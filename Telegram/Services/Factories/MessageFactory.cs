@@ -18,7 +18,10 @@ namespace Telegram.Services.Factories
 {
     public static class MessageFactory
     {
-        public static async Task<Object> CreatePhotoAsync(StoragePhoto photo, FormattedText caption, bool highQuality, bool captionAboveMedia, bool spoiler, MessageSelfDestructType ttl, long starCount)
+        // The longest side of a photo held as a video.
+        private const int StillMaxSide = 854;
+
+        public static async Task<Object> CreatePhotoAsync(StoragePhoto photo, FormattedText caption, bool highQuality, bool captionAboveMedia, bool spoiler, MessageSelfDestructType ttl, long starCount, bool grouped = false)
         {
             var conversionType = ConversionType.Compress;
             var file = photo.File;
@@ -37,6 +40,15 @@ namespace Telegram.Services.Factories
                 conversionType = ConversionType.HighQuality;
             }
 
+            if (generation != null)
+            {
+                var stillDuration = await GenerationService.GetStillDurationAsync(generation.Entities, false);
+                if (stillDuration > TimeSpan.Zero)
+                {
+                    return await CreateStillAsync(photo, generation, stillDuration, caption, captionAboveMedia, spoiler, ttl, starCount, grouped);
+                }
+            }
+
             var serialized = generation != null ? JsonSerializer.Serialize(generation, GenerationJsonContext.Default.ImageGeneration) : null;
             var generated = await GenerationService.PrepareAsync(file, conversionType, serialized);
             var thumbnail = default(InputThumbnail);
@@ -51,6 +63,46 @@ namespace Telegram.Services.Factories
             }
 
             return new InputMessagePhoto(new InputPhoto(generated, thumbnail, null, GetAddedStickers(generation?.Entities), size.Width, size.Height), caption, captionAboveMedia, ttl, spoiler);
+        }
+
+        // A photo with an animated sticker on it goes out as a muted loop of its stickers.
+        private static async Task<Object> CreateStillAsync(StoragePhoto photo, ImageGeneration state, TimeSpan stillDuration, FormattedText caption, bool captionAboveMedia, bool spoiler, MessageSelfDestructType ttl, long starCount, bool grouped)
+        {
+            var generation = new VideoGeneration
+            {
+                Transcode = true,
+                Mute = true,
+                MaxSide = StillMaxSide,
+                StillDuration = stillDuration,
+                Rectangle = state.Rectangle,
+                Angle = state.Angle,
+                Rotation = state.Rotation,
+                Flip = state.Flip,
+                Strokes = state.Strokes,
+                Entities = state.Entities
+            };
+
+            var output = await GenerationService.GetStillOutputSizeAsync(photo.File, generation);
+            var width = (int)output.Width;
+            var height = (int)output.Height;
+            var duration = (int)stillDuration.TotalSeconds;
+            var stickers = GetAddedStickers(state.Entities);
+
+            var serialized = JsonSerializer.Serialize(generation, GenerationJsonContext.Default.VideoGeneration);
+            var generated = await GenerationService.PrepareAsync(photo.File, ConversionType.Transcode, serialized);
+            var thumbnail = await GenerationService.PrepareVideoThumbnailAsync(photo.File, output, serialized);
+
+            if (starCount > 0)
+            {
+                return new InputPaidMedia(new InputPaidMediaTypeVideo(null, 0, duration, true), generated, thumbnail, stickers, width, height);
+            }
+            // Neither an album nor a self-destructing message can hold an animation.
+            else if (ttl == null && !grouped)
+            {
+                return new InputMessageAnimation(new InputAnimation(generated, thumbnail, stickers, duration, width, height), caption, captionAboveMedia, spoiler);
+            }
+
+            return new InputMessageVideo(new InputVideo(generated, thumbnail, null, 0, stickers, duration, width, height, true), caption, captionAboveMedia, ttl, spoiler);
         }
 
         // The stickers drawn into the media, so that it can lead to their sets.

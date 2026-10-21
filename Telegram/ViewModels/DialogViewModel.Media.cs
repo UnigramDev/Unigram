@@ -391,7 +391,7 @@ namespace Telegram.ViewModels
             Task<Object> request = null;
             if (storage is StoragePhoto photo && !popup.IsFilesSelected)
             {
-                request = MessageFactory.CreatePhotoAsync(photo, popup.Caption, highQuality, captionAboveMedia, hasSpoiler, storage.Ttl, 0);
+                request = MessageFactory.CreatePhotoAsync(photo, popup.Caption, highQuality, captionAboveMedia, hasSpoiler, storage.Ttl, 0, grouped: header.Editing.Message.MediaAlbumId != 0);
             }
             else if (storage is StorageVideo video && !popup.IsFilesSelected)
             {

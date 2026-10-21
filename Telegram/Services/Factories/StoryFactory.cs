@@ -69,6 +69,35 @@ namespace Telegram.Services.Factories
                 return new InputStoryContentVideo(file, MessageFactory.GetAddedStickers(state.Entities), (stop - start).TotalSeconds, 0, video.IsMuted);
             }
 
+            // A photo with an animated sticker on it goes out as a video, as long as the stickers
+            // take to come round together.
+            var stillDuration = await GenerationService.GetStillDurationAsync(state.Entities, true);
+            if (stillDuration > TimeSpan.Zero)
+            {
+                var still = new VideoGeneration
+                {
+                    Transcode = true,
+                    Mute = true,
+                    OutputSize = VideoSize,
+                    VideoBitrate = GenerationService.StillBitrate,
+                    StillDuration = stillDuration,
+                    Rectangle = state.Rectangle,
+                    Angle = state.Angle,
+                    Rotation = state.Rotation,
+                    Flip = state.Flip,
+                    Strokes = state.Strokes,
+                    Entities = state.Entities,
+                    FrameSize = state.FrameSize,
+                    FrameTopColor = state.FrameTopColor,
+                    FrameBottomColor = state.FrameBottomColor
+                };
+
+                var serialized = JsonSerializer.Serialize(still, GenerationJsonContext.Default.VideoGeneration);
+                var file = await GenerationService.PrepareAsync(media.File, ConversionType.Transcode, serialized);
+
+                return new InputStoryContentVideo(file, MessageFactory.GetAddedStickers(state.Entities), stillDuration.TotalSeconds, 0, true);
+            }
+
             var photo = JsonSerializer.Serialize(state, GenerationJsonContext.Default.ImageGeneration);
             var input = await GenerationService.PrepareAsync(media.File, ConversionType.Compress, photo);
 

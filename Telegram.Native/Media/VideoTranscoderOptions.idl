@@ -41,6 +41,14 @@ namespace Telegram.Native.Media
         // corners, which only a player that shows the whole square ever sees.
         Boolean RoundBlur;
 
+        // Held for StillDuration milliseconds in place of the video at InputPath, which is then not
+        // read: premultiplied BGRA, StillWidth by StillHeight, upright. The output has no audio and
+        // runs at MaxFrameRate, or at 30 frames a second when that is 0.
+        Windows.Storage.Streams.IBuffer StillPixels;
+        Int32 StillWidth;
+        Int32 StillHeight;
+        Int64 StillDuration;
+
         // Drawn over every frame, each over the ones added before it.
         void AddLayer(VideoTranscoderLayer layer);
     }

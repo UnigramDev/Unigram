@@ -75,6 +75,14 @@ namespace Telegram.Entities
 
         public Color FrameBottomColor { get; set; }
 
+        /// <summary>
+        /// How long a photo is held as a video, as a story with an animated sticker on it is; zero
+        /// when the source is a video.
+        /// </summary>
+        public TimeSpan StillDuration { get; set; }
+
+        public bool IsStill => StillDuration > TimeSpan.Zero;
+
         public bool HasFrame => FrameSize.Width > 0 && FrameSize.Height > 0;
 
         public bool HasOverlay => Strokes is { Count: > 0 } || Entities is { Count: > 0 };

@@ -1150,7 +1150,7 @@ namespace Telegram.ViewModels
                 }
                 else if (item is StoragePhoto photo)
                 {
-                    var factory = await MessageFactory.CreatePhotoAsync(photo, i == 0 ? caption : null, highQuality, captionAboveMedia, hasSpoiler, photo.Ttl, starCount);
+                    var factory = await MessageFactory.CreatePhotoAsync(photo, i == 0 ? caption : null, highQuality, captionAboveMedia, hasSpoiler, photo.Ttl, starCount, grouped: true);
                     if (factory is InputPaidMedia inputPaidMedia)
                     {
                         paidOperations.Add(inputPaidMedia);

@@ -865,97 +865,132 @@ namespace winrt::Telegram::Native::Media::implementation
             Fail(L"The output size must be positive and even");
         }
 
-        // Input.
-        session.input.handle = CreateFile2FromAppW(options.InputPath().c_str(), GENERIC_READ,
-            FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+        const auto self = winrt::get_self<implementation::VideoTranscoderOptions>(options);
 
-        if (session.input.handle == INVALID_HANDLE_VALUE)
+        // A still stands in for the video: nothing is read or decoded, and there is no audio.
+        const auto still = self->StillPixels();
+
+        int videoIndex = -1;
+        int audioIndex = -1;
+        AVStream* videoIn = nullptr;
+        AVStream* audioIn = nullptr;
+        int sourceWidth = 0;
+        int sourceHeight = 0;
+        int frameRate = DefaultFrameRate;
+        double length = 1;
+
+        if (still)
         {
-            Fail(L"Opening the source");
-        }
+            sourceWidth = self->StillWidth();
+            sourceHeight = self->StillHeight();
 
-        auto ioBuffer = static_cast<uint8_t*>(av_malloc(IoBufferSize));
-        if (ioBuffer == nullptr)
+            if (sourceWidth <= 0 || sourceHeight <= 0 || still.Length() < static_cast<uint32_t>(sourceWidth) * sourceHeight * 4)
+            {
+                Fail(L"The still's pixels do not match its size");
+            }
+
+            if (self->StillDuration() <= 0)
+            {
+                Fail(L"The still has no duration");
+            }
+
+            frameRate = options.MaxFrameRate() > 0 ? options.MaxFrameRate() : DefaultFrameRate;
+            length = static_cast<double>(self->StillDuration());
+        }
+        else
         {
-            Fail(L"Allocating the source's buffer", AVERROR(ENOMEM));
+            // Input.
+            session.input.handle = CreateFile2FromAppW(options.InputPath().c_str(), GENERIC_READ,
+                FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+
+            if (session.input.handle == INVALID_HANDLE_VALUE)
+            {
+                Fail(L"Opening the source");
+            }
+
+            auto ioBuffer = static_cast<uint8_t*>(av_malloc(IoBufferSize));
+            if (ioBuffer == nullptr)
+            {
+                Fail(L"Allocating the source's buffer", AVERROR(ENOMEM));
+            }
+
+            session.inputIo = avio_alloc_context(ioBuffer, IoBufferSize, 0, &session.input, ReadInput, nullptr, SeekInput);
+            if (session.inputIo == nullptr)
+            {
+                av_free(ioBuffer);
+                Fail(L"Allocating the source's reader", AVERROR(ENOMEM));
+            }
+
+            session.inputFormat = avformat_alloc_context();
+            if (session.inputFormat == nullptr)
+            {
+                Fail(L"Allocating the demuxer", AVERROR(ENOMEM));
+            }
+
+            session.inputFormat->pb = session.inputIo;
+
+            // The name is never opened, but the probe takes its extension as a hint.
+            auto inputName = winrt::to_string(options.InputPath());
+            Check(avformat_open_input(&session.inputFormat, inputName.c_str(), nullptr, nullptr), L"Demuxing the source");
+            Check(avformat_find_stream_info(session.inputFormat, nullptr), L"Reading the source's streams");
+
+            videoIndex = av_find_best_stream(session.inputFormat, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
+            if (videoIndex < 0)
+            {
+                Fail(L"The source has no video", videoIndex);
+            }
+
+            audioIndex = options.Mute()
+                ? -1
+                : av_find_best_stream(session.inputFormat, AVMEDIA_TYPE_AUDIO, -1, videoIndex, nullptr, 0);
+
+            videoIn = session.inputFormat->streams[videoIndex];
+            audioIn = audioIndex >= 0 ? session.inputFormat->streams[audioIndex] : nullptr;
+
+            const int64_t sourceDuration = session.inputFormat->duration != AV_NOPTS_VALUE
+                ? session.inputFormat->duration / 1000
+                : 0;
+
+            const int64_t stop = requestedStop > 0 ? requestedStop : sourceDuration;
+            length = static_cast<double>(std::max<int64_t>(1, stop - start));
+
+            // Video decoder.
+            const AVCodec* videoCodec = avcodec_find_decoder(videoIn->codecpar->codec_id);
+            if (videoCodec == nullptr)
+            {
+                Fail(L"No decoder for the source's video");
+            }
+
+            session.videoDecoder = avcodec_alloc_context3(videoCodec);
+            if (session.videoDecoder == nullptr)
+            {
+                Fail(L"Allocating the video decoder", AVERROR(ENOMEM));
+            }
+
+            Check(avcodec_parameters_to_context(session.videoDecoder, videoIn->codecpar), L"Configuring the video decoder");
+            session.videoDecoder->thread_count = 0;
+            Check(avcodec_open2(session.videoDecoder, videoCodec, nullptr), L"Opening the video decoder");
+
+            sourceWidth = session.videoDecoder->width;
+            sourceHeight = session.videoDecoder->height;
+
+            if (sourceWidth <= 0 || sourceHeight <= 0)
+            {
+                Fail(L"The source's video has no size");
+            }
+
+            // The source's own rate up to the cap: each frame then lands on a slot of it, and frames
+            // that come too quick for one are dropped.
+            AVRational sourceRate = videoIn->avg_frame_rate.num > 0 && videoIn->avg_frame_rate.den > 0
+                ? videoIn->avg_frame_rate
+                : videoIn->r_frame_rate;
+
+            frameRate = sourceRate.num > 0 && sourceRate.den > 0
+                ? static_cast<int>(std::lround(av_q2d(sourceRate)))
+                : DefaultFrameRate;
+
+            frameRate = std::clamp(frameRate, 1, options.MaxFrameRate() > 0 ? options.MaxFrameRate() : 60);
         }
-
-        session.inputIo = avio_alloc_context(ioBuffer, IoBufferSize, 0, &session.input, ReadInput, nullptr, SeekInput);
-        if (session.inputIo == nullptr)
-        {
-            av_free(ioBuffer);
-            Fail(L"Allocating the source's reader", AVERROR(ENOMEM));
-        }
-
-        session.inputFormat = avformat_alloc_context();
-        if (session.inputFormat == nullptr)
-        {
-            Fail(L"Allocating the demuxer", AVERROR(ENOMEM));
-        }
-
-        session.inputFormat->pb = session.inputIo;
-
-        // The name is never opened, but the probe takes its extension as a hint.
-        auto inputName = winrt::to_string(options.InputPath());
-        Check(avformat_open_input(&session.inputFormat, inputName.c_str(), nullptr, nullptr), L"Demuxing the source");
-        Check(avformat_find_stream_info(session.inputFormat, nullptr), L"Reading the source's streams");
-
-        const int videoIndex = av_find_best_stream(session.inputFormat, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
-        if (videoIndex < 0)
-        {
-            Fail(L"The source has no video", videoIndex);
-        }
-
-        const int audioIndex = options.Mute()
-            ? -1
-            : av_find_best_stream(session.inputFormat, AVMEDIA_TYPE_AUDIO, -1, videoIndex, nullptr, 0);
-
-        AVStream* videoIn = session.inputFormat->streams[videoIndex];
-        AVStream* audioIn = audioIndex >= 0 ? session.inputFormat->streams[audioIndex] : nullptr;
-
-        const int64_t sourceDuration = session.inputFormat->duration != AV_NOPTS_VALUE
-            ? session.inputFormat->duration / 1000
-            : 0;
-
-        const int64_t stop = requestedStop > 0 ? requestedStop : sourceDuration;
-        const double length = static_cast<double>(std::max<int64_t>(1, stop - start));
-
-        // Video decoder.
-        const AVCodec* videoCodec = avcodec_find_decoder(videoIn->codecpar->codec_id);
-        if (videoCodec == nullptr)
-        {
-            Fail(L"No decoder for the source's video");
-        }
-
-        session.videoDecoder = avcodec_alloc_context3(videoCodec);
-        if (session.videoDecoder == nullptr)
-        {
-            Fail(L"Allocating the video decoder", AVERROR(ENOMEM));
-        }
-
-        Check(avcodec_parameters_to_context(session.videoDecoder, videoIn->codecpar), L"Configuring the video decoder");
-        session.videoDecoder->thread_count = 0;
-        Check(avcodec_open2(session.videoDecoder, videoCodec, nullptr), L"Opening the video decoder");
-
-        const int sourceWidth = session.videoDecoder->width;
-        const int sourceHeight = session.videoDecoder->height;
-
-        if (sourceWidth <= 0 || sourceHeight <= 0)
-        {
-            Fail(L"The source's video has no size");
-        }
-
-        // The source's own rate up to the cap: each frame then lands on a slot of it, and frames
-        // that come too quick for one are dropped.
-        AVRational sourceRate = videoIn->avg_frame_rate.num > 0 && videoIn->avg_frame_rate.den > 0
-            ? videoIn->avg_frame_rate
-            : videoIn->r_frame_rate;
-
-        int frameRate = sourceRate.num > 0 && sourceRate.den > 0
-            ? static_cast<int>(std::lround(av_q2d(sourceRate)))
-            : DefaultFrameRate;
-
-        frameRate = std::clamp(frameRate, 1, options.MaxFrameRate() > 0 ? options.MaxFrameRate() : 60);
 
         const AVRational frameTimeBase{ 1, frameRate };
 
@@ -1190,14 +1225,15 @@ namespace winrt::Telegram::Native::Media::implementation
             Check(av_frame_get_buffer(session.picture, 0), L"Allocating the encoder's frames");
         }
 
-        const float3x2 transform = GetOrientation(GetRotation(videoIn), static_cast<float>(sourceWidth), static_cast<float>(sourceHeight))
+        const float3x2 transform = GetOrientation(still ? 0 : GetRotation(videoIn), static_cast<float>(sourceWidth), static_cast<float>(sourceHeight))
             * options.Transform();
 
         const D2D1_MATRIX_3X2_F drawTransform{ transform.m11, transform.m12, transform.m21, transform.m22, transform.m31, transform.m32 };
 
-        std::vector<uint8_t> bgra(static_cast<size_t>(sourceWidth) * sourceHeight * 4);
+        // What each decoded frame is converted to; a still is drawn from its own pixels.
+        std::vector<uint8_t> bgra(still ? 0 : static_cast<size_t>(sourceWidth) * sourceHeight * 4);
 
-        if (start > 0)
+        if (start > 0 && !still)
         {
             // The key frame before the start; the frames up to it are decoded and dropped.
             av_seek_frame(session.inputFormat, -1, start * 1000, AVSEEK_FLAG_BACKWARD);
@@ -1231,6 +1267,49 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             Check(avcodec_send_frame(session.audioEncoder, input), L"Encoding the audio");
             write(session.audioEncoder, audioOut);
+        };
+
+        // Draws a frame over the background and under the layers, encodes it, and reports how far
+        // through the output it is.
+        auto encodeFrame = [&](const uint8_t* pixels, uint32_t stride, int64_t pts, double done)
+        {
+            compositor.UpdateLayers(static_cast<double>(pts) / frameRate);
+            compositor.Draw(pixels, stride, drawTransform);
+
+            const int64_t sampleTime = pts * Second / frameRate;
+            const int64_t sampleDuration = Second / frameRate;
+
+            if (encoder.IsHardware())
+            {
+                auto texture = compositor.ConvertToNV12();
+                encoder.EncodeTexture(texture.get(), sampleTime, sampleDuration);
+            }
+            else
+            {
+                compositor.CopyToReadback();
+                Check(av_frame_make_writable(session.picture), L"Preparing the encoder's frame");
+
+                D2D1_MAPPED_RECT mapped{};
+                winrt::check_hresult(compositor.readback->Map(D2D1_MAP_OPTIONS_READ, &mapped));
+
+                // D2D's B8G8R8A8 is libyuv's ARGB: it names the bytes from the high end.
+                libyuv::ARGBToNV12(mapped.bits, static_cast<int>(mapped.pitch),
+                    session.picture->data[0], session.picture->linesize[0],
+                    session.picture->data[1], session.picture->linesize[1],
+                    width, height);
+
+                winrt::check_hresult(compositor.readback->Unmap());
+
+                encoder.EncodeMemory(session.picture->data[0], session.picture->linesize[0],
+                    session.picture->data[1], session.picture->linesize[1], sampleTime, sampleDuration);
+            }
+
+            done = std::clamp(done, 0.0, 1.0);
+            if (progress && done - reported >= 0.01)
+            {
+                reported = done;
+                progress(done);
+            }
         };
 
         auto receiveVideo = [&]()
@@ -1295,43 +1374,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
                 av_frame_unref(session.frame);
 
-                compositor.UpdateLayers(static_cast<double>(pts) / frameRate);
-                compositor.Draw(bgra.data(), sourceWidth * 4, drawTransform);
-
-                const int64_t sampleTime = pts * Second / frameRate;
-                const int64_t sampleDuration = Second / frameRate;
-
-                if (encoder.IsHardware())
-                {
-                    auto texture = compositor.ConvertToNV12();
-                    encoder.EncodeTexture(texture.get(), sampleTime, sampleDuration);
-                }
-                else
-                {
-                    compositor.CopyToReadback();
-                    Check(av_frame_make_writable(session.picture), L"Preparing the encoder's frame");
-
-                    D2D1_MAPPED_RECT mapped{};
-                    winrt::check_hresult(compositor.readback->Map(D2D1_MAP_OPTIONS_READ, &mapped));
-
-                    // D2D's B8G8R8A8 is libyuv's ARGB: it names the bytes from the high end.
-                    libyuv::ARGBToNV12(mapped.bits, static_cast<int>(mapped.pitch),
-                        session.picture->data[0], session.picture->linesize[0],
-                        session.picture->data[1], session.picture->linesize[1],
-                        width, height);
-
-                    winrt::check_hresult(compositor.readback->Unmap());
-
-                    encoder.EncodeMemory(session.picture->data[0], session.picture->linesize[0],
-                        session.picture->data[1], session.picture->linesize[1], sampleTime, sampleDuration);
-                }
-
-                const double done = std::clamp((time - start) / length, 0.0, 1.0);
-                if (progress && done - reported >= 0.01)
-                {
-                    reported = done;
-                    progress(done);
-                }
+                encodeFrame(bgra.data(), sourceWidth * 4, pts, (time - start) / length);
             }
         };
 
@@ -1416,78 +1459,96 @@ namespace winrt::Telegram::Native::Media::implementation
             }
         };
 
-        while (!videoDone || !audioDone)
+        if (still)
         {
-            if (m_canceled)
-            {
-                throw winrt::hresult_canceled();
-            }
+            const int64_t frames = std::max<int64_t>(1, std::llround(length * frameRate / 1000));
 
-            const int read = av_read_frame(session.inputFormat, session.packet);
-            if (read == AVERROR_EOF)
+            for (int64_t pts = 0; pts < frames; pts++)
             {
-                break;
-            }
-
-            Check(read, L"Reading the source");
-
-            if (session.packet->stream_index == videoIndex && !videoDone)
-            {
-                // A damaged packet costs its frame, not the video.
-                if (avcodec_send_packet(session.videoDecoder, session.packet) >= 0)
+                if (m_canceled)
                 {
-                    receiveVideo();
+                    throw winrt::hresult_canceled();
                 }
+
+                encodeFrame(still.data(), static_cast<uint32_t>(sourceWidth) * 4, pts, static_cast<double>(pts + 1) / frames);
+                lastPts = pts;
             }
-            else if (audioIn != nullptr && session.packet->stream_index == audioIndex && !audioDone)
+        }
+        else
+        {
+            while (!videoDone || !audioDone)
             {
-                if (copyAudio)
+                if (m_canceled)
                 {
-                    const auto timestamp = session.packet->pts != AV_NOPTS_VALUE ? session.packet->pts : session.packet->dts;
-                    const double time = timestamp != AV_NOPTS_VALUE ? timestamp * av_q2d(audioIn->time_base) * 1000 : start;
+                    throw winrt::hresult_canceled();
+                }
 
-                    if (requestedStop > 0 && time >= requestedStop)
+                const int read = av_read_frame(session.inputFormat, session.packet);
+                if (read == AVERROR_EOF)
+                {
+                    break;
+                }
+
+                Check(read, L"Reading the source");
+
+                if (session.packet->stream_index == videoIndex && !videoDone)
+                {
+                    // A damaged packet costs its frame, not the video.
+                    if (avcodec_send_packet(session.videoDecoder, session.packet) >= 0)
                     {
-                        audioDone = true;
-                    }
-                    else if (time >= start)
-                    {
-                        const auto offset = av_rescale_q(start, AVRational{ 1, 1000 }, audioIn->time_base);
-
-                        if (session.packet->pts != AV_NOPTS_VALUE)
-                        {
-                            session.packet->pts -= offset;
-                        }
-
-                        if (session.packet->dts != AV_NOPTS_VALUE)
-                        {
-                            session.packet->dts -= offset;
-                        }
-
-                        session.packet->stream_index = audioOut->index;
-                        session.packet->pos = -1;
-
-                        mux(session.packet, audioIn->time_base);
+                        receiveVideo();
                     }
                 }
-                else if (avcodec_send_packet(session.audioDecoder, session.packet) >= 0)
+                else if (audioIn != nullptr && session.packet->stream_index == audioIndex && !audioDone)
                 {
-                    receiveAudio();
+                    if (copyAudio)
+                    {
+                        const auto timestamp = session.packet->pts != AV_NOPTS_VALUE ? session.packet->pts : session.packet->dts;
+                        const double time = timestamp != AV_NOPTS_VALUE ? timestamp * av_q2d(audioIn->time_base) * 1000 : start;
+
+                        if (requestedStop > 0 && time >= requestedStop)
+                        {
+                            audioDone = true;
+                        }
+                        else if (time >= start)
+                        {
+                            const auto offset = av_rescale_q(start, AVRational{ 1, 1000 }, audioIn->time_base);
+
+                            if (session.packet->pts != AV_NOPTS_VALUE)
+                            {
+                                session.packet->pts -= offset;
+                            }
+
+                            if (session.packet->dts != AV_NOPTS_VALUE)
+                            {
+                                session.packet->dts -= offset;
+                            }
+
+                            session.packet->stream_index = audioOut->index;
+                            session.packet->pos = -1;
+
+                            mux(session.packet, audioIn->time_base);
+                        }
+                    }
+                    else if (avcodec_send_packet(session.audioDecoder, session.packet) >= 0)
+                    {
+                        receiveAudio();
+                    }
                 }
+
+                av_packet_unref(session.packet);
             }
 
-            av_packet_unref(session.packet);
-        }
+            // Drain the decoders, then the encoders.
+            if (avcodec_send_packet(session.videoDecoder, nullptr) >= 0)
+            {
+                receiveVideo();
+            }
 
-        // Drain the decoders, then the encoders.
-        if (avcodec_send_packet(session.videoDecoder, nullptr) >= 0)
-        {
-            receiveVideo();
-        }
-
-        if (session.audioDecoder != nullptr && avcodec_send_packet(session.audioDecoder, nullptr) >= 0)
-        {
-            receiveAudio();
+            if (session.audioDecoder != nullptr && avcodec_send_packet(session.audioDecoder, nullptr) >= 0)
+            {
+                receiveAudio();
+            }
         }
 
         if (lastPts < 0)

@@ -3,6 +3,7 @@
 #include "Media/VideoTranscoderOptions.g.h"
 
 #include <winrt/Windows.Foundation.Numerics.h>
+#include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.UI.h>
 
 #include <vector>
@@ -55,6 +56,18 @@ namespace winrt::Telegram::Native::Media::implementation
         bool RoundBlur() const { return m_roundBlur; }
         void RoundBlur(bool value) { m_roundBlur = value; }
 
+        winrt::Windows::Storage::Streams::IBuffer StillPixels() const { return m_stillPixels; }
+        void StillPixels(winrt::Windows::Storage::Streams::IBuffer const& value) { m_stillPixels = value; }
+
+        int32_t StillWidth() const { return m_stillWidth; }
+        void StillWidth(int32_t value) { m_stillWidth = value; }
+
+        int32_t StillHeight() const { return m_stillHeight; }
+        void StillHeight(int32_t value) { m_stillHeight = value; }
+
+        int64_t StillDuration() const { return m_stillDuration; }
+        void StillDuration(int64_t value) { m_stillDuration = value; }
+
         void AddLayer(winrt::Telegram::Native::Media::VideoTranscoderLayer const& layer) { m_layers.push_back(layer); }
         const std::vector<winrt::Telegram::Native::Media::VideoTranscoderLayer>& Layers() const { return m_layers; }
 
@@ -73,6 +86,10 @@ namespace winrt::Telegram::Native::Media::implementation
         int32_t m_maxFrameRate{ 0 };
         bool m_hardwareEncoding{ true };
         bool m_roundBlur{ false };
+        winrt::Windows::Storage::Streams::IBuffer m_stillPixels{ nullptr };
+        int32_t m_stillWidth{ 0 };
+        int32_t m_stillHeight{ 0 };
+        int64_t m_stillDuration{ 0 };
         std::vector<winrt::Telegram::Native::Media::VideoTranscoderLayer> m_layers;
     };
 }

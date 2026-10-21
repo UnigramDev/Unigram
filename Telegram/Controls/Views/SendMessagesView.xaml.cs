@@ -252,7 +252,7 @@ namespace Telegram.Controls.Views
                 }
                 else if (item is StoragePhoto photo)
                 {
-                    var factory = await MessageFactory.CreatePhotoAsync(photo, i == 0 ? caption : null, false, false, false, null, 0);
+                    var factory = await MessageFactory.CreatePhotoAsync(photo, i == 0 ? caption : null, false, false, false, null, 0, grouped: true);
                     if (factory is InputMessageContent input)
                     {
                         operations.Add(input);

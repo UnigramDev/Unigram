@@ -92,10 +92,7 @@ namespace Telegram.Services
                     return new InputFileLocal(path);
                 }
 
-                if (conversion == ConversionType.Compress)
-                {
-                    path = Path.ChangeExtension(path, ".jpg");
-                }
+                path = GetGeneratedPath(path, file, conversion);
 
                 return new InputFileGenerated(path, string.Format("{0}#{1}#{2}#{3}", token, conversion, arguments, fileTime), fileSize);
             }
@@ -105,10 +102,7 @@ namespace Telegram.Services
                 path = file.FolderRelativeId;
             }
 
-            if (conversion == ConversionType.Compress)
-            {
-                path = Path.ChangeExtension(path, ".jpg");
-            }
+            path = GetGeneratedPath(path, file, conversion);
 
             try
             {
@@ -119,6 +113,22 @@ namespace Telegram.Services
             {
                 return new InputFileGenerated(path, string.Format("{0}#{1}#{2}#{3}", token, conversion, arguments, 0), 0);
             }
+        }
+
+        // TDLib names the file it sends after this path, and takes its type from the extension: a
+        // transcode always comes out as MP4, even when what it holds is a photo.
+        private static string GetGeneratedPath(string path, StorageFile file, ConversionType conversion)
+        {
+            if (conversion == ConversionType.Compress)
+            {
+                return Path.ChangeExtension(path, ".jpg");
+            }
+            else if (conversion == ConversionType.Transcode && !file.HasExtension(Constants.VideoTypes))
+            {
+                return Path.ChangeExtension(path, ".mp4");
+            }
+
+            return path;
         }
 
         public static async Task<InputThumbnail> PrepareVideoThumbnailAsync(StorageVideo file, VideoGeneration video = null, string arguments = null)
@@ -134,14 +144,19 @@ namespace Telegram.Services
                 originalHeight = output.Height;
             }
 
-            double ratioX = 90 / originalWidth;
-            double ratioY = 90 / originalHeight;
+            return await PrepareVideoThumbnailAsync(file.File, new Size(originalWidth, originalHeight), arguments);
+        }
+
+        public static async Task<InputThumbnail> PrepareVideoThumbnailAsync(StorageFile file, Size output, string arguments)
+        {
+            double ratioX = 90 / output.Width;
+            double ratioY = 90 / output.Height;
             double ratio = Math.Min(ratioX, ratioY);
 
-            int width = (int)(originalWidth * ratio);
-            int height = (int)(originalHeight * ratio);
+            int width = (int)(output.Width * ratio);
+            int height = (int)(output.Height * ratio);
 
-            return new InputThumbnail(await PrepareAsync(file.File, ConversionType.TranscodeThumbnail, arguments), width, height);
+            return new InputThumbnail(await PrepareAsync(file, ConversionType.TranscodeThumbnail, arguments), width, height);
         }
 
         public async void Handle(UpdateFileGenerationStart update)
@@ -499,12 +514,19 @@ namespace Telegram.Services
                 }
 
                 var file = await GenerationSources.GetFileAsync(args[0]);
-                if (string.IsNullOrEmpty(file.Path))
+                if (string.IsNullOrEmpty(file.Path) && !generation.IsStill)
                 {
                     throw new InvalidOperationException("The video has no path to read it from");
                 }
 
-                var probe = await ProbeVideoAsync(file);
+                var still = generation.IsStill
+                    ? await DecodeStillAsync(file)
+                    : default;
+
+                var probe = generation.IsStill
+                    ? new VideoProbe(still.Width, still.Height, 0)
+                    : await ProbeVideoAsync(file);
+
                 var output = GetVideoOutputSize(generation, probe.Width, probe.Height);
                 var transform = GetVideoTransform(generation, (float)probe.Width, (float)probe.Height, output);
 
@@ -523,9 +545,17 @@ namespace Telegram.Services
                         : generation.HasFrame
                         ? MakeStoryBitrate(probe.Bitrate, generation.Entities is { Count: > 0 })
                         : MakeVideoBitrate(probe.Height, probe.Width, probe.Bitrate, (int)output.Height, (int)output.Width),
-                    MaxFrameRate = generation.HasFrame ? 59 : 60,
+                    MaxFrameRate = generation.IsStill ? StillFrameRate : generation.HasFrame ? 59 : 60,
                     HardwareEncoding = allowHardware && !AppSettings.Diagnostics.DisableHardwareVideoEncoding
                 };
+
+                if (generation.IsStill)
+                {
+                    options.StillPixels = still.Pixels;
+                    options.StillWidth = still.Width;
+                    options.StillHeight = still.Height;
+                    options.StillDuration = (long)generation.StillDuration.TotalMilliseconds;
+                }
 
                 if (generation.HasFrame)
                 {
@@ -842,6 +872,150 @@ namespace Telegram.Services
         }
 
         private readonly record struct VideoProbe(double Width, double Height, int Bitrate);
+
+        // A photo held as a video runs at 30 frames a second, decoded no larger than an output can
+        // use with room to zoom in. A story's is encoded at about 0.9 Mbps.
+        public const uint StillBitrate = 900_000;
+        private const int StillFrameRate = 30;
+        private const int StillMaxSide = 2560;
+
+        private readonly record struct StillImage(IBuffer Pixels, int Width, int Height);
+
+        // Upright and premultiplied, as the transcoder holds a still.
+        private static async Task<StillImage> DecodeStillAsync(StorageFile file)
+        {
+            using var stream = await file.OpenReadAsync();
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+
+            var transform = new BitmapTransform
+            {
+                InterpolationMode = BitmapInterpolationMode.Fant
+            };
+
+            var side = Math.Max(decoder.PixelWidth, decoder.PixelHeight);
+            if (side > StillMaxSide)
+            {
+                var scale = (double)StillMaxSide / side;
+                transform.ScaledWidth = (uint)Math.Max(1, Math.Round(decoder.PixelWidth * scale));
+                transform.ScaledHeight = (uint)Math.Max(1, Math.Round(decoder.PixelHeight * scale));
+            }
+
+            using var bitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+            var pixels = BufferSurface.Create((uint)(bitmap.PixelWidth * bitmap.PixelHeight * 4));
+            bitmap.CopyToBuffer(pixels);
+
+            return new StillImage(pixels, bitmap.PixelWidth, bitmap.PixelHeight);
+        }
+
+        /// <summary>
+        /// The size a photo held as a video comes out at, read from the photo as the transcode
+        /// will decode it.
+        /// </summary>
+        public static async Task<Size> GetStillOutputSizeAsync(StorageFile file, VideoGeneration generation)
+        {
+            using var stream = await file.OpenReadAsync();
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+
+            var scale = Math.Min(1, (double)StillMaxSide / Math.Max(decoder.OrientedPixelWidth, decoder.OrientedPixelHeight));
+            return GetVideoOutputSize(generation, Math.Round(decoder.OrientedPixelWidth * scale), Math.Round(decoder.OrientedPixelHeight * scale));
+        }
+
+        /// <summary>
+        /// How long a photo with these entities on it is held as a video, or zero when none is
+        /// animated and the photo stays a photo. A story holds its animated stickers' common loop
+        /// for 5 to 7.5 seconds; a message for at most 3, doubling a loop shorter than a second.
+        /// </summary>
+        public static Task<TimeSpan> GetStillDurationAsync(IReadOnlyList<PaintEntity> entities, bool story)
+        {
+            return Task.Run(() => GetStillDuration(entities, story));
+        }
+
+        private static TimeSpan GetStillDuration(IReadOnlyList<PaintEntity> entities, bool story)
+        {
+            const long Longest = 7500;
+
+            var animated = false;
+            long lcm = 1;
+
+            foreach (var entity in entities ?? Array.Empty<PaintEntity>())
+            {
+                if (!IsAnimatedOverlay(entity))
+                {
+                    continue;
+                }
+
+                animated = true;
+
+                // Past the longest it would be clamped anyway, and the multiple only grows.
+                var duration = GetAnimationDuration(entity);
+                if (duration > 0 && lcm <= Longest)
+                {
+                    lcm = lcm / Gcd(lcm, duration) * duration;
+                }
+            }
+
+            if (!animated)
+            {
+                return TimeSpan.Zero;
+            }
+
+            if (story)
+            {
+                return TimeSpan.FromMilliseconds(Math.Clamp(lcm, 5000, Longest));
+            }
+
+            // When no length could be read, the loop is held for as long as a message allows.
+            var loop = lcm > 1 ? Math.Min(3000, lcm) : 3000;
+            while (loop < 1000)
+            {
+                loop *= 2;
+            }
+
+            return TimeSpan.FromMilliseconds(loop);
+        }
+
+        private static long Gcd(long a, long b)
+        {
+            while (b != 0)
+            {
+                var remainder = a % b;
+                a = b;
+                b = remainder;
+            }
+
+            return a;
+        }
+
+        // In milliseconds, or 0 when the sticker cannot be read.
+        private static long GetAnimationDuration(PaintEntity entity)
+        {
+            var file = entity.StickerFile;
+            var path = file.Local.Path;
+
+            try
+            {
+                if (path.HasExtension(".tgs", ".json"))
+                {
+                    using var lottie = LottieAnimation.LoadFromFile(path, 64, 64, false, null);
+                    return lottie != null && lottie.FrameRate > 0
+                        ? (long)Math.Round(lottie.TotalFrame * 1000d / lottie.FrameRate)
+                        : 0;
+                }
+
+                var size = file.Size > 0 ? file.Size : file.Local.DownloadedSize;
+
+                using var video = VideoAnimation.LoadFromFile(new LocalFileSource(path, size), false, false, false);
+                return video != null
+                    ? video.Duration
+                    : 0;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                return 0;
+            }
+        }
 
         // The frame's upright size, as the transcoder sees it once the source's own rotation is
         // applied, and a bitrate taken from the file's size, which no container reliably states.
