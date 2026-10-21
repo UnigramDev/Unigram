@@ -116,16 +116,19 @@ namespace Telegram.Views
             _renderer.ClearAnchors();
 
             var args = e.Parameter as InstantPageArgs;
-            if (args?.InstantView == null || !Uri.TryCreate(args.Url, UriKind.Absolute, out Uri uri))
+            if (args?.InstantView == null)
             {
                 return;
             }
 
-            if (args.Url.StartsWith("tg"))
+            if (args.Url?.StartsWith("tg") is true)
             {
                 Feedback.Visibility = Visibility.Collapsed;
             }
 
+            // A local .md file is opened as tg://<file name>, which is no valid Uri when the name
+            // has a space in it. The page renders regardless; it just has no link to share.
+            Uri.TryCreate(args.Url, UriKind.Absolute, out Uri uri);
             ViewModel.ShareLink = uri;
             ViewModel.ShareTitle = args.Url;
 
