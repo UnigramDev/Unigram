@@ -526,6 +526,7 @@
                                                  AutomationProperties.LandmarkType="Search"
                                                  StartingIndex="1"
                                                  Padding="10,5,36,6"
+                                                 CornerRadius="16"
                                                  VerticalAlignment="Center"
                                                  GotFocus="Search_Click"
                                                  TextChanged="Search_TextChanged"
@@ -579,6 +580,7 @@
                                                   FontSize="16"
                                                   VerticalAlignment="Center"
                                                   Margin="-32,-4,0,-4"
+                                                  CornerRadius="12"
                                                   Width="36"
                                                   Height="32" />
                             <controls:GlyphButton x:Name="Proxy"
@@ -648,85 +650,21 @@
                                                                      ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                                                      FocusFollowsSingleSelection="True"
                                                                      SingleSelectionFollowsFocus="False"
-                                                                     Padding="8,0,8,0"
-                                                                     Height="40">
+                                                                     Height="32"
+                                                                     Margin="12,6,12,2"
+                                                                     Padding="2,0"
+                                                                     Background="{ThemeResource TextControlBackground}"
+                                                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                                                     BorderThickness="1"
+                                                                     CornerRadius="16">
                                             <controls:TopNavView.ItemContainerStyle>
                                                 <Style TargetType="controls:TopNavViewItem">
-                                                    <Setter Property="HorizontalAlignment"
-                                                            Value="Stretch" />
-                                                    <Setter Property="VerticalAlignment"
-                                                            Value="Stretch" />
-                                                    <Setter Property="HorizontalContentAlignment"
-                                                            Value="Center" />
-                                                    <Setter Property="VerticalContentAlignment"
-                                                            Value="Center" />
-                                                    <Setter Property="UseSystemFocusVisuals"
-                                                            Value="True" />
-                                                    <Setter Property="FocusVisualMargin"
-                                                            Value="-3,5" />
+                                                    <Setter Property="Padding"
+                                                            Value="8,0,8,4" />
+                                                    <Setter Property="BorderThickness"
+                                                            Value="2,0,2,0" />
                                                     <Setter Property="CornerRadius"
-                                                            Value="12" />
-                                                    <Setter Property="Foreground"
-                                                            Value="{ThemeResource TextFillColorSecondaryBrush}" />
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="controls:TopNavViewItem">
-                                                                <Grid x:Name="ContentBorder"
-                                                                      Background="Transparent">
-                                                                    <VisualStateManager.VisualStateGroups>
-                                                                        <VisualStateGroup x:Name="CommonStates">
-                                                                            <VisualState x:Name="Normal" />
-                                                                            <VisualState x:Name="PointerOver" />
-                                                                            <VisualState x:Name="Pressed" />
-                                                                            <VisualState x:Name="Selected">
-                                                                                <VisualState.Setters>
-                                                                                    <Setter Target="ContentPresenter.Foreground"
-                                                                                            Value="{ThemeResource AccentButtonBackground}" />
-                                                                                </VisualState.Setters>
-                                                                            </VisualState>
-                                                                            <VisualState x:Name="PointerOverSelected">
-                                                                                <VisualState.Setters>
-                                                                                    <Setter Target="ContentPresenter.Foreground"
-                                                                                            Value="{ThemeResource AccentButtonBackground}" />
-                                                                                </VisualState.Setters>
-                                                                            </VisualState>
-                                                                            <VisualState x:Name="PressedSelected">
-                                                                                <VisualState.Setters>
-                                                                                    <Setter Target="ContentPresenter.Foreground"
-                                                                                            Value="{ThemeResource AccentButtonBackground}" />
-                                                                                </VisualState.Setters>
-                                                                            </VisualState>
-                                                                        </VisualStateGroup>
-                                                                    </VisualStateManager.VisualStateGroups>
-                                                                    <ContentPresenter x:Name="ContentPresenter"
-                                                                                      Grid.Column="1"
-                                                                                      Margin="12,0,12,0"
-                                                                                      TextWrapping="NoWrap"
-                                                                                      Foreground="{TemplateBinding Foreground}"
-                                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                                      Content="{TemplateBinding Content}"
-                                                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                                      ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                                                                      VerticalAlignment="Center"
-                                                                                      AutomationProperties.AccessibilityView="Raw"
-                                                                                      Canvas.ZIndex="1" />
-                                                                    <Grid x:Name="SelectionIndicatorGrid"
-                                                                          Margin="4,4,4,0"
-                                                                          HorizontalAlignment="Stretch"
-                                                                          VerticalAlignment="Center"
-                                                                          Height="24"
-                                                                          Opacity="0.15">
-                                                                        <Rectangle x:Name="SelectionIndicator"
-                                                                                   Fill="{ThemeResource AccentButtonBackground}"
-                                                                                   Opacity="0"
-                                                                                   RadiusX="12"
-                                                                                   RadiusY="12" />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
+                                                            Value="16" />
                                                 </Style>
                                             </controls:TopNavView.ItemContainerStyle>
                                             <controls:ChatFoldersNavView.ItemTemplate>
@@ -745,7 +683,7 @@
                                                                                IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
                                                                                Visibility="{x:Bind ShowCount, Mode=OneWay}"
                                                                                VerticalAlignment="Bottom"
-                                                                               Margin="4,0,-4,0" />
+                                                                               Margin="4,0,-2,0" />
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </controls:ChatFoldersNavView.ItemTemplate>

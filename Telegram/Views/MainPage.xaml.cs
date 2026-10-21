@@ -962,6 +962,11 @@ namespace Telegram.Views
                 ShowHideTopTabsCompleted();
             };
 
+            var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            //opacity.Duration = Constants.FastAnimation;
+
             var offset1 = visual.Compositor.CreateScalarKeyFrameAnimation();
             offset1.InsertKeyFrame(show ? 0 : 1, -36);
             offset1.InsertKeyFrame(show ? 1 : 0, 0);
@@ -972,6 +977,7 @@ namespace Telegram.Views
             offset2.InsertKeyFrame(show ? 1 : 0, 0);
             //offset.Duration = Constants.FastAnimation;
 
+            header.StartAnimation("Opacity", opacity);
             header.Clip.StartAnimation("TopInset", offset2);
             visual.StartAnimation("Offset.Y", offset1);
 

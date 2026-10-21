@@ -4794,9 +4794,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:TopNavView">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                    <Grid CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
                         <ScrollViewer x:Name="ScrollViewer"
                                       TabNavigation="{TemplateBinding TabNavigation}"
                                       HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
@@ -4818,7 +4820,7 @@
                                             Footer="{TemplateBinding Footer}"
                                             FooterTemplate="{TemplateBinding FooterTemplate}" />
                         </ScrollViewer>
-                    </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
