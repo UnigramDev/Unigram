@@ -48,7 +48,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class SendFilesPopup : ContentPopup, IViewWithAutocomplete, INotifyPropertyChanged, IDiffHandler<StorageRow>
+    public sealed partial class SendFilesPopup : ModalPopup, IViewWithAutocomplete, INotifyPropertyChanged, IDiffHandler<StorageRow>
     {
         public ComposeViewModel ViewModel { get; private set; }
         public RangeObservableCollection<StorageMedia> Items { get; private set; }
@@ -408,12 +408,12 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             SetResult(ContentDialogResult.Primary);
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnSecondaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             SetResult(ContentDialogResult.Secondary);
         }
@@ -1564,6 +1564,7 @@ namespace Telegram.Views.Popups
             ListAutocomplete.CornerRadius = new CornerRadius(above ? 0 : 2, above ? 0 : 2, above ? 2 : 0, above ? 2 : 0);
 
             CaptionBorder.BorderThickness = new Thickness(0, 1, 0, above ? 1 : 0);
+            CaptionPanel.CornerRadius = new CornerRadius(0, 0, above ? 0 : 8, above ? 0 : 8);
 
             return above ? 0 : 2;
         }

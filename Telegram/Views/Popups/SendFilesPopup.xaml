@@ -1,22 +1,22 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.SendFilesPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:drawers="using:Telegram.Controls.Drawers"
-                       xmlns:messages="using:Telegram.Controls.Messages"
-                       xmlns:entities="using:Telegram.Entities"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:chats="using:Telegram.Controls.Chats"
-                       mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       FocusPrimaryButton="False"
-                       IsLightDismissEnabled="False"
-                       IsDismissButtonVisible="True"
-                       Title="{x:Bind TitleText, Mode=OneWay}"
-                       Padding="0,24,0,0">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.SendFilesPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:drawers="using:Telegram.Controls.Drawers"
+                     xmlns:messages="using:Telegram.Controls.Messages"
+                     xmlns:entities="using:Telegram.Entities"
+                     xmlns:local="using:Telegram.Views.Popups"
+                     xmlns:chats="using:Telegram.Controls.Chats"
+                     mc:Ignorable="d"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     SecondaryButtonClick="OnSecondaryButtonClick"
+                     FocusPrimaryButton="False"
+                     IsLightDismissEnabled="False"
+                     IsDismissButtonVisible="True"
+                     Title="{x:Bind TitleText, Mode=OneWay}"
+                     Padding="0,24,0,0">
 
     <ContentControl.Resources>
         <Style x:Key="InvoiceFileButtonStyle"
@@ -409,8 +409,8 @@
                         <DataTemplate>
                             <Grid>
                                 <local:MosaicPanel ItemTemplate="{StaticResource MediaItemTemplate}"
-                                                         ItemClick="Album_ItemClick"
-                                                         Margin="0,0,-2,6" />
+                                                   ItemClick="Album_ItemClick"
+                                                   Margin="0,0,-2,6" />
 
                                 <Button x:Name="PaidMediaButton"
                                         Style="{StaticResource InvoiceFileButtonStyle}"
@@ -501,4 +501,4 @@
                               Glyph="&#xEAB6;" />
     </Grid>
 
-</controls:ContentPopup>
+</controls:ModalPopup>
