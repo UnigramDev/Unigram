@@ -24,9 +24,8 @@
                 Value="{ThemeResource MessageForegroundLinkBrush}" />
         <Setter Property="IconForeground"
                 Value="{ThemeResource MessageForegroundBrush}" />
-        <!--  TODO: a brush of its own for the text selection. This one stands in for it.  -->
         <Setter Property="SelectionHighlightColor"
-                Value="{ThemeResource MessageHeaderBorderBrush}" />
+                Value="{ThemeResource MessageSelectionBrush}" />
     </Style>
 
     <Style TargetType="controls:DirectTextBlock"

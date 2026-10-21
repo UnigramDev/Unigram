@@ -820,6 +820,7 @@ namespace Telegram.Common
         public static readonly Dictionary<string, Color> DefaultLight = new()
         {
             { "MessageAccentBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+            { "MessageSelectionBrush", Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52) },
             { "MessageForegroundBrush", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
             { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD) },
             { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF) },
@@ -844,6 +845,7 @@ namespace Telegram.Common
         public static readonly Dictionary<string, Color> DefaultDark = new()
         {
             { "MessageAccentBrush", Color.FromArgb(0xFF, 0x25, 0x8D, 0xE5) },
+            { "MessageSelectionBrush", Color.FromArgb(0xFF, 0x65, 0xB9, 0xF4) },
             { "MessageForegroundBrush", Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2) },
             { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7) },
             { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0x2B, 0x52, 0x78) },
@@ -874,6 +876,7 @@ namespace Telegram.Common
         public static readonly Dictionary<string, Color> DefaultLight = new()
         {
             { "MessageAccentBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+            { "MessageSelectionBrush", Color.FromArgb(0xFF, 0x37, 0xA4, 0xDE) },
             { "MessageForegroundBrush", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
             { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD) },
             { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
@@ -898,6 +901,7 @@ namespace Telegram.Common
         public static readonly Dictionary<string, Color> DefaultDark = new()
         {
             { "MessageAccentBrush", Color.FromArgb(0xFF, 0x25, 0x8D, 0xE5) },
+            { "MessageSelectionBrush", Color.FromArgb(0xFF, 0x42, 0x9B, 0xDB) },
             { "MessageForegroundBrush", Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5) },
             { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7) },
             { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0x18, 0x25, 0x33) },
