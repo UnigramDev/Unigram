@@ -48,7 +48,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimationContent">
-                    <controls:AspectView x:Name="LayoutRoot">
+                    <controls:AspectView x:Name="LayoutRoot"
+                                         Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -82,12 +83,14 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <controls:AspectView.Background>
-                            <ImageBrush x:Name="ThumbnailTexture"
-                                        Stretch="UniformToFill"
-                                        AlignmentX="Center"
-                                        AlignmentY="Center" />
-                        </controls:AspectView.Background>
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <ImageBrush x:Name="ThumbnailTexture"
+                                            Stretch="UniformToFill"
+                                            AlignmentX="Center"
+                                            AlignmentY="Center" />
+                            </Rectangle.Fill>
+                        </Rectangle>
 
                         <Border x:Name="RootOverlay"
                                 Background="#54000000"
