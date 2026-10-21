@@ -15,6 +15,7 @@ using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
@@ -34,6 +35,7 @@ namespace Telegram.Controls.Stories.Popups
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
         private readonly StoryViewModel _story;
+        private readonly VoipGroupCall _groupCall;
         private readonly FormattedText _text;
 
         private MessageSender _selection;
@@ -46,13 +48,14 @@ namespace Telegram.Controls.Stories.Popups
 
         private ModalPopup _balance;
 
-        public StoryReactPopup(IClientService clientService, INavigationService navigationService, StoryViewModel story, FormattedText text, long minimumStarCount, long starCount = 50)
+        public StoryReactPopup(IClientService clientService, INavigationService navigationService, StoryViewModel story, VoipGroupCall groupCall, FormattedText text, long minimumStarCount, long starCount = 50)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _navigationService = navigationService;
             _story = story;
+            _groupCall = groupCall;
             _text = text ?? string.Empty.AsFormattedText();
 
             starCount = Math.Max(minimumStarCount, starCount);
@@ -69,7 +72,7 @@ namespace Telegram.Controls.Stories.Popups
                     TopReactorsRoot.Visibility = Visibility.Collapsed;
 
                     _reactors = new MutableVector<PaidReactor>();
-                    _selection = _story.GroupCall.MessageSenderId;
+                    _selection = _groupCall.MessageSenderId;
 
                     UpdateOrder();
                     UpdateAlias();
@@ -102,7 +105,7 @@ namespace Telegram.Controls.Stories.Popups
 
         private async void InitializeTopDonors()
         {
-            var response = await _clientService.SendAsync(new GetLiveStoryTopDonors(_story.GroupCall.Id));
+            var response = await _clientService.SendAsync(new GetLiveStoryTopDonors(_groupCall.Id));
             if (response is LiveStoryDonors donors)
             {
                 // Copied, not aliased: the ordering below edits it.
@@ -114,7 +117,7 @@ namespace Telegram.Controls.Stories.Popups
                 }
                 else
                 {
-                    _selection = _story.GroupCall.MessageSenderId;
+                    _selection = _groupCall.MessageSenderId;
                     UpdateOrder();
 
                     TopReactorsRoot.Visibility = Visibility.Collapsed;

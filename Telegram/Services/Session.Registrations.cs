@@ -54,6 +54,7 @@ namespace Telegram.Services
             typeof(Telegram.Services.IThemeService), typeof(Telegram.Services.ThemeService),
             typeof(Telegram.Services.IViewService), typeof(Telegram.Services.ViewService),
             typeof(Telegram.Services.IStorageService), typeof(Telegram.Services.StorageService),
+            typeof(Telegram.Services.IStoryService), typeof(Telegram.Services.StoryService),
             typeof(Telegram.Services.ITranslateService), typeof(Telegram.Services.TranslateService),
             typeof(Telegram.Services.IProfilePhotoService), typeof(Telegram.Services.ProfilePhotoService),
             typeof(Telegram.Services.ITextRecognitionService), typeof(Telegram.Services.TextRecognitionService),

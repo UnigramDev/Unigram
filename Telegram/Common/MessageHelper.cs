@@ -22,7 +22,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Settings;
-using Telegram.ViewModels.Stories;
 using Telegram.ViewModels.Supergroups;
 using Telegram.Views;
 using Telegram.Views.Business;
@@ -1574,15 +1573,7 @@ namespace Telegram.Common
                 var response2 = await clientService.SendAsync(new GetStory(chat.Id, storyId, false));
                 if (response2 is Story story)
                 {
-                    var settings = clientService.Session.Resolve<ISettingsService>();
-                    var aggregator = clientService.Session.Resolve<IEventAggregator>();
-
-                    var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, story);
-                    var viewModel = StoryListViewModel.Create(navigation, activeStories);
-
-                    var window = new StoriesWindow(navigation.XamlRoot);
-                    window.Update(viewModel, activeStories, StoryOpenOrigin.Card, Rect.Empty, null);
-                    _ = window.ShowAsync();
+                    StoriesWindow.ShowStory(navigation, story, StoryOpenOrigin.Card, Rect.Empty, null);
                 }
                 else
                 {
@@ -1614,16 +1605,7 @@ namespace Telegram.Common
                                 await clientService.SendAsync(new GetGroupCall(live.GroupCallId));
                             }
 
-                            var settings = clientService.Session.Resolve<ISettingsService>();
-                            var aggregator = clientService.Session.Resolve<IEventAggregator>();
-
-                            var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, story);
-                            var viewModel = StoryListViewModel.Create(navigation, activeStories);
-
-                            var window = new StoriesWindow(navigation.XamlRoot);
-                            window.Update(viewModel, activeStories, StoryOpenOrigin.Card, Rect.Empty, null);
-                            _ = window.ShowAsync();
-
+                            StoriesWindow.ShowStory(navigation, story, StoryOpenOrigin.Card, Rect.Empty, null);
                             return;
                         }
                     }

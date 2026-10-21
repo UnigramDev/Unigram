@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,8 +26,9 @@ namespace Telegram.ViewModels.Stories
     {
         private readonly long _chatId;
 
-        private readonly ChatActiveStories _activeStories;
-        private readonly Dictionary<int, StoryViewModel> _stories = new();
+        private readonly IStoryService _storyService;
+        private ChatActiveStories _activeStories;
+        private StoryViewModel _startItem;
 
         private readonly ChatMessageDelegate _messageDelegate;
 
@@ -36,51 +36,51 @@ namespace Telegram.ViewModels.Stories
 
         public ChatActiveStories Item => _activeStories;
 
+        /// <summary>
+        /// A chat's active stories, kept current by whoever owns this through <see cref="Update"/>.
+        /// </summary>
         public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ChatActiveStories activeStories, Chat chat)
-            : base(clientService, settingsService, aggregator)
+            : this(clientService, settingsService, aggregator, chat, new ObservableCollection<StoryViewModel>())
         {
-            _chatId = activeStories.ChatId;
-
+            _storyService = clientService.Session.Resolve<IStoryService>();
             _activeStories = activeStories;
             _task = new TaskCompletionSource<bool>();
 
-            Chat = chat;
-            IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
-
-            _messageDelegate = new ChatMessageDelegate(this, Chat);
-
-            Items = new ObservableCollection<StoryViewModel>();
             Update(activeStories);
         }
 
+        /// <summary>
+        /// A viewer over another list's stories, such as a profile grid.
+        /// </summary>
         public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryViewModel selectedItem, ObservableCollection<StoryViewModel> stories)
-            : base(clientService, settingsService, aggregator)
+            : this(clientService, settingsService, aggregator, clientService.GetChat(selectedItem.PosterChatId), stories)
         {
-            _chatId = selectedItem.PosterChatId;
-
-            Chat = clientService.GetChat(selectedItem.PosterChatId);
-            IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
-
-            _messageDelegate = new ChatMessageDelegate(this, Chat);
-
-            Items = stories;
             SelectedItem = selectedItem;
         }
 
+        /// <summary>
+        /// A single story.
+        /// </summary>
         public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, Story story)
+            : this(clientService, settingsService, aggregator, clientService.GetChat(story.PosterChatId), new ObservableCollection<StoryViewModel>())
+        {
+            var selectedItem = clientService.Session.Resolve<IStoryService>().GetOrCreate(story);
+
+            Items.Add(selectedItem);
+            SelectedItem = selectedItem;
+        }
+
+        private ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, Chat chat, ObservableCollection<StoryViewModel> items)
             : base(clientService, settingsService, aggregator)
         {
-            _chatId = story.PosterChatId;
+            _chatId = chat.Id;
 
-            Chat = clientService.GetChat(story.PosterChatId);
-            IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
+            Chat = chat;
+            IsMyStory = chat.Id == clientService.Options.MyId;
 
-            _messageDelegate = new ChatMessageDelegate(this, Chat);
+            _messageDelegate = new ChatMessageDelegate(this, chat);
 
-            var selectedItem = new StoryViewModel(clientService, story);
-
-            Items = new ObservableCollection<StoryViewModel> { selectedItem };
-            SelectedItem = selectedItem;
+            Items = items;
         }
 
         public Task Wait => _task?.Task ?? Task.CompletedTask;
@@ -90,8 +90,6 @@ namespace Telegram.ViewModels.Stories
         public override Chat Chat { get; set; }
 
         public long Order => _activeStories?.Order ?? 0;
-
-        public long MaxReadStoryId => _activeStories?.MaxReadStoryId ?? 0;
 
         /// <summary>
         /// True, if the stories are shown in the main story list and can be archived; otherwise, the stories can be hidden from the main story list -only by calling removeTopChat with topChatCategoryUsers and the chat_id. Stories of the current user can't be archived nor hidden using removeTopChat
@@ -123,50 +121,66 @@ namespace Telegram.ViewModels.Stories
             }
         }
 
-        public async void Update(ChatActiveStories activeStories)
+        public void Update(ChatActiveStories activeStories)
         {
-            var next = new List<StoryViewModel>();
-            var selected = default(StoryViewModel);
+            _activeStories = activeStories;
+
+            var start = default(StoryViewModel);
+            var index = 0;
 
             foreach (var story in activeStories.Stories)
             {
-                _stories.TryGetValue(story.StoryId, out var item);
-                item ??= new StoryViewModel(ClientService, activeStories.ChatId, story);
+                var item = _storyService.GetOrCreate(activeStories.ChatId, story);
 
                 if (story.IsLive)
                 {
-                    selected = item;
+                    start = item;
                 }
                 else if (story.StoryId > activeStories.MaxReadStoryId)
                 {
-                    selected ??= item;
+                    start ??= item;
                 }
 
-                next.Add(item);
+                // Moved into place rather than cleared and refilled, so that a viewer showing one
+                // of them still finds it in Items.
+                var position = Items.IndexOf(item);
+                if (position == -1)
+                {
+                    Items.Insert(index, item);
+                }
+                else if (position != index)
+                {
+                    Items.Move(position, index);
+                }
+
+                index++;
             }
 
-            _activeStories.List = activeStories.List;
-            _activeStories.ChatId = activeStories.ChatId;
-            _activeStories.Order = activeStories.Order;
-            _activeStories.MaxReadStoryId = activeStories.MaxReadStoryId;
-            _activeStories.Stories = activeStories.Stories;
-
-            _stories.Clear();
-            Items.Clear();
-
-            foreach (var item in next)
+            while (Items.Count > index)
             {
-                _stories[item.Id] = item;
-                Items.Add(item);
+                Items.RemoveAt(Items.Count - 1);
             }
 
-            var selectedItem = selected ?? Items.FirstOrDefault();
-            if (selectedItem != null)
+            _startItem = start ?? Items.FirstOrDefault();
+            _ = LoadStartItemAsync(_startItem);
+        }
+
+        private async Task LoadStartItemAsync(StoryViewModel startItem)
+        {
+            if (startItem != null)
             {
-                await selectedItem.LoadAsync();
+                await startItem.LoadAsync();
             }
 
             _task?.TrySetResult(true);
+        }
+
+        /// <summary>
+        /// Selects the story a viewer opens on: the live one, otherwise the first unread.
+        /// </summary>
+        public void SelectStartItem()
+        {
+            SelectedItem = _startItem ?? Items.FirstOrDefault();
         }
 
         public override MessageTopic TopicId { get; set; }
@@ -220,22 +234,6 @@ namespace Telegram.ViewModels.Stories
                 UpdateOrderOfInstalledStickerSets = AppSettings.Stickers.DynamicPackOrder && reorder,
                 EffectId = effectId
             });
-        }
-
-        public void Handle(UpdateStory update)
-        {
-            if (_stories.TryGetValue(update.Story.Id, out var story))
-            {
-                story.Update(update.Story);
-            }
-        }
-
-        public void Handle(UpdateStoryDeleted update)
-        {
-            if (_stories.Remove(update.StoryId, out var story))
-            {
-                Items.Remove(story);
-            }
         }
     }
 }

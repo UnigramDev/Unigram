@@ -348,11 +348,10 @@ namespace Telegram.Controls.Stories
 
         private void Update(StoryViewModel story)
         {
-            if (story.Content is StoryContentLive && story.GroupCall != null)
+            if (story.Content is StoryContentLive live && story.ClientService.TryGetGroupCall(live.GroupCallId, out GroupCall groupCall))
             {
                 LiveBadge.Visibility = Visibility.Visible;
-                Subtitle.Text = Locale.Declension(Strings.R.LiveStoryWatching, story.GroupCall.ParticipantCount);
-
+                Subtitle.Text = Locale.Declension(Strings.R.LiveStoryWatching, groupCall.ParticipantCount);
             }
             else
             {
@@ -803,7 +802,10 @@ namespace Telegram.Controls.Stories
             }
         }
 
+        // The live story's call belongs to this viewer, not to the story, which other windows share.
         private VoipGroupCall _call;
+        public VoipGroupCall GroupCall => _call;
+
         private ObservableCollection<GroupCallMessage> _messages;
         private SortedObservableCollection<GroupCallMessage> _pinnedMessages;
         private Dictionary<MessageSender, int> _topDonors;
@@ -847,8 +849,6 @@ namespace Telegram.Controls.Stories
                 {
                     UpdateStreamer(_call.Streamer);
                 }
-
-                story.GroupCall = _call;
 
                 _topDonors = new Dictionary<MessageSender, int>(new MessageSenderEqualityComparer());
 

@@ -1279,6 +1279,7 @@
     <Compile Include="Services\ProfilePhotoService.cs" />
     <Compile Include="Services\DownloadFolderService.cs" />
     <Compile Include="Services\StorageService.cs" />
+    <Compile Include="Services\StoryService.cs" />
     <Compile Include="Services\Stripe\SmartGlocalClient.cs" />
     <Compile Include="Services\Theme\ThemeAccentInfo.cs" />
     <Compile Include="Services\Theme\ThemeDefaults.cs" />

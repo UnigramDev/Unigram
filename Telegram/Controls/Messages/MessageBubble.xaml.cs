@@ -3097,14 +3097,7 @@ namespace Telegram.Controls.Messages
 
         public void OpenStory(MessageViewModel message, Story story)
         {
-            var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
-            var viewModel = StoryListViewModel.Create(message.Delegate.NavigationService, activeStories);
-
-            var origin = GetStoryOrigin(null);
-
-            var window = new StoriesWindow(XamlRoot);
-            window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, GetStoryOrigin);
-            _ = window.ShowAsync();
+            StoriesWindow.ShowStory(message.Delegate.NavigationService, story, StoryOpenOrigin.Card, GetStoryOrigin(null), GetStoryOrigin);
         }
 
         private Rect GetStoryOrigin(ActiveStoriesViewModel activeStories)

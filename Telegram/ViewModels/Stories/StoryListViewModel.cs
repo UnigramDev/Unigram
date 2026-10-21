@@ -69,18 +69,7 @@ namespace Telegram.ViewModels.Stories
         {
             foreach (var activeStories in Items)
             {
-                StoryViewModel selected = null;
-
-                foreach (var story in activeStories.Items)
-                {
-                    if (story.Id > activeStories.MaxReadStoryId)
-                    {
-                        selected = story;
-                        break;
-                    }
-                }
-
-                activeStories.SelectedItem = selected ?? activeStories.Items.FirstOrDefault();
+                activeStories.SelectStartItem();
             }
         }
 
@@ -413,9 +402,9 @@ namespace Telegram.ViewModels.Stories
 
             private void Subscribe()
             {
-                _aggregator.Subscribe<UpdateChatActiveStories>(this, Handle)
-                    .Subscribe<UpdateStory>(Handle)
-                    .Subscribe<UpdateStoryDeleted>(Handle);
+                // Stories themselves are kept current by IStoryService, and TDLib follows a
+                // deletion with the chat's new active stories.
+                _aggregator.Subscribe<UpdateChatActiveStories>(this, Handle);
             }
 
             public bool HasMoreItems => _hasMoreItems;
@@ -431,22 +420,6 @@ namespace Telegram.ViewModels.Stories
                 else
                 {
                     _viewModel.BeginOnUIThread(() => UpdateChatOrder(update.ActiveStories, 0));
-                }
-            }
-
-            public void Handle(UpdateStory update)
-            {
-                if (_chats.TryGetValue(update.Story.PosterChatId, out var item))
-                {
-                    item.Handle(update);
-                }
-            }
-
-            public void Handle(UpdateStoryDeleted update)
-            {
-                if (_chats.TryGetValue(update.StoryPosterChatId, out var item))
-                {
-                    item.Handle(update);
                 }
             }
 

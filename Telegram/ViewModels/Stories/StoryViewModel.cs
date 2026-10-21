@@ -8,18 +8,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Services.Calls;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Stories
 {
-    public partial class StoryViewModel : BindableBase
+    // Get one from IStoryService rather than constructing it: that is what makes it the only view
+    // model of its story. Bot previews are the exception, as their ids are only positions.
+    // Deliberately not bindable: one instance is shared by windows on different threads, and it is
+    // updated on the TDLib thread.
+    public partial class StoryViewModel
     {
         public IClientService ClientService { get; }
 
-        private TaskCompletionSource<bool> _task;
+        // One load per story, whichever window asks first.
+        private readonly object _loadLock = new();
+        private Task _load;
 
         public StoryViewModel(IClientService clientService, long chatId, StoryInfo storyInfo)
         {
@@ -39,54 +43,48 @@ namespace Telegram.ViewModels.Stories
             PosterChatId = story.PosterChatId;
             Chat = ClientService.GetChat(story.PosterChatId);
 
-            Date = story.Date;
-            Id = story.Id;
-
             IsBotPreview = botPreview;
 
             Update(story);
         }
 
-        public int Date { get; set; }
+        public int Date { get; private set; }
 
-        public long PosterChatId { get; set; }
+        public long PosterChatId { get; }
 
-        public Chat Chat { get; private set; }
+        public Chat Chat { get; }
 
-        public int Id { get; set; }
+        public int Id { get; private set; }
 
-        public bool IsBotPreview { get; set; }
+        public bool IsBotPreview { get; }
 
-        // TODO: Find a better solution
-        public VoipGroupCall GroupCall { get; set; }
-
-        public async Task LoadAsync()
+        public Task LoadAsync()
         {
-            if (_task != null)
+            lock (_loadLock)
             {
-                await _task.Task;
-                return;
+                return _load ??= LoadCoreAsync();
             }
+        }
 
-            _task = new TaskCompletionSource<bool>();
-
+        private async Task LoadCoreAsync()
+        {
             var response = await ClientService.SendAsync(new GetStory(PosterChatId, Id, false));
             if (response is Story story)
             {
                 Update(story);
-                Prepare();
+                DownloadFiles();
 
                 if (story.Content is StoryContentLive live && !ClientService.TryGetGroupCall(live.GroupCallId, out _))
                 {
                     await ClientService.SendAsync(new GetGroupCall(live.GroupCallId));
                 }
             }
-
-            _task.SetResult(true);
         }
 
         public void Update(Story story)
         {
+            Id = story.Id;
+            Date = story.Date;
             Caption = story.Caption;
             Content = story.Content;
             PrivacySettings = story.PrivacySettings;
@@ -105,8 +103,6 @@ namespace Telegram.ViewModels.Stories
             Areas = story.Areas;
             ChosenReactionType = story.ChosenReactionType;
         }
-
-        public Task Wait => _task?.Task ?? Task.CompletedTask;
 
         public FormattedText Caption { get; private set; }
 
@@ -187,22 +183,26 @@ namespace Telegram.ViewModels.Stories
 
         public void Load()
         {
-            if (_task != null)
-            {
-                return;
-            }
-
             _ = LoadAsync();
         }
 
         public void Prepare()
         {
-            if (_task == null)
+            lock (_loadLock)
             {
-                _ = LoadAsync();
-                return;
+                if (_load == null)
+                {
+                    // The load downloads the files once it has the story.
+                    _load = LoadCoreAsync();
+                    return;
+                }
             }
 
+            DownloadFiles();
+        }
+
+        private void DownloadFiles()
+        {
             if (Content is StoryContentPhoto photo)
             {
                 var file = photo.Photo.GetBig();

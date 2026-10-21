@@ -66,10 +66,13 @@ namespace Telegram.Controls.Stories
 
         public void Update(StoryContent content, ActiveStoriesViewModel activeStories, StoryViewModel story)
         {
+            _groupCall?.TotalStarCountChanged -= OnTotalStarCountChanged;
+            _groupCall?.Changed -= OnChanged;
+
             _content = content;
             _activeStories = activeStories;
             _viewModel = story;
-            _groupCall = story.GroupCall;
+            _groupCall = content.GroupCall;
 
             if (_groupCall == null)
             {
@@ -83,14 +86,11 @@ namespace Telegram.Controls.Stories
             MessageField.CustomEmoji = CustomEmoji;
             MessageField.DataContext = EmojiPanel.DataContext;
 
-            if (story.GroupCall != null)
-            {
-                _minimumStarCount = story.GroupCall.PaidMessageStarCount;
-                UpdateStars(story.GroupCall.PaidMessageStarCount);
+            _minimumStarCount = _groupCall.PaidMessageStarCount;
+            UpdateStars(_groupCall.PaidMessageStarCount);
 
-                activeStories.Aggregator.Unsubscribe(this);
-                activeStories.Aggregator.Subscribe<UpdateGroupCall>(this, Handle, EventType.GroupCall, story.GroupCall.Id);
-            }
+            activeStories.Aggregator.Unsubscribe(this);
+            activeStories.Aggregator.Subscribe<UpdateGroupCall>(this, Handle, EventType.GroupCall, _groupCall.Id);
         }
 
         private void OnChanged(object sender, EventArgs e)
@@ -201,7 +201,7 @@ namespace Telegram.Controls.Stories
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var service = GroupCallPaidReactionService.AddPending(_activeStories.NavigationService, ViewModel.GroupCall, 1, null);
+            var service = GroupCallPaidReactionService.AddPending(_activeStories.NavigationService, _groupCall, 1, null);
             if (service != null)
             {
                 _paidReaction?.Completed -= PaidReaction_Completed;
@@ -437,7 +437,7 @@ namespace Telegram.Controls.Stories
             }
             else
             {
-                ViewModel.GroupCall.SendMessage(MessageField.GetFormattedText(true), _starCount);
+                _groupCall.SendMessage(MessageField.GetFormattedText(true), _starCount);
                 RemoveStars();
             }
         }
@@ -480,7 +480,7 @@ namespace Telegram.Controls.Stories
 
         private async void ReactButton_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var popup = new StoryReactPopup(ViewModel.ClientService, _activeStories.NavigationService, ViewModel, null, 1);
+            var popup = new StoryReactPopup(ViewModel.ClientService, _activeStories.NavigationService, ViewModel, _groupCall, null, 1);
             popup.RequestedTheme = ElementTheme.Dark;
 
             var confirm = await popup.ShowQueuedAsync(XamlRoot);
@@ -491,7 +491,7 @@ namespace Telegram.Controls.Stories
 
             // TODO: switch message sender
 
-            var service = GroupCallPaidReactionService.AddPending(_activeStories.NavigationService, ViewModel.GroupCall, popup.StarCount, null);
+            var service = GroupCallPaidReactionService.AddPending(_activeStories.NavigationService, _groupCall, popup.StarCount, null);
             if (service != null)
             {
                 _paidReaction?.Completed -= PaidReaction_Completed;
@@ -544,7 +544,7 @@ namespace Telegram.Controls.Stories
         private async void EditStars(long starCount)
         {
             var text = MessageField.GetFormattedText(false);
-            var popup = new StoryReactPopup(ViewModel.ClientService, _activeStories.NavigationService, ViewModel, text, _minimumStarCount, starCount == 0 ? 50 : starCount);
+            var popup = new StoryReactPopup(ViewModel.ClientService, _activeStories.NavigationService, ViewModel, _groupCall, text, _minimumStarCount, starCount == 0 ? 50 : starCount);
             popup.RequestedTheme = ElementTheme.Dark;
 
             var confirm = await popup.ShowQueuedAsync(XamlRoot);

@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -29,9 +28,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public partial class ChatStoriesViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class ChatStoriesViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
     {
-        private ConcurrentDictionary<int, StoryViewModel> _cache = new();
+        private readonly IStoryService _storyService;
 
         private ChatStoriesType _type = ChatStoriesType.Pinned;
         private int _fromStoryId;
@@ -42,6 +41,8 @@ namespace Telegram.ViewModels.Chats
         public ChatStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _storyService = Session.Resolve<IStoryService>();
+
             Items = new IncrementalCollection<StoryViewModel>(this);
             SelectedItems = new RangeObservableCollection<StoryViewModel>();
             SelectedItems.CollectionChanged += OnCollectionChanged;
@@ -57,15 +58,52 @@ namespace Telegram.ViewModels.Chats
 
         public StoryViewModel GetOrCreate(Story story)
         {
-            if (_cache.TryGetValue(story.Id, out StoryViewModel viewModel))
+            return _storyService.GetOrCreate(story);
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateStory>(this, Handle)
+                .Subscribe<UpdateStoryDeleted>(Handle);
+        }
+
+        private void Handle(UpdateStory update)
+        {
+            // Read from the update, not the view model: IStoryService may not have applied it yet.
+            if (update.Story.PosterChatId == _chat?.Id && _type == ChatStoriesType.Pinned && !update.Story.IsPostedToChatPage)
             {
-                return viewModel;
+                BeginOnUIThread(() => RemoveStory(update.Story.Id));
             }
+        }
 
-            viewModel = new StoryViewModel(ClientService, story);
-            _cache[story.Id] = viewModel;
+        private void Handle(UpdateStoryDeleted update)
+        {
+            if (update.StoryPosterChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => RemoveStory(update.StoryId));
+            }
+        }
 
-            return viewModel;
+        private void RemoveStory(int storyId)
+        {
+            RemoveStory(Items, storyId);
+
+            foreach (var album in Albums)
+            {
+                RemoveStory(album.Items, storyId);
+            }
+        }
+
+        private static void RemoveStory(IncrementalCollection<StoryViewModel> items, int storyId)
+        {
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (items[i].Id == storyId)
+                {
+                    items.RemoveAt(i);
+                    return;
+                }
+            }
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -318,12 +356,7 @@ namespace Telegram.ViewModels.Chats
 
             if (IsPostedToChatPage)
             {
-                Items.Remove(story);
-
-                foreach (var album in Albums)
-                {
-                    album.Items.Remove(story);
-                }
+                RemoveStory(story.Id);
             }
 
             ShowToast(IsPostedToChatPage ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
@@ -339,12 +372,7 @@ namespace Telegram.ViewModels.Chats
 
                 if (IsPostedToChatPage)
                 {
-                    Items.Remove(story);
-
-                    foreach (var album in Albums)
-                    {
-                        album.Items.Remove(story);
-                    }
+                    RemoveStory(story.Id);
                 }
             }
 
@@ -393,12 +421,7 @@ namespace Telegram.ViewModels.Chats
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new DeleteStory(story.PosterChatId, story.Id));
-                Items.Remove(story);
-
-                foreach (var album in Albums)
-                {
-                    album.Items.Remove(story);
-                }
+                RemoveStory(story.Id);
             }
         }
 
@@ -415,12 +438,7 @@ namespace Telegram.ViewModels.Chats
                 foreach (var story in selection)
                 {
                     ClientService.Send(new DeleteStory(story.PosterChatId, story.Id));
-                    Items.Remove(story);
-
-                    foreach (var album in Albums)
-                    {
-                        album.Items.Remove(story);
-                    }
+                    RemoveStory(story.Id);
                 }
 
                 UnselectStories();
@@ -516,7 +534,6 @@ namespace Telegram.ViewModels.Chats
             return new IncrementalLoadResult(totalCount, totalCount > 0 && function is not GetBotMediaPreviews);
         }
 
-        private bool _isEmpty = false;
         public bool IsEmpty
         {
             get => Albums[0].IsEmpty;

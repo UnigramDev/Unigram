@@ -437,12 +437,7 @@ namespace Telegram.ViewModels
                 var point = transform.TransformPoint(new Point());
                 var origin = new Rect(point.X, point.Y, target.ActualWidth, target.ActualHeight);
 
-                var activeStories = new ActiveStoriesViewModel(ClientService, Settings, Aggregator, story.Story);
-                var viewModel = StoryListViewModel.Create(NavigationService, activeStories);
-
-                var window = new StoriesWindow(XamlRoot);
-                window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, GetOrigin);
-                _ = window.ShowAsync();
+                StoriesWindow.ShowStory(NavigationService, story.Story, StoryOpenOrigin.Card, origin, GetOrigin);
             }
             else
             {

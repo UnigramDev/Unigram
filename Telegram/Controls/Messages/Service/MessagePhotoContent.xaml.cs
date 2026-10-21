@@ -8,7 +8,6 @@
 using Telegram.Controls.Stories;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 
@@ -115,13 +114,7 @@ namespace Telegram.Controls.Messages.Service
                     return;
                 }
 
-                var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
-                var viewModel = StoryListViewModel.Create(message.Delegate.NavigationService, activeStories);
-
-                var window = new StoriesWindow(XamlRoot);
-                window.Update(viewModel, activeStories, StoryOpenOrigin.Mention, GetStoryOrigin(), _ => GetStoryOrigin());
-
-                _ = window.ShowAsync();
+                StoriesWindow.ShowStory(message.Delegate.NavigationService, story, StoryOpenOrigin.Mention, GetStoryOrigin(), _ => GetStoryOrigin());
             }
             else
             {

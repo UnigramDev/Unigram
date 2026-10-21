@@ -13,6 +13,7 @@ using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Td.Api;
@@ -291,6 +292,21 @@ namespace Telegram.Controls.Stories
         private Windows.Foundation.Rect _origin;
         private StoryOpenOrigin _ciccio;
         private Func<ActiveStoriesViewModel, Rect> _closing;
+
+        /// <summary>
+        /// Opens a single story, reached from a message, a link or a mention rather than from a list.
+        /// </summary>
+        public static void ShowStory(INavigationService navigationService, Story story, StoryOpenOrigin origin, Rect point, Func<ActiveStoriesViewModel, Rect> closing)
+        {
+            var session = navigationService.Session;
+
+            var activeStories = new ActiveStoriesViewModel(session.Resolve<IClientService>(), session.Resolve<ISettingsService>(), session.Resolve<IEventAggregator>(), story);
+            var viewModel = StoryListViewModel.Create(navigationService, activeStories);
+
+            var window = new StoriesWindow(navigationService.XamlRoot);
+            window.Update(viewModel, activeStories, origin, point, closing);
+            _ = window.ShowAsync();
+        }
 
         public void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories, StoryOpenOrigin origin, Rect point, Func<ActiveStoriesViewModel, Rect> closing)
         {
