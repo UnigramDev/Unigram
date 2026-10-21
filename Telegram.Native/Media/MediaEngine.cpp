@@ -200,6 +200,76 @@ namespace winrt::Telegram::Native::Media::implementation
             return 0;
         }
 
+        // A fragmented MP4's moov describes no samples: they are all in the fragments.
+        bool IsFragmented(AVFormatContext const* format)
+        {
+            if (format->nb_streams == 0 || strstr(format->iformat->name, "mp4") == nullptr)
+            {
+                return false;
+            }
+
+            for (unsigned index = 0; index < format->nb_streams; index++)
+            {
+                if (format->streams[index]->nb_frames > 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Opened from its mfra, a fragmented MP4 has had only its first fragment parsed, and ffmpeg
+        // takes the duration from what it parsed: seconds, for a file of minutes. A seek past the
+        // end goes through the mfra straight to each stream's last fragment and parses its moof,
+        // which lists the timing of every sample in it: the end is read from there, without the
+        // samples themselves. Reading starts over from the beginning after it.
+        void ProbeFragmentedEnd(AVFormatContext* format)
+        {
+            constexpr int64_t pastEnd = int64_t(1) << 50;
+
+            const int result = avformat_seek_file(format, -1, INT64_MIN, pastEnd, INT64_MAX, 0);
+            double end = NAN;
+
+            for (unsigned index = 0; index < format->nb_streams && result >= 0; index++)
+            {
+                AVStream* stream = format->streams[index];
+                const int count = avformat_index_get_entries_count(stream);
+
+                if (count == 0)
+                {
+                    continue;
+                }
+
+                // Timestamps of when samples start: the last one lasts about as long as the one
+                // before it.
+                AVIndexEntry const* last = avformat_index_get_entry(stream, count - 1);
+                AVIndexEntry const* previous = count > 1 ? avformat_index_get_entry(stream, count - 2) : nullptr;
+                const int64_t step = previous != nullptr ? std::max<int64_t>(0, last->timestamp - previous->timestamp) : 0;
+
+                const double time = ToSeconds(last->timestamp + step, stream->time_base);
+
+                if (!std::isnan(time))
+                {
+                    end = std::isnan(end) ? time : std::max(end, time);
+                }
+            }
+
+            // A read that a seek cut short leaves the moof unparsed, and its error on the context.
+            if (result >= 0 && format->pb->error == 0 && !std::isnan(end))
+            {
+                const double start = format->start_time != AV_NOPTS_VALUE ? static_cast<double>(format->start_time) / AV_TIME_BASE : 0;
+                const int64_t duration = static_cast<int64_t>((end - start) * AV_TIME_BASE);
+
+                if (format->duration == AV_NOPTS_VALUE || duration > format->duration)
+                {
+                    format->duration = duration;
+                }
+            }
+
+            avformat_seek_file(format, -1, INT64_MIN, 0, 0, 0);
+        }
+
         const AVCodec* FindDecoder(AVCodecID id)
         {
             // The native AV1 decoder only decodes through a hardware accelerator, and none is built.
@@ -955,11 +1025,11 @@ namespace winrt::Telegram::Native::Media::implementation
         AVDictionary* options = nullptr;
         av_dict_set(&options, "protocol_whitelist", "", 0);
 
-        // A plain file can be fragmented too. Unless it has an index of its fragments, the mov
-        // demuxer walks every moof to the end of the file before it returns, which over the network
-        // downloads nearly all of it before the first frame. The mfra at the end is that index, a
-        // few KB, and is only read when asked for. Its times are presentation times, as the
-        // standard has them: "pts" reads them as such.
+        // A plain file can be fragmented too. Without an index of its fragments the mov demuxer
+        // walks every moof to the end of the file before it returns, which over the network reads
+        // chunks from across all of it before the first frame. The mfra at the end is that index,
+        // a few KB, read only when asked for; its times are presentation times, as the standard
+        // has them. It leaves the duration wrong, which ProbeFragmentedEnd puts right.
         if (playlist == nullptr)
         {
             av_dict_set(&options, "use_mfra_for", "pts", 0);
@@ -987,6 +1057,18 @@ namespace winrt::Telegram::Native::Media::implementation
             if (result < 0 && !m_abort)
             {
                 LOGGER_WARNING(L"avformat_find_stream_info failed: {}", result);
+            }
+
+            if (IsFragmented(input->format))
+            {
+                ProbeFragmentedEnd(input->format);
+
+                // Cut short by a seek, the probe found no end, and the open is abandoned like any
+                // other a seek interrupts.
+                if (m_abort || SeekInterrupts())
+                {
+                    return nullptr;
+                }
             }
         }
 

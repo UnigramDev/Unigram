@@ -431,12 +431,28 @@ one left behind cancels its download-ahead. Playlists are downloaded on first us
 thread, so opening a video costs nothing for the qualities it never plays. Closing the player
 cancels a playlist download still waiting (`CancelPlaylist`), which offline would never end.
 
-**Fragmented plain files** are opened with `use_mfra_for=pts`. Without a fragment index the mov
-demuxer walks every `moof` to the end before it returns, downloading chunks from across the whole
-file before the first frame. The `mfra` at the end is that index, and is read only when asked
-for. On a 12 MB file the open went from 59 `moof`s read and parsing to the last byte to one `moof`
-and 4 KB, with identical timestamps for all 18,392 packets. A file with neither an `mfra` nor a
-`sidx` still walks.
+**Fragmented plain files** are opened with `use_mfra_for=pts`, then probed for their duration.
+- **Why the index:** without an index of its fragments, the mov demuxer walks every `moof` to the
+  end of the file before it returns. That reads 64 KB at each fragment, chunks from across the
+  whole file before the first frame. The `mfra` at the end is that index, and ffmpeg reads it only
+  when asked.
+- **The trap:** opened from the index, ffmpeg takes the duration from the fragments it parsed, only
+  the first one, so a 270 s file comes out as 5 s. Seeks clamp to that, and the download window
+  sized from it covers the whole file. ffmpeg 7.1.2 and the master build of 2026-10-19 both do
+  this.
+- **The probe** (`ProbeFragmentedEnd`): a seek past the end parses each stream's last `moof`, and
+  the end is read from the timestamps it lists, without reading samples. It runs only when the moov
+  describes no samples (`IsFragmented`).
+- **Measured against a plain open:**
+
+  | File | Plain open | Index and probe | Duration |
+  |---|---|---|---|
+  | 12 MB, 59 fragments | 3.7 MB read | 133 KB + 86 KB | the same, 270.274 s |
+  | Corpus `03-fragmented.mp4` | 2.4 MB read | 525 KB + 131 KB | 30.083 s against 30.067 s |
+
+  The first packets are the same, and the 40 other corpus MP4s are untouched.
+- **Seeks** land at the start of the fragment holding the target, at most one fragment early.
+- **No index:** a file with neither an `mfra` nor a `sidx` still walks.
 
 ## Phase 3 as built
 
