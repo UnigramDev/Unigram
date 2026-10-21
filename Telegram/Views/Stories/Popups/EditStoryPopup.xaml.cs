@@ -210,12 +210,23 @@ namespace Telegram.Views.Stories.Popups
                 // editing.
                 _postOptions ??= new PostStoryPopup(_clientService, _navigationService);
 
+                // Paused under the sheet, and resumed only on going back to editing.
+                var playing = Surface.Player?.IsPlaying == true;
+                if (playing)
+                {
+                    Surface.Player.Pause(true);
+                }
+
                 var confirm = await _navigationService.ShowPopupAsync(_postOptions, requestedTheme: ElementTheme.Dark);
                 _accepting = false;
 
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Hide(ContentDialogResult.Primary);
+                }
+                else if (playing)
+                {
+                    Surface.Player?.Pause(false);
                 }
             }
             else
