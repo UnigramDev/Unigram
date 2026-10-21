@@ -48,6 +48,7 @@
                                  GotFocus="Search_Click"
                                  TextChanged="Search_TextChanged"
                                  StartingIndex="1"
+                                 CornerRadius="16"
                                  Grid.Row="1" />
         <controls:GlyphButton x:Name="SearchClear"
                               Click="SearchClear_Click"
@@ -58,6 +59,7 @@
                               VerticalAlignment="Center"
                               Visibility="Collapsed"
                               Margin="-36,0,0,0"
+                              CornerRadius="12"
                               Width="36"
                               Height="32"
                               Grid.Row="1" />

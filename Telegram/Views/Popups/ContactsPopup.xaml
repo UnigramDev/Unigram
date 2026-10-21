@@ -29,6 +29,7 @@
                                  VerticalAlignment="Center"
                                  GotFocus="Search_Click"
                                  TextChanged="Search_TextChanged"
+                                 CornerRadius="16"
                                  Margin="24,0" />
 
         <ListView x:Name="ContactsSearchListView"
