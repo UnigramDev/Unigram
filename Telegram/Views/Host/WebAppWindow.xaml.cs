@@ -360,6 +360,8 @@ namespace Telegram.Views.Host
         private void View_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             PostViewportChanged();
+            PostSafeAreaChanged();
+            PostContentSafeAreaChanged();
         }
 
         private void MainButton_Click(object sender, RoutedEventArgs e)
@@ -442,6 +444,8 @@ namespace Telegram.Views.Host
         private void View_Navigated(object sender, WebViewerNavigatedEventArgs e)
         {
             PostViewportChanged();
+            PostSafeAreaChanged();
+            PostContentSafeAreaChanged();
             PostThemeChanged();
 
             CompositionPathParser.StopThumbnail(_placeholderVisual);
@@ -498,6 +502,14 @@ namespace Telegram.Views.Host
             else if (eventName == "web_app_request_viewport")
             {
                 PostViewportChanged();
+            }
+            else if (eventName == "web_app_request_safe_area")
+            {
+                PostSafeAreaChanged();
+            }
+            else if (eventName == "web_app_request_content_safe_area")
+            {
+                PostContentSafeAreaChanged();
             }
             else if (eventName == "web_app_open_tg_link")
             {
@@ -664,10 +676,10 @@ namespace Telegram.Views.Host
         private async void SetStorageKey(WebAppStorage storage, JsonObject eventData, String eventSuccess, String eventFail)
         {
             if (storage == null || _botUser == null) return;
-            String req_id = "";
+            Windows.Data.Json.JsonValue req_id;
             try
             {
-                req_id = eventData.GetNamedString("req_id");
+                req_id = eventData.GetNamedValue("req_id");
             }
             catch (Exception e)
             {
@@ -728,10 +740,10 @@ namespace Telegram.Views.Host
         private async void GetStorageKey(WebAppStorage storage, JsonObject eventData, String eventSuccess, String eventFail)
         {
             if (storage == null || _botUser == null) return;
-            String req_id = "";
+            Windows.Data.Json.JsonValue req_id;
             try
             {
-                req_id = eventData.GetNamedString("req_id");
+                req_id = eventData.GetNamedValue("req_id");
             }
             catch (Exception e)
             {
@@ -774,10 +786,10 @@ namespace Telegram.Views.Host
         private async void RestoreStorageKey(WebAppStorage storage, JsonObject eventData, String eventSuccess, String eventFail)
         {
             if (storage == null || _botUser == null) return;
-            String req_id = "";
+            Windows.Data.Json.JsonValue req_id;
             try
             {
-                req_id = eventData.GetNamedString("req_id");
+                req_id = eventData.GetNamedValue("req_id");
             }
             catch (Exception e)
             {
@@ -842,10 +854,10 @@ namespace Telegram.Views.Host
         private async void ClearStorageKey(WebAppStorage storage, JsonObject eventData, String eventSuccess, String eventFail)
         {
             if (storage == null || _botUser == null) return;
-            String req_id = "";
+            Windows.Data.Json.JsonValue req_id;
             try
             {
-                req_id = eventData.GetNamedString("req_id");
+                req_id = eventData.GetNamedValue("req_id");
             }
             catch (Exception e)
             {
@@ -998,8 +1010,8 @@ namespace Telegram.Views.Host
 
         private async void RequestClipboardText(JsonObject eventData)
         {
-            var requestId = eventData.GetNamedString("req_id", string.Empty);
-            if (string.IsNullOrEmpty(requestId))
+            var requestId = eventData.GetNamedValue("req_id", null);
+            if (requestId == null)
             {
                 return;
             }
@@ -1023,8 +1035,8 @@ namespace Telegram.Views.Host
 
         private async void InvokeCustomMethod(JsonObject eventData)
         {
-            var requestId = eventData.GetNamedString("req_id", string.Empty);
-            if (string.IsNullOrEmpty(requestId))
+            var requestId = eventData.GetNamedValue("req_id", null);
+            if (requestId == null)
             {
                 return;
             }
@@ -1035,7 +1047,14 @@ namespace Telegram.Views.Host
             var response = await _clientService.SendAsync(new SendWebAppCustomRequest(_botUser.Id, method, parameters.Stringify()));
             if (response is CustomRequestResult result)
             {
-                PostEvent("custom_method_invoked", "req_id", requestId, "result", result.Result);
+                if (Windows.Data.Json.JsonValue.TryParse(result.Result, out var value))
+                {
+                    PostEvent("custom_method_invoked", "req_id", requestId, "result", value);
+                }
+                else
+                {
+                    PostEvent("custom_method_invoked", "req_id", requestId, "error", "Could not parse response.");
+                }
             }
             else if (response is Error error)
             {
@@ -1368,6 +1387,16 @@ namespace Telegram.Views.Host
         private void PostViewportChanged()
         {
             PostEvent("viewport_changed", "height", View.ActualHeight, "is_state_stable", true, "is_expanded", true);
+        }
+
+        private void PostSafeAreaChanged()
+        {
+            PostEvent("safe_area_changed", "top", 0, "right", 0, "bottom", 0, "left", 0);
+        }
+
+        private void PostContentSafeAreaChanged()
+        {
+            PostEvent("content_safe_area_changed", "top", 0, "right", 0, "bottom", 0, "left", 0);
         }
 
         private void ProcessBackButtonMessage(JsonObject eventData)
@@ -2016,28 +2045,13 @@ namespace Telegram.Views.Host
                     {
                         data[key] = eventData[i + 1] switch
                         {
-                            string stringValue => CreateStringValue(stringValue),
+                            string stringValue => Windows.Data.Json.JsonValue.CreateStringValue(stringValue),
                             double numberValue => Windows.Data.Json.JsonValue.CreateNumberValue(numberValue),
+                            int integerValue => Windows.Data.Json.JsonValue.CreateNumberValue(integerValue),
                             bool booleanValue => Windows.Data.Json.JsonValue.CreateBooleanValue(booleanValue),
+                            IJsonValue jsonValue => jsonValue,
                             _ => Windows.Data.Json.JsonValue.CreateNullValue(),
                         };
-
-                        static Windows.Data.Json.JsonValue CreateStringValue(string stringValue)
-                        {
-                            try
-                            {
-                                if (Windows.Data.Json.JsonValue.TryParse(stringValue, out Windows.Data.Json.JsonValue obj))
-                                {
-                                    return obj;
-                                }
-                            }
-                            catch
-                            {
-                                Logger.Debug("Unable to parse JSON string: " + stringValue);
-                            }
-
-                            return Windows.Data.Json.JsonValue.CreateStringValue(stringValue);
-                        }
                     }
                 }
 
@@ -2309,9 +2323,11 @@ namespace Telegram.Views.Host
         private void PostThemeChanged()
         {
             var theme = ClientEx.GetThemeParametersJsonString(Window.ThemeParameters);
-            PostEvent("theme_changed", "theme_params", theme);
+            if (Windows.Data.Json.JsonValue.TryParse(theme, out Windows.Data.Json.JsonValue obj))
+            {
+                PostEvent("theme_changed", "theme_params", obj);
+            }
         }
-
     }
 
     public partial class SecondaryNavigationService : TLNavigationService
