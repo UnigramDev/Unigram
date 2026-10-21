@@ -38,7 +38,15 @@ namespace Telegram.Services
 
         private void OnColorValuesChanged(UISettings sender, object args)
         {
-            Update(null);
+            // Wearing the system variant makes an accent change a change to the theme itself.
+            if (AppSettings.Appearance.UpdateSystemAccent())
+            {
+                Update(updateBackground: false);
+            }
+            else
+            {
+                Update(null);
+            }
         }
 
         public void UpdateTimer()

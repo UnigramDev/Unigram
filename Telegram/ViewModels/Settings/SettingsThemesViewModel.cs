@@ -457,6 +457,12 @@ namespace Telegram.ViewModels.Settings
         /// </summary>
         public bool CanReset(ThemeSettingsData item)
         {
+            // Not editable, so there is nothing to put back.
+            if (item.Name == SystemThemeId)
+            {
+                return false;
+            }
+
             var stored = AppSettings.Appearance.Variants.Get(Type, item.Name);
             return stored != null && GetSeed(item.Name) is ThemeSettings seed && !IsClean(stored, seed);
         }
@@ -487,6 +493,12 @@ namespace Telegram.ViewModels.Settings
 
         public ThemeSettings GetSeed(string id)
         {
+            // Not the one from when the page opened: the system accent may have changed since.
+            if (id == SystemThemeId)
+            {
+                return AppearanceSettings.GetSystemVariant(Type, AppearanceSettings.GetDefaultBackground(RequestedTheme == TelegramTheme.Dark));
+            }
+
             return _seeds != null && _seeds.TryGetValue(id, out ThemeSettings seed) ? seed : null;
         }
 
@@ -575,10 +587,11 @@ namespace Telegram.ViewModels.Settings
             // copy of its own; then the ones made with "+", which always have one.
             var seeds = new Dictionary<string, ThemeSettings>
             {
-                [DefaultThemeId] = AppearanceSettings.GetHouse(type)
+                [DefaultThemeId] = AppearanceSettings.GetHouse(type),
+                [SystemThemeId] = AppearanceSettings.GetSystemVariant(type, AppearanceSettings.GetDefaultBackground(!light))
             };
 
-            var ids = new List<string> { DefaultThemeId };
+            var ids = new List<string> { DefaultThemeId, SystemThemeId };
 
             foreach (var theme in clientService.ChatThemes)
             {
@@ -640,6 +653,9 @@ namespace Telegram.ViewModels.Settings
 
         public const string DefaultThemeId = "\U0001F3E0";
         public const string CustomThemeId = "\U0001F3A8";
+
+        // Not an emoji, so no chat theme can share it, and no "+" either, so it is never a created one.
+        public const string SystemThemeId = "system";
 
         private static Task<ThemeSettingsData> LoadVariant(IClientService clientService, TelegramThemeType type, BuiltInTheme baseTheme, string id, ThemeSettings seed)
         {

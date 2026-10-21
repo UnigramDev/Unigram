@@ -13223,6 +13223,7 @@
     <string name="InviteRestrictedUsers2_other">**{0} users** can only be invited via link, but you don\'t have permission to share invite links to this group.</string>
 
     <string name="UseSystemAccentColor">Use System Accent Color</string>
+    <string name="UseSystemAccentColorInfo">This theme updates automatically when you change your accent color in Windows settings.</string>
     <string name="AccountSettings">Account</string>
 
     <string name="LoginWithPasskey">Log in with passkey</string>

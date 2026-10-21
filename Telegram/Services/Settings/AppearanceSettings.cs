@@ -362,8 +362,42 @@ namespace Telegram.Services.Settings
             {
                 return ThemeSettingsStore.WithBackground(GetHouse(requested), stored?.Background);
             }
+            else if (identity.Kind == ThemeKind.Variant && identity.Id == ThemeData.SystemThemeId)
+            {
+                return GetSystemVariant(identity.Type, stored?.Background);
+            }
 
             return stored;
+        }
+
+        /// <summary>
+        /// Puts the current system accent on whatever wears the system variant, and says whether
+        /// that changed anything.
+        /// </summary>
+        public bool UpdateSystemAccent()
+        {
+            lock (_themeLock)
+            {
+                var changed = false;
+
+                foreach (var requested in new[] { TelegramTheme.Light, TelegramTheme.Dark })
+                {
+                    var worn = GetWornTheme(requested);
+                    if (worn.Identity.Kind != ThemeKind.Variant || worn.Identity.Id != ThemeData.SystemThemeId)
+                    {
+                        continue;
+                    }
+
+                    if (worn.Settings.AccentColor != GetSystemAccent())
+                    {
+                        worn.Settings = GetSystemVariant(worn.Identity.Type, worn.Settings.Background);
+                        SaveWorn(requested, worn);
+                        changed = true;
+                    }
+                }
+
+                return changed;
+            }
         }
 
         private void Wear(TelegramTheme requested, ThemeIdentity identity, ThemeSettings settings)
@@ -517,6 +551,24 @@ namespace Telegram.Services.Settings
                 OutgoingMessageAccentColor = accent,
                 Background = GetDefaultBackground(GetBase(type) == TelegramTheme.Dark)
             };
+        }
+
+        /// <summary>
+        /// The system variant: an accent over the built-in, the way production drew one, with the
+        /// accent the system has now. Built in code like the houses, and not editable: only its
+        /// background is the user's.
+        /// </summary>
+        public static ThemeSettings GetSystemVariant(TelegramThemeType type, Background background)
+        {
+            var settings = CreateLegacyVariant(type, GetSystemAccent());
+            settings.Background = background;
+
+            return settings;
+        }
+
+        public static int GetSystemAccent()
+        {
+            return BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent).ToValue();
         }
 
         public static TelegramTheme GetBase(TelegramThemeType type)
@@ -1053,27 +1105,100 @@ namespace Telegram.Services.Settings
         /// </summary>
         private void Migrate()
         {
-            if (GetValueOrDefault("AppearanceVersion", 0) >= 1)
+            var version = GetValueOrDefault("AppearanceVersion", 0);
+            if (version >= 2)
             {
                 return;
             }
 
-            MigrateThemePath();
-            DropBeta();
-
-            var light = MigrateBase(TelegramTheme.Light);
-            var dark = MigrateBase(TelegramTheme.Dark);
-
-            // An accent picked for a built-in that is not worn is still the user's choice.
-            foreach (var type in new[] { TelegramThemeType.Day, TelegramThemeType.Night, TelegramThemeType.Tinted })
+            if (version == 0)
             {
-                if (type != light && type != dark && TryGetLegacyAccent(type, out int accent))
+                MigrateThemePath();
+                DropBeta();
+
+                var light = MigrateBase(TelegramTheme.Light);
+                var dark = MigrateBase(TelegramTheme.Dark);
+
+                // An accent picked for a built-in that is not worn is still the user's choice.
+                foreach (var type in new[] { TelegramThemeType.Day, TelegramThemeType.Night, TelegramThemeType.Tinted })
                 {
-                    Variants.Create(type, CreateLegacyVariant(type, accent));
+                    if (type == light || type == dark)
+                    {
+                        continue;
+                    }
+
+                    if (HasLegacySystemAccent(type))
+                    {
+                        SaveVariant(type, ThemeData.SystemThemeId, GetSystemVariant(type, null));
+                        AddOrUpdateValue($"LastVariant{type}", ThemeData.SystemThemeId);
+                    }
+                    else if (TryGetLegacyAccent(type, out int accent))
+                    {
+                        Variants.Create(type, CreateLegacyVariant(type, accent));
+                    }
                 }
             }
+            else
+            {
+                RepairSystemAccents();
+            }
 
-            AddOrUpdateValue("AppearanceVersion", 1);
+            AddOrUpdateValue("AppearanceVersion", 2);
+        }
+
+        // Version 1 read production's "follow the system accent" as black, and created a black
+        // variant for it. The production keys are still there to say which ones those were. Each
+        // becomes the system variant, which keeps only its background.
+        private void RepairSystemAccents()
+        {
+            foreach (var type in new[] { TelegramThemeType.Day, TelegramThemeType.Night, TelegramThemeType.Tinted })
+            {
+                if (!HasLegacySystemAccent(type))
+                {
+                    continue;
+                }
+
+                foreach (var id in Variants.GetCreated(type))
+                {
+                    var stored = Variants.Get(type, id);
+                    if (!IsCreatedByMigration(id) || stored == null || stored.AccentColor != 0)
+                    {
+                        continue;
+                    }
+
+                    var requested = GetBase(type);
+                    var identity = ThemeIdentity.Variant(type, id);
+                    var recent = TryGetRecent(requested, out ThemeIdentity pointer) && pointer == identity;
+
+                    SaveVariant(type, ThemeData.SystemThemeId, GetSystemVariant(type, stored.Background));
+
+                    if (GetWorn(requested) == identity)
+                    {
+                        WearVariant(type, ThemeData.SystemThemeId, null, recent);
+                    }
+                    else
+                    {
+                        AddOrUpdateValue($"LastVariant{type}", ThemeData.SystemThemeId);
+
+                        if (recent)
+                        {
+                            SetRecent(requested, ThemeIdentity.Variant(type, ThemeData.SystemThemeId));
+                        }
+                    }
+
+                    // After the pointers moved, so nothing falls back to 🏠 on the way.
+                    DeleteVariant(type, id);
+                    break;
+                }
+            }
+        }
+
+        // Version 1 ran on an empty store and made at most one variant for each of Day, Night and
+        // Tinted, and ids are never reused, so +1 to +3 can only be its own. A black variant the
+        // user made later is a choice and is left alone.
+        private static bool IsCreatedByMigration(string id)
+        {
+            return int.TryParse(id.Substring(1), out int number) && number <= 3;
         }
 
         // The single theme setting of old builds, before light and dark were kept apart.
@@ -1207,7 +1332,11 @@ namespace Telegram.Services.Settings
                 type = requested == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night;
             }
 
-            if (TryGetLegacyAccent(type, out int accent))
+            if (HasLegacySystemAccent(type))
+            {
+                WearVariant(type, ThemeData.SystemThemeId, GetSystemVariant(type, null), true);
+            }
+            else if (TryGetLegacyAccent(type, out int accent))
             {
                 WearVariant(type, Variants.Create(type, CreateLegacyVariant(type, accent)), null, true);
             }
@@ -1224,9 +1353,10 @@ namespace Telegram.Services.Settings
         }
 
         // ARGB as an int: ColorEx.ToHex's output, despite the name. Equal to the default is no choice.
+        // Zero is not a colour; see HasLegacySystemAccent.
         private bool TryGetLegacyAccent(TelegramThemeType type, out int accent)
         {
-            if (TryGetValue(_container, $"{type}Accent", out int argb))
+            if (TryGetValue(_container, $"{type}Accent", out int argb) && argb != 0)
             {
                 accent = ColorEx.FromHex(argb).ToValue();
                 return accent != ThemeInfoBase.Accents[type].ToValue();
@@ -1234,6 +1364,13 @@ namespace Telegram.Services.Settings
 
             accent = 0;
             return false;
+        }
+
+        // Production stored "follow the system accent" as default(Color), transparent black, which
+        // is zero; a black picked by hand is 0xFF000000.
+        private bool HasLegacySystemAccent(TelegramThemeType type)
+        {
+            return TryGetValue(_container, $"{type}Accent", out int argb) && argb == 0;
         }
 
         // How production drew an accent: the outgoing bubble derived from it, Night's on its
@@ -1645,7 +1782,22 @@ namespace Telegram.Services.Settings
 
         public ThemeSettings Get(TelegramThemeType type, string id)
         {
-            return Get(type.ToString(), id);
+            var stored = Get(type.ToString(), id);
+            if (stored == null || id != ThemeData.SystemThemeId)
+            {
+                return stored;
+            }
+
+            // Its colours are only ever written from code, so the accent is all that can go stale.
+            // Stored again rather than patched on the way out, so a changed accent is a new
+            // instance: that is how the themes page tells a card needs redrawing.
+            if (stored.AccentColor != AppearanceSettings.GetSystemAccent())
+            {
+                Set(type, id, AppearanceSettings.GetSystemVariant(type, stored.Background));
+                stored = Get(type.ToString(), id);
+            }
+
+            return stored;
         }
 
         public bool Has(TelegramThemeType type, string id)

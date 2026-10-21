@@ -21,6 +21,7 @@ using Telegram.ViewModels.Settings;
 using Telegram.Views.Popups;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -139,7 +140,36 @@ namespace Telegram.Views.Settings
             }
             else if (args.Item is ThemeSettings settings && args.ItemContainer.ContentTemplateRoot is Grid content)
             {
+                var system = settings is ThemeSettingsData { Name: ThemeData.SystemThemeId };
+                var name = system
+                    ? Strings.UseSystemAccentColor
+                    : null;
+
+                AutomationProperties.SetName(args.ItemContainer, name ?? string.Empty);
+                ToolTipService.SetToolTip(args.ItemContainer, name);
+
                 content.Background = new SolidColorBrush(settings.AccentColor.ToColor());
+
+                if (content is AccentCell accent && accent.IsEditable == system)
+                {
+                    accent.IsEditable = !system;
+
+                    // Recycled with its selection unchanged, so nothing else redraws it.
+                    accent.UpdateState(args.ItemContainer.IsSelected, false, false);
+                }
+
+                var icon = content.Children[1] as TextBlock;
+                if (system)
+                {
+                    icon.Foreground = ColorEx.UseBlackText([settings.AccentColor])
+                        ? new SolidColorBrush(Colors.Black)
+                        : new SolidColorBrush(Colors.White);
+                    icon.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    icon.Visibility = Visibility.Collapsed;
+                }
 
                 var bubble = content.Children[0] as Border;
                 if (true || settings.HasOutgoingMessageAccentColor)
@@ -158,6 +188,13 @@ namespace Telegram.Views.Settings
 
         #endregion
 
+        private string ConvertFooter(ThemeSettingsData selected)
+        {
+            return selected?.Name == ThemeData.SystemThemeId
+                ? Strings.UseSystemAccentColorInfo
+                : null;
+        }
+
         private void CreateVariant_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.CreateVariant();
@@ -167,7 +204,7 @@ namespace Telegram.Views.Settings
         {
             if (sender is ListView listView && listView.SelectedItem == e.ClickedItem)
             {
-                if (e.ClickedItem is ThemeSettingsData settings && ViewModel.SelectedItem is ThemeData theme)
+                if (e.ClickedItem is ThemeSettingsData settings && settings.Name != ThemeData.SystemThemeId && ViewModel.SelectedItem is ThemeData theme)
                 {
                     // A copy: the editor changes what it is given as you go, and cancelling must leave
                     // the card as it was.
@@ -179,6 +216,12 @@ namespace Telegram.Views.Settings
 
     public class AccentCell : Grid, IMultipleElement
     {
+        /// <summary>
+        /// Whether a second click opens the editor, which is what the three dots of the selected
+        /// state say.
+        /// </summary>
+        public bool IsEditable { get; set; } = true;
+
         public void UpdateState(bool selected, bool animate, bool multiple)
         {
             var compositor = BootStrapper.Current.Compositor;
@@ -225,9 +268,13 @@ namespace Telegram.Views.Settings
             var visual = compositor.CreateShapeVisual();
             visual.Size = new Vector2(size);
             visual.Shapes.Add(outerShape);
-            visual.Shapes.Add(innerShape1);
-            visual.Shapes.Add(innerShape2);
-            visual.Shapes.Add(innerShape3);
+
+            if (IsEditable)
+            {
+                visual.Shapes.Add(innerShape1);
+                visual.Shapes.Add(innerShape2);
+                visual.Shapes.Add(innerShape3);
+            }
 
             ElementCompositionPreview.SetElementChildVisual(this, visual);
 

@@ -27,7 +27,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
-                <controls:HeaderedControl>
+                <controls:HeaderedControl Footer="{x:Bind ConvertFooter(ViewModel.SelectedItem.SelectedAccent), Mode=OneWay}">
                     <Grid Background="{ThemeResource SettingsItemBackground}"
                           BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                         <Grid.RowDefinitions>
@@ -95,7 +95,9 @@
                                                 </Rectangle.Fill>
                                             </Rectangle>
                                         </Grid>
-                                        --><!--</RadioButton>--><!--
+                                        -->
+                                    <!--</RadioButton>-->
+                                    <!--
                                         <TextBlock Text="{x:Bind Info.Name}"
                                                    Margin="0,4,0,0"
                                                    TextAlignment="Center"
@@ -142,10 +144,18 @@
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
                                                 <settings:AccentCell Width="36"
-                                                                     Height="36">
+                                                                     Height="36"
+                                                                     CornerRadius="18">
                                                     <Border Width="16"
                                                             Height="16"
                                                             CornerRadius="8" />
+                                                    <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               Text="&#xE977;"
+                                                               FontSize="24"
+                                                               Foreground="#FFFFFF"
+                                                               Visibility="Collapsed" />
                                                 </settings:AccentCell>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>

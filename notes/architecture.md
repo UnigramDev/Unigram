@@ -138,7 +138,11 @@ seam for swapping backends. `settings.dat` is locked while the package is regist
 **Appearance:** each base (light, dark) stores one *worn* `ThemeSettings` plus a `ThemeIdentity`
 (preset emoji, variant id, or theme file name) in `WornLight`/`WornDark`; the built-in is derived
 from `BaseTheme`, never stored. `GetSettings(requested)` is all rendering reads. The two houses (🏠)
-are built in code by `AppearanceSettings.GetHouse` and never stored. Presets keep only their
+are built in code by `AppearanceSettings.GetHouse` and never stored. The system variant
+(`ThemeData.SystemThemeId`, on every built-in) is not editable: like a house it is built in code
+(`GetSystemVariant`, the current Windows accent) and only its background is the user's. `Rebuild` and
+`ThemeVariantStore.Get` rebuild it when the stored accent is stale, and `NightModeService` repaints
+through `UpdateSystemAccent` on `ColorValuesChanged`. Presets keep only their
 background (`Presets`), variants everything (`Variants`), theme files their background
 (`ThemeFiles`). Every write goes through the `Wear*`/`*Variant`/`DeleteThemeFile` API, and switching
 to the other base goes through `NightModeService.Show`/`Switch`. Trap: the default background is
