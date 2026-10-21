@@ -35,6 +35,8 @@
                                                 Value="6,1,6,3" />
                                         <Setter Target="Footer.Background"
                                                 Value="{ThemeResource MessageServiceBackgroundBrush}" />
+                                        <Setter Target="Footer.CornerRadius"
+                                                Value="{ThemeResource MessageServiceCornerRadius}" />
                                         <Setter Target="Footer.Foreground"
                                                 Value="White" />
                                         <Setter Target="Footer.Stroke"
@@ -83,6 +85,8 @@
                                                 Value="6,1,6,3" />
                                         <Setter Target="Footer.Background"
                                                 Value="{ThemeResource MessageServiceBackgroundBrush}" />
+                                        <Setter Target="Footer.CornerRadius"
+                                                Value="{ThemeResource MessageServiceCornerRadius}" />
                                         <Setter Target="Footer.Foreground"
                                                 Value="White" />
                                         <Setter Target="Footer.Stroke"
@@ -131,6 +135,8 @@
                                                 Value="6,1,6,3" />
                                         <Setter Target="Footer.Background"
                                                 Value="{ThemeResource MessageOverlayBackgroundBrush}" />
+                                        <Setter Target="Footer.CornerRadius"
+                                                Value="{ThemeResource MessageServiceCornerRadius}" />
                                         <Setter Target="Footer.Foreground"
                                                 Value="White" />
                                         <Setter Target="Footer.Stroke"

@@ -10,7 +10,7 @@
         <Setter Property="Background"
                 Value="Transparent" />
         <Setter Property="CornerRadius"
-                Value="{ThemeResource MessageServiceCornerRadius}" />
+                Value="0" />
         <Setter Property="Foreground"
                 Value="{ThemeResource MessageSubtleLabelBrush}" />
         <Setter Property="VerticalAlignment"
