@@ -1137,7 +1137,7 @@ namespace Telegram.Views.Wallet.Popups
 
         private void MenuItemTopUp()
         {
-            _navigationService.ShowPopup(new WalletSharePopup(_clientService, _navigationService, State.Address));
+            _navigationService.ShowPopup(new WalletSharePopup(_clientService, _wallet, _navigationService));
         }
 
         #endregion

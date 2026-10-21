@@ -500,7 +500,7 @@ namespace Telegram.Views.Wallet
 
         private void AddFunds_Click(object sender, RoutedEventArgs e)
         {
-            _navigationService.ShowPopup(new WalletSharePopup(_clientService, _navigationService, _wallet.State.Address));
+            _navigationService.ShowPopup(new WalletSharePopup(_clientService, _wallet, _navigationService));
         }
 
         private async void Send_Click(object sender, RoutedEventArgs e)

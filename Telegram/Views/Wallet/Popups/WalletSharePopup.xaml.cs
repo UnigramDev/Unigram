@@ -9,10 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Wallet;
 using Telegram.Td.Api;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -29,17 +31,20 @@ namespace Telegram.Views.Wallet.Popups
     public sealed partial class WalletSharePopup : ContentPopup
     {
         private readonly IClientService _clientService;
+        private readonly IWalletService _wallet;
         private readonly INavigationService _navigationService;
 
         private readonly string _address;
 
-        public WalletSharePopup(IClientService clientService, INavigationService navigationService, string address)
+        public WalletSharePopup(IClientService clientService, IWalletService wallet, INavigationService navigationService)
         {
             InitializeComponent();
 
             _clientService = clientService;
+            _wallet = wallet;
             _navigationService = navigationService;
 
+            var address = wallet.State.Address;
             _address = address;
 
             var geometry = QrCode.CreateGeometry("ton://transfer/" + address, 3, 4, true, 148);
@@ -254,28 +259,105 @@ namespace Telegram.Views.Wallet.Popups
 
         private async void Buy_Click(object sender, RoutedEventArgs e)
         {
-            var response = await _clientService.SendAsync(new GetOnRampProviders("gram"));
-            if (response is OnRampProviders providers)
+            BuyButton.IsEnabled = false;
+
+            var response = await BuyAsync();
+            if (response is Error error)
             {
-                if (providers.Providers.Count == 1)
+                BuyButton.IsEnabled = true;
+                ToastPopup.ShowError(XamlRoot, error);
+            }
+            else
+            {
+                Hide();
+            }
+        }
+
+        private async Task<BaseObject> BuyAsync()
+        {
+            if (string.IsNullOrEmpty(_address))
+            {
+                return new Error(400, "ADDRESS_INVALID");
+            }
+
+            var response = await _clientService.SendAsync(new GetOnRampProviders("gram"));
+            if (response is not OnRampProviders providers)
+            {
+                return response;
+            }
+
+            var provider = SelectProvider(providers.Providers);
+            if (provider == null)
+            {
+                return new Error(404, "NO_PROVIDERS");
+            }
+
+            var baseCurrency = await GetBaseCurrencyAsync(provider);
+            var theme = NightModeService.Current.GetCalculatedApplicationTheme();
+
+            response = await _clientService.SendAsync(new CreateOnRampPaymentSession(provider.Id, "gram", _address, string.Empty, baseCurrency, string.Empty, string.Empty, string.Empty, theme == ApplicationTheme.Light ? "light" : "dark", string.Empty, string.Empty));
+
+            if (response is not OnRampPaymentSession session)
+            {
+                return response;
+            }
+            else if (string.IsNullOrEmpty(session.Url))
+            {
+                return new Error(404, "NO_SESSION");
+            }
+
+            // A provider either hands back a bot link, which must open in the app, or its own
+            // checkout page, which TDLib does not recognize as internal and goes to the browser.
+            response = await _clientService.SendAsync(new GetInternalLinkType(session.Url));
+
+            if (response is InternalLinkType internalLink)
+            {
+                MessageHelper.OpenTelegramUrl(_clientService, _navigationService, internalLink, null);
+            }
+            else
+            {
+                MessageHelper.OpenUrl(_clientService, _navigationService, session.Url);
+            }
+
+            return session;
+        }
+
+        private static OnRampProvider SelectProvider(Vector<OnRampProvider> providers)
+        {
+            // Telegram's own provider when it is offered, as the other clients do.
+            foreach (var provider in providers)
+            {
+                if (provider.Id == "wallet")
                 {
-                    var provider = providers.Providers[0];
-                    var theme = NightModeService.Current.GetCalculatedApplicationTheme();
+                    return provider;
+                }
+            }
 
-                    response = await _clientService.SendAsync(new CreateOnRampPaymentSession(provider.Id, "gram", _clientService.TonWalletState.Address, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, theme == ApplicationTheme.Light ? "light" : "dark", string.Empty, string.Empty));
+            return providers.Count > 0 ? providers[0] : null;
+        }
 
-                    if (response is OnRampPaymentSession session)
+        private async Task<string> GetBaseCurrencyAsync(OnRampProvider provider)
+        {
+            if (provider.SupportsBaseCurrencies)
+            {
+                var currency = AppSettings.WalletCurrency;
+
+                // A currency the provider does not take fails the session, while none at all
+                // lets the checkout page pick one, so it is only sent when it is listed.
+                var response = await _clientService.SendAsync(new GetOnRampProviderBaseCurrencies(provider.Id, "gram"));
+                if (response is Currencies currencies)
+                {
+                    foreach (var item in currencies.CurrenciesValue)
                     {
-                        response = await _clientService.SendAsync(new GetInternalLinkType(session.Url));
-
-                        if (response is InternalLinkType internalLink)
+                        if (string.Equals(item, currency, StringComparison.OrdinalIgnoreCase))
                         {
-                            MessageHelper.OpenTelegramUrl(_clientService, _navigationService, internalLink, null);
-                            Hide();
+                            return item;
                         }
                     }
                 }
             }
+
+            return string.Empty;
         }
     }
 
