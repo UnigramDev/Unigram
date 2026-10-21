@@ -74,7 +74,7 @@
                              FocusFollowsSingleSelection="True"
                              SingleSelectionFollowsFocus="False"
                              Height="32"
-                             Margin="12,6,12,2"
+                             Margin="24,6,16,2"
                              Padding="2,0"
                              Background="{ThemeResource TextControlBackground}"
                              BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
@@ -172,6 +172,10 @@
                                                ItemClick="OnItemClick"
                                                ChoosingItemContainer="TopChats_ChoosingItemContainer"
                                                ContainerContentChanging="TopChats_ContainerContentChanging"
+                                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                               ScrollViewer.HorizontalScrollMode="Auto"
+                                               ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                               ScrollViewer.VerticalScrollMode="Disabled"
                                                ItemsSource="{x:Bind ViewModel.TopChats}"
                                                Style="{StaticResource HorizontalListViewStyle}">
                             <ListView.ItemTemplate>

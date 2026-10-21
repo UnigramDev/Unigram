@@ -533,6 +533,22 @@
                                           SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="controls:ChatListListViewItem">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                    <Setter Property="MinHeight"
+                            Value="64" />
+                    <Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="Margin"
+                            Value="4,2,4,2" />
+                    <Setter Property="CornerRadius"
+                            Value="4" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemContainerTransitions>
                 <TransitionCollection>
                     <!-- Reordering items for some reason requires AddDeleteThemeTransition. -->

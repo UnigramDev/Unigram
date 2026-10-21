@@ -743,8 +743,8 @@
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
                                            AutomationProperties.AccessibilityView="Raw"
-                                           Width="20"
-                                           Height="20" />
+                                           Width="24"
+                                           Height="24" />
 
                         <ContentPresenter x:Name="ContentPresenter"
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"

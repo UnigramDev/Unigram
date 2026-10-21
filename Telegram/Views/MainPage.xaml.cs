@@ -920,7 +920,7 @@ namespace Telegram.Views
                     ? _tabsTopCollapsed ? -74 : -78
                     : -12;
 
-                TopicListPresenter.Margin = new Thickness(68, padding, 0, 0);
+                TopicListPresenter.Margin = new Thickness(80, padding, 0, 0);
             }
 
             Stories.TabsTopCollapsed = !show;
@@ -3730,7 +3730,7 @@ namespace Telegram.Views
             var margin = _tabsTopCollapsed ? 38 : 74;
 
             DialogsPanel.Margin = new Thickness(0, -margin, 0, 0);
-            TopicListPresenter.Margin = new Thickness(68, padding, 0, 0);
+            TopicListPresenter.Margin = new Thickness(80, padding, 0, 0);
 
             void ShowHideTopicListCompleted()
             {
@@ -3757,7 +3757,7 @@ namespace Telegram.Views
 
             var compositor = chats.Compositor;
 
-            var inset = 68;
+            var inset = 80;
             var width = ChatsList.ActualSize.X - inset;
 
             var sourceOffset = new Vector2(inset, 0);

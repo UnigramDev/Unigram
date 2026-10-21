@@ -51,6 +51,12 @@ namespace Telegram.Controls.Views
             InitializeComponent();
         }
 
+        public Thickness PaddingImpl
+        {
+            get => ScrollingHost.Padding;
+            set => ScrollingHost.Padding = value;
+        }
+
         private ForumViewType _type;
 
         public void UpdateType(ForumViewType type)
@@ -246,6 +252,7 @@ namespace Telegram.Controls.Views
                 {
                     args.ItemContainer = new ChatListListViewItem(null)
                     {
+                        Style = sender.ItemContainerStyle,
                         MinWidth = 0,
                         MinHeight = 0
                     };

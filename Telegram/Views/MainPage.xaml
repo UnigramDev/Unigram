@@ -511,13 +511,13 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Grid x:Name="MainHeader"
-                          Padding="12,0,0,0"
+                          Padding="24,0,0,0"
                           Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto"
-                                              MinWidth="12" />
+                                              MinWidth="16" />
                         </Grid.ColumnDefinitions>
                         <controls:SuggestTextBox x:Name="SearchField"
                                                  PlaceholderText="{CustomResource Search}"
@@ -612,7 +612,8 @@
                                            DataContext="{x:Bind ViewModel.SearchChats}"
                                            ItemClick="ListView_ItemClick"
                                            ItemContextRequested="DialogsSearchPanel_ItemContextRequested"
-                                           Margin="0,72,0,0" />
+                                           Margin="0,72,0,0"
+                                           PaddingImpl="12,0,12,0" />
                     <Grid x:Name="DialogsPanel">
                         <Grid x:Name="ChatsPanel">
                             <Grid.RowDefinitions>
@@ -651,7 +652,7 @@
                                                                      FocusFollowsSingleSelection="True"
                                                                      SingleSelectionFollowsFocus="False"
                                                                      Height="32"
-                                                                     Margin="12,6,12,2"
+                                                                     Margin="24,6,16,2"
                                                                      Padding="2,0"
                                                                      Background="{ThemeResource TextControlBackground}"
                                                                      BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
@@ -702,7 +703,8 @@
 
                             <views:ForumView x:Name="TopicListPresenter"
                                              x:Load="False"
-                                             Margin="68,-78,0,0"
+                                             Margin="80,-78,0,0"
+                                             PaddingImpl="0,0,0,62"
                                              ItemClick="ListView_ItemClick"
                                              Grid.Row="1"
                                              Canvas.ZIndex="1" />
@@ -751,7 +753,7 @@
                                                         AutomationProperties.Name="{CustomResource ArchivedChats}"
                                                         Style="{StaticResource ListEmptyButtonStyle}"
                                                         Background="Transparent"
-                                                        Margin="4,2"
+                                                        Margin="16,2,12,2"
                                                         CornerRadius="4">
                                                     <cells:ChatCell x:Name="ArchivedChats"
                                                                     Visibility="Collapsed"
