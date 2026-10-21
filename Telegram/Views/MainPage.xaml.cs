@@ -113,6 +113,7 @@ namespace Telegram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(DialogsPanel, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(SearchField, true);
 
             _navigationShadow = new ThemeShadowEx(Navigation, 16);
 
@@ -1994,20 +1995,117 @@ namespace Telegram.Views
         private void UpdatePaneToggleButtonVisibility()
         {
             var visible = ViewModel.Chats.Items.ChatList is ChatListArchive
-                || !_searchCollapsed
-                || _prevIndex != INDEX_CHATS;
+                || !_searchCollapsed;
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 visible &= MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage);
             }
 
-            Photo.IsChecked = visible;
-            //Photo.Glyph = visible
-            //    ? Photo.HorizontalAlignment == HorizontalAlignment.Right
-            //    ? Icons.ArrowRight
-            //    : Icons.ArrowLeft
-            //    : Icons.Hamburger;
+            ShowHideBackButton(visible);
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            OnBackRequested(new BackRequestedRoutedEventArgs());
+        }
+
+        private bool _backButtonCollapsed = true;
+        private CompositionScopedBatch _backButtonBatch;
+
+        private void ShowHideBackButton(bool show)
+        {
+            if (_backButtonCollapsed != show)
+            {
+                return;
+            }
+
+            _backButtonCollapsed = !show;
+
+            var width = (float)(BackButton.Width + BackButton.Margin.Left + BackButton.Margin.Right);
+            var fullWidth = SearchField.ActualSize.X + (float)SearchField.Margin.Left;
+            var newWidth = show ? fullWidth - width : fullWidth;
+
+            SearchField.Margin = new Thickness(show ? width : 0, 0, 0, 0);
+            BackButton.Visibility = Visibility.Visible;
+
+            var field = ElementComposition.GetElementVisual(SearchField);
+            var border = SearchField.GetChild<Border>(x => x.Name == "BorderElement");
+
+            if (border == null || SearchField.ActualSize.X == 0 || newWidth <= 0)
+            {
+                _backButtonBatch = null;
+
+                BackButton.Visibility = show
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+                return;
+            }
+
+            var compositor = field.Compositor;
+            var background = ElementComposition.GetElementVisual(border);
+            var button = ElementComposition.GetElementVisual(BackButton);
+
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += ShowHideBackButton_Completed;
+
+            _backButtonBatch = batch;
+
+            // The field takes its new size at once and slides in from where it was. Its border, scaled
+            // from the left by 1 - translation / width, keeps the right edge fixed only while both
+            // animations share the same duration and easing.
+            var from = show ? -width : width;
+
+            var offset = compositor.CreateScalarKeyFrameAnimation();
+            offset.InsertKeyFrame(0, from);
+            offset.InsertKeyFrame(1, 0);
+            offset.Duration = Constants.FastAnimation;
+
+            var stretch = compositor.CreateScalarKeyFrameAnimation();
+            stretch.InsertKeyFrame(0, 1 - from / newWidth);
+            stretch.InsertKeyFrame(1, 1);
+            stretch.Duration = Constants.FastAnimation;
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
+            scale.Duration = Constants.FastAnimation;
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity.Duration = Constants.FastAnimation;
+
+            button.CenterPoint = new Vector3(BackButton.ActualSize / 2, 0);
+
+            background.CenterPoint = Vector3.Zero;
+
+            field.StartAnimation("Translation.X", offset);
+            background.StartAnimation("Scale.X", stretch);
+            button.StartAnimation("Scale", scale);
+            button.StartAnimation("Opacity", opacity);
+
+            batch.End();
+        }
+
+        private void ShowHideBackButton_Completed(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (sender is CompositionScopedBatch batch)
+            {
+                batch.Completed -= ShowHideBackButton_Completed;
+            }
+
+            // An interrupted batch completes after its replacement has started, and must not reset it.
+            if (sender != _backButtonBatch || BackButton == null)
+            {
+                return;
+            }
+
+            _backButtonBatch = null;
+
+            BackButton.Visibility = _backButtonCollapsed
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
 
         private Visibility UpdateScrollingHostHeaderVisibility(MasterDetailState state, bool primaryFolderSelected)
@@ -4207,6 +4305,7 @@ namespace Telegram.Views
             ChatFolders = null;
             MainHeader = null;
             SearchField = null;
+            BackButton = null;
             ChatsOptions = null;
             Proxy = null;
             Lock = null;

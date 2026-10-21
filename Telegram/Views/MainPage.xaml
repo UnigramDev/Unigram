@@ -414,6 +414,26 @@
                             </TextBox.Header>-->
                         </controls:SuggestTextBox>
 
+                        <controls:GlyphButton x:Name="BackButton"
+                                              Click="BackButton_Click"
+                                              AutomationProperties.Name="{CustomResource AccDescrGoBack}"
+                                              ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
+                                              RenderTransformOrigin="0.5,0.5"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center"
+                                              Width="48"
+                                              Height="48"
+                                              Margin="-16,0,-8,0"
+                                              CornerRadius="20"
+                                              Glyph="&#xe93e;"
+                                              Visibility="Collapsed"
+                                              Grid.Column="1">
+                            <Button.RenderTransform>
+                                <ScaleTransform ScaleX="0.8"
+                                                ScaleY="0.8" />
+                            </Button.RenderTransform>
+                        </controls:GlyphButton>
+
                         <StackPanel x:Name="ChatsOptions"
                                     Orientation="Horizontal"
                                     VerticalAlignment="Center"
