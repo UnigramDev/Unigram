@@ -81,7 +81,7 @@ namespace Telegram.Common
 
             await OpenAsync(new ViewServiceOptions
             {
-                Width = 384,
+                Width = 608,
                 Height = 640,
                 PersistedId = "TextEditor",
                 ViewMode = ViewServiceMode.Default,

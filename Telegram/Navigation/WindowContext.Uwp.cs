@@ -822,6 +822,11 @@ namespace Telegram.Navigation
             {
                 newHost.PopupClosed();
             }
+
+            if (content is WindowPresenter { Content: RichTextWindow })
+            {
+                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(468, 500));
+            }
         }
 
         partial void SetScreenCaptureEnabled(bool enabled)
