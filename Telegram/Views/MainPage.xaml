@@ -13,6 +13,8 @@
                    xmlns:navigation="using:Telegram.Navigation.Services"
                    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
                    xmlns:icons="using:Telegram.Assets.Icons"
+                   xmlns:services="using:Telegram.Services"
+                   xmlns:converters="using:Telegram.Converters"
                    mc:Ignorable="d"
                    Loaded="OnLoaded"
                    Unloaded="OnUnloaded">
@@ -24,6 +26,51 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
+
+    <Page.Resources>
+        <DataTemplate x:Name="SessionItemTemplate"
+                      x:DataType="services:ISession">
+            <Grid Margin="-2,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePicture Size="20"
+                                         Margin="0,0,10,0" />
+
+                <Grid HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <controls:CustomEmojiIcon x:Name="BotVerified"
+                                              Visibility="Collapsed"
+                                              VerticalAlignment="Bottom"
+                                              Margin="0,-2,4,-2" />
+                    <TextBlock x:Name="TitleLabel"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis"
+                               Grid.Column="1" />
+                    <controls:IdentityIcon x:Name="Identity"
+                                           VerticalAlignment="Bottom"
+                                           Margin="4,0,0,0"
+                                           Grid.Column="2" />
+                </Grid>
+
+                <controls:BadgeControl Text="{x:Bind converters:Formatter.ShortNumber(UnreadCount), Mode=OneWay}"
+                                       IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
+                                       Visibility="{x:Bind ShowCount, Mode=OneWay}"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"
+                                       Grid.Column="2" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -991,7 +1038,7 @@
                                 <icons:TabChats />
                             </controls:TopNavViewIconItem.IconSource>
                         </controls:TopNavViewIconItem>
-                        <controls:TopNavViewIconItem Content="{CustomResource Settings}"
+                        <controls:TopNavViewIconItem ContextRequested="Settings_ContextRequested"
                                                      CornerRadius="24"
                                                      MinWidth="64">
                             <controls:TopNavViewIconItem.Content>

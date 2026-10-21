@@ -4131,6 +4131,102 @@ namespace Telegram.Views
                 }
             }
         }
+
+        private void Settings_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var items = LifetimeService.Current.GetItems(out _);
+            var flyout = new MenuFlyout();
+
+            foreach (var session in items)
+            {
+                var template = Resources["SessionItemTemplate"] as DataTemplate;
+                var content = template.LoadContent() as Grid;
+                content.DataContext = session;
+
+                var user = session.ClientService.GetUser(session.UserId);
+                if (user == null)
+                {
+                    session.ClientService.Send(new GetUser(session.UserId));
+                    continue;
+                }
+
+                var title = content.FindName("TitleLabel") as TextBlock;
+                title.Text = user.FullName();
+
+                var photo = content.Children[0] as ProfilePicture;
+                photo.Source = ProfilePictureSource.User(session.ClientService, user);
+
+                var identity = content.FindName("Identity") as IdentityIcon;
+                var botVerified = content.FindName("BotVerified") as CustomEmojiIcon;
+
+                identity.SetStatus(session.ClientService, user, botVerified);
+
+                var item = new MenuFlyoutButton
+                {
+                    Content = content,
+                    CommandParameter = session,
+                    Command = new RelayCommand<ISession>(Root.Switch)
+                };
+
+                AutomationProperties.SetName(item, user.FullName());
+
+                if (session == ViewModel.Session)
+                {
+                    if (items.Count < Constants.MaxAccountCount)
+                    {
+                        flyout.CreateFlyoutItem(MenuItemAddAccount, Strings.AddAccount, Icons.AddCircle);
+                    }
+
+                    flyout.Items.Add(item);
+
+                    if (items.Count > 1)
+                    {
+                        flyout.CreateFlyoutSeparator();
+                    }
+                }
+                else
+                {
+                    flyout.Items.Add(item);
+                }
+            }
+
+            if (flyout.Items.Count > 1)
+            {
+                flyout.ShowAt(sender, FlyoutPlacementMode.Top);
+            }
+        }
+
+        private void MenuItemAddAccount()
+        {
+            var premium = 0;
+            var count = 0;
+
+            foreach (var session in LifetimeService.Current.Items)
+            {
+                if (session.Settings.UseTestDC)
+                {
+                    continue;
+                }
+
+                if (session.ClientService.Options.IsPremium)
+                {
+                    premium++;
+                }
+
+                count++;
+            }
+
+            var limit = 3;
+
+            if (count >= limit + premium)
+            {
+                ViewModel.NavigationService.ShowLimitReached(new PremiumLimitTypeConnectedAccounts());
+                return;
+            }
+
+            Root.Switch(LifetimeService.Current.Create());
+        }
+
         private void ChatFolders_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem == ViewModel.SelectedFolder)

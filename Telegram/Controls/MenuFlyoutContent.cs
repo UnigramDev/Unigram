@@ -9,9 +9,11 @@ using Telegram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Markup;
 
 namespace Telegram.Controls
 {
+    [ContentProperty(Name = nameof(Content))]
     public partial class MenuFlyoutContent : MenuFlyoutItem
     {
         public MenuFlyoutContent()
@@ -67,6 +69,14 @@ namespace Telegram.Controls
             DependencyProperty.Register("ContentTemplate", typeof(DataTemplate), typeof(MenuFlyoutContent), new PropertyMetadata(null));
 
         #endregion
+    }
+
+    public partial class MenuFlyoutButton : MenuFlyoutContent
+    {
+        public MenuFlyoutButton()
+        {
+            DefaultStyleKey = typeof(MenuFlyoutButton);
+        }
     }
 
     public partial class MenuFlyoutContentAutomationPeer : MenuFlyoutItemAutomationPeer
