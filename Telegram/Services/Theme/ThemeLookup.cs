@@ -24,7 +24,7 @@ namespace Telegram.Services
     /// </summary>
     /// <remarks>
     /// Eight bytes - the kind in the high word, and an ARGB colour, an <see cref="AccentShade"/> or
-    /// an index into <see cref="ThemeDefaults.AcrylicColors"/> in the low one. There are ~1600 of
+    /// an index into <see cref="ThemeDefaults.AcrylicColors"/> in the low one. There are ~2000 of
     /// these per theme and they were <c>object</c>, so each was a box that lived for the session.
     /// </remarks>
     public readonly struct ThemeValue

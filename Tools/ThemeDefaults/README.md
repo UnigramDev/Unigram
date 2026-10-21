@@ -81,7 +81,7 @@ from this folder.
 | `verify` | Reads the generated C# back the way the app does and diffs every row against the tables, values and order both. |
 | `export <source>` | The one-time import out of the old `Dictionary<string, object>` pair. Already run; kept to document how the tables got here. |
 | `resources <package>` | Pulls the compiled XBF theme resources out of a shipped Microsoft.UI.Xaml package, and reports the keys in each. |
-| `compare` | Reads the framework's own dictionaries and diffs them against the tables. `--key` lists what resolves to one key instead; `--write` takes the framework's values, and `--aliases` with it keeps the framework's edges. Reports only, unless `--write`. |
+| `compare` | Reads the framework's own dictionaries and diffs them against the tables. `--key` lists what resolves to one key instead; `--write` takes the framework's values and adds the brushes it defines that the tables lack, and `--aliases` with it keeps the framework's edges. Reports only, unless `--write`. |
 
 `verify` is the one worth running. The packed arrays cannot be reviewed by eye, so it is
 the only thing standing between a bad edit and a theme that silently loses a colour.
@@ -109,6 +109,14 @@ light rows and 1500 of 1590 dark rows exactly, and derived 45 of the 49 per-them
 `Brush.Opacity` alphas with nothing contradicting. Differences are not failures - the tables
 came from a snapshot that predates April 2021, so some of what `compare` reports is the
 tables being stale.
+
+That snapshot also fixed the key set, and refreshing values never touched it: about 380 brushes
+per theme that WinUI added later stayed unpinned, `LayerOnMicaBaseAltFillColor*` among them.
+`--write` now appends every missing brush after the existing rows, so the order the theme
+editor shows does not move. It skips two kinds. Gradients and Reveal brushes have no value a
+row can hold. A `StaticResource` aliasing a Color key, such as
+`ScrollBarThumbBackgroundColor`, is a Color, and pinning it as a brush breaks the template
+that reads it.
 
 ## If the app ever moves to WinUI 3
 

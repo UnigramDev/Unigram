@@ -132,6 +132,45 @@ def refresh(rows, entries):
     return out, changed
 
 
+def _is_brush(entries, key, _seen=()):
+    """Whether `key` is a brush at runtime, which `Entry.brush` cannot say for an alias.
+
+    A `StaticResource` is whatever it points at, so one aliasing a Color key is a Color -
+    `ScrollBarThumbBackgroundColor` is one, and pinning it as a SolidColorBrush breaks the
+    template that reads it. A SolidColorBrush over a reference is a brush whatever it names.
+    """
+    entry = entries.get(key)
+    if entry is None or key in _seen:
+        return False
+    if entry.kind != "alias":
+        return entry.brush
+    if len(entry.args) > 1:
+        return True
+    return _is_brush(entries, entry.args[0], _seen + (key,))
+
+
+def extend(rows, entries):
+    """The table's rows followed by every brush the framework defines and the table lacks.
+
+    Without this the key set is whatever the original snapshot held, and everything WinUI
+    added since resolves to a framework brush `Theme.Update` cannot recolour. Appended in
+    declaration order so the rows the theme editor already lists keep their places. Only
+    colours and shades: a gradient or Reveal brush has no value a row can hold.
+    """
+    have = {key for key, _ in rows}
+    out, added = list(rows), []
+    for key, entry in entries.items():
+        if key in have or not entry.brush or not _is_brush(entries, key):
+            continue
+        resolved, _ = harvest.resolve(entries, key)
+        value = _harvested(resolved)
+        if value is None:
+            continue
+        out.append((key, value))
+        added.append((key, value))
+    return out, added
+
+
 def relink(rows, entries):
     """The table's rows with flattened values replaced by the edge the framework writes.
 

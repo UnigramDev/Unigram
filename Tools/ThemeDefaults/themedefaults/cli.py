@@ -197,6 +197,7 @@ def cmd_compare(args):
             prepared, changes = {}, {}
             for name, rows in (("light", light), ("dark", dark)):
                 rows, refreshed = compare.refresh(rows, entries[name])
+                rows, added = compare.extend(rows, entries[name])
                 # Edges are recorded against the framework's own values, where the rule that
                 # an edge may not move a colour holds. Overriding first would leave every
                 # dependent disagreeing with its target, and none of them would be linked.
@@ -204,7 +205,7 @@ def cmd_compare(args):
                 if args.aliases:
                     rows, linked, refused = compare.relink(rows, entries[name])
                 prepared[name] = rows
-                changes[name] = (refreshed, linked, refused)
+                changes[name] = (refreshed, added, linked, refused)
 
             # Then the overrides, which is what makes them propagate: the root takes its new
             # value and `flatten` carries it to everything aliasing it. One theme may be
@@ -215,12 +216,13 @@ def cmd_compare(args):
                 changes[name] += (applied,)
 
             for name in ("light", "dark"):
-                refreshed, linked, refused, applied = changes[name]
+                refreshed, added, linked, refused, applied = changes[name]
                 table.save(getattr(args, name), prepared[name],
                            "%s theme defaults." % name.title())
 
-                _say("%s: %d values from the framework, %d overridden, %d rows kept as edges."
-                     % (name, len(refreshed), len(applied), len(linked)))
+                _say("%s: %d values from the framework, %d keys added, %d overridden, "
+                     "%d rows kept as edges."
+                     % (name, len(refreshed), len(added), len(applied), len(linked)))
                 for key, was, now in applied:
                     _say("    ours  %-50s %-22s -> %s"
                          % (key, table.format_value(was), table.format_value(now)))
