@@ -3068,7 +3068,8 @@ namespace Telegram.Controls
                     // so a pass per tick piled up gigabytes of frames. A pass does not draw while
                     // CommitsInFlight passes are still uncommitted. More than one, because a commit
                     // takes two frames or more to be confirmed in the shipping build, and waiting for
-                    // each made every pass that long. The timeout is only so that Close is noticed.
+                    // each made every pass that long. The timeout is so that Close is noticed, and so
+                    // that WaitForCommit can find out about completions that never arrive.
                     while (!_closed && !_device.WaitForCommit(CommitsInFlight - 1, 250))
                     {
                     }

@@ -730,13 +730,14 @@ to hang because `Client.Run` serializes dispatch and reply on one thread). `Equa
 special-case `IsUnique` sources to avoid cache collisions.
 
 ## Animated images — Telegram/Controls/AnimatedImage.cs, Telegram.Native/FrameSurface.*
-<!-- map: verified=3c8ae898a paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.h,Telegram.Native/CachedVideoAnimation.idl,Telegram.Native/VideoAnimation.cpp,Telegram.Native/VideoAnimation.h,Telegram.Native/VideoFrameProducer.h -->
+<!-- map: verified=cc62f11b7 paths=Telegram/Controls/AnimatedImage.cs,Telegram.Native/FrameSurface.cpp,Telegram.Native/FrameSurface.h,Telegram.Native/FrameSurface.idl,Telegram.Native/CachedVideoAnimation.cpp,Telegram.Native/CachedVideoAnimation.h,Telegram.Native/CachedVideoAnimation.idl,Telegram.Native/VideoAnimation.cpp,Telegram.Native/VideoAnimation.h,Telegram.Native/VideoFrameProducer.h -->
 Stickers, custom emoji, GIFs and video stickers, decoded off the UI thread and drawn into a composition
 surface without the UI thread touching a frame. One file holds the control, the presenter, the decode
 tasks and the per-window loader.
 **Key types:** `AnimatedImage` — the control; paints the frame as `LayoutRoot.Background` through
 `AnimatedImageSurfaceBrush`, a `XamlCompositionBrushBase` that carries the replacement-colour tint as an
-effect, so the control owns no composition node. `AnimatedImagePresenter` — one per
+effect, or in its place the blurred one-colour silhouette `SetEffect` asks for (the wallet card's gift
+stickers), so the control owns no composition node. `AnimatedImagePresenter` — one per
 `AnimatedImagePresentation` (source, decode size, playback policy) per window, shared by every image
 showing it; owns the task, two frame buffers and the surface. `AnimatedImageTask` and its Lottie, Video,
 WebP, Particles and Dice subclasses — the decoders. `AnimatedImageLoader` — one per `XamlRoot`: the
@@ -755,7 +756,10 @@ after the clock a pass does not draw while `FrameFlusher.CommitsInFlight` (3) of
 (`WaitForCommit`): DComp keeps every surface update until a commit takes it, and the clock keeps ticking
 when none do - behind a stalled UI thread or in a minimized window - so pacing on the clock alone piled up
 gigabytes of frames. The limit is not 1 because release builds confirm a commit 22-42 ms after it is
-requested, two frames or more, and waiting for each one halved the flusher.
+requested, two frames or more, and waiting for each one halved the flusher. A completion can also
+never arrive, as for commits requested as the system went to sleep: `WaitForCommit` counts by sequence
+number, so any later completion accounts for the lost ones, and after a timeout asks for an empty
+commit to find one. Counting completions stopped a window's animations for good after three.
 **Pacing:** a task picks its frame from playback time (`AnimatedImageTask.Advance`, moved by the vblank
 stamps) rather than taking the next one, so a decode that misses its vblank costs a frame, not time; the
 presenter is not polled again until it finishes (`_decoding`). Lottie and Dice take the frame nearest to

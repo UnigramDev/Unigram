@@ -60,7 +60,8 @@ namespace Telegram.Native
         Boolean RequestCommit();
 
         // Until no more than inFlight of the commits RequestCommit asked for are still to be taken:
-        // false if timeoutMs passed first.
+        // false if timeoutMs passed first, after asking for an empty commit, so that a call after a
+        // timeout counts any whose completion was lost.
         Boolean WaitForCommit(Int32 inFlight, Int32 timeoutMs);
 
         SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);

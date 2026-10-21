@@ -494,7 +494,16 @@ namespace winrt::Telegram::Native::implementation
     struct CommitState
     {
         winrt::handle completed{ CreateEventW(nullptr, FALSE, FALSE, nullptr) };
-        std::atomic<int32_t> outstanding{ 0 };
+
+        // Sequence numbers rather than a count. Commits are taken in order, so a completion also
+        // accounts for the requests before it, including any whose own completion never arrives:
+        // those made as the system went to sleep did not, and counting them shut the gate for good.
+        int64_t requested{ 0 };
+        std::atomic<int64_t> taken{ 0 };
+
+        // The last request WaitForCommit made with nothing drawn, to find out whether the
+        // compositor is committing at all.
+        int64_t probe{ 0 };
     };
 
     static std::shared_ptr<CommitState> const& Commits()
@@ -503,6 +512,32 @@ namespace winrt::Telegram::Native::implementation
         // the completions, which can outlive both the wait and the thread once the wait times out.
         thread_local auto s_commits = std::make_shared<CommitState>();
         return s_commits;
+    }
+
+    static bool SendCommit(Compositor const& compositor, std::shared_ptr<CommitState> const& commits)
+    {
+        auto sequence = ++commits->requested;
+
+        try
+        {
+            compositor.RequestCommitAsync().Completed([commits, sequence](auto&&, auto&&)
+            {
+                auto taken = commits->taken.load();
+                while (taken < sequence && !commits->taken.compare_exchange_weak(taken, sequence))
+                {
+                }
+
+                SetEvent(commits->completed.get());
+            });
+        }
+        catch (winrt::hresult_error const&)
+        {
+            // The compositor is going away with its window, and there is nothing left to wait for.
+            commits->requested--;
+            return false;
+        }
+
+        return true;
     }
 
     bool Direct2DDevice::RequestCommit()
@@ -514,24 +549,7 @@ namespace winrt::Telegram::Native::implementation
             return false;
         }
 
-        commits->outstanding++;
-
-        try
-        {
-            m_compositor.RequestCommitAsync().Completed([commits](auto&&, auto&&)
-            {
-                commits->outstanding--;
-                SetEvent(commits->completed.get());
-            });
-        }
-        catch (winrt::hresult_error const&)
-        {
-            // The compositor is going away with its window, and there is nothing left to wait for.
-            commits->outstanding--;
-            return false;
-        }
-
-        return true;
+        return SendCommit(m_compositor, commits);
     }
 
     bool Direct2DDevice::WaitForCommit(int32_t inFlight, int32_t timeoutMs)
@@ -545,12 +563,21 @@ namespace winrt::Telegram::Native::implementation
 
         auto deadline = GetTickCount64() + timeoutMs;
 
-        while (commits->outstanding.load() > inFlight)
+        while (commits->requested - commits->taken.load() > inFlight)
         {
             auto now = GetTickCount64();
             if (now >= deadline || WaitForSingleObject(commits->completed.get(), static_cast<DWORD>(deadline - now)) != WAIT_OBJECT_0)
             {
-                return commits->outstanding.load() <= inFlight;
+                // An empty commit, one at a time, so that lost completions are not waited for
+                // forever: taken, it accounts for them. A compositor that is not committing at all -
+                // a minimized window, a stalled UI thread - leaves it waiting with the rest, and the
+                // gate shut.
+                if (m_compositor && commits->taken.load() >= commits->probe && SendCommit(m_compositor, commits))
+                {
+                    commits->probe = commits->requested;
+                }
+
+                return commits->requested - commits->taken.load() <= inFlight;
             }
         }
 
