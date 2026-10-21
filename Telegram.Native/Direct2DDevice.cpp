@@ -514,42 +514,64 @@ namespace winrt::Telegram::Native::implementation
         return s_commits;
     }
 
-    static bool SendCommit(Compositor const& compositor, std::shared_ptr<CommitState> const& commits)
+    static void TakeCommit(std::shared_ptr<CommitState> const& commits, int64_t sequence)
+    {
+        auto taken = commits->taken.load();
+        while (taken < sequence && !commits->taken.compare_exchange_weak(taken, sequence))
+        {
+        }
+
+        SetEvent(commits->completed.get());
+    }
+
+    static bool SendCommit(Compositor const& compositor, winrt::Windows::System::DispatcherQueue const& queue, std::shared_ptr<CommitState> const& commits)
     {
         auto sequence = ++commits->requested;
 
+        // Asked for on the compositor's own thread, never from this one. From here, each request
+        // wakes the UI thread inside whatever synchronous COM call it is making, and a XAML timer
+        // that runs there under an event handler - LaunchUriAsync in a link's Click - fails fast
+        // in OnReentrancyProtectedWindowMessage. A queued item waits for the message loop.
         try
         {
-            compositor.RequestCommitAsync().Completed([commits, sequence](auto&&, auto&&)
+            if (queue.TryEnqueue([compositor, commits, sequence]
             {
-                auto taken = commits->taken.load();
-                while (taken < sequence && !commits->taken.compare_exchange_weak(taken, sequence))
+                try
                 {
+                    compositor.RequestCommitAsync().Completed([commits, sequence](auto&&, auto&&)
+                    {
+                        TakeCommit(commits, sequence);
+                    });
                 }
-
-                SetEvent(commits->completed.get());
-            });
+                catch (winrt::hresult_error const&)
+                {
+                    // The compositor is going away with its window, and there is nothing left to wait for.
+                    TakeCommit(commits, sequence);
+                }
+            }))
+            {
+                return true;
+            }
         }
         catch (winrt::hresult_error const&)
         {
-            // The compositor is going away with its window, and there is nothing left to wait for.
-            commits->requested--;
-            return false;
         }
 
-        return true;
+        // The thread is shutting down with its window.
+        commits->requested--;
+        return false;
     }
 
     bool Direct2DDevice::RequestCommit()
     {
         auto const& commits = Commits();
 
-        if (m_compositor == nullptr || !commits->completed)
+        if (m_compositor == nullptr || m_commitQueue == nullptr || !commits->completed)
         {
             return false;
         }
 
-        return SendCommit(m_compositor, commits);
+        return SendCommit(m_compositor, m_commitQueue, commits);
     }
 
     bool Direct2DDevice::WaitForCommit(int32_t inFlight, int32_t timeoutMs)
@@ -572,7 +594,7 @@ namespace winrt::Telegram::Native::implementation
                 // forever: taken, it accounts for them. A compositor that is not committing at all -
                 // a minimized window, a stalled UI thread - leaves it waiting with the rest, and the
                 // gate shut.
-                if (m_compositor && commits->taken.load() >= commits->probe && SendCommit(m_compositor, commits))
+                if (m_compositor && m_commitQueue && commits->taken.load() >= commits->probe && SendCommit(m_compositor, m_commitQueue, commits))
                 {
                     commits->probe = commits->requested;
                 }
@@ -1264,6 +1286,7 @@ namespace winrt::Telegram::Native::implementation
         if (m_compositor)
         {
             m_dispatcherQueue = winrt::Windows::System::DispatcherQueue::GetForCurrentThread();
+            m_commitQueue = m_dispatcherQueue;
         }
 
         if (m_dispatcherQueue)

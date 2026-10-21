@@ -285,6 +285,9 @@ private:
 
     Compositor m_compositor{ nullptr };
 
+    // The compositor's thread, where commits are asked for: see request_commit.
+    winrt::Windows::System::DispatcherQueue m_dispatcherQueue{ nullptr };
+
     // Shared with the commit's completion, which can outlive the queue once a wait times out.
     std::shared_ptr<winrt::handle> m_committed = std::make_shared<winrt::handle>(CreateEventW(nullptr, FALSE, FALSE, nullptr));
 
@@ -297,23 +300,35 @@ private:
     // arrive meanwhile replace each other in m_pending_commands.
     void request_commit()
     {
-        if (m_compositor == nullptr || !*m_committed)
+        if (m_compositor == nullptr || m_dispatcherQueue == nullptr || !*m_committed)
         {
             return;
         }
 
+        // On the compositor's thread, never from this one: from here each request wakes the UI
+        // thread inside whatever synchronous COM call it is making, and XAML fails fast when a
+        // timer runs there under an event handler. A queued item waits for the message loop.
         try
         {
-            m_compositor.RequestCommitAsync().Completed([committed = m_committed](auto&&, auto&&)
+            m_awaiting_commit = m_dispatcherQueue.TryEnqueue([compositor = m_compositor, committed = m_committed]
             {
-                SetEvent(committed->get());
+                try
+                {
+                    compositor.RequestCommitAsync().Completed([committed](auto&&, auto&&)
+                    {
+                        SetEvent(committed->get());
+                    });
+                }
+                catch (winrt::hresult_error const&)
+                {
+                    // The compositor is going away with its window, and there is nothing left to wait for.
+                    SetEvent(committed->get());
+                }
             });
-
-            m_awaiting_commit = true;
         }
         catch (winrt::hresult_error const&)
         {
-            // The compositor is going away with its window, and there is nothing left to wait for.
+            // The thread is shutting down with its window.
             m_awaiting_commit = false;
         }
     }
@@ -421,6 +436,9 @@ public:
     {
         auto instance = std::shared_ptr<CompositionRenderQueue>(new CompositionRenderQueue());
         instance->m_compositor = device.Compositor();
+
+        // Created by the first VoipVideoOutput, on the thread that owns the device's compositor.
+        instance->m_dispatcherQueue = winrt::Windows::System::DispatcherQueue::GetForCurrentThread();
         instance->start_thread();
         return instance;
     }
