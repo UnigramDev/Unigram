@@ -800,6 +800,12 @@ namespace Telegram.Controls
 
         public static void ShowFeaturePromo(INavigationService navigationService, string text, PremiumFeature feature)
         {
+            Show(navigationService.XamlRoot, CreatePromoLabel(navigationService, text, feature), ToastPopupIcon.Premium);
+        }
+
+        /// <summary><paramref name="text"/> as a toast's label, its one bold span a link to <paramref name="feature"/>'s promo.</summary>
+        public static TextBlock CreatePromoLabel(INavigationService navigationService, string text, PremiumFeature feature)
+        {
             var label = new TextBlock
             {
                 TextWrapping = TextWrapping.Wrap,
@@ -860,7 +866,7 @@ namespace Telegram.Controls
                 TextBlockHelper.SetFormattedText(label, markdown);
             }
 
-            Show(navigationService.XamlRoot, label, ToastPopupIcon.Premium);
+            return label;
         }
 
         public static async void ShowPromo(INavigationService navigationService, string text, string action, PremiumSource source, PremiumFeature feature = null)
@@ -1103,24 +1109,29 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowActionAsync(XamlRoot xamlRoot, FormattedText text, string action, ToastPopupIcon? icon, ToastPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            AnimatedImage animated = null;
-            if (icon != null)
+            return ShowActionAsync(xamlRoot, text, action, CreateActionIcon(icon), placement, requestedTheme, dismissAfter);
+        }
+
+        /// <summary>The icon of a toast with an action, for an overload that takes it made.</summary>
+        public static AnimatedImage CreateActionIcon(ToastPopupIcon? icon)
+        {
+            if (icon == null)
             {
-                animated = new AnimatedImage
-                {
-                    Source = new LocalFileSource($"ms-appx:///Assets/Toasts/{icon}.tgs"),
-                    Width = 32,
-                    Height = 32,
-                    AutoPlay = true,
-                    LoopCount = 1,
-                    IsCachingEnabled = false,
-                    FrameSize = new Size(32, 32),
-                    DecodeFrameType = DecodePixelType.Logical,
-                    Margin = new Thickness(-4, -12, 8, -12)
-                };
+                return null;
             }
 
-            return ShowActionAsync(xamlRoot, text, action, animated, placement, requestedTheme, dismissAfter);
+            return new AnimatedImage
+            {
+                Source = new LocalFileSource($"ms-appx:///Assets/Toasts/{icon}.tgs"),
+                Width = 32,
+                Height = 32,
+                AutoPlay = true,
+                LoopCount = 1,
+                IsCachingEnabled = false,
+                FrameSize = new Size(32, 32),
+                DecodeFrameType = DecodePixelType.Logical,
+                Margin = new Thickness(-4, -12, 8, -12)
+            };
         }
 
         public static Task<ContentDialogResult> ShowActionAsync(XamlRoot xamlRoot, string text, string action, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)

@@ -755,13 +755,8 @@ namespace Telegram.Controls.RichEditor
                     e.Handled = true;
                     break;
 
-                // HTML pasted this way can become more than text: the host is asked first.
                 case VirtualKey.V when ctrl && shift && !alt:
-                    if (!RaiseRichPaste())
-                    {
-                        Editor?.Paste(true);
-                    }
-
+                    Editor?.Paste(true);
                     e.Handled = true;
                     break;
 
@@ -905,7 +900,7 @@ namespace Telegram.Controls.RichEditor
 
         private async void PasteFormatted()
         {
-            if (await TryLinkSelectionAsync())
+            if (await TryLinkSelectionAsync() || RaiseRichPaste())
             {
                 return;
             }
@@ -962,12 +957,14 @@ namespace Telegram.Controls.RichEditor
             PasteRequested?.Invoke(this, new FormattedTextPasteEventArgs(e.Content));
         }
 
+        // HTML goes to the host first, which the composer offers to open in the rich editor:
+        // anything but a message's own text, unless that came out of a rich message.
         private bool RaiseRichPaste()
         {
             var handler = PasteRequested;
             var content = handler != null ? ClipboardEx.TryGetContent() : null;
 
-            if (content == null || !content.Contains(StandardDataFormats.Html) || content.Contains("application/x-tl-field-tags"))
+            if (content == null || !content.Contains(StandardDataFormats.Html) || (content.Contains("application/x-tl-field-tags") && !content.Contains(RichClipboard.FormatId)))
             {
                 return false;
             }
@@ -977,7 +974,7 @@ namespace Telegram.Controls.RichEditor
             return args.Handled;
         }
 
-        /// <summary>Raised for what the clipboard or a drop holds that is not text (files, bitmaps), and for HTML pasted with Ctrl+Shift+V.</summary>
+        /// <summary>Raised for what the clipboard or a drop holds that is not text (files, bitmaps), and for HTML pasted with Ctrl+V.</summary>
         public event EventHandler<FormattedTextPasteEventArgs> PasteRequested;
 
         private void OnLinkRequested(object sender, EventArgs e)

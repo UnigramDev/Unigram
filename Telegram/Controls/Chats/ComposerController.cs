@@ -11,16 +11,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls.RichEditor;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Chats
@@ -63,6 +66,7 @@ namespace Telegram.Controls.Chats
                 if (_viewModel != value)
                 {
                     CancelInlineBotToken();
+                    CancelOffer();
 
                     _viewModel = value;
                     _isMenuExpanded = false;
@@ -166,6 +170,11 @@ namespace Telegram.Controls.Chats
 
         private void OnContentChanged(object sender, EventArgs e)
         {
+            if (_pendingOffer != null || _shownOffer != null)
+            {
+                UpdateOffer();
+            }
+
             if (_input.IsEmpty)
             {
                 _wasEmpty = true;
@@ -194,29 +203,36 @@ namespace Telegram.Controls.Chats
         // once the clipboard has been read.
         private void OnPasteRequested(object sender, FormattedTextPasteEventArgs e)
         {
-            if (_viewModel == null)
+            var viewModel = _viewModel;
+            if (viewModel == null)
             {
                 return;
             }
 
-            e.Handled = true;
-            Paste(e.Package);
+            var formats = e.Package.AvailableFormats;
+
+            if (formats.Contains(StandardDataFormats.Bitmap) || formats.Contains(StandardDataFormats.StorageItems))
+            {
+                e.Handled = true;
+                PasteMedia(viewModel, e.Package);
+            }
+            else if (formats.Contains(RichClipboard.FormatId))
+            {
+                e.Handled = true;
+                PasteRich(viewModel, e.Package);
+            }
+            else if (formats.Contains(StandardDataFormats.Html))
+            {
+                // The box pastes the text it reads as; all this adds is the offer.
+                OfferRich(viewModel, e.Package);
+            }
         }
 
-        private async void Paste(DataPackageView package)
+        private async void PasteMedia(DialogViewModel viewModel, DataPackageView package)
         {
-            var viewModel = _viewModel;
-
             try
             {
-                if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap) || package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-                {
-                    await viewModel.HandlePackageAsync(package);
-                }
-                else if (!await TryPasteRichAsync(viewModel, package) && package.AvailableFormats.Contains(StandardDataFormats.Text))
-                {
-                    _input.InsertText(await package.GetTextAsync());
-                }
+                await viewModel.HandlePackageAsync(package);
             }
             catch
             {
@@ -225,62 +241,228 @@ namespace Telegram.Controls.Chats
         }
 
         /// <summary>
-        /// The clipboard's HTML: message text whenever it can be said with entities, and the rich
-        /// editor when it can't. Returns false when there is nothing to paste that way, leaving
-        /// the caller to paste it as plain text.
+        /// A copy out of a rich message: its text and entities when a message can say all of it,
+        /// as any message's copy pastes, and otherwise its plain text and the offer to restore
+        /// the rest in the rich editor.
         /// </summary>
-        private async Task<bool> TryPasteRichAsync(DialogViewModel viewModel, DataPackageView package)
+        private async void PasteRich(DialogViewModel viewModel, DataPackageView package)
         {
-            Vector<PageBlock> blocks;
-            bool own;
+            var offer = CreateOffer(viewModel);
 
             try
             {
-                // CF_HTML wraps the markup in a header of byte offsets and a source URL.
-                var fragment = HtmlFormatHelper.GetStaticFragment(await package.GetHtmlFormatAsync());
-                own = RichHtml.IsOwnFragment(fragment);
-                blocks = RichHtml.Parse(fragment);
+                var blocks = await GetRichBlocksAsync(package);
+                if (blocks == null)
+                {
+                    _input.InsertFormattedText(await MessageHelper.PasteTextAsync(package));
+                    return;
+                }
+
+                _input.InsertText(await package.GetTextAsync());
+
+                if (offer != null)
+                {
+                    offer.Blocks = blocks;
+                    Offer(offer);
+                }
             }
             catch
             {
-                return false;
+                // The clipboard changed, or its source went away, while being read.
             }
+        }
 
-            if (blocks.Count == 0)
+        private async void OfferRich(DialogViewModel viewModel, DataPackageView package)
+        {
+            var offer = CreateOffer(viewModel);
+            if (offer != null && await GetRichBlocksAsync(package) is Vector<PageBlock> blocks)
             {
-                return false;
+                offer.Blocks = blocks;
+                Offer(offer);
             }
+        }
 
-            // A <pre> with nothing inside it is what a browser wraps a text/plain
-            // document in — a log, a raw file — so pasting that as a code block is more
-            // often wrong than right. Anything the source marked up itself, a <code>
-            // child or the spans of a highlighter, parses to more than one leaf and
-            // keeps its block.
-            if (!own && blocks.Count == 1 && blocks[0] is PageBlockPreformatted { Text: RichTextPlain, Language.Length: 0 })
+        /// <summary>The clipboard's HTML as page blocks when it says more than a message's text and entities can; null otherwise.</summary>
+        private static async Task<Vector<PageBlock>> GetRichBlocksAsync(DataPackageView package)
+        {
+            try
             {
-                return false;
-            }
+                // CF_HTML wraps the markup in a header of byte offsets and a source URL.
+                var blocks = RichHtml.Parse(HtmlFormatHelper.GetStaticFragment(await package.GetHtmlFormatAsync()));
 
-            // Everything a message can say: an ordinary formatted paste, entities and all.
-            if (PageBlockHelper.TryGetFormattedText(new RichMessage(blocks, false, true), out FormattedText text))
+                if (blocks.Count > 0 && !PageBlockHelper.TryGetFormattedText(new RichMessage(blocks, false, true), out _))
+                {
+                    return blocks;
+                }
+            }
+            catch
             {
-                _input.InsertFormattedText(text);
-                return true;
+                // The clipboard changed, or its source went away, while being read.
             }
 
-            // Beyond that only our own content is worth a trip to the editor:
-            // since this is gated behind a different shortcut it's fine, but only for premium users
-            if (!own && !viewModel.IsPremium)
+            return null;
+        }
+
+        // =====================================================================================
+        // Rich paste offer
+        // =====================================================================================
+
+        private sealed class RichPasteOffer
+        {
+            public RichPasteOffer(DialogViewModel viewModel, string text, FormattedText was, FormattedText before, FormattedText after)
             {
-                return false;
+                ViewModel = viewModel;
+                Text = text;
+                Was = was;
+                Before = before;
+                After = after;
             }
 
-            // What the field already held is split around the paste — the selection is
-            // replaced, as any paste would.
+            public DialogViewModel ViewModel { get; }
+
+            /// <summary>The field's text before the paste, and the same with its formatting, markdown unparsed.</summary>
+            public string Text { get; }
+
+            public FormattedText Was { get; }
+
+            /// <summary>The field around the selection the paste replaced, as the editor gets it.</summary>
+            public FormattedText Before { get; }
+
+            public FormattedText After { get; }
+
+            public Vector<PageBlock> Blocks { get; set; }
+
+            /// <summary>The field's text once the paste landed; anything else and the toast goes.</summary>
+            public string Pasted { get; set; }
+
+            public ulong Expires { get; set; }
+
+            public CancellationTokenSource Cancellation { get; } = new CancellationTokenSource();
+        }
+
+        // As TDesktop has it: on screen for 9 seconds, and offered at most once in 30.
+        private const int OfferDuration = 9;
+        private const ulong OfferInterval = 30000;
+
+        private ulong _lastOffer;
+        private RichPasteOffer _pendingOffer;
+        private RichPasteOffer _shownOffer;
+
+        private bool IsOfferThrottled => _lastOffer != 0 && Logger.TickCount - _lastOffer < OfferInterval;
+
+        // Taken before the paste lands: the offer, taken up, puts the field back as it was.
+        private RichPasteOffer CreateOffer(DialogViewModel viewModel)
+        {
+            // The editor sends a new message, so an edit stays in the field.
+            if (viewModel.ComposerHeader?.Editing != null || IsOfferThrottled)
+            {
+                return null;
+            }
+
+            if (!viewModel.IsPremium && (!viewModel.IsPremiumAvailable || viewModel.Settings.HideRichPasteToast))
+            {
+                return null;
+            }
+
             _input.SplitAtSelection(out FormattedText before, out FormattedText after);
-            viewModel.PasteRichMessage(before, blocks, after);
+            return new RichPasteOffer(viewModel, _input.Text, _input.GetFormattedText(false, false), before, after);
+        }
 
-            return true;
+        // The box reads the clipboard as this does, so its paste may not have landed yet: the
+        // offer then waits for it, though not for long, in case the paste changed nothing.
+        private void Offer(RichPasteOffer offer)
+        {
+            if (_input.Text == offer.Text)
+            {
+                offer.Expires = Logger.TickCount + 2000;
+                _pendingOffer = offer;
+            }
+            else
+            {
+                ShowOffer(offer);
+            }
+        }
+
+        private void UpdateOffer()
+        {
+            if (_pendingOffer is RichPasteOffer pending)
+            {
+                _pendingOffer = null;
+
+                if (Logger.TickCount < pending.Expires)
+                {
+                    ShowOffer(pending);
+                }
+            }
+            else if (_shownOffer is RichPasteOffer shown && _input.Text != shown.Pasted)
+            {
+                shown.Cancellation.Cancel();
+            }
+        }
+
+        private void CancelOffer()
+        {
+            _pendingOffer = null;
+            _shownOffer?.Cancellation.Cancel();
+        }
+
+        private async void ShowOffer(RichPasteOffer offer)
+        {
+            var viewModel = _viewModel;
+            if (viewModel != offer.ViewModel || IsOfferThrottled)
+            {
+                return;
+            }
+
+            _lastOffer = Logger.TickCount;
+            _shownOffer = offer;
+            offer.Pasted = _input.Text;
+
+            var locked = !viewModel.IsPremium;
+
+            TextBlock label;
+            if (locked)
+            {
+                label = ToastPopup.CreatePromoLabel(viewModel.NavigationService, Strings.RichPasteToastPremium, new PremiumFeatureRichMessages());
+            }
+            else
+            {
+                label = new TextBlock { TextWrapping = TextWrapping.Wrap };
+                label.Inlines.Add(new Run { Text = Strings.RichPasteToastEditor });
+            }
+
+            label.Inlines.Insert(0, new LineBreak());
+            label.Inlines.Insert(0, new Run { Text = Strings.RichPasteToast, FontWeight = FontWeights.SemiBold });
+
+            var icon = locked ? ToastPopup.CreateActionIcon(ToastPopupIcon.Premium) : null;
+            var confirm = await ToastPopup.ShowActionAsync(_element.XamlRoot, label, locked ? Strings.GotIt : Strings.Open, icon, ToastPlacementMode.Center,
+                dismissAfter: TimeSpan.FromSeconds(OfferDuration), cancellationToken: offer.Cancellation.Token);
+
+            if (_shownOffer == offer)
+            {
+                _shownOffer = null;
+            }
+
+            offer.Cancellation.Dispose();
+
+            if (confirm != ContentDialogResult.Primary || _viewModel != viewModel)
+            {
+                return;
+            }
+
+            if (locked)
+            {
+                viewModel.Settings.HideRichPasteToast = true;
+                return;
+            }
+
+            // The toast closes on any change, but the field may have been set from outside.
+            if (_input.Text == offer.Pasted)
+            {
+                _input.SetText(offer.Was);
+            }
+
+            viewModel.PasteRichMessage(offer.Before, offer.Blocks, offer.After);
         }
 
         // =====================================================================================

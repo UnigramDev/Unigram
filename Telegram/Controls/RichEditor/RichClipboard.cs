@@ -327,17 +327,12 @@ namespace Telegram.Controls.RichEditor
         /// <summary>
         /// The document as HTML: what other applications paste, and - through
         /// <see cref="RichHtml"/>, which reads exactly this markup - what the chat composer
-        /// recognises as copied out of this app. Media writes nothing; its file cannot travel.
+        /// opens in the rich editor. Media writes nothing; its file cannot travel.
         /// </summary>
         public static string ToHtml(RichDocument document)
         {
             var html = new StringBuilder();
-
-            // The origin mark RichHtml.IsOwnFragment looks for, on a wrapper RichHtml reads
-            // through to the blocks inside it.
-            html.Append("<div ").Append(RichHtml.OriginAttribute).Append("=\"1\">");
             WriteBlocks(document.Blocks, html);
-            html.Append("</div>");
 
             return html.ToString();
         }

@@ -25,6 +25,7 @@ namespace Telegram.Services
         VideoSettings Video { get; }
 
         bool HideArchivedChats { get; set; }
+        bool HideRichPasteToast { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
         int LastMessageTtl { get; set; }
 
@@ -83,6 +84,13 @@ namespace Telegram.Services
         {
             get => _hideArchivedChats ??= GetValueOrDefault("HideArchivedChats", false);
             set => AddOrUpdateValue(ref _hideArchivedChats, "HideArchivedChats", value);
+        }
+
+        private bool? _hideRichPasteToast;
+        public bool HideRichPasteToast
+        {
+            get => _hideRichPasteToast ??= GetValueOrDefault("HideRichPasteToast", false);
+            set => AddOrUpdateValue(ref _hideRichPasteToast, "HideRichPasteToast", value);
         }
 
         private RecentEmojiSettings _recentEmoji;

@@ -124,8 +124,8 @@ namespace Telegram.Controls
         event EventHandler Submitted;
 
         /// <summary>
-        /// Raised for a paste the box will not take as text: files, pictures, and HTML pasted
-        /// with Ctrl+Shift+V. Left unhandled, the box pastes what text there is.
+        /// Raised for a paste the box will not take as text, files and pictures, and for HTML
+        /// pasted with Ctrl+V. Left unhandled, the box pastes what text there is.
         /// </summary>
         event EventHandler<FormattedTextPasteEventArgs> PasteRequested;
     }

@@ -14434,6 +14434,12 @@
         the Android string once it ships, and remove this block.-->
     <string name="WalletCardFull">You can add up to {0} collectibles to your card.</string>
 
+    <!--NOT FINAL: the toast offering the rich editor for a structured paste, in TDesktop's wording
+        (lng_rich_paste_toast*). Replace with the Android strings once they ship, and remove this block.-->
+    <string name="RichPasteToast">Pasted as plain text</string>
+    <string name="RichPasteToastEditor">Restore formatting in editor</string>
+    <string name="RichPasteToastPremium">**Subscribe to Premium** to preserve formatting when pasting.</string>
+
 
   <!-- new from translations.telegram.org -->
 

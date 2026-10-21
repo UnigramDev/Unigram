@@ -33,23 +33,6 @@ namespace Telegram.Common
     public static class RichHtml
     {
         /// <summary>
-        /// The attribute the rich editor stamps on the wrapper of everything it copies
-        /// (<see cref="Telegram.Controls.RichEditor.RichClipboard.ToHtml"/>).
-        /// </summary>
-        public const string OriginAttribute = "data-telegram-rich";
-
-        /// <summary>
-        /// Whether this fragment was copied out of this app. Foreign HTML — a web page,
-        /// a document — still becomes message text when it can be said with entities, but
-        /// it never reopens the rich editor: that is a separate window and a paid feature,
-        /// and nobody expects one because they copied a heading.
-        /// </summary>
-        public static bool IsOwnFragment(string html)
-        {
-            return html != null && html.IndexOf(OriginAttribute, StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
-        /// <summary>
         /// Parses an HTML fragment into page blocks. Returns an empty list when there is
         /// nothing to paste — the caller decides what an empty paste means.
         /// </summary>
