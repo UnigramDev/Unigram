@@ -1299,7 +1299,7 @@ namespace Telegram.Controls.Messages
                             ? Color.FromArgb(0xFF, 0x65, 0x60, 0xF6)
                             : Color.FromArgb(0xFF, 0x75, 0xC8, 0x73);
 
-                        MemberTag.Background = new SolidColorBrush(color) { Opacity = 0.2 };
+                        MemberTag.Background = new SolidColorBrush(color) { Opacity = 0.15 };
                         MemberTag.Foreground = new SolidColorBrush(color.Darken());
                     }
                     else
