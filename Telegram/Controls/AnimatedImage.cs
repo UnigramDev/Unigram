@@ -1482,10 +1482,11 @@ namespace Telegram.Controls
                 _surfaceShown = true;
             }
 
-            if (_prevPosition?.Position != _nextPosition && PositionChanged != null)
+            var position = Volatile.Read(ref _nextPosition);
+            if (_prevPosition?.Position != position && PositionChanged != null)
             {
                 _prevPosition ??= new AnimatedImagePositionChangedEventArgs();
-                _prevPosition.Position = _nextPosition;
+                _prevPosition.Position = position;
 
                 PositionChanged.Invoke(this, _prevPosition);
             }
@@ -1810,7 +1811,14 @@ namespace Telegram.Controls
                 return false;
             }
 
-            var state = task.Render(frame, time, out _nextPosition);
+            // Into a local: the UI thread reads _nextPosition, and every task zeroes its out
+            // parameter on entry, so a Skip would publish position 0 between two real frames.
+            var state = task.Render(frame, time, out double position);
+            if (state != AnimatedImageTaskState.Skip)
+            {
+                Volatile.Write(ref _nextPosition, position);
+            }
+
             if (state == AnimatedImageTaskState.Stop)
             {
                 _ticking = false;
