@@ -434,7 +434,8 @@ namespace Telegram.ViewModels
 
                 if (value?.Document?.DocumentValue.Id != _item.Document?.DocumentValue.Id && ((value != null && _item?.Type is BackgroundTypeFill) || _item?.Type is BackgroundTypePattern))
                 {
-                    if (value == null)
+                    // The first entry in Patterns is the "no pattern" one, with no document.
+                    if (value?.Document == null)
                     {
                         Item = new Background(0, false, Item.IsDark, Item.Name, null, new BackgroundTypeFill(GetFill()));
                     }
