@@ -5006,6 +5006,216 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:TopNavViewIconItem">
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="FontFamily"
+                Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="MinHeight"
+                Value="0" />
+        <Setter Property="MinWidth"
+                Value="0" />
+        <Setter Property="Padding"
+                Value="16,1,16,6" />
+        <Setter Property="BorderThickness"
+                Value="4,4,4,4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:TopNavViewIconItem">
+                    <Grid x:Name="ContentBorder"
+                          Background="Transparent"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="ContentBorderScale" />
+                        </Grid.RenderTransform>
+                        <VisualStateManager.CustomVisualStateManager>
+                            <local:TopNavViewItemManager />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground"
+                                                Value="{ThemeResource AccentButtonBackground}" />
+                                        <Setter Target="Icon.Foreground"
+                                                Value="{ThemeResource AccentButtonBackground}" />
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Selected" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOverSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground"
+                                                Value="{ThemeResource AccentButtonBackground}" />
+                                        <Setter Target="Icon.Foreground"
+                                                Value="{ThemeResource AccentButtonBackground}" />
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Selected" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PressedSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground"
+                                                Value="{ThemeResource AccentButtonBackground}" />
+                                        <Setter Target="Icon.Foreground"
+                                                Value="{ThemeResource AccentButtonBackground}" />
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Selected" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ReorderHintStates">
+                                <VisualState x:Name="NoReorderHint" />
+                                <VisualState x:Name="BottomReorderHint">
+                                    <Storyboard>
+                                        <DragOverThemeAnimation TargetName="ContentBorder"
+                                                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                Direction="Bottom" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="TopReorderHint">
+                                    <Storyboard>
+                                        <DragOverThemeAnimation TargetName="ContentBorder"
+                                                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                Direction="Top" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="RightReorderHint">
+                                    <Storyboard>
+                                        <DragOverThemeAnimation TargetName="ContentBorder"
+                                                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                Direction="Right" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="LeftReorderHint">
+                                    <Storyboard>
+                                        <DragOverThemeAnimation TargetName="ContentBorder"
+                                                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                Direction="Left" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition To="NoReorderHint"
+                                                      GeneratedDuration="0:0:0.2" />
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DragStates">
+                                <VisualState x:Name="NotDragging" />
+                                <VisualState x:Name="Dragging">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="{ThemeResource ListViewItemDragThemeOpacity}" />
+                                        <DragItemThemeAnimation TargetName="ContentBorder" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DraggingTarget" />
+                                <VisualState x:Name="MultipleDraggingPrimary" />
+                                <VisualState x:Name="MultipleDraggingSecondary" />
+                                <VisualState x:Name="DraggedPlaceholder" />
+                                <VisualState x:Name="Reordering">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0.240"
+                                                         To="{ThemeResource ListViewItemReorderThemeOpacity}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ReorderingTarget">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0.240"
+                                                         To="{ThemeResource ListViewItemReorderTargetThemeOpacity}" />
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorderScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         Duration="0:0:0.240"
+                                                         To="{ThemeResource ListViewItemReorderTargetThemeScale}" />
+                                        <DoubleAnimation Storyboard.TargetName="ContentBorderScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         Duration="0:0:0.240"
+                                                         To="{ThemeResource ListViewItemReorderTargetThemeScale}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MultipleReorderingPrimary" />
+                                <VisualState x:Name="ReorderedPlaceholder">
+                                    <Storyboard>
+                                        <FadeOutThemeAnimation TargetName="ContentBorder" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="DragOver">
+                                    <Storyboard>
+                                        <DropTargetItemThemeAnimation TargetName="ContentBorder" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition To="NotDragging"
+                                                      GeneratedDuration="0:0:0.2" />
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <muxc:AnimatedIcon x:Name="Icon"
+                                           muxc:AnimatedIcon.State="Normal"
+                                           Source="{TemplateBinding IconSource}"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Margin="0,4,0,-4"
+                                           Width="20"
+                                           Height="20" />
+
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          Grid.Column="1"
+                                          Margin="{TemplateBinding Padding}"
+                                          TextWrapping="NoWrap"
+                                          FontWeight="SemiBold"
+                                          FontSize="12"
+                                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                          VerticalAlignment="Center"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          Canvas.ZIndex="1"
+                                          Grid.Row="1" />
+                        <Grid x:Name="SelectionIndicatorGrid"
+                              Margin="{TemplateBinding BorderThickness}"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center"
+                              Height="40"
+                              Opacity="0.15"
+                              Grid.RowSpan="2">
+                            <Rectangle x:Name="SelectionIndicator"
+                                       Fill="{ThemeResource AccentButtonBackground}"
+                                       Opacity="0"
+                                       RadiusX="20"
+                                       RadiusY="20" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:HeaderedControl">
         <!--<Setter Property="CornerRadius"
                 Value="4" />-->

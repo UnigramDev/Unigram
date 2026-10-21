@@ -8,7 +8,6 @@
                  mc:Ignorable="d"
                  d:DesignHeight="300"
                  d:DesignWidth="400"
-                 Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                  MinHeight="40"
                  HorizontalContentAlignment="Stretch"
                  VerticalContentAlignment="Stretch"
@@ -16,7 +15,7 @@
                  VerticalAlignment="Top"
                  BorderThickness="0"
                  Padding="0"
-                 Margin="0">
+                 Margin="0,0,0,8">
 
     <HyperlinkButton.Template>
         <ControlTemplate TargetType="HyperlinkButton">
@@ -43,6 +42,16 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Border x:Name="CardShadow"
+                CornerRadius="20"
+                Grid.ColumnSpan="4" />
+        <Border x:Name="CardBackground"
+                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="20"
+                Grid.ColumnSpan="4" />
+
         <local:DownloadsIndicator x:Name="Icon"
                                   Width="40" />
 
@@ -58,6 +67,7 @@
                    TextWrapping="NoWrap"
                    Typography.NumeralAlignment="Tabular"
                    VerticalAlignment="Center"
+                   Margin="0,0,12,0"
                    Grid.Column="2" />
     </Grid>
 </HyperlinkButton>

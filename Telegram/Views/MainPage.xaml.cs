@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Services.Updates;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -40,6 +42,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -71,6 +74,8 @@ namespace Telegram.Views
         private bool _memorySettling;
 
         private bool _unloaded;
+
+        private readonly ThemeShadowEx _navigationShadow;
 
         public MainPage()
         {
@@ -108,6 +113,8 @@ namespace Telegram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(DialogsPanel, true);
+
+            _navigationShadow = new ThemeShadowEx(Navigation, 16);
 
             if (AppSettings.Diagnostics.ShowMemoryUsage)
             {
@@ -1142,24 +1149,30 @@ namespace Telegram.Views
                 return;
             }
 
-            if (index == 0)
+            if (index == INDEX_CHATS)
             {
                 SettingsRoot?.Visibility = Visibility.Collapsed;
 
-                Show(ChatsRoot, _prevIndex > index, 0);
+                Show(ChatsRoot, _prevIndex > index, index);
             }
-            else if (index == 1)
+            else if (index == INDEX_SETTINGS)
             {
                 ChatsRoot.Visibility = Visibility.Collapsed;
 
                 if (SettingsRoot != null)
                 {
                     SettingsView.UpdateAccounts();
+                    Show(SettingsRoot, _prevIndex > index, index);
+                }
+                else
+                {
+                    Pivot_SelectionChanged(index);
+                    return;
                 }
             }
 
             _prevIndex = index;
-            Pivot_SelectionChanged(null, null);
+            Pivot_SelectionChanged(index);
         }
 
         private void Show(UIElement element, bool leftToRight, int index)
@@ -1196,7 +1209,9 @@ namespace Telegram.Views
         private void SettingsRoot_Loaded(object sender, RoutedEventArgs e)
         {
             SettingsRoot.Loaded -= SettingsRoot_Loaded;
-            Show(SettingsRoot, _prevIndex > 1, 1);
+            Show(SettingsRoot, _prevIndex > INDEX_SETTINGS, INDEX_SETTINGS);
+
+            _prevIndex = INDEX_SETTINGS;
         }
 
         private void UpdateUser(User user)
@@ -2259,11 +2274,11 @@ namespace Telegram.Views
             }
         }
 
-        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Pivot_SelectionChanged(int index)
         {
-            MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && _prevIndex == INDEX_CHATS;
+            MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && index == INDEX_CHATS;
 
-            switch (_prevIndex)
+            switch (index)
             {
                 case INDEX_CHATS:
                     Root?.SetSelectedIndex(RootDestination.Chats);
@@ -2293,7 +2308,7 @@ namespace Telegram.Views
 
             SearchReset();
 
-            if (_prevIndex != INDEX_CHATS)
+            if (index != INDEX_CHATS)
             {
                 Stories.Collapse();
                 ViewModel.IsSettingsSelected = true;
@@ -2554,6 +2569,10 @@ namespace Telegram.Views
                 {
                     MasterDetail.NavigationService.GoBackAt(0);
                 }
+
+                Navigation.SelectionChanged -= Navigation_SelectionChanged;
+                Navigation.SelectedIndex = index;
+                Navigation.SelectionChanged += Navigation_SelectionChanged;
             }
         }
 
@@ -4091,6 +4110,11 @@ namespace Telegram.Views
             LogoEmoji = null;
         }
 
+        private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetPivotSelectedIndex(Navigation.SelectedIndex);
+        }
+
         private void ChatFolders_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem == ViewModel.SelectedFolder)
@@ -4098,6 +4122,32 @@ namespace Telegram.Views
                 var scrollViewer = ChatsList.GetScrollViewer();
                 scrollViewer?.TryChangeView(null, 0, null);
             }
+        }
+    }
+
+    public class MainNavigationItem
+    {
+        public string Text { get; set; }
+
+        public override string ToString()
+        {
+            return Text;
+        }
+    }
+
+    public class MainNavigationItemChats : MainNavigationItem
+    {
+        public MainNavigationItemChats()
+        {
+            Text = Strings.FilterChats;
+        }
+    }
+
+    public class MainNavigationItemSettings : MainNavigationItem
+    {
+        public MainNavigationItemSettings()
+        {
+            Text = Strings.Settings;
         }
     }
 }

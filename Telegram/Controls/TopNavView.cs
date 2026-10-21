@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
 using System.Numerics;
@@ -385,10 +386,32 @@ namespace Telegram.Controls
             if (!fromCache)
             {
                 SelectionIndicator ??= GetTemplateChild(nameof(SelectionIndicator)) as UIElement;
+                SelectionIndicator?.IsHitTestVisible = false;
             }
 
             return SelectionIndicator;
         }
+    }
+
+    public partial class TopNavViewIconItem : TopNavViewItem
+    {
+        public TopNavViewIconItem()
+        {
+            DefaultStyleKey = typeof(TopNavViewIconItem);
+        }
+
+        #region IconSource
+
+        public IAnimatedVisualSource2 IconSource
+        {
+            get { return (IAnimatedVisualSource2)GetValue(IconSourceProperty); }
+            set { SetValue(IconSourceProperty, value); }
+        }
+
+        public static readonly DependencyProperty IconSourceProperty =
+            DependencyProperty.Register("IconSource", typeof(IAnimatedVisualSource2), typeof(TopNavViewIconItem), new PropertyMetadata(null));
+
+        #endregion
     }
 
     public partial class TopNavViewItemManager : VisualStateManager

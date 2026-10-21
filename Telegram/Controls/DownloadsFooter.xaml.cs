@@ -19,10 +19,14 @@ namespace Telegram.Controls
 {
     public sealed partial class DownloadsFooter : HyperlinkButton
     {
+        private readonly ThemeShadowEx _shadow;
+
         public DownloadsFooter()
         {
             InitializeComponent();
             ElementCompositionPreview.SetIsTranslationEnabled(this, true);
+
+            _shadow = new ThemeShadowEx(CardShadow, 32);
         }
 
         public void UpdateFileDownloads(UpdateFileDownloads update)

@@ -12,6 +12,7 @@
                    xmlns:local="using:Telegram.Views"
                    xmlns:navigation="using:Telegram.Navigation.Services"
                    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
+                   xmlns:icons="using:Telegram.Assets.Icons"
                    mc:Ignorable="d"
                    Loaded="OnLoaded"
                    Unloaded="OnUnloaded">
@@ -728,6 +729,7 @@
                                                        CanDragItems="True"
                                                        CanReorderItems="False"
                                                        Orientation="Vertical"
+                                                       Padding="0,0,0,62"
                                                        Grid.RowSpan="2">
                                 <ListView.Header>
                                     <StackPanel>
@@ -829,13 +831,6 @@
 
                             </Grid>
                         </Grid>
-
-                        <controls:DownloadsFooter x:Name="Downloads"
-                                                  x:Load="False"
-                                                  Click="Downloads_Click"
-                                                  VerticalAlignment="Bottom"
-                                                  Visibility="Collapsed"
-                                                  Grid.Row="1" />
 
                         <Grid VerticalAlignment="Bottom"
                               HorizontalAlignment="Center"
@@ -957,6 +952,55 @@
 
                     <local:SettingsPage x:Name="SettingsView" />
                 </Grid>
+
+                <StackPanel VerticalAlignment="Bottom"
+                            MaxWidth="1000"
+                            Margin="24,8"
+                            Grid.RowSpan="2"
+                            Canvas.ZIndex="1">
+                    <controls:DownloadsFooter x:Name="Downloads"
+                                              x:Load="False"
+                                              Click="Downloads_Click"
+                                              HorizontalAlignment="Center"
+                                              Visibility="Collapsed" />
+
+                    <controls:TopNavView x:Name="Navigation"
+                                         SelectedIndex="0"
+                                         SelectionChanged="Navigation_SelectionChanged"
+                                         HorizontalAlignment="Center"
+                                         Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                         BorderThickness="1"
+                                         CornerRadius="24"
+                                         Height="48"
+                                         Padding="0,0,8,0">
+                        <controls:TopNavView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,0,0" />
+                            </ItemsPanelTemplate>
+                        </controls:TopNavView.ItemsPanel>
+                        <controls:TopNavViewIconItem CornerRadius="24"
+                                                     MinWidth="64">
+                            <controls:TopNavViewIconItem.Content>
+                                <local:MainNavigationItemChats />
+                            </controls:TopNavViewIconItem.Content>
+                            <controls:TopNavViewIconItem.IconSource>
+                                <icons:TabChats />
+                            </controls:TopNavViewIconItem.IconSource>
+                        </controls:TopNavViewIconItem>
+                        <controls:TopNavViewIconItem Content="{CustomResource Settings}"
+                                                     CornerRadius="24"
+                                                     MinWidth="64">
+                            <controls:TopNavViewIconItem.Content>
+                                <local:MainNavigationItemSettings />
+                            </controls:TopNavViewIconItem.Content>
+                            <controls:TopNavViewIconItem.IconSource>
+                                <icons:TabSettings />
+                            </controls:TopNavViewIconItem.IconSource>
+                        </controls:TopNavViewIconItem>
+                    </controls:TopNavView>
+                </StackPanel>
 
                 <stories:StoriesStrip x:Name="Stories"
                                       Expanding="Stories_Expanding"
