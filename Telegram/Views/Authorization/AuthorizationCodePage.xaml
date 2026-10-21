@@ -64,10 +64,11 @@
                     HorizontalAlignment="Stretch"
                     Margin="0,4,0,8" />
 
-            <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
-                             Visibility="{x:Bind ViewModel.CodeInfo.NextType, Converter={StaticResource NullToVisibilityConverter}}"
-                             Content="{CustomResource DidNotGetTheCode}"
-                             HorizontalAlignment="Center" />
+            <Button Command="{x:Bind ViewModel.ResendCommand}"
+                    Visibility="{x:Bind ViewModel.CodeInfo.NextType, Converter={StaticResource NullToVisibilityConverter}}"
+                    Content="{CustomResource DidNotGetTheCode}"
+                    Style="{StaticResource AccentTextButtonStyle}"
+                    HorizontalAlignment="Center" />
         </StackPanel>
 
         <controls:VersionLabel VerticalAlignment="Bottom"
