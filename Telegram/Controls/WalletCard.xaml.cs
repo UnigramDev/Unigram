@@ -1132,12 +1132,10 @@ namespace Telegram.Controls
 
         // The whole motion, one progress driving three curves: the slide out of the slot over its
         // first 40%, and from 30% a spring for the turn and the flight, and an ease for the slot's
-        // edge rising out of the way. Longer than on a phone, because on a desktop the card comes
-        // out of a wider slot and flies further.
-        private const float EjectSeconds = 1.0f;
+        // edge rising out of the way. The beta's 650 ms.
+        private const float EjectSeconds = 0.65f;
 
-        // Putting it back runs the same curves backwards, in the beta's own 380 ms: unlike the
-        // way out, not lengthened for the desktop, since nobody waits for something closing.
+        // Putting it back runs the same curves backwards, in the beta's 380 ms.
         private const float InsertSeconds = 0.38f;
 
         // The tilt about the slot line while the card comes out, in degrees: what makes it a
