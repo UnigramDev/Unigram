@@ -90,6 +90,7 @@ namespace Telegram.Controls
         private Image ImageViewer;
         private FrameworkElement PanSurface;
         private Path Clip;
+        private Grid RectangleGrid;
         private Grid ThumbsContainer;
         private UIElement MajorGrid;
         private UIElement MinorGrid;
@@ -179,6 +180,7 @@ namespace Telegram.Controls
             ImageThumb = GetTemplateChild(nameof(ImageThumb)) as FrameworkElement;
             ImageViewer = GetTemplateChild(nameof(ImageViewer)) as Image;
             PanSurface = GetTemplateChild(nameof(PanSurface)) as FrameworkElement;
+            RectangleGrid = GetTemplateChild(nameof(RectangleGrid)) as Grid;
             ThumbsContainer = GetTemplateChild(nameof(ThumbsContainer)) as Grid;
             MajorGrid = GetTemplateChild(nameof(MajorGrid)) as UIElement;
             MinorGrid = GetTemplateChild(nameof(MinorGrid)) as UIElement;
@@ -1833,6 +1835,8 @@ namespace Telegram.Controls
             {
                 thumb.Visibility = m_frame ? Visibility.Collapsed : Visibility.Visible;
             }
+
+            RectangleGrid.Visibility = m_frame ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion
