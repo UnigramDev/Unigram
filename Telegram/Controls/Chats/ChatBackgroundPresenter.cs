@@ -97,6 +97,7 @@ namespace Telegram.Controls.Chats
             // Drops a pattern still drawing, and makes the reload draw it again.
             _patternRequest++;
             _patternLoading = false;
+            _pattern?.Dispose();
             _pattern = null;
             _patternPath = null;
             _wallpaperPath = null;
@@ -230,6 +231,7 @@ namespace Telegram.Controls.Chats
                 _intensity = 1;
                 _backgroundFill = typeFill.Fill;
 
+                _pattern?.Dispose();
                 _pattern = null;
                 _patternPath = null;
                 _wallpaperPath = null;
@@ -299,6 +301,7 @@ namespace Telegram.Controls.Chats
                 _intensity = 1;
                 _backgroundFill = null;
 
+                _pattern?.Dispose();
                 _pattern = null;
                 _patternPath = null;
 
@@ -507,6 +510,7 @@ namespace Telegram.Controls.Chats
                 // A newer request owns _patternLoading, and will show its own result.
                 if (request != _patternRequest)
                 {
+                    loaded?.Dispose();
                     return;
                 }
 
@@ -516,9 +520,11 @@ namespace Telegram.Controls.Chats
                 {
                     // Otherwise returning to this file would take _pattern, a different one, as its render.
                     _patternPath = null;
+                    loaded?.Dispose();
                     return;
                 }
 
+                _pattern?.Dispose();
                 _pattern = loaded;
 
                 void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
