@@ -2288,6 +2288,7 @@ namespace Telegram.Views.Popups
         }
 
         private bool _backButtonCollapsed = true;
+        private CompositionScopedBatch _backButtonBatch;
 
         private void ShowHideBackButton(bool show)
         {
@@ -2297,42 +2298,93 @@ namespace Telegram.Views.Popups
             }
 
             _backButtonCollapsed = !show;
+
+            var width = (float)(BackButton.Width + BackButton.Margin.Left + BackButton.Margin.Right);
+            var fullWidth = SearchField.ActualSize.X + (float)SearchField.Margin.Left;
+            var newWidth = show ? fullWidth - width : fullWidth;
+
+            SearchField.Margin = new Thickness(show ? width : 0, 0, 0, 0);
             BackButton.Visibility = Visibility.Visible;
 
-            ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
+            var field = ElementComposition.GetElementVisual(SearchField);
+            var border = SearchField.GetChild<Border>(x => x.Name == "BorderElement");
 
-            var visual1 = ElementComposition.GetElementVisual(BackButton);
-            var visual2 = ElementComposition.GetElementVisual(Title);
-
-            var batch = visual1.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
+            if (border == null || SearchField.ActualSize.X == 0 || newWidth <= 0)
             {
-                visual2.Properties.InsertVector3("Translation", Vector3.Zero);
+                _backButtonBatch = null;
+
                 BackButton.Visibility = show
                     ? Visibility.Visible
                     : Visibility.Collapsed;
-            };
+                return;
+            }
 
-            var offset = visual1.Compositor.CreateScalarKeyFrameAnimation();
-            offset.InsertKeyFrame(0, show ? -28 : 0);
-            offset.InsertKeyFrame(1, show ? 0 : -28);
+            ElementCompositionPreview.SetIsTranslationEnabled(SearchField, true);
+
+            var compositor = field.Compositor;
+            var background = ElementComposition.GetElementVisual(border);
+            var button = ElementComposition.GetElementVisual(BackButton);
+
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += ShowHideBackButton_Completed;
+
+            _backButtonBatch = batch;
+
+            // The field takes its new size at once and slides in from where it was. Its border, scaled
+            // from the left by 1 - translation / width, keeps the right edge fixed only while both
+            // animations share the same duration and easing.
+            var from = show ? -width : width;
+
+            var offset = compositor.CreateScalarKeyFrameAnimation();
+            offset.InsertKeyFrame(0, from);
+            offset.InsertKeyFrame(1, 0);
             offset.Duration = Constants.FastAnimation;
 
-            var scale = visual1.Compositor.CreateVector3KeyFrameAnimation();
+            var stretch = compositor.CreateScalarKeyFrameAnimation();
+            stretch.InsertKeyFrame(0, 1 - from / newWidth);
+            stretch.InsertKeyFrame(1, 1);
+            stretch.Duration = Constants.FastAnimation;
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
             scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
             scale.Duration = Constants.FastAnimation;
 
-            var opacity = visual1.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(show ? 0 : 1, 0);
             opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity.Duration = Constants.FastAnimation;
 
-            visual1.CenterPoint = new Vector3(24);
+            button.CenterPoint = new Vector3(BackButton.ActualSize / 2, 0);
 
-            visual2.StartAnimation("Translation.X", offset);
-            visual1.StartAnimation("Scale", scale);
-            visual1.StartAnimation("Opacity", opacity);
+            background.CenterPoint = Vector3.Zero;
+
+            field.StartAnimation("Translation.X", offset);
+            background.StartAnimation("Scale.X", stretch);
+            button.StartAnimation("Scale", scale);
+            button.StartAnimation("Opacity", opacity);
+
             batch.End();
+        }
+
+        private void ShowHideBackButton_Completed(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (sender is CompositionScopedBatch batch)
+            {
+                batch.Completed -= ShowHideBackButton_Completed;
+            }
+
+            // An interrupted batch completes after its replacement has started, and must not reset it.
+            if (sender != _backButtonBatch)
+            {
+                return;
+            }
+
+            _backButtonBatch = null;
+
+            BackButton.Visibility = _backButtonCollapsed
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
     }
 }
