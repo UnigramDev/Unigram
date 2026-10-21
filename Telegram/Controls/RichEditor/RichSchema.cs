@@ -170,6 +170,12 @@ namespace Telegram.Controls.RichEditor
 
                     foreach (var row in table.Rows)
                     {
+                        // A copy keeps the rows outside the selection, emptied.
+                        if (row.TrueForAll(IsEmptyCell))
+                        {
+                            continue;
+                        }
+
                         var line = new RichTextLeaf();
 
                         for (int i = 0; i < row.Count; i++)
@@ -210,6 +216,8 @@ namespace Telegram.Controls.RichEditor
                     break;
             }
         }
+
+        private static bool IsEmptyCell(RichTableCell cell) => cell.Text.IsEmpty;
 
         private static string Marker(RichListBlock list, RichListItem item, int index)
         {

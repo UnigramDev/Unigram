@@ -15,7 +15,8 @@ namespace Telegram.Controls.RichEditor
         /// <summary>
         /// The selection as a document of its own: what copy puts on the clipboard. A block
         /// only partly selected is kept with the rest of it emptied - a quote stays a quote
-        /// around the lines taken from it, a table keeps its shape - and a selected block is
+        /// around the lines taken from it, a table keeps its shape unless the selection is
+        /// inside one cell - and a selected block is
         /// copied whole.
         /// </summary>
         public RichDocument GetSelectionFragment()
@@ -61,6 +62,20 @@ namespace Telegram.Controls.RichEditor
             if (document.Stops[startStop].Leaf is RichTextLeaf startLeaf)
             {
                 startLeaf.Delete(0, startOffset);
+            }
+
+            // Text taken from inside one cell is that text, not a table with every other cell
+            // emptied around it.
+            if (startStop == endStop && document.Stops[startStop].Leaf is { Owner: RichTableBlock } cell)
+            {
+                var line = new RichTextLeaf();
+                line.Insert(0, cell);
+
+                document.Blocks.Clear();
+                document.Blocks.Add(new RichParagraphBlock(RichBlockKind.Paragraph, line));
+                document.Reindex();
+
+                return document;
             }
 
             Prune(document.Blocks, startStop, endStop);
