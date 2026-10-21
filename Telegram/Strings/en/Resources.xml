@@ -6139,6 +6139,12 @@
     <string name="StoryPeriodPremium_one">Subscribe to **Telegram Premium** to make your stories disappear after {0} hour.</string>
     <string name="StoryPeriodPremium_other">Subscribe to **Telegram Premium** to make your stories disappear after {0} hours.</string>
     <string name="StoryPrivacyButtonPost">Post Story</string>
+    <string name="UploadingStory">Uploading…</string>
+    <string name="FailedStory">Failed</string>
+    <string name="FailedToUploadStory">failed to upload</string>
+    <string name="StoryError">Couldn’t upload</string>
+    <string name="TryAgain">Try Again</string>
+    <string name="StoryCancelTooLate">This story has finished uploading and will be posted.</string>
 
 
 

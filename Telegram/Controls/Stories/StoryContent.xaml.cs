@@ -346,12 +346,34 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void Update(StoryViewModel story)
+        /// <summary>
+        /// Shows a change in the post state of the story on screen, which keeps its id when it fails.
+        /// </summary>
+        public void UpdatePostState()
+        {
+            var story = _viewModel?.SelectedItem;
+            if (story != null && story.Id == _storyId)
+            {
+                UpdateSubtitle(story);
+            }
+        }
+
+        private void UpdateSubtitle(StoryViewModel story)
         {
             if (story.Content is StoryContentLive live && story.ClientService.TryGetGroupCall(live.GroupCallId, out GroupCall groupCall))
             {
                 LiveBadge.Visibility = Visibility.Visible;
                 Subtitle.Text = Locale.Declension(Strings.R.LiveStoryWatching, groupCall.ParticipantCount);
+            }
+            else if (story.IsPostFailed)
+            {
+                LiveBadge.Visibility = Visibility.Collapsed;
+                Subtitle.Text = Strings.FailedToUploadStory;
+            }
+            else if (story.IsBeingPosted)
+            {
+                LiveBadge.Visibility = Visibility.Collapsed;
+                Subtitle.Text = Strings.UploadingStory;
             }
             else
             {
@@ -360,6 +382,11 @@ namespace Telegram.Controls.Stories
                     ? Locale.FormatRelativeShort(story.Date)
                     : string.Format("{0}/{1}", 1 + ViewModel.Items.IndexOf(story), ViewModel.Items.Count);
             }
+        }
+
+        private void Update(StoryViewModel story)
+        {
+            UpdateSubtitle(story);
 
             switch (story.PrivacySettings)
             {

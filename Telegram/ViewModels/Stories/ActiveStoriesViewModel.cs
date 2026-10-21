@@ -89,7 +89,16 @@ namespace Telegram.ViewModels.Stories
 
         public override Chat Chat { get; set; }
 
-        public long Order => _activeStories?.Order ?? 0;
+        // Your own stories have no order while the first of them is still being posted, or when only
+        // failed posts are left, but they still lead the list.
+        public long Order
+        {
+            get
+            {
+                var order = _activeStories?.Order ?? 0;
+                return order == 0 && IsMyStory && _activeStories != null && Items.Count > 0 ? long.MaxValue : order;
+            }
+        }
 
         /// <summary>
         /// True, if the stories are shown in the main story list and can be archived; otherwise, the stories can be hidden from the main story list -only by calling removeTopChat with topChatCategoryUsers and the chat_id. Stories of the current user can't be archived nor hidden using removeTopChat
@@ -128,6 +137,10 @@ namespace Telegram.ViewModels.Stories
             var start = default(StoryViewModel);
             var index = 0;
 
+            var selectedIndex = _selectedItem != null
+                ? Items.IndexOf(_selectedItem)
+                : -1;
+
             foreach (var story in activeStories.Stories)
             {
                 var item = _storyService.GetOrCreate(activeStories.ChatId, story);
@@ -141,19 +154,13 @@ namespace Telegram.ViewModels.Stories
                     start ??= item;
                 }
 
-                // Moved into place rather than cleared and refilled, so that a viewer showing one
-                // of them still finds it in Items.
-                var position = Items.IndexOf(item);
-                if (position == -1)
-                {
-                    Items.Insert(index, item);
-                }
-                else if (position != index)
-                {
-                    Items.Move(position, index);
-                }
+                Place(item, index++);
+            }
 
-                index++;
+            // TDLib forgets a story whose post failed; it stays at the end until retried or discarded.
+            foreach (var item in _storyService.GetFailedStories(activeStories.ChatId))
+            {
+                Place(item, index++);
             }
 
             while (Items.Count > index)
@@ -161,8 +168,30 @@ namespace Telegram.ViewModels.Stories
                 Items.RemoveAt(Items.Count - 1);
             }
 
+            // A viewer showing a story that just went, such as a failed post being retried, moves
+            // to whatever took its place.
+            if (selectedIndex != -1 && Items.Count > 0 && !Items.Contains(_selectedItem))
+            {
+                SelectedItem = Items[Math.Min(selectedIndex, Items.Count - 1)];
+            }
+
             _startItem = start ?? Items.FirstOrDefault();
             _ = LoadStartItemAsync(_startItem);
+        }
+
+        // Moved into place rather than cleared and refilled, so that a viewer showing one of them
+        // still finds it in Items.
+        private void Place(StoryViewModel item, int index)
+        {
+            var position = Items.IndexOf(item);
+            if (position == -1)
+            {
+                Items.Insert(index, item);
+            }
+            else if (position != index)
+            {
+                Items.Move(position, index);
+            }
         }
 
         private async Task LoadStartItemAsync(StoryViewModel startItem)

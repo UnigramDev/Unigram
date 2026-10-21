@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,6 +59,57 @@ namespace Telegram.ViewModels.Stories
 
         public bool IsBotPreview { get; }
 
+        public bool IsBeingPosted { get; private set; }
+
+        public bool IsBeingEdited { get; private set; }
+
+        /// <summary>
+        /// Why posting the story failed. TDLib forgets such a story, so this view model is all that
+        /// is left of it, kept by <see cref="IStoryService"/> until it is posted again or discarded.
+        /// </summary>
+        public Error PostError { get; private set; }
+
+        public bool IsPostFailed => PostError != null;
+
+        public void SetPostError(Error error)
+        {
+            PostError = error;
+        }
+
+        /// <summary>
+        /// How far the conversion making the file being posted has got, which TDLib does not report.
+        /// </summary>
+        public float PostConversionProgress { get; private set; }
+
+        public void SetPostConversionProgress(float progress)
+        {
+            PostConversionProgress = progress;
+        }
+
+        /// <summary>
+        /// How far posting has got, weighted as converting 0.3 and uploading 0.7.
+        /// </summary>
+        public float GetPostProgress()
+        {
+            var file = GetFile();
+            if (file == null || file.Remote.IsUploadingCompleted)
+            {
+                return file == null ? 0 : 1;
+            }
+
+            // The story's file is TDLib's copy of the converted one, made once the conversion is
+            // over, so until then it has no progress of its own.
+            var converted = file.Local.IsDownloadingCompleted
+                ? 1
+                : PostConversionProgress;
+
+            var uploaded = file.Size > 0
+                ? (float)file.Remote.UploadedSize / file.Size
+                : 0;
+
+            return Math.Clamp(converted * 0.3f + uploaded * 0.7f, 0, 1);
+        }
+
         public Task LoadAsync()
         {
             lock (_loadLock)
@@ -85,6 +137,8 @@ namespace Telegram.ViewModels.Stories
         {
             Id = story.Id;
             Date = story.Date;
+            IsBeingPosted = story.IsBeingPosted;
+            IsBeingEdited = story.IsBeingEdited;
             Caption = story.Caption;
             Content = story.Content;
             PrivacySettings = story.PrivacySettings;

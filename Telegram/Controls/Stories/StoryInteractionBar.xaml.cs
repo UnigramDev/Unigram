@@ -36,9 +36,30 @@ namespace Telegram.Controls.Stories
             remove => DeleteButton.Click -= value;
         }
 
+        public event RoutedEventHandler RetryClick
+        {
+            add => RetryButton.Click += value;
+            remove => RetryButton.Click -= value;
+        }
+
         public void Update(StoryViewModel story)
         {
             _viewModel = story;
+
+            // A story not posted yet has no viewers, and is cancelled from the menu.
+            FailRoot.Visibility = story.IsPostFailed
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            ViewersButton.Visibility =
+                DeleteButton.Visibility = story.IsPostFailed || story.IsBeingPosted
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+            if (story.IsPostFailed)
+            {
+                FailText.Text = story.PostError.Message;
+            }
 
             if (story.ClientService.TryGetUser(story.PosterChatId, out User user) && user.Type is UserTypeBot)
             {

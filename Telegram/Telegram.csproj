@@ -801,6 +801,8 @@
     <Compile Include="Td\Api\ProfileColor.cs" />
     <Compile Include="Td\Api\UpdateChatAffiliatePrograms.cs" />
     <Compile Include="Td\Api\UpdateChatSwitchInlineQuery.cs" />
+    <Compile Include="Td\Api\UpdateFailedStories.cs" />
+    <Compile Include="Td\Api\UpdateFileGenerationProgress.cs" />
     <Compile Include="Td\Api\UpdateGiftUpgraded.cs" />
     <Compile Include="Td\Api\UpdateGiftIsSold.cs" />
     <Compile Include="Td\Api\UpdateGiftIsSaved.cs" />

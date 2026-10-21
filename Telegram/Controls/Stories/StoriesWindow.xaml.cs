@@ -21,6 +21,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -314,7 +315,9 @@ namespace Telegram.Controls.Stories
             _origin = point;
             _closing = closing;
 
-            viewModel.Aggregator.Subscribe<UpdateStoryStealthMode>(this, Handle);
+            viewModel.Aggregator.Subscribe<UpdateStoryStealthMode>(this, Handle)
+                .Subscribe<UpdateStoryPostSucceeded>(Handle)
+                .Subscribe<UpdateFailedStories>(Handle);
 
             Update(viewModel, activeStories);
             UpdateStealthTimer();
@@ -332,6 +335,28 @@ namespace Telegram.Controls.Stories
             {
                 _dispatcherQueue.TryEnqueue(UpdateStealthTimer);
             }
+        }
+
+        // Low priority, so that it runs after the strip has updated the stories this shows.
+        private void Handle(UpdateStoryPostSucceeded update)
+        {
+            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, UpdatePostState);
+        }
+
+        private void Handle(UpdateFailedStories update)
+        {
+            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, UpdatePostState);
+        }
+
+        private void UpdatePostState()
+        {
+            if (_viewModel == null || _index < 0 || _index >= _viewModel.Items.Count)
+            {
+                return;
+            }
+
+            Update(_viewModel, _viewModel.Items[_index]);
+            ActiveCard?.UpdatePostState();
         }
 
         private void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories)
@@ -789,6 +814,15 @@ namespace Telegram.Controls.Stories
             }
         }
 
+        private async void Interactions_RetryClick(object sender, RoutedEventArgs e)
+        {
+            var story = ViewModel.Items[_index].SelectedItem;
+            if (story != null)
+            {
+                await ViewModel.RetryStoryAsync(story);
+            }
+        }
+
         private async void Interactions_ViewersClick(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Items[_index];
@@ -977,6 +1011,13 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
+            // A story not posted yet can only be cancelled.
+            if (story.IsBeingPosted || story.IsPostFailed)
+            {
+                flyout.CreateFlyoutItem(DiscardStory, story, Strings.Cancel, Icons.Dismiss, destructive: true);
+                return;
+            }
+
             if (story.CanBeReplied)
             {
                 flyout.Opened += async (s, args) =>
@@ -1095,6 +1136,11 @@ namespace Telegram.Controls.Stories
             ActiveCard.Suspend(StoryPauseSource.Popup);
             await ViewModel.DeleteStoryAsync(story);
             ActiveCard.Resume(StoryPauseSource.Popup);
+        }
+
+        private async void DiscardStory(StoryViewModel story)
+        {
+            await ViewModel.DiscardStoryAsync(story);
         }
 
         private async void StealthStory(StoryViewModel story)

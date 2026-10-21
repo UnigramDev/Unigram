@@ -64,5 +64,51 @@
                               Glyph="&#xE74D;"
                               CornerRadius="20"
                               Grid.Column="2" />
+
+        <Grid x:Name="FailRoot"
+              Visibility="Collapsed"
+              Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border Background="{ThemeResource SystemFillColorCriticalBrush}"
+                    CornerRadius="10"
+                    Width="20"
+                    Height="20"
+                    Margin="16,0,12,0">
+                <TextBlock Text="!"
+                           Foreground="#FFFFFF"
+                           FontWeight="SemiBold"
+                           TextLineBounds="Tight"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+
+            <StackPanel VerticalAlignment="Center"
+                        Grid.Column="1">
+                <TextBlock Text="{CustomResource StoryError}"
+                           Foreground="#FFFFFF"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock x:Name="FailText"
+                           Foreground="#80FFFFFF"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource CaptionTextBlockStyle}" />
+            </StackPanel>
+
+            <Button x:Name="RetryButton"
+                    Content="{CustomResource TryAgain}"
+                    CornerRadius="16"
+                    Height="32"
+                    Padding="12,0"
+                    Margin="8,0"
+                    VerticalAlignment="Center"
+                    Grid.Column="2" />
+        </Grid>
     </Grid>
 </UserControl>

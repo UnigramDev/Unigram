@@ -9,6 +9,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Globalization;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI.Composition;
@@ -63,6 +64,8 @@ namespace Telegram.Controls.Cells
 
                 Photo.Source = ProfilePictureSource.Chat(activeStories.ClientService, chat);
             }
+
+            UpdatePosting();
         }
 
         public ChatActiveStories Trigger
@@ -75,7 +78,103 @@ namespace Telegram.Controls.Cells
                 LiveBadge.Visibility = Segments.HasLiveBadge
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+
+                // The binding can run before Update hands over a recycled cell's new item.
+                if (_viewModel != null && _viewModel.ChatId == value?.ChatId)
+                {
+                    UpdatePosting();
+                }
             }
+        }
+
+        private StoryViewModel _posting;
+        private long _postingToken;
+
+        // Your own posts, while any is in flight or failed, take over the title and the ring.
+        private void UpdatePosting()
+        {
+            var posting = default(StoryViewModel);
+            var failed = false;
+
+            if (_viewModel.IsMyStory)
+            {
+                foreach (var story in _viewModel.Items)
+                {
+                    if (story.IsPostFailed)
+                    {
+                        failed = true;
+                    }
+                    else if (story.IsBeingPosted)
+                    {
+                        posting ??= story;
+                    }
+                }
+            }
+
+            if (failed)
+            {
+                Title.Text = Strings.FailedStory;
+
+                Segments.ShowFailed(48);
+                SegmentsSmall.ShowFailed(48, 3);
+
+                posting = null;
+            }
+            else if (posting != null)
+            {
+                Title.Text = Strings.UploadingStory;
+                UpdatePostingProgress(posting);
+            }
+            else if (_viewModel.IsMyStory)
+            {
+                Title.Text = Strings.MyStory;
+            }
+
+            // TDLib posts a chat's stories one at a time, so the first in flight is the one moving.
+            if (_posting != posting)
+            {
+                _posting = posting;
+
+                var file = posting?.GetFile();
+                if (file != null)
+                {
+                    UpdateManager.Subscribe(this, posting.ClientService, file, ref _postingToken, UpdatePostingFile);
+
+                    // The upload comes from the file, the conversion before it from GenerationService.
+                    _viewModel.Aggregator.Subscribe<UpdateFileGenerationProgress>(this, Handle);
+                }
+                else
+                {
+                    UpdateManager.Unsubscribe(this, ref _postingToken);
+                    _viewModel.Aggregator.Unsubscribe<UpdateFileGenerationProgress>(this);
+                }
+            }
+        }
+
+        private void Handle(UpdateFileGenerationProgress update)
+        {
+            this.BeginOnUIThread(UpdatePostingProgress);
+        }
+
+        private void UpdatePostingFile(File file)
+        {
+            UpdatePostingProgress();
+        }
+
+        private void UpdatePostingProgress()
+        {
+            if (_posting != null)
+            {
+                UpdatePostingProgress(_posting);
+            }
+        }
+
+        private void UpdatePostingProgress(StoryViewModel posting)
+        {
+            var progress = posting.GetPostProgress();
+
+            Segments.ShowProgress(48, progress);
+            SegmentsSmall.ShowProgress(48, progress, 3);
         }
 
         public void Update(SelectorItem container, int index, int f, int l, CompositionPropertySet tracker, ExpressionAnimation expression)

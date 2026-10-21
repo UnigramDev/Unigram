@@ -562,7 +562,22 @@ namespace Telegram.Services
                     }
 
                     var id = update.GenerationId;
-                    var handler = new VideoTranscoderProgressHandler(progress => _clientService.Send(new SetFileGenerationProgress(id, 100, (long)(progress * 100))));
+                    var conversion = update.Conversion;
+                    var percent = -1;
+
+                    var handler = new VideoTranscoderProgressHandler(progress =>
+                    {
+                        var current = (int)(progress * 100);
+                        if (current == percent)
+                        {
+                            return;
+                        }
+
+                        percent = current;
+
+                        _clientService.Send(new SetFileGenerationProgress(id, 100, current));
+                        _aggregator.Publish(new UpdateFileGenerationProgress(conversion, current));
+                    });
 
                     await Task.Run(() => transcoder.Transcode(options, handler));
                 }

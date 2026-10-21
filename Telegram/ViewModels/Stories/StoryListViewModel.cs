@@ -38,12 +38,14 @@ namespace Telegram.ViewModels.Stories
     {
         private readonly IStorageService _storageService;
         private readonly ITranslateService _translateService;
+        private readonly IStoryService _storyService;
 
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryList storyList)
             : base(clientService, settingsService, aggregator)
         {
             _storageService = Session.Resolve<IStorageService>();
             _translateService = Session.Resolve<ITranslateService>();
+            _storyService = Session.Resolve<IStoryService>();
 
             Items = new ItemsCollection(clientService, aggregator, this, storyList);
         }
@@ -53,6 +55,7 @@ namespace Telegram.ViewModels.Stories
         {
             _storageService = Session.Resolve<IStorageService>();
             _translateService = Session.Resolve<ITranslateService>();
+            _storyService = Session.Resolve<IStoryService>();
 
             Items = new ObservableCollection<ActiveStoriesViewModel>(items);
         }
@@ -191,6 +194,29 @@ namespace Telegram.ViewModels.Stories
             return ShowPopupAsync(popup);
         }
 
+        public Task RetryStoryAsync(StoryViewModel story)
+        {
+            // A failure shows on the story itself, with the new error.
+            return _storyService.RetryAsync(story);
+        }
+
+        public async Task DiscardStoryAsync(StoryViewModel story)
+        {
+            var response = await _storyService.DiscardAsync(story);
+            if (response is Error error)
+            {
+                // TDLib can only cancel a post while its file is still uploading.
+                if (error.Message == "Story upload has been already completed")
+                {
+                    ShowToast(Strings.StoryCancelTooLate);
+                }
+                else
+                {
+                    ShowToast(error);
+                }
+            }
+        }
+
         public async Task DeleteStoryAsync(StoryViewModel story)
         {
             var message = Strings.DeleteStorySubtitle;
@@ -240,8 +266,14 @@ namespace Telegram.ViewModels.Stories
                     var content = await StoryFactory.CreateContentAsync(media);
 
                     // Posted as the current user through the Saved Messages chat, whose id is the user's.
-                    var response = await ClientService.SendAsync(new PostStory(ClientService.Options.MyId, content, null, options.Caption, options.PrivacySettings, Vector<int>.Empty, options.ActivePeriod, null, options.IsPostedToChatPage, options.ProtectContent));
-                    if (response is Error error)
+                    var request = new PostStory(ClientService.Options.MyId, content, null, options.Caption, options.PrivacySettings, Vector<int>.Empty, options.ActivePeriod, null, options.IsPostedToChatPage, options.ProtectContent);
+
+                    var response = await ClientService.SendAsync(request);
+                    if (response is Story story)
+                    {
+                        _storyService.TrackPost(request, story);
+                    }
+                    else if (response is Error error)
                     {
                         ToastPopup.ShowError(XamlRoot, error);
                     }
@@ -404,7 +436,8 @@ namespace Telegram.ViewModels.Stories
             {
                 // Stories themselves are kept current by IStoryService, and TDLib follows a
                 // deletion with the chat's new active stories.
-                _aggregator.Subscribe<UpdateChatActiveStories>(this, Handle);
+                _aggregator.Subscribe<UpdateChatActiveStories>(this, Handle)
+                    .Subscribe<UpdateFailedStories>(Handle);
             }
 
             public bool HasMoreItems => _hasMoreItems;
@@ -413,27 +446,31 @@ namespace Telegram.ViewModels.Stories
 
             public void Handle(UpdateChatActiveStories update)
             {
-                if ((update.ActiveStories.List is StoryListMain && _storyList is StoryListMain) || (update.ActiveStories.List is StoryListArchive && _storyList is StoryListArchive))
+                _viewModel.BeginOnUIThread(() => UpdateChatOrder(update.ActiveStories));
+            }
+
+            public void Handle(UpdateFailedStories update)
+            {
+                if (_clientService.TryGetActiveStories(update.ChatId, out ChatActiveStories activeStories))
                 {
-                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(update.ActiveStories, update.ActiveStories.Order));
-                }
-                else
-                {
-                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(update.ActiveStories, 0));
+                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(activeStories));
                 }
             }
 
-            private void UpdateChatOrder(ChatActiveStories activeStories, long order)
+            private void UpdateChatOrder(ChatActiveStories activeStories)
             {
+                var inList = (activeStories.List is StoryListMain && _storyList is StoryListMain) || (activeStories.List is StoryListArchive && _storyList is StoryListArchive);
+
+                // The item's order, not TDLib's: your own stories can have one while TDLib has none.
                 if (_chats.TryGetValue(activeStories.ChatId, out var item))
                 {
                     item.Update(activeStories);
-                    UpdateChatOrder(item, order, true);
+                    UpdateChatOrder(item, inList ? item.Order : 0, true);
                 }
-                else if (order != 0 && _clientService.TryGetChat(activeStories.ChatId, out Chat chat))
+                else if (inList && (activeStories.Order != 0 || activeStories.ChatId == _clientService.Options.MyId) && _clientService.TryGetChat(activeStories.ChatId, out Chat chat))
                 {
                     item = _viewModel.Create(activeStories, chat);
-                    UpdateChatOrder(item, order, true);
+                    UpdateChatOrder(item, item.Order, true);
                 }
             }
 
