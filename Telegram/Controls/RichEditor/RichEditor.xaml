@@ -299,7 +299,7 @@
                                             CornerRadius="6"
                                             Visibility="Collapsed" />
                                     <Rectangle x:Name="Caret"
-                                               Width="1.5"
+                                               Width="1"
                                                Fill="{ThemeResource TextFillColorPrimaryBrush}"
                                                Visibility="Collapsed" />
                                     <!--  The flag on the caret's reading side while the keyboard
