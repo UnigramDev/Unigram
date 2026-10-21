@@ -52,7 +52,7 @@ namespace Telegram.Controls.Messages.Content
             base.OnApplyTemplate();
 
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
-            ThumbnailTexture = LayoutRoot.Background as ImageBrush;
+            ThumbnailTexture = GetTemplateChild(nameof(ThumbnailTexture)) as ImageBrush;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;

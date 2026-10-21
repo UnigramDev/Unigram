@@ -71,7 +71,7 @@ namespace Telegram.Controls.Messages.Content
             base.OnApplyTemplate();
 
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
-            ThumbnailTexture = LayoutRoot.Background as ImageBrush;
+            ThumbnailTexture = GetTemplateChild(nameof(ThumbnailTexture)) as ImageBrush;
             Particles = GetTemplateChild(nameof(Particles)) as AnimatedImage;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as FileButton;
