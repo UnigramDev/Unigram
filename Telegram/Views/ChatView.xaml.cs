@@ -5619,7 +5619,7 @@ namespace Telegram.Views
 
         private void ButtonAction_LosingFocus(UIElement sender, LosingFocusEventArgs args)
         {
-            if (_actionCollapsed && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (_actionCollapsed && TextField.FocusTarget != null && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
             {
                 args.TrySetNewFocusedElement(TextField.FocusTarget);
                 args.Handled = true;
