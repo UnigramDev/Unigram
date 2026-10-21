@@ -571,7 +571,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
         {
-            MessageHelper.DragStarting(_message, args);
+            MessageHelper.DragStarting(sender, _message, args);
         }
 
         private void Recognize_Click(object sender, RoutedEventArgs e)

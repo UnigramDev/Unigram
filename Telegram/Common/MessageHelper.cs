@@ -299,11 +299,22 @@ namespace Telegram.Common
             }
         }
 
-        public static async void DragStarting(MessageViewModel message, DragStartingEventArgs args)
+        // DragOver must not ask the DataView whether a drag is one of ours: the query is a
+        // synchronous call into the drag source, and XAML's reentrancy guard fail-fasts when a
+        // window message is pumped during it. Volatile because the target can be another window's
+        // thread.
+        private static volatile bool _isDraggingMessage;
+
+        public static bool IsDraggingMessage => _isDraggingMessage;
+
+        public static async void DragStarting(UIElement sender, MessageViewModel message, DragStartingEventArgs args)
         {
             var file = message?.GetFile();
             if (file != null && file.Local.IsDownloadingCompleted && message.CanBeSaved)
             {
+                _isDraggingMessage = true;
+                sender.DropCompleted += OnDropCompleted;
+
                 var deferral = args.GetDeferral();
 
                 try
@@ -343,6 +354,12 @@ namespace Telegram.Common
             {
                 args.Cancel = true;
             }
+        }
+
+        private static void OnDropCompleted(UIElement sender, DropCompletedEventArgs args)
+        {
+            sender.DropCompleted -= OnDropCompleted;
+            _isDraggingMessage = false;
         }
 
         public static async Task<FormattedText> PasteTextAsync(DataPackageView package)

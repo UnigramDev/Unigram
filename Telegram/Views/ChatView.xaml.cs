@@ -2412,23 +2412,9 @@ namespace Telegram.Views
 
         private void OnDragOver(object sender, DragEventArgs e)
         {
-            try
-            {
-                if (e.DataView.Contains("application/x-tl-message"))
-                {
-                    e.AcceptedOperation = DataPackageOperation.None;
-                }
-                else
-                {
-                    e.AcceptedOperation = DataPackageOperation.Copy;
-                }
-            }
-            catch (Exception ex)
-            {
-                // Contains is a cross-process call into the drag source, which can deny it or go away mid-drag.
-                Logger.Error(ex);
-                e.AcceptedOperation = DataPackageOperation.None;
-            }
+            e.AcceptedOperation = MessageHelper.IsDraggingMessage
+                ? DataPackageOperation.None
+                : DataPackageOperation.Copy;
         }
 
         private async void OnDrop(object sender, DragEventArgs e)
