@@ -6145,6 +6145,18 @@
     <string name="StoryError">Couldn’t upload</string>
     <string name="TryAgain">Try Again</string>
     <string name="StoryCancelTooLate">This story has finished uploading and will be posted.</string>
+    <string name="LimitReachedStoriesCount2First_one">You can post **{0}** story in **24** hours.</string>
+    <string name="LimitReachedStoriesCount2First_other">You can post **{0}** stories in **24** hours.</string>
+    <string name="LimitReachedStoriesCount2Second_one">Subscribe to **Telegram Premium** to increase this limit to **{0}**.</string>
+    <string name="LimitReachedStoriesCount2Second_other">Subscribe to **Telegram Premium** to increase this limit to **{0}**.</string>
+    <string name="LimitReachedStoriesCount2Premium_one">Sorry, you can’t post more than **{0}** story in **24** hours.</string>
+    <string name="LimitReachedStoriesCount2Premium_other">Sorry, you can’t post more than **{0}** stories in **24** hours.</string>
+    <string name="LimitReachedStoriesWeekly">You can post **{0}** stories in a week.\nSubscribe to **Telegram Premium** to increase this limit to **{1}**.</string>
+    <string name="LimitReachedStoriesWeeklyPremium">Sorry, you can’t post more than **{0}** stories in a week.</string>
+    <string name="LimitReachedStoriesMonthly">You can post **{0}** stories in a month.\nSubscribe to **Telegram Premium** to increase this limit to **{1}**.</string>
+    <string name="LimitReachedStoriesMonthlyPremium">Sorry, you can’t post more than **{0}** stories in a month.</string>
+    <string name="LiveStoryAlreadyStreamingTitle">Already Live</string>
+    <string name="LiveStoryAlreadyStreaming">You have already live stream running.</string>
 
 
 

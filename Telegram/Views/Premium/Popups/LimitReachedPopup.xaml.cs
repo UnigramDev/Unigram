@@ -120,6 +120,25 @@ namespace Telegram.Views.Premium.Popups
 
                         animatedValue = new LocalFileSource("ms-appx:///Assets/Animations/AddOne.json");
                         break;
+                    case PremiumLimitTypeActiveStoryCount:
+                        // Plurals, so composed here rather than formatted below, which leaves them as they are.
+                        iconValue = Icons.Stories;
+                        freeValue = Locale.Declension(Strings.R.LimitReachedStoriesCount2First, limit.DefaultValue) + "\n" + Locale.Declension(Strings.R.LimitReachedStoriesCount2Second, limit.PremiumValue);
+                        lockedValue = Locale.Declension(Strings.R.LimitReachedStoriesCount2Premium, limit.DefaultValue);
+                        premiumValue = Locale.Declension(Strings.R.LimitReachedStoriesCount2Premium, limit.PremiumValue);
+                        break;
+                    case PremiumLimitTypeWeeklyPostedStoryCount:
+                        iconValue = Icons.Stories;
+                        freeValue = Strings.LimitReachedStoriesWeekly;
+                        lockedValue = Strings.LimitReachedStoriesWeeklyPremium;
+                        premiumValue = Strings.LimitReachedStoriesWeeklyPremium;
+                        break;
+                    case PremiumLimitTypeMonthlyPostedStoryCount:
+                        iconValue = Icons.Stories;
+                        freeValue = Strings.LimitReachedStoriesMonthly;
+                        lockedValue = Strings.LimitReachedStoriesMonthlyPremium;
+                        premiumValue = Strings.LimitReachedStoriesMonthlyPremium;
+                        break;
                 }
 
                 if (clientService.IsPremium)
@@ -290,6 +309,12 @@ namespace Telegram.Views.Premium.Popups
                     return CreateLimit(500);
                 case PremiumLimitTypeConnectedAccounts:
                     return CreateLimit(4);
+                case PremiumLimitTypeActiveStoryCount:
+                    return CreateLimit(clientService.Options.ActiveStoryCountMax);
+                case PremiumLimitTypeWeeklyPostedStoryCount:
+                    return CreateLimit(clientService.Options.WeeklySentStoryCountMax);
+                case PremiumLimitTypeMonthlyPostedStoryCount:
+                    return CreateLimit(clientService.Options.MonthlySentStoryCountMax);
             }
 
             return null;

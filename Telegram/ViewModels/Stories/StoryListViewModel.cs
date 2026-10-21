@@ -25,6 +25,7 @@ using Telegram.Services.Factories;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
 using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
 using Windows.Storage.Pickers;
@@ -194,10 +195,47 @@ namespace Telegram.ViewModels.Stories
             return ShowPopupAsync(popup);
         }
 
-        public Task RetryStoryAsync(StoryViewModel story)
+        public async Task RetryStoryAsync(StoryViewModel story)
         {
-            // A failure shows on the story itself, with the new error.
-            return _storyService.RetryAsync(story);
+            // A post that failed on a limit would only fail again. Any other failure shows on the
+            // story itself, with the new error.
+            if (await CanPostStoryAsync(story.PosterChatId, ElementTheme.Dark))
+            {
+                await _storyService.RetryAsync(story);
+            }
+        }
+
+        // Says why not, where a story cannot be posted to the chat now.
+        private async Task<bool> CanPostStoryAsync(long chatId, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            var response = await ClientService.SendAsync(new CanPostStory(chatId));
+            switch (response)
+            {
+                case CanPostStoryResultOk:
+                    return true;
+                case CanPostStoryResultPremiumNeeded:
+                    NavigationService.ShowPromo(new PremiumFeatureUpgradedStories());
+                    break;
+                case CanPostStoryResultActiveStoryLimitExceeded:
+                    await ShowPopupAsync(new LimitReachedPopup(NavigationService, ClientService, new PremiumLimitTypeActiveStoryCount()), requestedTheme: requestedTheme);
+                    break;
+                case CanPostStoryResultWeeklyLimitExceeded:
+                    await ShowPopupAsync(new LimitReachedPopup(NavigationService, ClientService, new PremiumLimitTypeWeeklyPostedStoryCount()), requestedTheme: requestedTheme);
+                    break;
+                case CanPostStoryResultMonthlyLimitExceeded:
+                    await ShowPopupAsync(new LimitReachedPopup(NavigationService, ClientService, new PremiumLimitTypeMonthlyPostedStoryCount()), requestedTheme: requestedTheme);
+                    break;
+                case CanPostStoryResultLiveStoryIsActive:
+                    await ShowPopupAsync(Strings.LiveStoryAlreadyStreaming, Strings.LiveStoryAlreadyStreamingTitle, Strings.OK, requestedTheme: requestedTheme);
+                    break;
+                case Error error:
+                    ToastPopup.ShowError(XamlRoot, error);
+                    break;
+
+                // CanPostStoryResultBoostNeeded is for channels, which cannot post stories yet.
+            }
+
+            return false;
         }
 
         public async Task DiscardStoryAsync(StoryViewModel story)
@@ -248,6 +286,12 @@ namespace Telegram.ViewModels.Stories
         {
             try
             {
+                // Before the picker, so that nobody edits a story they then cannot post.
+                if (!await CanPostStoryAsync(ClientService.Options.MyId))
+                {
+                    return;
+                }
+
                 var picker = new FileOpenPicker();
                 picker.ViewMode = PickerViewMode.Thumbnail;
                 picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
