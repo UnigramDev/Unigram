@@ -1727,7 +1727,7 @@ namespace Telegram.Common
             // list to keep in sync with what's on screen.
             var message = CreateMessage(clientService, new MessagePhoto(block.Photo, null, null, false, block.HasSpoiler, false));
             var content = new PhotoContent(message, album: parent is PageBlockCollage);
-            content.HorizontalAlignment = parent is PageBlockCollage ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
+            content.HorizontalAlignment = parent is PageBlockCollage or PageBlockSlideshow ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
 
@@ -1760,7 +1760,7 @@ namespace Telegram.Common
             // See ProcessPhoto: the gallery is built on tap, not collected here.
             var message = CreateMessage(clientService, new MessageVideo(block.Video, Array.Empty<AlternativeVideo>(), Array.Empty<VideoStoryboard>(), null, 0, null, false, block.HasSpoiler, false));
             var content = new VideoContent(message, album: parent is PageBlockCollage);
-            content.HorizontalAlignment = parent is PageBlockCollage ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
+            content.HorizontalAlignment = parent is PageBlockCollage or PageBlockSlideshow ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
 
@@ -1948,6 +1948,8 @@ namespace Telegram.Common
 
         private FrameworkElement ProcessSlideshow(IClientService clientService, PageBlockSlideshow block)
         {
+            object constraint = null;
+
             var items = new List<FrameworkElement>();
             foreach (var item in block.Blocks)
             {
@@ -1955,17 +1957,26 @@ namespace Telegram.Common
                 if (child != null)
                 {
                     child.Tag = item;
-                    child.HorizontalAlignment = HorizontalAlignment.Center;
+                    child.HorizontalAlignment = HorizontalAlignment.Stretch;
                     child.ClearValue(FrameworkElement.MaxWidthProperty);
                     child.ClearValue(FrameworkElement.MaxHeightProperty);
 
                     items.Add(child);
+
+                    constraint ??= item switch
+                    {
+                        PageBlockPhoto photo => photo.Photo,
+                        PageBlockVideo video => video.Video,
+                        _ => null
+                    };
                 }
             }
 
-            var flip = new FlipView();
-            flip.ItemsSource = items;
-            flip.MaxHeight = 420;
+            var flip = new FlipView
+            {
+                ItemsSource = items,
+                CornerRadius = new CornerRadius()
+            };
 
             var pager = new PipsPager
             {
@@ -1983,7 +1994,12 @@ namespace Telegram.Common
                 Mode = BindingMode.TwoWay
             });
 
-            var content = new Grid();
+            var content = new AspectView
+            {
+                Constraint = constraint,
+                MaxHeight = 432,
+            };
+
             content.Children.Add(flip);
             content.Children.Add(pager);
 
