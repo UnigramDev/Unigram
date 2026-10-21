@@ -13,22 +13,21 @@
                        Padding="0,16,0,0">
 
     <FlyoutBase.AttachedFlyout>
-        <Flyout x:Name="EmojiFlyout"
-                Closed="EmojiFlyout_Closed"
-                Placement="Top"
-                ShowMode="Transient">
-            <Flyout.FlyoutPresenterStyle>
-                <Style TargetType="FlyoutPresenter"
-                       BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+        <MenuFlyout x:Name="EmojiFlyout"
+                    Closed="EmojiFlyout_Closed">
+            <MenuFlyout.MenuFlyoutPresenterStyle>
+                <Style TargetType="MenuFlyoutPresenter">
                     <Setter Property="Padding"
                             Value="0" />
                 </Style>
-            </Flyout.FlyoutPresenterStyle>
-            <drawers:EmojiDrawer x:Name="EmojiPanel"
-                                 ItemClick="Emoji_ItemClick"
-                                 Width="300"
-                                 Height="360" />
-        </Flyout>
+            </MenuFlyout.MenuFlyoutPresenterStyle>
+            <controls:MenuFlyoutContent Padding="0">
+                <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                     ItemClick="Emoji_ItemClick"
+                                     Width="300"
+                                     Height="360" />
+            </controls:MenuFlyoutContent>
+        </MenuFlyout>
     </FlyoutBase.AttachedFlyout>
 
     <Grid>

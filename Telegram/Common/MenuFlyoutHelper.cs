@@ -45,13 +45,13 @@ namespace Telegram.Common
             return false;
         }
 
-        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement, FlyoutShowMode showMode, bool overlap = false)
+        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement, FlyoutShowMode showMode, bool overlap = false, FrameworkElement source = null)
         {
             try
             {
                 if (flyout is MenuFlyout { Items.Count: > 0 } menuFlyout)
                 {
-                    return menuFlyout.ShowMorphAt(placementTarget, placement, showMode, overlap: overlap);
+                    return menuFlyout.ShowMorphAt(placementTarget, placement, showMode, overlap: overlap, source: source);
                 }
                 else
                 {

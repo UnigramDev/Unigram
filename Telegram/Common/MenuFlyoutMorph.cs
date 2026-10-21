@@ -61,18 +61,28 @@ namespace Telegram.Common
         /// </param>
         /// <param name="cornerRadius">
         /// The radius the menu starts from, for a target that looks rounded without being so itself:
-        /// a panel whose CornerRadius would clip what it hosts. By default it is read from the target.
+        /// a panel whose CornerRadius would clip what it hosts. By default it is read from the source.
         /// </param>
-        public static bool ShowMorphAt(this MenuFlyout flyout, DependencyObject placementTarget, FlyoutPlacementMode placement = FlyoutPlacementMode.Auto, FlyoutShowMode showMode = FlyoutShowMode.Auto, bool overlap = true, double? cornerRadius = null)
+        /// <param name="source">
+        /// The element the menu grows out of, when it is not the one it is placed against: an emoji
+        /// button whose menu lines up with the whole input box around it. It is expected to be
+        /// inside the placement target, and it is the one that fades. By default it is the target.
+        /// </param>
+        public static bool ShowMorphAt(this MenuFlyout flyout, DependencyObject placementTarget, FlyoutPlacementMode placement = FlyoutPlacementMode.Auto, FlyoutShowMode showMode = FlyoutShowMode.Auto, bool overlap = true, double? cornerRadius = null, FrameworkElement source = null)
         {
             if (flyout.Items.Count == 0)
             {
                 return false;
             }
 
+            var target = source ?? placementTarget as FrameworkElement;
+
             if (!PowerSavingPolicy.AreSmoothTransitionsEnabled
-                || placementTarget is not FrameworkElement target
-                || target.XamlRoot == null
+                || placementTarget is not FrameworkElement destination
+                || destination.XamlRoot == null
+                || destination.ActualWidth < 1
+                || destination.ActualHeight < 1
+                || target.XamlRoot != destination.XamlRoot
                 || target.ActualWidth < 1
                 || target.ActualHeight < 1)
             {
@@ -90,7 +100,7 @@ namespace Telegram.Common
                 previous.Abort();
             }
 
-            return new Session(flyout, target, placement, overlap, cornerRadius ?? GetCornerRadius(target)).Show(showMode);
+            return new Session(flyout, target, destination, placement, overlap, cornerRadius ?? GetCornerRadius(target)).Show(showMode);
         }
 
         private static bool ShowStock(MenuFlyout flyout, DependencyObject target, FlyoutPlacementMode placement, FlyoutShowMode showMode)
@@ -492,6 +502,7 @@ namespace Telegram.Common
         {
             private readonly MenuFlyout _flyout;
             private readonly FrameworkElement _target;
+            private readonly FrameworkElement _placementTarget;
             private readonly FlyoutPlacementMode _placement;
             private readonly bool _overlap;
             private readonly double _cornerRadius;
@@ -549,10 +560,11 @@ namespace Telegram.Common
             private bool _targetRestored;
             private bool _released;
 
-            public Session(MenuFlyout flyout, FrameworkElement target, FlyoutPlacementMode placement, bool overlap, double cornerRadius)
+            public Session(MenuFlyout flyout, FrameworkElement target, FrameworkElement placementTarget, FlyoutPlacementMode placement, bool overlap, double cornerRadius)
             {
                 _flyout = flyout;
                 _target = target;
+                _placementTarget = placementTarget;
                 _placement = placement;
                 _overlap = overlap;
                 _cornerRadius = cornerRadius;
@@ -649,16 +661,22 @@ namespace Telegram.Common
                 // waits for the LayoutUpdated that follows, raised once every SizeChanged handler of
                 // the pass has run, and still before the frame.
                 var vertical = _growth == Axis.Vertical;
-                var current = _target.TransformToVisual(body).TransformBounds(GetVisibleBounds(_target));
+                var current = GetBounds(_target, body);
+                var anchor = GetBounds(_placementTarget, body);
                 var window = _target.XamlRoot.Content.TransformToVisual(body).TransformBounds(new Rect(new Point(0, 0), _target.XamlRoot.Size));
 
                 // The side the menu lands on, flips included, is the side the strip goes on.
                 var origin = vertical
-                    ? Place(_vertical, current.Top, current.Bottom, body.ActualHeight, window.Top, window.Bottom, true)
-                    : Place(_horizontal, current.Left, current.Right, body.ActualWidth, window.Left, window.Right, true);
+                    ? Place(_vertical, anchor.Top, anchor.Bottom, body.ActualHeight, window.Top, window.Bottom, true)
+                    : Place(_horizontal, anchor.Left, anchor.Right, body.ActualWidth, window.Left, window.Right, true);
 
-                _stripAfter = vertical ? origin >= current.Bottom : origin >= current.Right;
-                _strip = (vertical ? current.Height : current.Width) + BesideMargin;
+                _stripAfter = vertical ? origin >= anchor.Bottom : origin >= anchor.Right;
+
+                // From the menu's edge back to the far edge of the source, so the shape can start
+                // over it: the placement target's length plus the margin when the two are one.
+                _strip = vertical
+                    ? (_stripAfter ? anchor.Bottom - current.Top : current.Bottom - anchor.Top) + BesideMargin
+                    : (_stripAfter ? anchor.Right - current.Left : current.Right - anchor.Left) + BesideMargin;
                 _room = Math.Ceiling(OvershootRoom * ((vertical ? body.ActualHeight : body.ActualWidth) + _strip)) + 1;
 
                 _padded = true;
@@ -749,11 +767,12 @@ namespace Telegram.Common
                 // Everything is in the body's own coordinates, which are logical: in right-to-left
                 // the start edge is on the right, and Left/Right placements mirror with it.
                 var xamlRoot = _target.XamlRoot;
-                var current = _target.TransformToVisual(body).TransformBounds(GetVisibleBounds(_target));
+                var current = GetBounds(_target, body);
+                var anchor = GetBounds(_placementTarget, body);
                 var window = xamlRoot.Content.TransformToVisual(body).TransformBounds(new Rect(new Point(0, 0), xamlRoot.Size));
 
-                // The menu inside the presenter: all of it, or all of it but the strip, whose edge on
-                // the target's side meets the target's.
+                // The menu inside the presenter: all of it, or all of it but the strip, which reaches
+                // from the menu's edge to the source's far edge.
                 var menu = new Rect(0, 0, width, height);
                 double x;
                 double y;
@@ -761,19 +780,19 @@ namespace Telegram.Common
                 if (strip > 0 && _growth == Axis.Vertical)
                 {
                     menu = _stripAfter ? new Rect(0, strip, width, height - strip - _room) : new Rect(0, _room, width, height - strip - _room);
-                    x = Place(_horizontal, current.Left, current.Right, width, window.Left, window.Right, false);
+                    x = Place(_horizontal, anchor.Left, anchor.Right, width, window.Left, window.Right, false);
                     y = _stripAfter ? current.Top : current.Bottom - height;
                 }
                 else if (strip > 0)
                 {
                     menu = _stripAfter ? new Rect(strip, 0, width - strip - _room, height) : new Rect(_room, 0, width - strip - _room, height);
                     x = _stripAfter ? current.Left : current.Right - width;
-                    y = Place(_vertical, current.Top, current.Bottom, height, window.Top, window.Bottom, false);
+                    y = Place(_vertical, anchor.Top, anchor.Bottom, height, window.Top, window.Bottom, false);
                 }
                 else
                 {
-                    x = Place(_horizontal, current.Left, current.Right, width, window.Left, window.Right, false);
-                    y = Place(_vertical, current.Top, current.Bottom, height, window.Top, window.Bottom, false);
+                    x = Place(_horizontal, anchor.Left, anchor.Right, width, window.Left, window.Right, false);
+                    y = Place(_vertical, anchor.Top, anchor.Bottom, height, window.Top, window.Bottom, false);
                 }
 
                 _menu = menu;
@@ -1150,6 +1169,11 @@ namespace Telegram.Common
             }
 
             return new Rect(0, 0, target.ActualWidth, target.ActualHeight);
+        }
+
+        private static Rect GetBounds(FrameworkElement element, UIElement relativeTo)
+        {
+            return element.TransformToVisual(relativeTo).TransformBounds(GetVisibleBounds(element));
         }
 
         private static double GetCornerRadius(FrameworkElement element)

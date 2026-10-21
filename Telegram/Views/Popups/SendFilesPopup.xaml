@@ -310,21 +310,20 @@
               Background="{ThemeResource ContentDialogBackground}"
               Grid.Row="{x:Bind ConvertCaptionRow(ShowCaptionAboveMedia), Mode=OneWay}">
             <FlyoutBase.AttachedFlyout>
-                <Flyout x:Name="EmojiFlyout"
-                        Placement="Top"
-                        ShowMode="Transient">
-                    <Flyout.FlyoutPresenterStyle>
-                        <Style TargetType="FlyoutPresenter"
-                               BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+                <MenuFlyout x:Name="EmojiFlyout">
+                    <MenuFlyout.MenuFlyoutPresenterStyle>
+                        <Style TargetType="MenuFlyoutPresenter">
                             <Setter Property="Padding"
                                     Value="0" />
                         </Style>
-                    </Flyout.FlyoutPresenterStyle>
-                    <drawers:EmojiDrawer x:Name="EmojiPanel"
-                                         ItemClick="Emoji_ItemClick"
-                                         Width="300"
-                                         Height="360" />
-                </Flyout>
+                    </MenuFlyout.MenuFlyoutPresenterStyle>
+                    <controls:MenuFlyoutContent Padding="0">
+                        <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                             ItemClick="Emoji_ItemClick"
+                                             Width="300"
+                                             Height="360" />
+                    </controls:MenuFlyoutContent>
+                </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -357,12 +356,14 @@
                                         IsHitTestVisible="False"
                                         Margin="22,11,0,0" />
 
-            <controls:GlyphButton Click="Emoji_Click"
+            <controls:GlyphButton x:Name="EmojiButton"
+                                  Click="Emoji_Click"
                                   Glyph="&#xE76E;"
                                   AutomationProperties.Name="{CustomResource Emoji}"
                                   AllowFocusOnInteraction="False"
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Bottom"
+                                  CornerRadius="20"
                                   FontSize="24"
                                   Grid.Column="1" />
 
