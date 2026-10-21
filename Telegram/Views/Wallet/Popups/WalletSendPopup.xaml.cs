@@ -165,7 +165,7 @@ namespace Telegram.Views.Wallet.Popups
             }
             else
             {
-                Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.Ton);
+                Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.Gram14);
                 NameText.Text = Strings.WalletGramWalletAddress;
             }
 
