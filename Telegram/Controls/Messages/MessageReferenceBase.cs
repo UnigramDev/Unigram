@@ -1126,7 +1126,7 @@ namespace Telegram.Controls.Messages
 
         private void SetDocumentTemplate(MessageViewModel message, MessageSender sender, FormattedText quote, bool manual, MessageDocument document, string title, bool outgoing, bool white)
         {
-            HideThumbnail();
+            UpdateThumbnail(message, document.Document.Thumbnail, document.Document.Minithumbnail);
 
             SetText(message.ClientService,
                 message,
