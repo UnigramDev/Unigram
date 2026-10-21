@@ -71,7 +71,7 @@ namespace Telegram.Controls
         private AnimatedImagePresenter _presenter;
         private int _suppressEvents;
 
-        private CompositionAnimation _shimmer;
+        private ShapeVisual _shimmer;
 
         protected bool _clean = false;
 
@@ -637,10 +637,14 @@ namespace Telegram.Controls
 
             _shimmerPending = false;
 
+            CompositionPathParser.StopThumbnail(_shimmer);
+
             if (source is { Outline.IsReady: true })
             {
-                _shimmer = CompositionPathParser.ParseThumbnail(source.Width, source.Height, source.Outline, out ShapeVisual visual, IsOutlineAnimated);
+                CompositionPathParser.ParseThumbnail(source.Width, source.Height, source.Outline, out ShapeVisual visual, IsOutlineAnimated);
                 ElementCompositionPreview.SetElementChildVisual(LayoutRoot, visual);
+
+                _shimmer = visual;
             }
             else
             {
@@ -726,6 +730,7 @@ namespace Telegram.Controls
             {
                 _clean = false;
 
+                CompositionPathParser.StopThumbnail(_shimmer);
                 _shimmer = null;
                 ElementCompositionPreview.SetElementChildVisual(LayoutRoot, null);
 
