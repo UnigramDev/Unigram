@@ -6516,7 +6516,7 @@ namespace Telegram.Views
             var textArea = ElementComposition.GetElementVisual(TextArea);
 
             var value = show ? 48 : 0;
-            var width = Math.Max(0, _textAreaRadius > 0 ? ActualSize.X - 24 : ActualSize.X);
+            var width = Math.Max(0, TextAreaRadius > 0 ? ActualSize.X - 24 : ActualSize.X);
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
             rect.CornerRadius = new Vector2(AppSettings.Appearance.CornerRadius);
@@ -6768,6 +6768,14 @@ namespace Telegram.Views
         }
 
         private double _textAreaRadius = double.NaN;
+        public double TextAreaRadius
+        {
+            get
+            {
+                UpdateTextAreaRadius();
+                return _textAreaRadius;
+            }
+        }
 
         private void UpdateTextAreaRadius(bool force = true)
         {
@@ -8269,7 +8277,7 @@ namespace Telegram.Views
         {
             ElementCompositionPreview.SetIsTranslationEnabled(ChatFooter, true);
 
-            var radius = new Vector2((float)_textAreaRadius);
+            var radius = new Vector2((float)TextAreaRadius);
             var width = collapse ? ActualSize.X - 24 - 72 : ActualSize.X - 24;
             var margin = (width - (ActualSize.X - 24)) / 2;
 
@@ -8313,7 +8321,7 @@ namespace Telegram.Views
             ElementCompositionPreview.SetIsTranslationEnabled(ButtonDelete, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ButtonForward, true);
 
-            var radius = new Vector2((float)_textAreaRadius);
+            var radius = new Vector2((float)TextAreaRadius);
             var width = collapse ? ActualSize.X - 24 - 72 : ActualSize.X - 24;
             var margin = (width - (ActualSize.X - 24)) / 2;
 
@@ -8361,7 +8369,7 @@ namespace Telegram.Views
             //ElementCompositionPreview.SetIsTranslationEnabled(ButtonDelete, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(ButtonForward, true);
 
-            var radius = new Vector2((float)_textAreaRadius);
+            var radius = new Vector2((float)TextAreaRadius);
             var width = collapse ? ActualSize.X - 24 - 72 : ActualSize.X - 24;
             var margin = (width - (ActualSize.X - 24)) / 2;
 
@@ -8474,7 +8482,7 @@ namespace Telegram.Views
 
         private void InlinePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var show = e.NewSize.Height > _textAreaRadius;
+            var show = e.NewSize.Height > TextAreaRadius;
             var tracker = ++_inlinePanelTracker;
 
             var prev = e.PreviousSize.ToVector2();
@@ -8489,7 +8497,7 @@ namespace Telegram.Views
             var background = ElementComposition.GetElementVisual(InlineBackground);
 
             var rectangle = visual.Compositor.CreateRoundedRectangleGeometry();
-            rectangle.CornerRadius = new Vector2((float)_textAreaRadius);
+            rectangle.CornerRadius = new Vector2((float)TextAreaRadius);
 
             grid.Clip = visual.Compositor.CreateGeometricClip(rectangle);
 
