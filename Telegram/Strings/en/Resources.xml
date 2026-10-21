@@ -6108,6 +6108,34 @@
 
     <string name="MyStory">My Story</string>
     <string name="AddStory">Add Story</string>
+    <string name="StoryPrivacyAlertTitle">Share story</string>
+    <string name="StoryPrivacyWhoCanView">Who can view your story</string>
+    <string name="StoryPrivacyOptionEveryone">Everyone</string>
+    <string name="StoryPrivacyOptionContacts">Contacts</string>
+    <string name="StoryPrivacyOptionCloseFriends">Close Friends</string>
+    <string name="StoryPrivacyOptionSelectedContacts">Selected Contacts</string>
+    <string name="StoryPrivacyOptionPeople_one">{0} person</string>
+    <string name="StoryPrivacyOptionPeople_other">{0} people</string>
+    <string name="StoryPrivacyOptionContactsDetail">exclude people</string>
+    <string name="StoryPrivacyOptionCloseFriendsDetail">edit list</string>
+    <string name="StoryPrivacyOptionSelectedContactsDetail">edit list</string>
+    <string name="StoryPrivacyOptionExcludePeople_one">except {0} person</string>
+    <string name="StoryPrivacyOptionExcludePeople_other">except {0} people</string>
+    <string name="StoryPrivacyButtonExcludeContacts">Exclude Contacts</string>
+    <string name="StoryPrivacyAlertCloseFriendsSubtitle">Choose close friends</string>
+    <string name="StoryPrivacyAlertSelectContactsSubtitle">Choose contacts</string>
+    <string name="StoryPrivacyAlertExcludeFromEveryoneTitle">Everyone except…</string>
+    <string name="StoryPrivacyAlertExcludedContactsTitle">Excluded Contacts</string>
+    <string name="StoryPrivacyAlertCloseFriendsTitle">Close Friends</string>
+    <string name="StoryPrivacyAlertSelectContactsTitle">Select Contacts</string>
+    <string name="StoryAllowScreenshots">Allow Screenshots</string>
+    <string name="StoryKeep">Keep on My Page</string>
+    <string name="StoryKeepInfo_one">Keep this story on your page even after it expires in {0} hour. Privacy settings will apply.</string>
+    <string name="StoryKeepInfo_other">Keep this story on your page even after it expires in {0} hours. Privacy settings will apply.</string>
+    <string name="StoryPeriodHint">Choose how long the story will be visible.</string>
+    <string name="StoryPeriodPremium_one">Subscribe to **Telegram Premium** to make your stories disappear after {0} hour.</string>
+    <string name="StoryPeriodPremium_other">Subscribe to **Telegram Premium** to make your stories disappear after {0} hours.</string>
+    <string name="StoryPrivacyButtonPost">Post Story</string>
 
 
 

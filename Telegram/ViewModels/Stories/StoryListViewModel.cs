@@ -14,12 +14,14 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Stories;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Factories;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Popups;
@@ -239,15 +241,31 @@ namespace Telegram.ViewModels.Stories
                 var media = await picker.PickSingleMediaAsync(XamlRoot);
                 if (media is StoragePhoto or StorageVideo)
                 {
-                    var popup = new EditStoryPopup(XamlRoot, ClientService, media);
-                    await popup.ShowAsync();
+                    var editor = new EditStoryPopup(NavigationService, ClientService, media);
+                    if (await editor.ShowAsync() != ContentDialogResult.Primary)
+                    {
+                        return;
+                    }
+
+                    var options = editor.PostOptions;
+                    var content = await StoryFactory.CreateContentAsync(media);
+
+                    // Posted as the current user through the Saved Messages chat, whose id is the user's.
+                    var response = await ClientService.SendAsync(new PostStory(ClientService.Options.MyId, content, null, options.Caption, options.PrivacySettings, Vector<int>.Empty, options.ActivePeriod, null, options.IsPostedToChatPage, options.ProtectContent));
+                    if (response is Error error)
+                    {
+                        ToastPopup.ShowError(XamlRoot, error);
+                    }
                 }
                 else if (media is StorageInvalid)
                 {
                     await ShowPopupAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         public async void SaveStory(StoryViewModel story)

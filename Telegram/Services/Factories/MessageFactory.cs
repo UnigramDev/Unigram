@@ -50,20 +50,20 @@ namespace Telegram.Services.Factories
                 return new InputMessageDocument(new InputDocument(generated, thumbnail, false), caption);
             }
 
-            return new InputMessagePhoto(new InputPhoto(generated, thumbnail, null, GetAddedStickers(generation), size.Width, size.Height), caption, captionAboveMedia, ttl, spoiler);
+            return new InputMessagePhoto(new InputPhoto(generated, thumbnail, null, GetAddedStickers(generation?.Entities), size.Width, size.Height), caption, captionAboveMedia, ttl, spoiler);
         }
 
-        // The stickers drawn into the photo, so that it can lead to their sets.
-        private static Vector<int> GetAddedStickers(ImageGeneration generation)
+        // The stickers drawn into the media, so that it can lead to their sets.
+        internal static Vector<int> GetAddedStickers(IReadOnlyList<PaintEntity> entities)
         {
-            if (generation?.Entities == null)
+            if (entities == null)
             {
                 return null;
             }
 
             List<int> files = null;
 
-            foreach (var entity in generation.Entities)
+            foreach (var entity in entities)
             {
                 if (entity.Type == PaintEntityType.Sticker && entity.StickerFile is { } file)
                 {

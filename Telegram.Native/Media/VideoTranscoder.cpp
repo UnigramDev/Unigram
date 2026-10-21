@@ -269,6 +269,10 @@ namespace winrt::Telegram::Native::Media::implementation
             winrt::com_ptr<ID2D1BitmapBrush1> sharp;
             winrt::com_ptr<ID2D1SolidColorBrush> shade;
 
+            // What the frame does not cover: one colour, or a gradient when the two ends differ.
+            D2D1_COLOR_F clear{ 0, 0, 0, 1 };
+            winrt::com_ptr<ID2D1LinearGradientBrush> background;
+
             bool video{ false };
             uint32_t width{ 0 };
             uint32_t height{ 0 };
@@ -405,6 +409,29 @@ namespace winrt::Telegram::Native::Media::implementation
 
                     return false;
                 }
+            }
+
+            void SetBackground(winrt::Windows::UI::Color top, winrt::Windows::UI::Color bottom)
+            {
+                auto ToColor = [](winrt::Windows::UI::Color color)
+                    {
+                        return D2D1::ColorF(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+                    };
+
+                clear = ToColor(top);
+
+                if (top == bottom)
+                {
+                    return;
+                }
+
+                D2D1_GRADIENT_STOP stops[2]{ { 0, ToColor(top) }, { 1, ToColor(bottom) } };
+
+                winrt::com_ptr<ID2D1GradientStopCollection> collection;
+                winrt::check_hresult(context->CreateGradientStopCollection(stops, 2, collection.put()));
+
+                auto properties = D2D1::LinearGradientBrushProperties(D2D1::Point2F(0, 0), D2D1::Point2F(0, static_cast<float>(height)));
+                winrt::check_hresult(context->CreateLinearGradientBrush(properties, collection.get(), background.put()));
             }
 
             // A layer that cannot be read is left out of the video rather than failing it.
@@ -590,14 +617,21 @@ namespace winrt::Telegram::Native::Media::implementation
                 winrt::check_hresult(context->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0.75f), shade.put()));
             }
 
-            // Draws a BGRA frame through the transform onto black.
+            // Draws a BGRA frame through the transform onto the background.
             void Draw(const uint8_t* pixels, uint32_t stride, const D2D1_MATRIX_3X2_F& transform)
             {
                 winrt::check_hresult(source->CopyFromMemory(nullptr, pixels, stride));
 
                 context->BeginDraw();
                 context->SetTarget(frame ? frame.get() : target.get());
-                context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
+                context->Clear(clear);
+
+                if (background)
+                {
+                    context->SetTransform(D2D1::Matrix3x2F::Identity());
+                    context->FillRectangle(D2D1::RectF(0, 0, static_cast<float>(width), static_cast<float>(height)), background.get());
+                }
+
                 context->SetTransform(transform);
                 context->DrawBitmap(source.get(), nullptr, 1.0f, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, nullptr, nullptr);
 
@@ -1106,6 +1140,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
         Compositor compositor;
         compositor.Create(sourceWidth, sourceHeight, width, height);
+        compositor.SetBackground(options.BackgroundTop(), options.BackgroundBottom());
 
         if (options.RoundBlur())
         {

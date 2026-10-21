@@ -205,10 +205,26 @@ namespace Telegram.Entities
         public double Angle { get; set; }
 
         /// <summary>
-        /// Whether the photo has to be drawn by Win2D, which alone renders a free angle and
-        /// objects.
+        /// A story's frame, the size it is posted at, or empty for none. <see cref="Rectangle"/> is
+        /// then the frame over the media and may reach outside 0..1 on any side, and the strokes
+        /// and objects are laid out in the frame rather than on the media.
         /// </summary>
-        public bool RequiresRender => Angle != 0 || Entities is { Count: > 0 };
+        public Size FrameSize { get; set; }
+
+        /// <summary>
+        /// The frame's fill where the media does not cover it, a vertical gradient.
+        /// </summary>
+        public Color FrameTopColor { get; set; }
+
+        public Color FrameBottomColor { get; set; }
+
+        public bool HasFrame => FrameSize.Width > 0 && FrameSize.Height > 0;
+
+        /// <summary>
+        /// Whether the photo has to be drawn by Win2D, which alone renders a free angle, objects
+        /// and a frame.
+        /// </summary>
+        public bool RequiresRender => Angle != 0 || Entities is { Count: > 0 } || HasFrame;
 
         public TimeSpan TrimStartTime { get; set; }
         public TimeSpan TrimStopTime { get; set; }
@@ -220,7 +236,8 @@ namespace Telegram.Entities
                 && Entities == null
                 && Rotation == ImageRotation.None
                 && Flip == ImageFlip.None
-                && Angle == 0;
+                && Angle == 0
+                && !HasFrame;
         }
     }
 }

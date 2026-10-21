@@ -569,13 +569,26 @@ namespace Telegram.Common
             double orientedHeight = quarter ? decoder.OrientedPixelWidth : decoder.OrientedPixelHeight;
 
             var crop = new Rect(0, 0, rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
-            var output = Scale(crop, new Size(orientedWidth, orientedHeight), min, max).Crop;
 
-            var outputWidth = Math.Max(1, (int)Math.Round(output.Width));
-            var outputHeight = Math.Max(1, (int)Math.Round(output.Height));
+            int outputWidth;
+            int outputHeight;
+
+            // A story is posted at its frame's exact size.
+            if (generation.HasFrame)
+            {
+                outputWidth = (int)generation.FrameSize.Width;
+                outputHeight = (int)generation.FrameSize.Height;
+            }
+            else
+            {
+                var output = Scale(crop, new Size(orientedWidth, orientedHeight), min, max).Crop;
+
+                outputWidth = Math.Max(1, (int)Math.Round(output.Width));
+                outputHeight = Math.Max(1, (int)Math.Round(output.Height));
+            }
 
             // Never decode larger than the output needs; Win2D scales up when the crop is small.
-            var factor = Math.Min(1, output.Width / crop.Width);
+            var factor = Math.Min(1, outputWidth / crop.Width);
             var transform = new BitmapTransform
             {
                 ScaledWidth = (uint)Math.Max(1, Math.Round(decoder.PixelWidth * factor)),
@@ -600,6 +613,22 @@ namespace Telegram.Common
                 * Matrix3x2.CreateScale((float)(outputWidth / cropWidth))
                 * Matrix3x2.CreateTranslation(outputWidth / 2f, outputHeight / 2f);
 
+            // Strokes and objects are laid out on the upright image, which the matrix carries, or in
+            // a story's frame, which only scales to the output. Only the image mirrors them.
+            var layerSize = generation.HasFrame
+                ? new Vector2((float)generation.FrameSize.Width, (float)generation.FrameSize.Height)
+                : new Vector2(uprightWidth, uprightHeight);
+
+            var layerScale = generation.HasFrame
+                ? outputWidth / layerSize.X
+                : (float)(outputWidth / cropWidth);
+
+            var layer = generation.HasFrame
+                ? Matrix3x2.CreateScale(layerScale)
+                : matrix;
+
+            var mirrored = !generation.HasFrame && generation.Flip != ImageFlip.None;
+
             var device = ElementComposition.GetSharedDevice();
             var target = new CanvasRenderTarget(device, outputWidth, outputHeight, 96);
 
@@ -614,7 +643,21 @@ namespace Telegram.Common
                 using (var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, pixels))
                 using (var session = target.CreateDrawingSession())
                 {
-                    session.Clear(Windows.UI.Colors.Black);
+                    if (generation.HasFrame)
+                    {
+                        using var fill = new CanvasLinearGradientBrush(device, generation.FrameTopColor, generation.FrameBottomColor)
+                        {
+                            StartPoint = Vector2.Zero,
+                            EndPoint = new Vector2(0, outputHeight)
+                        };
+
+                        session.FillRectangle(0, 0, outputWidth, outputHeight, fill);
+                    }
+                    else
+                    {
+                        session.Clear(Windows.UI.Colors.Black);
+                    }
+
                     session.Transform = matrix;
                     session.DrawImage(bitmap, 0, 0, bitmap.Bounds, 1, bestQuality ? CanvasImageInterpolation.HighQualityCubic : CanvasImageInterpolation.Linear);
                 }
@@ -623,7 +666,7 @@ namespace Telegram.Common
                 {
                     // Their own target, because the eraser draws transparency with a Copy blend.
                     using var overlay = new CanvasRenderTarget(device, outputWidth, outputHeight, 96);
-                    using var blur = PencilCanvas.CreateBlur(target, uprightWidth * outputWidth / (float)cropWidth);
+                    using var blur = PencilCanvas.CreateBlur(target, layerSize.X * layerScale);
                     using var brush = new CanvasImageBrush(device, blur)
                     {
                         SourceRectangle = new Rect(0, 0, outputWidth, outputHeight)
@@ -631,11 +674,11 @@ namespace Telegram.Common
 
                     using (var session = overlay.CreateDrawingSession())
                     {
-                        session.Transform = matrix;
+                        session.Transform = layer;
 
                         foreach (var builder in strokes)
                         {
-                            PencilCanvas.DrawPath(session, builder, new Vector2(uprightWidth, uprightHeight), brush);
+                            PencilCanvas.DrawPath(session, builder, layerSize, brush);
                         }
                     }
 
@@ -648,15 +691,15 @@ namespace Telegram.Common
                 if (generation.Entities is { Count: > 0 } entities)
                 {
                     // Stickers go in as their first frame, at about the size they are drawn.
-                    var pixelsPerUnit = uprightWidth / PaintEntityRenderer.Reference * (float)(outputWidth / cropWidth);
+                    var pixelsPerUnit = layerSize.X / PaintEntityRenderer.Reference * layerScale;
                     var stickers = await PaintEntityRenderer.LoadStickersAsync(device, entities, pixelsPerUnit);
 
                     try
                     {
                         using (var session = target.CreateDrawingSession())
                         {
-                            session.Transform = matrix;
-                            PaintEntityRenderer.Draw(session, entities, new Vector2(uprightWidth, uprightHeight), generation.Flip != ImageFlip.None, stickers);
+                            session.Transform = layer;
+                            PaintEntityRenderer.Draw(session, entities, layerSize, mirrored, stickers);
                         }
                     }
                     finally

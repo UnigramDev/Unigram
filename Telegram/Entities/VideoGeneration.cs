@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using Telegram.Controls;
 using Windows.Foundation;
+using Windows.UI;
 
 namespace Telegram.Entities
 {
@@ -62,6 +63,19 @@ namespace Telegram.Entities
         /// plane in white.
         /// </summary>
         public bool RoundOverlay { get; set; }
+
+        /// <summary>
+        /// A story's frame, as <see cref="ImageGeneration.FrameSize"/>: <see cref="Rectangle"/> is
+        /// the frame over the video, encoded at <see cref="OutputSize"/>, and the strokes and
+        /// objects are laid out in the frame.
+        /// </summary>
+        public Size FrameSize { get; set; }
+
+        public Color FrameTopColor { get; set; }
+
+        public Color FrameBottomColor { get; set; }
+
+        public bool HasFrame => FrameSize.Width > 0 && FrameSize.Height > 0;
 
         public bool HasOverlay => Strokes is { Count: > 0 } || Entities is { Count: > 0 };
 

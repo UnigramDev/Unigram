@@ -3,6 +3,7 @@
 #include "Media/VideoTranscoderOptions.g.h"
 
 #include <winrt/Windows.Foundation.Numerics.h>
+#include <winrt/Windows.UI.h>
 
 #include <vector>
 
@@ -36,6 +37,12 @@ namespace winrt::Telegram::Native::Media::implementation
         winrt::Windows::Foundation::Numerics::float3x2 Transform() const { return m_transform; }
         void Transform(winrt::Windows::Foundation::Numerics::float3x2 const& value) { m_transform = value; }
 
+        winrt::Windows::UI::Color BackgroundTop() const { return m_backgroundTop; }
+        void BackgroundTop(winrt::Windows::UI::Color const& value) { m_backgroundTop = value; }
+
+        winrt::Windows::UI::Color BackgroundBottom() const { return m_backgroundBottom; }
+        void BackgroundBottom(winrt::Windows::UI::Color const& value) { m_backgroundBottom = value; }
+
         int32_t VideoBitrate() const { return m_videoBitrate; }
         void VideoBitrate(int32_t value) { m_videoBitrate = value; }
 
@@ -60,6 +67,8 @@ namespace winrt::Telegram::Native::Media::implementation
         int32_t m_outputWidth{ 0 };
         int32_t m_outputHeight{ 0 };
         winrt::Windows::Foundation::Numerics::float3x2 m_transform{ winrt::Windows::Foundation::Numerics::float3x2::identity() };
+        winrt::Windows::UI::Color m_backgroundTop{ 255, 0, 0, 0 };
+        winrt::Windows::UI::Color m_backgroundBottom{ 255, 0, 0, 0 };
         int32_t m_videoBitrate{ 0 };
         int32_t m_maxFrameRate{ 0 };
         bool m_hardwareEncoding{ true };

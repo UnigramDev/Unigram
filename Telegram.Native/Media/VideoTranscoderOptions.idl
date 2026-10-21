@@ -23,6 +23,11 @@ namespace Telegram.Native.Media
         // From the source's upright pixels, once its own rotation is applied, to the output's.
         Windows.Foundation.Numerics.Matrix3x2 Transform;
 
+        // What the output shows where the frame does not cover it: a vertical gradient, top to
+        // bottom. Black by default.
+        Windows.UI.Color BackgroundTop;
+        Windows.UI.Color BackgroundBottom;
+
         // In bits per second.
         Int32 VideoBitrate;
 

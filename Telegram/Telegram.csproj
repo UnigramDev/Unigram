@@ -1968,6 +1968,7 @@
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\EventAggregator.cs" />
     <Compile Include="Services\Factories\MessageFactory.cs" />
+    <Compile Include="Services\Factories\StoryFactory.cs" />
     <Compile Include="Services\GenerationGuard.cs" />
     <Compile Include="Services\GenerationService.cs" />
     <Compile Include="Services\GenerationSources.cs" />
@@ -2266,6 +2267,9 @@
     </Compile>
     <Compile Include="Views\Stories\Popups\EditStoryPopup.xaml.cs">
       <DependentUpon>EditStoryPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stories\Popups\PostStoryPopup.xaml.cs">
+      <DependentUpon>PostStoryPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\Premium\PremiumFeatureUpgradedStoriesCell.xaml.cs">
       <DependentUpon>PremiumFeatureUpgradedStoriesCell.xaml</DependentUpon>
@@ -4826,6 +4830,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stories\Popups\EditStoryPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stories\Popups\PostStoryPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

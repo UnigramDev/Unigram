@@ -10,7 +10,9 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Entities;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Factories;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,21 +27,26 @@ namespace Telegram.Views.Stories.Popups
     public sealed partial class EditStoryPopup : OverlayWindow
     {
         // The frame strokes and objects are laid out in, at the size a photo story is posted.
-        private static readonly Size FrameSize = new(1080, 1920);
+        private static readonly Size FrameSize = StoryFactory.PhotoSize;
 
         // The longest stretch of video a story holds.
         private static readonly TimeSpan MaximumLength = TimeSpan.FromSeconds(59);
 
+        private readonly INavigationService _navigationService;
         private readonly IClientService _clientService;
         private readonly StorageMedia _media;
 
+        // Kept, so that coming back to it after more editing finds what was chosen.
+        private PostStoryPopup _postOptions;
+
         private bool _accepting;
 
-        public EditStoryPopup(XamlRoot xamlRoot, IClientService clientService, StorageMedia media)
-            : base(xamlRoot)
+        public EditStoryPopup(INavigationService navigationService, IClientService clientService, StorageMedia media)
+            : base(navigationService.XamlRoot)
         {
             InitializeComponent();
 
+            _navigationService = navigationService;
             _clientService = clientService;
             _media = media;
 
@@ -73,6 +80,11 @@ namespace Telegram.Views.Stories.Popups
                 Surface.Play();
             }
         }
+
+        /// <summary>
+        /// The caption and settings the story is posted with, once the editor closed with Primary.
+        /// </summary>
+        public PostStoryPopup PostOptions => _postOptions;
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -184,6 +196,9 @@ namespace Telegram.Views.Stories.Popups
                     Angle = Surface.Cropper.Angle,
                     TrimStartTime = trimStartTime,
                     TrimStopTime = trimStopTime,
+                    FrameSize = FrameSize,
+                    FrameTopColor = Surface.FrameTopColor,
+                    FrameBottomColor = Surface.FrameBottomColor
                 };
 
                 if (_media is StorageVideo video && TrimToolbar?.CanMute == true)
@@ -191,7 +206,17 @@ namespace Telegram.Views.Stories.Popups
                     video.IsMuted = TrimToolbar.IsMuted;
                 }
 
-                Hide(ContentDialogResult.Primary);
+                // Over the editor rather than after it, so that backing out of it is going back to
+                // editing.
+                _postOptions ??= new PostStoryPopup(_clientService, _navigationService);
+
+                var confirm = await _navigationService.ShowPopupAsync(_postOptions, requestedTheme: ElementTheme.Dark);
+                _accepting = false;
+
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    Hide(ContentDialogResult.Primary);
+                }
             }
             else
             {

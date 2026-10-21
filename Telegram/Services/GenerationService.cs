@@ -520,10 +520,18 @@ namespace Telegram.Services
                     Transform = transform,
                     VideoBitrate = generation.VideoBitrate != 0
                         ? (int)generation.VideoBitrate
+                        : generation.HasFrame
+                        ? MakeStoryBitrate(probe.Bitrate, generation.Entities is { Count: > 0 })
                         : MakeVideoBitrate(probe.Height, probe.Width, probe.Bitrate, (int)output.Height, (int)output.Width),
-                    MaxFrameRate = 60,
+                    MaxFrameRate = generation.HasFrame ? 59 : 60,
                     HardwareEncoding = allowHardware && !AppSettings.Diagnostics.DisableHardwareVideoEncoding
                 };
+
+                if (generation.HasFrame)
+                {
+                    options.BackgroundTop = generation.FrameTopColor;
+                    options.BackgroundBottom = generation.FrameBottomColor;
+                }
 
                 var transcoder = new VideoTranscoder();
                 _transcoders[update.GenerationId] = transcoder;
@@ -534,7 +542,17 @@ namespace Telegram.Services
                 {
                     if (generation.HasOverlay)
                     {
-                        await AddOverlaysAsync(options, generation, output, transform, new Vector2((float)probe.Width, (float)probe.Height), animations);
+                        // Laid out on the upright video, which its own transform carries, or in a story's
+                        // frame, which only scales to the output. Only the video mirrors them.
+                        if (generation.HasFrame)
+                        {
+                            var frame = new Vector2((float)generation.FrameSize.Width, (float)generation.FrameSize.Height);
+                            await AddOverlaysAsync(options, generation, output, Matrix3x2.CreateScale((float)(output.Width / frame.X)), frame, false, animations);
+                        }
+                        else
+                        {
+                            await AddOverlaysAsync(options, generation, output, transform, new Vector2((float)probe.Width, (float)probe.Height), generation.Flip != ImageFlip.None, animations);
+                        }
                     }
 
                     if (generation.RoundOverlay)
@@ -632,7 +650,7 @@ namespace Telegram.Services
         // The edit, drawn over the video in the order it was made: strokes and still objects baked
         // into one image per run, the size of the output, and each animated sticker a layer of its
         // own between them, decoded frame by frame as the video goes.
-        private async Task AddOverlaysAsync(VideoTranscoderOptions options, VideoGeneration generation, Size output, Matrix3x2 transform, Vector2 upright, List<IDisposable> animations)
+        private async Task AddOverlaysAsync(VideoTranscoderOptions options, VideoGeneration generation, Size output, Matrix3x2 transform, Vector2 upright, bool mirrored, List<IDisposable> animations)
         {
             var entities = generation.Entities ?? Array.Empty<PaintEntity>();
 
@@ -643,7 +661,6 @@ namespace Telegram.Services
             }
 
             var device = ElementComposition.GetSharedDevice();
-            var mirrored = generation.Flip != ImageFlip.None;
 
             // How many output pixels a unit of the renderer's comes to, for decoding stills at about
             // the size they are drawn.
@@ -885,6 +902,22 @@ namespace Telegram.Services
                 * Matrix3x2.CreateRotation((float)(generation.Angle * Math.PI / 180))
                 * Matrix3x2.CreateScale((float)(output.Width / crop.Width), (float)(output.Height / crop.Height))
                 * Matrix3x2.CreateTranslation((float)output.Width / 2, (float)output.Height / 2);
+        }
+
+        // A story's, as the official apps pick it: a thin source is raised to a fixed rate, and any
+        // other keeps its own within 0.5 to 3 Mbps.
+        private static int MakeStoryBitrate(int originalBitrate, bool hasEntities)
+        {
+            if (originalBitrate < 1_000_000 && hasEntities)
+            {
+                return 2_000_000;
+            }
+            else if (originalBitrate < 500_000)
+            {
+                return 2_500_000;
+            }
+
+            return Math.Clamp(originalBitrate, 500_000, 3_000_000);
         }
 
         // As the official apps pick it: the source's bitrate for the pixels kept, within a range

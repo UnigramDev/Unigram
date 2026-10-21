@@ -516,7 +516,7 @@ play/pause) and `ZoomableListHandler` (press-and-hold preview); `EmojiDrawer`, `
 or the grid keeps animating behind an open preview.
 
 ## Media editor — Telegram/Views/Popups/EditMediaPopup.xaml.cs, Telegram/Views/Stories/Popups/EditStoryPopup.xaml.cs, Telegram/Controls/{MediaEditorSurface,PaintToolbar,PaintTabs,TrimToolbar,CropToolbar}.xaml.cs
-<!-- map: verified=7da182287 paths=Telegram/Views/Popups/EditMediaPopup.xaml,Telegram/Views/Popups/EditMediaPopup.xaml.cs,Telegram/Views/Stories/Popups/EditStoryPopup.xaml,Telegram/Views/Stories/Popups/EditStoryPopup.xaml.cs,Telegram/Controls/ImageCropper.cs,Telegram/Controls/MediaEditorSurface.xaml,Telegram/Controls/MediaEditorSurface.xaml.cs,Telegram/Controls/PaintToolbar.xaml,Telegram/Controls/PaintToolbar.xaml.cs,Telegram/Controls/PaintTabs.xaml,Telegram/Controls/PaintTabs.xaml.cs,Telegram/Controls/TrimToolbar.xaml,Telegram/Controls/TrimToolbar.xaml.cs,Telegram/Controls/CropToolbar.xaml,Telegram/Controls/CropToolbar.xaml.cs,Telegram/Entities/ImageGeneration.cs -->
+<!-- map: verified=60549527e paths=Telegram/Views/Popups/EditMediaPopup.xaml,Telegram/Views/Popups/EditMediaPopup.xaml.cs,Telegram/Views/Stories/Popups/EditStoryPopup.xaml,Telegram/Views/Stories/Popups/EditStoryPopup.xaml.cs,Telegram/Views/Stories/Popups/PostStoryPopup.xaml,Telegram/Views/Stories/Popups/PostStoryPopup.xaml.cs,Telegram/Controls/ImageCropper.cs,Telegram/Services/Factories/StoryFactory.cs,Telegram/Entities/VideoGeneration.cs,Telegram/Controls/MediaEditorSurface.xaml,Telegram/Controls/MediaEditorSurface.xaml.cs,Telegram/Controls/PaintToolbar.xaml,Telegram/Controls/PaintToolbar.xaml.cs,Telegram/Controls/PaintTabs.xaml,Telegram/Controls/PaintTabs.xaml.cs,Telegram/Controls/TrimToolbar.xaml,Telegram/Controls/TrimToolbar.xaml.cs,Telegram/Controls/CropToolbar.xaml,Telegram/Controls/CropToolbar.xaml.cs,Telegram/Entities/ImageGeneration.cs -->
 The photo and video editor opened before sending, for profile photos and for rich-text media: crop,
 free angle, drawing, text/sticker/shape objects, trim, mute and quality. `EditMediaPopup` is a thin host
 over parts that `EditStoryPopup`, the story editor, composes differently.
@@ -545,6 +545,15 @@ over parts that `EditStoryPopup`, the story editor, composes differently.
   9.6 s.
 - The edit state is baked later by `GenerationService`: `CompressAsync` for photos, `TranscodeAsync`
   for video.
+- A story's edit carries its frame (`ImageGeneration.FrameSize` and the two fill colours).
+  `StoryFactory.CreateContentAsync` turns it into an `InputStoryContent`: the photo through the same
+  Compress generation, rendered at the frame's exact size by `ImageHelper.RenderRotatedAsync`; the
+  video through Transcode at 720×1280, with the fill passed to the native transcoder as
+  `BackgroundTop`/`BackgroundBottom`.
+- Posting runs `StoryListViewModel.AddStory`: pick a file, then `EditStoryPopup`, whose Next opens
+  `PostStoryPopup` on top of it (a `ModalPopup`, so `ChooseChatsPopup` can open over it in turn) for
+  caption, privacy, screenshots, keep and period. Backing out of it returns to editing; confirming
+  closes both, and `AddStory` posts through `StoryFactory` and `postStory` as the current user.
 
 **Traps:**
 - **The mode flag.** `Surface.Cropper.IsCropEnabled` is it: false means draw mode, and Done, Cancel

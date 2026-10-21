@@ -19,6 +19,7 @@ namespace Telegram.Entities
             : base(file, fileSize)
         {
             TotalSeconds = (int)Math.Floor(totalMilliseconds / 1000);
+            TotalMilliseconds = totalMilliseconds;
 
             Width = width;
             Height = height;
@@ -60,6 +61,8 @@ namespace Telegram.Entities
         }
 
         public int TotalSeconds { get; }
+
+        public double TotalMilliseconds { get; }
 
         public string Duration
         {
