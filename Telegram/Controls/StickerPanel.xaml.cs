@@ -63,16 +63,18 @@ namespace Telegram.Controls
             Interval = TimeSpan.FromSeconds(2)
         };
 
+        private readonly ThemeShadowEx _shadow;
+
         public StickerPanel()
         {
             InitializeComponent();
 
             var header = VisualUtilities.DropShadow(HeaderSeparator);
-            var shadow = VisualUtilities.DropShadow(ShadowElement);
-
             header.Clip = header.Compositor.CreateInsetClip(0, -40, 0, 40);
 
             _deactivateTimer.Tick += Deactivate_Tick;
+            _shadow = new ThemeShadowEx(ShadowElement, 32);
+
             Unloaded += OnUnloaded;
         }
 
