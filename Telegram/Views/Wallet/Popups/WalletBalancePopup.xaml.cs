@@ -13,17 +13,24 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Wallet.Popups
 {
     /// <summary>
     /// Someone's wallet card, handed over by the profile's balance: it comes out of the button that
-    /// asked for it, and the popup explaining why it can be seen comes in around it as it settles.
-    /// Closing plays it backwards: the card goes back into the button as the popup fades around it.
+    /// asked for it, and a note on why it can be seen above it and what can be done with it below
+    /// come in with its flight. Closing plays it backwards, the card going back into the button.
     /// </summary>
     public sealed partial class WalletBalancePopup : ModalPopup
     {
+        // How far the note and the buttons rise into place as they come in, and how small the
+        // buttons start: the beta's 8 dp, 16 dp and 0.8.
+        private const float TipRise = 8;
+        private const float ActionsRise = 16;
+        private const float ActionsStartScale = 0.8f;
+
         private Deferral _closing;
 
         /// <param name="slot">What was clicked to show it, which the card comes out of.</param>
@@ -38,11 +45,20 @@ namespace Telegram.Views.Wallet.Popups
             var background = Card.Stickers.Find(card.BackgroundNftAddress);
             Card.SetStyle(clientService, background?.Collectible.Gift, default, false);
 
+            CloseCardButton.Content = Strings.Close;
+
             // There is no sending money to yourself.
             if (user.Id == clientService.Options.MyId)
             {
                 Note.Text = Strings.WalletPublicBalanceNote;
-                SecondaryButtonText = Strings.Close;
+                SendMoneyButton.Visibility = Visibility.Collapsed;
+
+                Grid.SetColumn(CloseCardButton, 0);
+                Grid.SetColumnSpan(CloseCardButton, 2);
+
+                // Enter presses primary even in a popup with no primary button, which would close
+                // this one as if Send Money had been clicked.
+                IsPrimaryButtonEnabled = false;
             }
             else
             {
@@ -50,9 +66,14 @@ namespace Telegram.Views.Wallet.Popups
                     ? string.Format(Strings.WalletProfileOwnsGrams, user.FirstName, Formatter.Grams(Formatter.GramSummary(card.GramAmount), card.GramAmount, capital: true))
                     : string.Format(Strings.WalletProfileOwnsNoGrams, user.FirstName);
 
-                PrimaryButtonText = Strings.WalletSendMoney;
+                SendMoneyButton.Content = Strings.WalletSendMoney;
             }
 
+            // ToastPopup's, and unguarded like it: ThemeShadow arrived in the minimum version.
+            TipRoot.Shadow = new ThemeShadow();
+            TipRoot.Translation = new Vector3(0, 0, 32);
+
+            Card.EjectFlightChanged += Card_EjectFlightChanged;
             Card.Eject(slot);
 
             Closing += OnClosing;
@@ -68,18 +89,25 @@ namespace Telegram.Views.Wallet.Popups
         {
             _closing = args.GetDeferral();
 
+            // The smoke goes with the card's progress, which runs linearly.
             var remaining = Card.Insert();
             if (remaining > TimeSpan.Zero)
             {
-                // Both on the card's progress, which runs linearly: the smoke is the progress
-                // itself, and the popup goes on the curve the slot's edge comes down on, over
-                // the flight back, its first 70%. Backwards, that edge's quint ease out is an ease in.
-                var compositor = ElementComposition.GetElementVisual(this).Compositor;
-                var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.68f, 0), new Vector2(0.77f, 0));
-
-                HideChrome(TimeSpan.FromMilliseconds(remaining.TotalMilliseconds * 0.7), easing);
                 HideSmoke(remaining);
             }
+        }
+
+        private void Card_EjectFlightChanged(object sender, float flight)
+        {
+            Tip.Opacity = flight;
+            Tip.Translation = new Vector3(0, TipRise * (1 - flight), 0);
+
+            var scale = ActionsStartScale + (1 - ActionsStartScale) * flight;
+
+            Actions.Opacity = flight;
+            Actions.Translation = new Vector3(0, ActionsRise * (1 - flight), 0);
+            Actions.CenterPoint = new Vector3(Actions.ActualSize / 2, 0);
+            Actions.Scale = new Vector3(scale, scale, 1);
         }
 
         private void Card_Inserted(object sender, EventArgs e)
@@ -88,14 +116,14 @@ namespace Telegram.Views.Wallet.Popups
             _closing = null;
         }
 
-        private void Card_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void SendMoneyButton_Click(object sender, RoutedEventArgs e)
         {
-            CardSpace.Height = e.NewSize.Height;
+            Hide(ContentDialogResult.Primary);
         }
 
-        private void Card_EjectSettling(object sender, EventArgs e)
+        private void CloseCardButton_Click(object sender, RoutedEventArgs e)
         {
-            ShowChrome();
+            Hide();
         }
     }
 }

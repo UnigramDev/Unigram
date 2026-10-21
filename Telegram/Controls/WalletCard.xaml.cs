@@ -1160,7 +1160,6 @@ namespace Telegram.Controls
         private TextBlock _slotText;
         private float _ejectElapsed = -1;
         private bool _ejectStarted;
-        private bool _ejectSettling;
         private bool _inserting;
 
         // In Stage's coordinates: the slot's middle, the window's top edge, which the slot's edge
@@ -1179,10 +1178,11 @@ namespace Telegram.Controls
         private double _ejectScale = 1;
 
         /// <summary>
-        /// The card is out of the slot and on its way to rest after <see cref="Eject"/>: what it
-        /// was handed over for can come in around it.
+        /// How far the card has flown from its slot towards rest, 0 to 1 on the curve the slot's
+        /// edge rises on: every frame it moves, either way, and once more when it stops. What it
+        /// was handed over for comes and goes with it.
         /// </summary>
-        public event EventHandler EjectSettling;
+        public event EventHandler<float> EjectFlightChanged;
 
         /// <summary>
         /// The card is back in the slot after <see cref="Insert"/>, or was never out of it.
@@ -1200,7 +1200,6 @@ namespace Telegram.Controls
             _ejectSlot = slot;
             _ejectElapsed = 0;
             _ejectStarted = false;
-            _ejectSettling = false;
 
             _hovering = false;
             _pitch = _yaw = _targetPitch = _targetYaw = 0;
@@ -1235,7 +1234,6 @@ namespace Telegram.Controls
             }
 
             _inserting = true;
-            _ejectSettling = true;
             _hovering = false;
 
             UpdateRendering();
@@ -1362,11 +1360,7 @@ namespace Telegram.Controls
             // The slot's edge rises to the top of the window as the card flies.
             _slotGeometry.Offset = new Vector2(-SlotReach, _slotCenter.Y + (_windowTop - _slotCenter.Y) * edge);
 
-            if (!_ejectSettling && progress >= 0.3f)
-            {
-                _ejectSettling = true;
-                EjectSettling?.Invoke(this, EventArgs.Empty);
-            }
+            EjectFlightChanged?.Invoke(this, edge);
 
             if (_inserting ? _ejectElapsed <= 0 : progress >= 1)
             {
@@ -1418,6 +1412,9 @@ namespace Telegram.Controls
 
             // Back in, it is behind the slot's edge, which goes with the clip.
             LayoutRoot.Opacity = inserted && _ejectStarted ? 0 : 1;
+
+            // Where it stopped, which a skipped eject never stepped to.
+            EjectFlightChanged?.Invoke(this, inserted ? 0 : 1);
 
             if (inserted)
             {

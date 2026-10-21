@@ -1087,8 +1087,8 @@ namespace Telegram.Controls
 
         /// <summary>
         /// Hides the card - its fill, shadow, content and buttons - leaving the smoke and the
-        /// <see cref="Overlay"/>, for a popup whose overlay arrives first. From OnApplyTemplate, so
-        /// the card is never seen; <see cref="ShowChrome"/> brings it in.
+        /// <see cref="Overlay"/>, for a popup drawn entirely in its overlay. From OnApplyTemplate, so
+        /// the card is never seen.
         /// </summary>
         protected void HideChrome()
         {
@@ -1103,30 +1103,6 @@ namespace Telegram.Controls
 
             // Invisible buttons must not take a click meant for the overlay.
             ClipRoot.IsHitTestVisible = false;
-        }
-
-        /// <summary>
-        /// Fades the card out on the given timing, for a popup whose overlay leaves last. With
-        /// <see cref="HideSmoke"/> as well, closing skips its own animation.
-        /// </summary>
-        protected void HideChrome(TimeSpan duration, CompositionEasingFunction easing)
-        {
-            if (ClipRoot == null || ShadowCaster == null)
-            {
-                return;
-            }
-
-            _chromeHidden = true;
-            ClipRoot.IsHitTestVisible = false;
-
-            var clip = ElementComposition.GetElementVisual(ClipRoot);
-
-            var opacity = clip.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(1, 0, easing);
-            opacity.Duration = AtLeastOneFrame(duration);
-
-            clip.StartAnimation("Opacity", opacity);
-            ElementComposition.GetElementVisual(ShadowCaster).StartAnimation("Opacity", opacity);
         }
 
         /// <summary>
@@ -1157,27 +1133,6 @@ namespace Telegram.Controls
         private static TimeSpan AtLeastOneFrame(TimeSpan duration)
         {
             return duration.TotalMilliseconds < 1 ? TimeSpan.FromMilliseconds(1) : duration;
-        }
-
-        protected void ShowChrome()
-        {
-            if (ClipRoot == null || ShadowCaster == null)
-            {
-                return;
-            }
-
-            _chromeHidden = false;
-            ClipRoot.IsHitTestVisible = true;
-
-            var clip = ElementComposition.GetElementVisual(ClipRoot);
-            var compositor = clip.Compositor;
-
-            var opacity = compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(1, 1, CreateSettleEasing(compositor));
-            opacity.Duration = OpenScaleDuration;
-
-            clip.StartAnimation("Opacity", opacity);
-            ElementComposition.GetElementVisual(ShadowCaster).StartAnimation("Opacity", opacity);
         }
 
         // cubic-bezier(0, 0, 0, 1): the easing CreateStoryboardImpl builds by taking a linear

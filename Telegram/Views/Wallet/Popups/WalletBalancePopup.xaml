@@ -6,29 +6,87 @@
                      xmlns:controls="using:Telegram.Controls"
                      mc:Ignorable="d"
                      ContentMinWidth="408"
-                     ContentMaxWidth="408"
-                     ButtonsLayout="Vertical">
+                     ContentMaxWidth="408">
 
-    <!-- Over the popup rather than in it, so that it can come out of its slot before the popup is
-         there, and in the room CardSpace keeps for it once it is. -->
+    <!-- All of it in the overlay, the popup's own card hidden: the card floats with the note in a
+         tip above it and the buttons below, which come and go with its flight. -->
     <controls:ModalPopup.Overlay>
-        <controls:WalletCard x:Name="Card"
-                             SizeChanged="Card_SizeChanged"
-                             EjectSettling="Card_EjectSettling"
-                             Inserted="Card_Inserted"
-                             VerticalAlignment="Top"
-                             Margin="24,24,24,0" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- A toast as ToastPopup.ShowImpl makes one: dark, as wide as its text up to the
+                 toast's 320, with its tail pointing down at the card. The shadow is cast from code,
+                 as ToastPopup casts its own. -->
+            <Grid x:Name="Tip"
+                  RequestedTheme="Dark"
+                  Opacity="0"
+                  MaxWidth="320"
+                  HorizontalAlignment="Center"
+                  Margin="0,0,0,8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="8" />
+                </Grid.RowDefinitions>
+
+                <Border x:Name="TipRoot"
+                        Background="{ThemeResource TeachingTipBackgroundBrush}"
+                        BorderBrush="{ThemeResource TeachingTipBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{ThemeResource OverlayCornerRadius}">
+                    <TextBlock x:Name="Note"
+                               Foreground="{ThemeResource TeachingTipForegroundBrush}"
+                               FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               Margin="12" />
+                </Border>
+
+                <!-- ToastPopup's tail exactly, as SetTail docks it below: taller than its 8 band and
+                     bottom-aligned, so it reaches up into the content rather than meeting its edge,
+                     which leaves no seam at any scale. -->
+                <Polygon Points="0,0 10,10 20,0"
+                         Fill="{ThemeResource TeachingTipBackgroundBrush}"
+                         Stroke="{ThemeResource TeachingTipBorderBrush}"
+                         StrokeThickness="1"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Bottom"
+                         Margin="0,-1,0,0"
+                         Grid.Row="1" />
+            </Grid>
+
+            <controls:WalletCard x:Name="Card"
+                                 Inserted="Card_Inserted"
+                                 Margin="24,0,24,0"
+                                 Grid.Row="1" />
+
+            <!-- ModalPopup's horizontal command row: primary on the left, the other one beside it,
+                 or across the whole row when it is alone. -->
+            <Grid x:Name="Actions"
+                  Opacity="0"
+                  ColumnSpacing="8"
+                  Margin="24,12,24,0"
+                  Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="SendMoneyButton"
+                        Click="SendMoneyButton_Click"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Height="36"
+                        HorizontalAlignment="Stretch" />
+
+                <Button x:Name="CloseCardButton"
+                        Click="CloseCardButton_Click"
+                        Height="36"
+                        HorizontalAlignment="Stretch"
+                        Grid.Column="1" />
+            </Grid>
+        </Grid>
     </controls:ModalPopup.Overlay>
-
-    <StackPanel>
-        <!-- The card's height at the popup's width from the start, so the popup never grows into
-             it: a resize slides the popup, and the card with it, off the slot it comes out of. -->
-        <Border x:Name="CardSpace"
-                Height="220" />
-
-        <TextBlock x:Name="Note"
-                   Style="{StaticResource BodyTextBlockStyle}"
-                   TextAlignment="Center"
-                   Margin="0,16,0,0" />
-    </StackPanel>
 </controls:ModalPopup>
