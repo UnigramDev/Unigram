@@ -574,7 +574,7 @@ namespace Telegram.Services
 
             if ((change & TopicChange.UnreadPollVoteCount) != 0)
             {
-                _aggregator.Publish(new UpdateForumTopicUnreadReactionCount(_chatId, forumTopicId, topic.UnreadPollVoteCount));
+                _aggregator.Publish(new UpdateForumTopicUnreadPollVoteCount(_chatId, forumTopicId, topic.UnreadPollVoteCount));
             }
 
             if ((change & TopicChange.ReadInbox) != 0)
@@ -660,6 +660,11 @@ namespace Telegram.Services
                 if (topic.UnreadReactionCount != update.UnreadReactionCount)
                 {
                     _aggregator.Publish(new UpdateForumTopicUnreadReactionCount(_chatId, update.ForumTopicId, topic.UnreadReactionCount = update.UnreadReactionCount));
+                }
+
+                if (topic.UnreadPollVoteCount != update.UnreadPollVoteCount)
+                {
+                    _aggregator.Publish(new UpdateForumTopicUnreadPollVoteCount(_chatId, update.ForumTopicId, topic.UnreadPollVoteCount = update.UnreadPollVoteCount));
                 }
 
                 if (topic.DraftMessage?.Date != update.DraftMessage?.Date)
@@ -769,6 +774,7 @@ namespace Telegram.Services
                 topic.NotificationSettings = newTopic.NotificationSettings;
                 topic.UnreadReactionCount = newTopic.UnreadReactionCount;
                 topic.UnreadMentionCount = newTopic.UnreadMentionCount;
+                topic.UnreadPollVoteCount = newTopic.UnreadPollVoteCount;
                 topic.IsPinned = newTopic.IsPinned;
                 topic.Info = newTopic.Info;
 
