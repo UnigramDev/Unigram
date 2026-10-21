@@ -10,14 +10,6 @@
                   ShowHeader="False"
                   NavigationMode="Root">
 
-    <Page.Transitions>
-        <TransitionCollection>
-            <NavigationThemeTransition>
-                <SlideNavigationTransitionInfo Effect="FromRight" />
-            </NavigationThemeTransition>
-        </TransitionCollection>
-    </Page.Transitions>
-
     <Page.Resources>
         <DataTemplate x:Key="PaymentOptionTemplate">
             <Grid DataContextChanged="OnDataContextChanged">
