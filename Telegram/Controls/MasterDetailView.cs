@@ -210,7 +210,7 @@ namespace Telegram.Controls
             }
         }
 
-        private BackgroundKind _backgroundType;
+        private BackgroundKind _backgroundType = BackgroundKind.Background;
 
         public void ShowHideBackground(BackgroundKind show, bool animate)
         {
