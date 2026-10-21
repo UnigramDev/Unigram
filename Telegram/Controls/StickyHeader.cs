@@ -48,6 +48,8 @@ namespace Telegram.Controls
         private float _threshold = float.NaN;
         private bool _running;
 
+        private double _resting;
+
         public StickyHeader()
         {
             DefaultStyleKey = typeof(StickyHeader);
@@ -332,8 +334,10 @@ namespace Telegram.Controls
 
             _scrollingHost = scrollingHost;
             _contentRoot = contentRoot;
+            _resting = scrollingHost.VerticalOffset;
 
             _scrollingHost.SizeChanged += OnLayoutChanged;
+            _scrollingHost.ViewChanged += OnViewChanged;
             _contentRoot.SizeChanged += OnLayoutChanged;
 
             LiftItemsHost(this, contentRoot);
@@ -395,6 +399,7 @@ namespace Telegram.Controls
             }
 
             _scrollingHost.SizeChanged -= OnLayoutChanged;
+            _scrollingHost.ViewChanged -= OnViewChanged;
 
             if (_contentRoot != null)
             {
@@ -424,6 +429,47 @@ namespace Telegram.Controls
             // Start rather than UpdateThreshold: a resize of the content is also a chance to make
             // good on a start that had no layout to measure.
             Start();
+        }
+
+        /// <summary>
+        /// Carries a scroll that comes to rest mid-transition - the header half collapsed, the strip
+        /// part way through its handover - on to the edge it was heading for.
+        /// </summary>
+        /// <remarks>
+        /// The direction of travel rather than the nearest edge, because every wheel notch ends in a
+        /// resting view and the nearest edge would push slow wheeling back. The strip is settled here
+        /// too, so that a strip right under the header cannot pull the other way.
+        /// </remarks>
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (e.IsIntermediate)
+            {
+                return;
+            }
+
+            var offset = _scrollingHost.VerticalOffset;
+            var forward = offset >= _resting;
+
+            _resting = offset;
+
+            if (Settle(offset, _threshold, _threshold + CollapseRange, forward, out var target)
+                || (_tabs != null && Settle(offset, _tabs.Threshold - StickyHeaderTabs.ApproachRange, _tabs.Threshold, forward, out target)))
+            {
+                _scrollingHost.TryChangeView(null, target, null, false);
+            }
+        }
+
+        private bool Settle(double offset, float from, float to, bool forward, out double target)
+        {
+            target = forward ? to : from;
+
+            // Open at both ends so the view a settle lands on is not settled again, and never towards
+            // an edge out of reach: the view would clamp inside the band and bounce back. An
+            // unmeasured (NaN) threshold fails every comparison.
+            return offset > from + 0.5
+                && offset < to - 0.5
+                && target >= 0
+                && target <= _scrollingHost.ScrollableHeight;
         }
 
         /// <summary>

@@ -32,7 +32,7 @@ namespace Telegram.Controls
         // handover that starts at contact leaves the surface's overshoot nowhere to spend itself
         // but after the strip, and it reads as a lunge. Progress is the short one, left for a strip
         // used without a header, which has only its own surface to fade in.
-        private const float ApproachRange = 48;
+        internal const float ApproachRange = 48;
 
         // It comes to rest 8 pixels inside the collapsed header rather than flush under it. Read by
         // StickyHeader, which grows its own surface by the rest of the strip's height.
@@ -287,6 +287,11 @@ namespace Telegram.Controls
             // good on a start that had no layout to measure.
             Start();
         }
+
+        /// <summary>
+        /// The scroll offset at which the strip pins, or NaN until it has been measured.
+        /// </summary>
+        internal float Threshold => _threshold;
 
         /// <inheritdoc cref="StickyHeader.UpdateThreshold"/>
         public void UpdateThreshold()
