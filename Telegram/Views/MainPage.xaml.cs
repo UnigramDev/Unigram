@@ -1002,8 +1002,6 @@ namespace Telegram.Views
             _tabsLeftCollapsed = !show;
             FindName(nameof(ChatTabsLeft));
 
-            Root?.SetSidebarEnabled(show);
-
             Stories.TabsLeftCollapsed = !show;
 
             UpdateTitleBarMargins();
@@ -1078,12 +1076,7 @@ namespace Telegram.Views
 
         public void OnBackRequesting(BackRequestedRoutedEventArgs args)
         {
-            if (Root?.IsPaneOpen is true)
-            {
-                Root.IsPaneOpen = false;
-                args.Handled = true;
-            }
-            else if (!_searchCollapsed)
+            if (!_searchCollapsed)
             {
                 DialogsSearchPanel.OnBackRequested(args);
 
@@ -2383,8 +2376,6 @@ namespace Telegram.Views
                     break;
                 case INDEX_SETTINGS:
                     _shouldGoBackWithDetail = false;
-
-                    Root?.SetSelectedIndex(RootDestination.Settings);
                     SearchField.ControlledList = null;
 
                     if (SettingsView == null)
@@ -2674,62 +2665,6 @@ namespace Telegram.Views
             }
         }
 
-        public void NavigationView_ItemClick(RootDestination destination)
-        {
-            if (destination == RootDestination.Chats)
-            {
-                SetPivotSelectedIndex(INDEX_CHATS);
-            }
-            else if (destination == RootDestination.Contacts)
-            {
-                ViewModel.NavigationService.ShowPopup(new ContactsPopup());
-            }
-            else if (destination == RootDestination.Calls)
-            {
-                ViewModel.NavigationService.ShowPopup(new CallsPopup());
-            }
-            else if (destination == RootDestination.Wallet)
-            {
-                ViewModel.NavigationService.NavigateToWallet();
-            }
-            else if (destination == RootDestination.Settings)
-            {
-                SetPivotSelectedIndex(INDEX_SETTINGS);
-            }
-            else if (destination == RootDestination.ArchivedChats)
-            {
-                ArchivedChats_Click(null, null);
-            }
-            else if (destination == RootDestination.Status)
-            {
-                Status_Click(null, null);
-            }
-            else if (destination == RootDestination.NewGroup)
-            {
-                ViewModel.NavigationService.ShowPopup(new NewGroupPopup());
-            }
-            else if (destination == RootDestination.NewChannel)
-            {
-                ViewModel.NavigationService.ShowPopup(new NewChannelPopup());
-            }
-            else if (destination == RootDestination.MyProfile)
-            {
-                ViewModel.NavigateToMyProfile(false);
-            }
-            else if (destination == RootDestination.SavedMessages)
-            {
-                ViewModel.NavigateToMyProfile(true);
-            }
-            else if (destination == RootDestination.Tips && Uri.TryCreate(Strings.TelegramFeaturesUrl, UriKind.Absolute, out Uri tipsUri))
-            {
-                MessageHelper.OpenTelegramUrl(ViewModel.ClientService, MasterDetail.NavigationService, tipsUri);
-            }
-            else if (destination == RootDestination.News)
-            {
-                MessageHelper.NavigateToUsername(ViewModel.ClientService, MasterDetail.NavigationService, "unigram");
-            }
-        }
-
         private void Arrow_Click(object sender, RoutedEventArgs e)
         {
             var scrollViewer = ChatsList.GetScrollViewer();
@@ -2899,8 +2834,6 @@ namespace Telegram.Views
                     : Visibility.Visible;
                 //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
                 ChatsList.Margin = new Thickness(0, Stories.TopPadding, 0, 0);
-
-                Root.UpdateSessions();
 
                 if (((ViewModelBase)ViewModel).Settings.HideArchivedChats)
                 {
