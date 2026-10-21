@@ -14282,6 +14282,11 @@
     <string name="CheckPasswordWrong">You entered the wrong password.</string>
     <string name="WalletRecipientUnavailable">Recipient wallet is unavailable</string>
     <string name="WalletTonConnectManifestLoadFailed">Could not load dApp manifest: {0}</string>
+    <string name="WalletGiftOnCard">On Card</string>
+    <string name="WalletGiftAddToCard">Add to Card</string>
+    <string name="WalletGiftRemoveFromCard">Remove from Card</string>
+    <string name="WalletGiftApplyColor">Apply Color</string>
+    <string name="WalletGiftRemoveColor">Remove Color</string>
     <string name="WalletConnectNoWallet">You need a wallet to connect apps.</string>
     <string name="WalletConnectFailed">Could not connect to this app.</string>
     <string name="WalletDisconnectConfirm">Are you sure you want to disconnect **{0}**?</string>
@@ -14390,9 +14395,9 @@
     <string name="BotTypeApp">App</string>
     <string name="BotTypeGame">Game</string>
     <string name="BotTypeNonBinary">Non-binary</string>
+
+    <!--NOT FINAL: the toast for a wallet card that holds all the collectibles it can. Replace with
+        the Android string once it ships, and remove this block.-->
     <string name="WalletCardFull">You can add up to {0} collectibles to your card.</string>
-    <string name="WalletCardOnCard">on card</string>
-    <string name="WalletCardRemoveColor">Remove Color</string>
-    <string name="WalletCardRemoveFromCard">Remove from Card</string>
 
 </resources>

@@ -96,7 +96,7 @@ namespace Telegram.Controls.Cells
                 ShowOutline(gift);
             }
 
-            Ribbon.Text = onCard ? Strings.WalletCardOnCard : string.Format("#{0:N0}", gift.Number);
+            Ribbon.Text = onCard ? Strings.WalletGiftOnCard : string.Format("#{0:N0}", gift.Number);
         }
 
         private async void ShowOutline(UpgradedGift gift)

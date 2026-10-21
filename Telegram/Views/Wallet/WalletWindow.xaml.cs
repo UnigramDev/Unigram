@@ -854,11 +854,11 @@ namespace Telegram.Views.Wallet
 
             if (Card.Stickers.Contains(collectible.Address))
             {
-                flyout.CreateFlyoutItem(RemoveFromCard, collectible, Strings.WalletCardRemoveFromCard, Icons.Sticker);
+                flyout.CreateFlyoutItem(RemoveFromCard, collectible, Strings.WalletGiftRemoveFromCard, Icons.Sticker);
             }
             else
             {
-                flyout.CreateFlyoutItem(AddToCard, collectible, Strings.WalletCardAddToCard, Icons.Sticker);
+                flyout.CreateFlyoutItem(AddToCard, collectible, Strings.WalletGiftAddToCard, Icons.Sticker);
             }
 
             flyout.ShowAt(sender, args);
@@ -870,7 +870,7 @@ namespace Telegram.Views.Wallet
             var flyout = new MenuFlyout();
 
             CreateColorItem(flyout, collectible);
-            flyout.CreateFlyoutItem(RemoveStickerFromCard, collectible, Strings.WalletCardRemoveFromCard, Icons.Sticker);
+            flyout.CreateFlyoutItem(RemoveStickerFromCard, collectible, Strings.WalletGiftRemoveFromCard, Icons.Sticker);
 
             flyout.ShowAt(e.Sticker, e.Args);
         }
@@ -879,11 +879,11 @@ namespace Telegram.Views.Wallet
         {
             if (collectible.Address == _backgroundAddress)
             {
-                flyout.CreateFlyoutItem(RemoveColor, Strings.WalletCardRemoveColor, Icons.Color);
+                flyout.CreateFlyoutItem(RemoveColor, Strings.WalletGiftRemoveColor, Icons.Color);
             }
             else if (collectible.Gift.CanBeTonWalletCardBackground)
             {
-                flyout.CreateFlyoutItem(ApplyColor, collectible, Strings.WalletCardApplyColor, Icons.Color);
+                flyout.CreateFlyoutItem(ApplyColor, collectible, Strings.WalletGiftApplyColor, Icons.Color);
             }
         }
 

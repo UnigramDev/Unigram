@@ -106,6 +106,7 @@ namespace Telegram.Controls.Wallet
         private int _z;
         private bool _rendering;
         private bool _active;
+        private bool _held;
         private TimeSpan _lastTime;
 
         public WalletStickerLayer()
@@ -197,6 +198,23 @@ namespace Telegram.Controls.Wallet
             {
                 _active = active;
                 ActiveChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// A sticker being moved, turned or sized by hand, past a press.
+        /// </summary>
+        public bool IsHeld => _held;
+
+        public event EventHandler HeldChanged;
+
+        private void UpdateHeld()
+        {
+            var held = _gesture is Gesture.Move or Gesture.Handle or Gesture.Pinch;
+            if (_held != held)
+            {
+                _held = held;
+                HeldChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -759,6 +777,7 @@ namespace Telegram.Controls.Wallet
 
                     CapturePointer(e.Pointer);
                     Select(_target);
+                    UpdateHeld();
                 }
 
                 e.Handled = true;
@@ -809,6 +828,7 @@ namespace Telegram.Controls.Wallet
 
             CapturePointer(e.Pointer);
             UpdateActive();
+            UpdateHeld();
             e.Handled = true;
         }
 
@@ -836,6 +856,7 @@ namespace Telegram.Controls.Wallet
 
                     _target.PickUp(_pressPoint - _target.Center);
                     UpdateFrame();
+                    UpdateHeld();
                     goto case Gesture.Move;
 
                 case Gesture.Move:
@@ -942,6 +963,7 @@ namespace Telegram.Controls.Wallet
 
             UpdateFrame();
             UpdateActive();
+            UpdateHeld();
 
             if (changed)
             {

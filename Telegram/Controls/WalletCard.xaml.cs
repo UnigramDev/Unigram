@@ -71,6 +71,7 @@ namespace Telegram.Controls
             StickerLayer.Frame = StickerFrame;
             StickerLayer.IsClipped = true;
             StickerLayer.Arranged += OnStickersArranged;
+            StickerLayer.HeldChanged += OnStickersHeldChanged;
 
             CardBalanceText.SizeChanged += OnPrintSizeChanged;
             CardBalanceUsd.SizeChanged += OnPrintSizeChanged;
@@ -980,6 +981,17 @@ namespace Telegram.Controls
         {
             _hovering = false;
             UpdateRendering();
+        }
+
+        // A sticker in hand settles the card flat under it. The layer takes every move until it is
+        // let go, so the tilt comes back with the first move after that.
+        private void OnStickersHeldChanged(object sender, EventArgs e)
+        {
+            if (StickerLayer.IsHeld)
+            {
+                _hovering = false;
+                UpdateRendering();
+            }
         }
 
         private bool IsIdle()
