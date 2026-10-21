@@ -91,6 +91,36 @@ try {
         return $null
     }
 
+    # Markdown is not committed here: notes worth keeping in git go to a separate private
+    # repository. The public docs already tracked outside notes/ may still be edited. Judged by
+    # common git dir, so this repository's worktrees are covered and that private one is not.
+    $projectGitDir = & git -C (Join-Path $PSScriptRoot '..\..') rev-parse --path-format=absolute --git-common-dir 2>$null
+
+    function Test-ThisRepository([string]$dir) {
+        if (-not $projectGitDir) { return $false }
+        $common = & git -C $dir rev-parse --path-format=absolute --git-common-dir 2>$null
+        return $common -and ([IO.Path]::GetFullPath($common) -eq [IO.Path]::GetFullPath($projectGitDir))
+    }
+
+    # Root-relative paths, as git diff names them.
+    function Get-ForbiddenMarkdown([string]$dir, [string[]]$paths) {
+        $paths | Where-Object { $_ -match '\.md$' } | Where-Object {
+            $_ -match '^notes/' -or -not (& git -C $dir ls-tree --name-only HEAD -- ":/$_" 2>$null)
+        }
+    }
+
+    function Deny-Markdown([string[]]$paths) {
+        Deny (@(
+            'Refusing to commit Markdown: .md files are never committed to this repository.'
+            ''
+            ($paths | ForEach-Object { "  $_" })
+            ''
+            'Notes worth keeping in git go to the separate private repository instead. Only the'
+            'public docs already tracked outside notes/ (README, CONTRIBUTING, Documentation/, tool'
+            'READMEs, skills) may be edited.'
+        ) -join "`n")
+    }
+
     # Every git command is judged in the directory it runs in: after any cd earlier in the
     # same command line, and under its own -C. Judged in the session's directory instead, a
     # commit made from a separate worktree was checked against the main checkout's index.
@@ -105,6 +135,24 @@ try {
             $target = if ($tokens.Count -gt 0) { Unquote $tokens[0] } else { '~' }
             $resolved = Resolve-Directory $target $dir
             if ($resolved) { $dir = $resolved }
+            continue
+        }
+
+        # A commit from a scratch index is the sanctioned way to commit only some hunks, so
+        # nothing else here applies to it - only the Markdown rule, judged against that index.
+        if ($part -match '^GIT_INDEX_FILE=(?<index>\S+)\s+git(\.exe)?\s+commit\b') {
+            $index = Unquote $Matches['index']
+            if (-not [IO.Path]::IsPathRooted($index) -and $index -notmatch '^/[a-zA-Z]/') { $index = Join-Path $dir $index }
+            elseif ($index -match '^/([a-zA-Z])(/.*)$') { $index = "$($Matches[1]):$($Matches[2])" }
+
+            if ((Test-Path -LiteralPath $index) -and (Test-ThisRepository $dir)) {
+                $env:GIT_INDEX_FILE = $index
+                $changed = @(& git -C $dir diff --cached --name-only --diff-filter=d 2>$null)
+                Remove-Item Env:GIT_INDEX_FILE
+
+                $forbidden = @(Get-ForbiddenMarkdown $dir $changed)
+                if ($forbidden.Count -gt 0) { Deny-Markdown $forbidden }
+            }
             continue
         }
 
@@ -142,6 +190,15 @@ try {
                     'Name every path instead:  git add <path> <path>'
                 ) -join "`n")
             }
+
+            if (Test-ThisRepository $entry.Dir) {
+                $named = @($verbPart -split '\s+' | Select-Object -Skip 1 | Where-Object { $_ -and $_ -notmatch '^-' } |
+                    ForEach-Object { Unquote $_ } | Where-Object { $_ -match '\.md$' } |
+                    ForEach-Object { & git -C $entry.Dir ls-files --full-name --others --cached -- $_ 2>$null })
+                $forbidden = @(Get-ForbiddenMarkdown $entry.Dir $named)
+                if ($forbidden.Count -gt 0) { Deny-Markdown $forbidden }
+            }
+
             $needsLock = $true
         }
 
@@ -191,6 +248,15 @@ try {
             # path is partly staged, that silently commits more than was staged.
             $tail = ($verbPart -split '\s--(\s|$)', 2)[-1]
             $paths = $tail -split '\s+' | Where-Object { $_ -and $_ -notmatch '^-' } | ForEach-Object { Unquote $_ } | Where-Object { $_ }
+
+            # Deletions pass: taking a note out of the repository is the point.
+            if (Test-ThisRepository $entry.Dir) {
+                $changed = @(foreach ($path in $paths) {
+                    & git -C $entry.Dir diff HEAD --name-only --diff-filter=d -- $path 2>$null
+                })
+                $forbidden = @(Get-ForbiddenMarkdown $entry.Dir $changed)
+                if ($forbidden.Count -gt 0) { Deny-Markdown $forbidden }
+            }
 
             foreach ($path in $paths) {
                 $staged = & git -C $entry.Dir diff --cached --name-only -- $path 2>$null

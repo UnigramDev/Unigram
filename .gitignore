@@ -292,3 +292,9 @@ _Pvt_Extensions
 !/Libraries/tlottie/lib/x64/
 !/Libraries/tlottie/lib/ARM64/
 
+# Markdown is not committed here, and nor is anything in notes/: notes go to a separate private
+# repository. Ignoring a file does not untrack it, so the public docs already in the repository
+# stay as they are.
+*.md
+/notes/
+
