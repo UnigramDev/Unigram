@@ -246,7 +246,11 @@ namespace Telegram.Common
 
         private void Recycle(int generation, long hashCode)
         {
-            SetSource(null);
+            try
+            {
+                SetSource(null);
+            }
+            catch { }
 
             _generation = generation;
             _hashCode = hashCode;
