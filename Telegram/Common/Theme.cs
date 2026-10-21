@@ -629,7 +629,7 @@ namespace Telegram.Common
 
                 if (lookup.TryGetColor("ControlStrokeColorDefaultBrush", out Color stroke))
                 {
-                    brush.GradientStops[0].Color = getShade(requested == TelegramTheme.Light ? AccentShade.Dark1 : AccentShade.Light1);
+                    brush.GradientStops[0].Color = getShade(AccentShade.Default/*requested == TelegramTheme.Light ? AccentShade.Dark2 : AccentShade.Light1*/);
                     brush.GradientStops[1].Color = stroke;
                 }
             });
