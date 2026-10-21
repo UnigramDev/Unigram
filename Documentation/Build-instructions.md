@@ -4,6 +4,7 @@ The following tools and SDKs are mandatory for the project development:
 * Visual Studio 2026, with
     * .NET desktop development
     * Desktop development with C++
+        * C++ Clang Compiler for Windows
     * Universal Windows Platform deveopment
 	    * Windows 11 SDK (10.0.26100.0)
  
@@ -74,6 +75,11 @@ ffmpeg has to be built with a specific set of decoders, so it is vendored as an
 [overlay port](https://learn.microsoft.com/vcpkg/concepts/overlay-ports) in
 `Libraries\vcpkg-ports\ffmpeg`, taken from the vcpkg registry with the `--enable-*` list applied
 on top. It takes precedence over whichever ffmpeg version the pinned commit happens to carry.
+
+libyuv is an overlay port too, in `Libraries\vcpkg-ports\libyuv`, because its SIMD code is GCC-style
+inline assembly that MSVC cannot compile: built with MSVC it is almost entirely scalar, and has no
+NEON at all on ARM64. The port builds it with the clang-cl that ships with Visual Studio, which is
+why the **C++ Clang Compiler for Windows** component is required.
 
 TDLib is built from the same manifest and into the same roots, so the openssl and zlib it links
 are the ones the app ships.

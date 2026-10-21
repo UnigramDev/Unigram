@@ -1132,8 +1132,8 @@ staticlib plus its C ABI header — see `Libraries/tlottie/README.md` to rebuild
 Lottie renderer, rlottie was removed with its submodule and in-tree vcxproj). **Prebuilt binaries
 checked in or downloaded:** `wallet-engine`, `tdjson` (local CMake tree providing `td_api.tl`),
 `ton-walletkit`. **vcpkg overlay ports:**
-`Libraries/vcpkg-ports/{ffmpeg,webrtc}` — ffmpeg and webrtc come in as vcpkg packages with local
-patches.
+`Libraries/vcpkg-ports/{ffmpeg,libyuv,webrtc}` — vcpkg packages with local patches; libyuv is
+built with clang-cl (see Native dependencies and vcpkg).
 **Traps:** the ffmpeg portfile is hand-patched to disable most codecs and enable only D3D11VA/DXVA2
 hwaccel plus a narrow allowlist; building against upstream vcpkg ffmpeg changes decoder availability.
 `tlottie.lib` is linked by an explicit per-platform path, which only works because the projects
@@ -1224,6 +1224,11 @@ runtime DLLs.
 A native project globs `bin\*.dll` at `ResolveReferences`, before its own vcpkg install runs, so the
 first build after a package leaves the manifest fails with MSB3030 on that package's DLLs, which the
 install has just purged; building again passes.
+The libyuv overlay port compiles with Visual Studio's clang-cl, because libyuv's SIMD is GCC-style inline
+assembly and an MSVC build is scalar, with no NEON on ARM64. It needs the C++ Clang Compiler for Windows
+component and fails naming it. Under the UWP toolchain clang-cl needs three things the port sets: C++/CX
+`/FU` off (also for `try_compile`), `WindowsApp.lib` for CMake's compiler probe, and libyuv's CMake patched
+so it does not mistake clang-cl for MSVC and skip the NEON sources.
 openssl and zlib are excluded from the copied runtime DLLs to avoid clashing with tdjson's own OpenSSL
 under the same filename. `VcpkgApplocalDeps=false` means DLLs can go missing from the appx on an
 incremental build where the linker did not run.
