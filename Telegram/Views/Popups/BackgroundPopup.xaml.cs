@@ -280,7 +280,7 @@ namespace Telegram.Views.Popups
             _updatePending = false;
 
             var background = ViewModel.Item;
-            if (background != null)
+            if (background != null && IsConnected)
             {
                 Preview.XamlRoot ??= XamlRoot;
 
