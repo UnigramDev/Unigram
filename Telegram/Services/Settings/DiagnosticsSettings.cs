@@ -28,7 +28,7 @@ namespace Telegram.Services.Settings
         private int? _nativeTextInput;
         public NativeTextInputMode NativeTextInput
         {
-            get => (NativeTextInputMode)(_nativeTextInput ??= GetValueOrDefault("NativeTextInput", (int)NativeTextInputMode.Off));
+            get => (NativeTextInputMode)(_nativeTextInput ??= GetValueOrDefault("NativeTextInput", (int)NativeTextInputMode.All));
             set => AddOrUpdateValue(ref _nativeTextInput, "NativeTextInput", (int)value);
         }
 
@@ -229,7 +229,7 @@ namespace Telegram.Services.Settings
         private bool? _directTextDebug;
         public bool DirectTextDebug
         {
-            get => _directTextDebug ??= GetValueOrDefault("DirectTextDebug", false);
+            get => _directTextDebug ??= GetValueOrDefault("DirectTextDebug", ApiInfo.IsPackagedRelease);
             set => AddOrUpdateValue(ref _directTextDebug, "DirectTextDebug", value);
         }
 
