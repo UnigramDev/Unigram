@@ -140,7 +140,8 @@ namespace Telegram.Services
         // save their own, so this is per-session and not the download folder's business.
         private readonly HashSet<string> _completedDownloads = new();
         private readonly HashSet<int> _explicitDownloads = new();
-        private readonly Dictionary<int, int> _streamingFiles = new();
+        private readonly Dictionary<int, List<FileReadLease>> _fileReads = new();
+        private long _fileReadSequence;
         private readonly object _downloadsLock = new();
 
         /// <summary>
@@ -155,7 +156,17 @@ namespace Telegram.Services
                 _canceledDownloads.Clear();
                 _completedDownloads.Clear();
                 _explicitDownloads.Clear();
-                _streamingFiles.Clear();
+
+                // Their readers still hold them, and must find them closed.
+                foreach (var leases in _fileReads.Values)
+                {
+                    foreach (var lease in leases)
+                    {
+                        lease.IsClosed = true;
+                    }
+                }
+
+                _fileReads.Clear();
             }
         }
 
@@ -342,32 +353,8 @@ namespace Telegram.Services
             }
         }
 
-        /// <param name="onlyIfStreaming">
-        /// Cancels the download only if nothing asked for the file itself, meaning the
-        /// download exists because a reader is streaming the file. Set by such a reader
-        /// when it closes, so that it takes back its own read ahead without stopping a
-        /// download the user is waiting for.
-        /// </param>
-        public async void CancelDownloadFile(File file, bool onlyIfPending = false, bool onlyIfStreaming = false)
+        public async void CancelDownloadFile(File file, bool onlyIfPending = false)
         {
-            if (onlyIfStreaming)
-            {
-                lock (_downloadsLock)
-                {
-                    if (_explicitDownloads.Contains(file.Id))
-                    {
-                        return;
-                    }
-                }
-
-                // Nothing else to undo here: a download that exists only to feed a reader
-                // was never added to the download list nor staged in the download folder,
-                // and it must not be remembered as canceled, which would keep
-                // auto-download from ever picking the file up again.
-                Send(new CancelDownloadFile(file.Id, onlyIfPending));
-                return;
-            }
-
             lock (_downloadsLock)
             {
                 _canceledDownloads.Add(file.Id);
@@ -412,47 +399,162 @@ namespace Telegram.Services
         {
             lock (_downloadsLock)
             {
-                return _streamingFiles.ContainsKey(fileId) && !_explicitDownloads.Contains(fileId);
+                return _fileReads.ContainsKey(fileId) && !_explicitDownloads.Contains(fileId);
             }
         }
 
-        /// <param name="streaming">
-        /// Whether a reader started or finished playing the file. Counted rather than set,
-        /// as the same file can be read by more than one at a time: a video playing in the
-        /// gallery over the one autoplaying in the bubble behind it.
+        /// <param name="preempted">
+        /// Called when a reader of a higher rank opens the file, outside any lock. Nothing the
+        /// lease asks for is sent after that, so its reader should close.
         /// </param>
-        public void TrackStreamingFile(int fileId, bool streaming)
+        public FileReadLease OpenFileRead(int fileId, FileReadRank rank, Action preempted = null)
         {
+            var lease = new FileReadLease(fileId, rank, preempted);
+            List<FileReadLease> outranked = null;
+
             lock (_downloadsLock)
             {
-                _streamingFiles.TryGetValue(fileId, out int count);
+                if (!_fileReads.TryGetValue(fileId, out var leases))
+                {
+                    _fileReads[fileId] = leases = new List<FileReadLease>();
+                }
 
-                if (streaming)
+                foreach (var other in leases)
                 {
-                    _streamingFiles[fileId] = count + 1;
+                    if (other.IsPreempted)
+                    {
+                        continue;
+                    }
+
+                    if (other.Rank > rank)
+                    {
+                        lease.Preempt();
+                    }
+                    else if (other.Rank < rank)
+                    {
+                        other.Preempt();
+
+                        outranked ??= new List<FileReadLease>();
+                        outranked.Add(other);
+                    }
                 }
-                else if (count > 1)
+
+                leases.Add(lease);
+            }
+
+            if (outranked != null)
+            {
+                foreach (var other in outranked)
                 {
-                    _streamingFiles[fileId] = count - 1;
-                }
-                else
-                {
-                    _streamingFiles.Remove(fileId);
+                    other.Preempted?.Invoke();
                 }
             }
+
+            return lease;
         }
 
         /// <summary>
-        /// Records that the file itself was asked for, by the user or by auto-download,
-        /// rather than a reader pulling in the parts it needs as it plays.
+        /// Asks for the window the reader is about to need. Readers of the same rank each send
+        /// theirs, the last one winning, as the same video can play in the gallery over the
+        /// bubble behind it.
         ///
-        /// A reader streaming a file stops the download when it closes, otherwise the last
-        /// window it asked for keeps running for a video nobody is watching. It may only
-        /// do that for a download nothing else wanted: the same file can be downloading
-        /// because the user asked for it, and closing a player must not cancel that.
+        /// Sent directly rather than through <see cref="DownloadFile"/>, which records the
+        /// file as one that was asked for in its own right.
+        /// </summary>
+        public void RequestFileRead(FileReadLease lease, int priority, long offset, long limit)
+        {
+            lock (_downloadsLock)
+            {
+                if (lease.IsClosed || lease.IsPreempted)
+                {
+                    return;
+                }
+
+                lease.HasWindow = true;
+                lease.Priority = priority;
+                lease.Offset = offset;
+                lease.Limit = limit;
+                lease.Sequence = ++_fileReadSequence;
+
+                SendFileRead(lease);
+            }
+        }
+
+        /// <param name="cancel">
+        /// Whether to stop the download if no other reader is left, otherwise the last window
+        /// keeps running for a video nobody is watching. It never stops a download of the
+        /// whole file that something asked for: see <see cref="TrackExplicitDownload"/>.
+        /// </param>
+        public void CloseFileRead(FileReadLease lease, bool cancel)
+        {
+            lock (_downloadsLock)
+            {
+                if (lease.IsClosed)
+                {
+                    return;
+                }
+
+                lease.IsClosed = true;
+
+                if (!_fileReads.TryGetValue(lease.FileId, out var leases))
+                {
+                    return;
+                }
+
+                leases.Remove(lease);
+
+                FileReadLease next = null;
+
+                foreach (var other in leases)
+                {
+                    if (other.HasWindow && !other.IsPreempted && (next == null || other.Sequence > next.Sequence))
+                    {
+                        next = other;
+                    }
+                }
+
+                if (leases.Count == 0)
+                {
+                    _fileReads.Remove(lease.FileId);
+                }
+
+                if (next != null)
+                {
+                    // The window running was this lease's, and the reader left behind would
+                    // otherwise wait for its next retry to ask for its own.
+                    if (lease.Sequence > next.Sequence && !lease.IsPreempted)
+                    {
+                        SendFileRead(next);
+                    }
+                }
+                else if (cancel && !lease.IsPreempted && !_explicitDownloads.Contains(lease.FileId))
+                {
+                    // Nothing else to undo: a download that exists only to feed a reader was
+                    // never added to the download list nor staged in the download folder, and
+                    // it must not be remembered as canceled, which would keep auto-download from
+                    // ever picking the file up again.
+                    Send(new CancelDownloadFile(lease.FileId, false));
+                }
+            }
+        }
+
+        private void SendFileRead(FileReadLease lease)
+        {
+            // A window would replace a download of the whole file, which then stops for good
+            // where the window ends. With no limit TDLib downloads from the offset to the end and
+            // wraps around to the start, so the file still completes.
+            var limit = _explicitDownloads.Contains(lease.FileId) ? 0 : lease.Limit;
+            Send(new DownloadFile(lease.FileId, lease.Priority, lease.Offset, limit, false));
+        }
+
+        /// <summary>
+        /// Records that the whole file was asked for, by the user, by auto-download or by a
+        /// caller that needs all of it, rather than a reader pulling in the parts it needs.
         ///
-        /// Streaming readers therefore send downloadFile themselves rather than going
-        /// through <see cref="DownloadFile"/>, which is what marks a file here.
+        /// A reader closing stops the download it leaves behind, but never one of these, and
+        /// while one runs a reader moves its offset without limiting it.
+        ///
+        /// A prefix is not recorded: it is a preload, which a reader can take over and stop.
         /// </summary>
         private void TrackExplicitDownload(int fileId)
         {

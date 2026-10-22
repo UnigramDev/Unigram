@@ -46,10 +46,13 @@ namespace Telegram.Services
         Task<File> DownloadFileAsync(File file, int priority, long offset = 0, long limit = 0);
 
         void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30);
-        void CancelDownloadFile(File file, bool onlyIfPending = false, bool onlyIfStreaming = false);
+        void CancelDownloadFile(File file, bool onlyIfPending = false);
         bool IsDownloadFileCanceled(int fileId);
         bool IsDownloadFileImplicit(int fileId);
-        void TrackStreamingFile(int fileId, bool streaming);
+
+        FileReadLease OpenFileRead(int fileId, FileReadRank rank, Action preempted = null);
+        void RequestFileRead(FileReadLease lease, int priority, long offset, long limit);
+        void CloseFileRead(FileReadLease lease, bool cancel);
 
         void PrepareLogs(int fileId, int verbosityLevel);
 
@@ -1166,13 +1169,20 @@ namespace Telegram.Services
 
         public void DownloadFile(int fileId, int priority, long offset = 0, long limit = 0, bool synchronous = false)
         {
-            TrackExplicitDownload(fileId);
+            if (limit == 0)
+            {
+                TrackExplicitDownload(fileId);
+            }
+
             Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
         }
 
         public async Task<File> DownloadFileAsync(File file, int priority, long offset = 0, long limit = 0)
         {
-            TrackExplicitDownload(file.Id);
+            if (limit == 0)
+            {
+                TrackExplicitDownload(file.Id);
+            }
 
             var response = await SendAsync(new DownloadFile(file.Id, priority, offset, limit, true));
             if (response is File updated)

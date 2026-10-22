@@ -1279,6 +1279,7 @@
     <Compile Include="Services\ClientService.ChatList.cs" />
     <Compile Include="Services\ClientService.PendingDelete.cs" />
     <Compile Include="Services\ClientService.Files.cs" />
+    <Compile Include="Services\FileReadLease.cs" />
     <Compile Include="Services\ProfilePhotoService.cs" />
     <Compile Include="Services\DownloadFolderService.cs" />
     <Compile Include="Services\StorageService.cs" />

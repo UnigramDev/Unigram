@@ -45,7 +45,9 @@ namespace Telegram.Streams
         private long _requestedEnd;
 
         private bool _closed;
-        private bool _tracked;
+
+        // Null while closed. Under _stateLock.
+        private FileReadLease _lease;
 
         private long _fileToken;
 
@@ -78,8 +80,6 @@ namespace Telegram.Streams
 
             Format = new StickerFormatWebm();
             UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile);
-
-            TrackStreaming(true);
         }
 
         public RemoteFileSource(IClientService clientService, File file/*, int priority = 32*/)
@@ -93,8 +93,6 @@ namespace Telegram.Streams
 
             Format = new StickerFormatWebm();
             UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile);
-
-            TrackStreaming(true);
         }
 
         public override void SeekCallback(long offset)
@@ -310,17 +308,15 @@ namespace Telegram.Streams
             }
         }
 
-        /// <summary>
-        /// Asks for the range the reader is about to need.
-        ///
-        /// Sent directly rather than through IClientService.DownloadFile, which records
-        /// the file as one that was asked for in its own right. This is a reader pulling
-        /// in the parts it is about to read, and it is what Close is allowed to cancel.
-        /// </summary>
         private void Download(long offset, long limit)
         {
+            if (_lease == null)
+            {
+                return;
+            }
+
             Interlocked.Exchange(ref _requestedEnd, limit > 0 ? offset + limit : _file.Size);
-            _clientService.Send(new DownloadFile(_file.Id, _priority, offset, limit, false));
+            _clientService.RequestFileRead(_lease, _priority, offset, limit);
         }
 
         public override string FilePath => _file.Local.Path;
@@ -372,30 +368,16 @@ namespace Telegram.Streams
             }
         }
 
-        /// <summary>
-        /// Marks the file as one that is only being read, rather than downloaded in its
-        /// own right. The download buttons hide a download that exists for a reader alone,
-        /// which would otherwise flicker as the window this source asks for moves along.
-        /// </summary>
-        private void TrackStreaming(bool streaming)
-        {
-            if (_tracked == streaming)
-            {
-                return;
-            }
-
-            _tracked = streaming;
-            _clientService.TrackStreamingFile(_file.Id, streaming);
-        }
-
         public void Open()
         {
             lock (_stateLock)
             {
                 _closed = false;
 
-                // The player opens the media again to replay it, having closed it at the end.
-                TrackStreaming(true);
+                // Not taken in the constructor: a source can be created and dropped without ever
+                // being read, and only Close gives a lease back. Readers open the source before
+                // reading, and again to replay it, having closed it at the end.
+                _lease ??= _clientService.OpenFileRead(_file.Id, FileReadRank.Playback);
             }
 
             // Close unsubscribed. Without this the reopened source hears no updateFile, so
@@ -418,24 +400,15 @@ namespace Telegram.Streams
 
                 _closed = true;
 
-                TrackStreaming(false);
-
                 //Logger.Debug($"Disposing the stream");
                 UpdateManager.Unsubscribe(this, ref _fileToken);
 
-                // Only the reader that owns the download stops it. The last window this
-                // source asked for is still running, and nothing else ends it, so closing
-                // the player would otherwise leave it fetching ahead of a video nobody is
-                // watching. Sources serving one ranged request each share the file with
-                // whoever else is reading it and must leave it alone.
-                //
-                // onlyIfStreaming keeps this to the download this source started: the same
-                // file may also be downloading because the user asked for it, or because
-                // auto-download picked it up, and neither ends when a player closes.
-                if (_streaming)
-                {
-                    _clientService.CancelDownloadFile(_file, false, true);
-                }
+                // Only the reader that owns the download stops it, and only once no other
+                // reader is left: the last window it asked for would otherwise keep fetching
+                // ahead of a video nobody is watching. Sources serving one ranged request each
+                // leave it to whoever else is reading the file.
+                _clientService.CloseFileRead(_lease, _streaming);
+                _lease = null;
 
                 _event.Set();
             }

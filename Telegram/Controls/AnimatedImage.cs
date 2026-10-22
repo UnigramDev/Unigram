@@ -2237,6 +2237,11 @@ namespace Telegram.Controls
         public override void Dispose()
         {
             _animation.Dispose();
+
+            if (_presentation.Source is RemoteFileSource remote)
+            {
+                remote.Close();
+            }
         }
     }
 
@@ -3708,6 +3713,10 @@ namespace Telegram.Controls
                     && !double.IsNaN(animation.FrameRate);
             }
 
+            // A remote source downloads only between Open and Close, which the task owns from here.
+            var remote = work.Presentation.Source as RemoteFileSource;
+            remote?.Open();
+
             var animation = CachedVideoAnimation.LoadFromFile(work.Presentation.Source, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.ResizeMode == AnimatedImageResizeMode.Fit, work.Presentation.IsCachingEnabled, work.Presentation.LimitFps);
             if (animation != null)
             {
@@ -3718,13 +3727,18 @@ namespace Telegram.Controls
                         animation.Seek(work.Presentation.Source.SeekToSeconds);
                     }
 
-                    NotifyDelegate(weakDelegate, animation, new VideoAnimatedImageTask(animation, work.Presentation));
+                    if (NotifyDelegate(weakDelegate, animation, new VideoAnimatedImageTask(animation, work.Presentation)))
+                    {
+                        return;
+                    }
                 }
                 else
                 {
                     animation.Dispose();
                 }
             }
+
+            remote?.Close();
         }
 
         private async void LoadWebP(WeakReference<AnimatedImagePresenter> weakDelegate, WorkItem work, LocalFileSource local)
