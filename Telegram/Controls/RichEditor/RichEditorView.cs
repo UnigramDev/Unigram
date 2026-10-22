@@ -757,6 +757,34 @@ namespace Telegram.Controls.RichEditor
             Surface.UpdateLayout();
         }
 
+        /// <summary>
+        /// What of the editor is on screen, in its own coordinates, and empty when none of it is;
+        /// false until a layout pass has said.
+        /// </summary>
+        internal bool TryGetVisibleBounds(out Rect bounds)
+        {
+            bounds = Rect.Empty;
+
+            if (Blocks == null || _viewport.IsEmpty)
+            {
+                return false;
+            }
+
+            var viewport = Blocks.TransformToVisual(this).TransformBounds(_viewport);
+
+            var left = Math.Max(viewport.Left, 0);
+            var top = Math.Max(viewport.Top, 0);
+            var right = Math.Min(viewport.Right, ActualWidth);
+            var bottom = Math.Min(viewport.Bottom, ActualHeight);
+
+            if (right > left && bottom > top)
+            {
+                bounds = new Rect(left, top, right - left, bottom - top);
+            }
+
+            return true;
+        }
+
         // Raised after a layout pass, outside it, which is where the window can move: what it
         // realizes is measured by the pass this raises again.
         private void OnBlocksViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -26,7 +27,7 @@ namespace Telegram.Controls.RichEditor
     /// newline between two. An object is one position, as it is one caret stop, and reads as the
     /// text it stands for - a custom emoji as its emoji, a formula as its source.
     /// </summary>
-    public sealed partial class RichEditorAutomationPeer : FrameworkElementAutomationPeer, ITextProvider, ITextProvider2
+    public sealed partial class RichEditorAutomationPeer : FrameworkElementAutomationPeer, ITextProvider, ITextProvider2, ITextEditProvider
     {
         private readonly RichEditorView _owner;
 
@@ -42,7 +43,7 @@ namespace Telegram.Controls.RichEditor
 
         protected override object GetPatternCore(PatternInterface patternInterface)
         {
-            if (patternInterface is PatternInterface.Text or PatternInterface.Text2)
+            if (patternInterface is PatternInterface.Text or PatternInterface.Text2 or PatternInterface.TextEdit)
             {
                 return this;
             }
@@ -60,13 +61,25 @@ namespace Telegram.Controls.RichEditor
             return nameof(RichEditorView);
         }
 
-        protected override string GetNameCore()
+        // RichEditBox reads its placeholder out while it is empty, through DescribedBy pointing at
+        // the placeholder's element. The hint here is drawn by a line, not an element of its own.
+        protected override string GetHelpTextCore()
         {
-            var name = base.GetNameCore();
-            return string.IsNullOrEmpty(name) ? Strings.ArticleEditor : name;
+            var help = base.GetHelpTextCore();
+            if (string.IsNullOrEmpty(help) && Document is RichDocument document && document.IsEmpty)
+            {
+                return _owner.PlaceholderText ?? string.Empty;
+            }
+
+            return help;
         }
 
         protected override bool IsKeyboardFocusableCore() => true;
+
+        protected override void ShowContextMenuCore()
+        {
+            _owner.RequestKeyboardMenu();
+        }
 
         /// <summary>Says something the text pattern cannot: a block selected whole, a line that changed kind.</summary>
         internal void Announce(string text)
@@ -97,6 +110,24 @@ namespace Telegram.Controls.RichEditor
             if ((changes & RichEditorChanges.Selection) != 0)
             {
                 RaiseAutomationEvent(AutomationEvents.TextPatternOnTextSelectionChanged);
+            }
+        }
+
+        /// <summary>The text an IME is composing, as it changes and once it is committed: what a reader says while it converts.</summary>
+        internal void RaiseComposition(string text, bool finalized)
+        {
+            if (ListenerExists(AutomationEvents.TextEditTextChanged))
+            {
+                var type = finalized ? AutomationTextEditChangeType.CompositionFinalized : AutomationTextEditChangeType.Composition;
+                RaiseTextEditTextChangedEvent(type, new[] { text });
+            }
+        }
+
+        internal void RaiseConversionTargetChanged()
+        {
+            if (ListenerExists(AutomationEvents.ConversionTargetChanged))
+            {
+                RaiseAutomationEvent(AutomationEvents.ConversionTargetChanged);
             }
         }
 
@@ -154,7 +185,12 @@ namespace Telegram.Controls.RichEditor
             return new RichPosition(leaves[0], 0);
         }
 
-        internal string GetText(int start, int end)
+        /// <summary>
+        /// The text of [start, end). An object reads as its text, which is wider than its one
+        /// position: <paramref name="positions"/>, when given, gets the position each character
+        /// was read from.
+        /// </summary>
+        internal string GetText(int start, int end, List<int> positions = null)
         {
             var builder = new StringBuilder(Math.Max(0, end - start));
             var leaves = Document.Leaves;
@@ -168,7 +204,28 @@ namespace Telegram.Controls.RichEditor
                 var from = Math.Max(start, flat);
                 var to = Math.Min(end, leafEnd);
 
-                if (to > from)
+                if (to > from && positions != null)
+                {
+                    for (int j = from; j < to; j++)
+                    {
+                        var c = leaf[j - flat];
+                        if (c != RichTextLeaf.ObjectChar)
+                        {
+                            builder.Append(c);
+                            positions.Add(j);
+                            continue;
+                        }
+
+                        var text = leaf.GetObjectAt(j - flat)?.PlainText ?? string.Empty;
+                        builder.Append(text);
+
+                        for (int k = 0; k < text.Length; k++)
+                        {
+                            positions.Add(j);
+                        }
+                    }
+                }
+                else if (to > from)
                 {
                     builder.Append(leaf.ToPlainText(from - flat, to - flat));
                 }
@@ -176,6 +233,7 @@ namespace Telegram.Controls.RichEditor
                 if (i < leaves.Count - 1 && leafEnd >= start && leafEnd < end)
                 {
                     builder.Append('\n');
+                    positions?.Add(leafEnd);
                 }
 
                 flat = leafEnd + 1;
@@ -206,9 +264,101 @@ namespace Telegram.Controls.RichEditor
             };
         }
 
+        /// <summary>The lines on screen, a range for each stretch of them that follows on in the document.</summary>
         public ITextRangeProvider[] GetVisibleRanges()
         {
-            return new[] { DocumentRange };
+            var document = Document;
+
+            if (document == null || !_owner.TryGetVisibleBounds(out Rect viewport))
+            {
+                return new[] { DocumentRange };
+            }
+
+            if (viewport.IsEmpty)
+            {
+                return Array.Empty<ITextRangeProvider>();
+            }
+
+            List<ITextRangeProvider> ranges = null;
+            var start = -1;
+            var end = -1;
+            var flat = 0;
+
+            foreach (var leaf in document.Leaves)
+            {
+                var leafStart = flat;
+                flat += leaf.Length + 1;
+
+                if (!_owner.TryGetLeafView(leaf, out RichLeafView view) || view.Visibility != Visibility.Visible || !GetVisibleLines(leaf, view, viewport, out int from, out int to))
+                {
+                    continue;
+                }
+
+                // Lines of a table's cells side by side are on screen together, but not one after
+                // the other in the document.
+                if (start < 0 || leafStart + from > end + 1)
+                {
+                    if (start >= 0)
+                    {
+                        (ranges ??= new List<ITextRangeProvider>()).Add(new RichTextRangeProvider(this, start, end));
+                    }
+
+                    start = leafStart + from;
+                }
+
+                end = leafStart + to;
+            }
+
+            if (start >= 0)
+            {
+                (ranges ??= new List<ITextRangeProvider>()).Add(new RichTextRangeProvider(this, start, end));
+            }
+
+            return ranges?.ToArray() ?? Array.Empty<ITextRangeProvider>();
+        }
+
+        private bool GetVisibleLines(RichTextLeaf leaf, RichLeafView view, Rect viewport, out int from, out int to)
+        {
+            from = 0;
+            to = leaf.Length;
+
+            var transform = view.TransformToVisual(_owner);
+            var bounds = transform.TransformBounds(new Rect(0, 0, view.ActualWidth, view.ActualHeight));
+
+            if (bounds.Bottom <= viewport.Top || bounds.Top >= viewport.Bottom || bounds.Right <= viewport.Left || bounds.Left >= viewport.Right)
+            {
+                return false;
+            }
+
+            var lengths = view.TextBlock?.GetLineLengths();
+            if (lengths == null || lengths.Length < 2 || (bounds.Top >= viewport.Top && bounds.Bottom <= viewport.Bottom))
+            {
+                return true;
+            }
+
+            var first = -1;
+            var position = 0;
+
+            for (int i = 0; i < lengths.Length; i++)
+            {
+                var line = transform.TransformBounds(view.GetCaretRect(position));
+                var lineEnd = Math.Min(position + lengths[i], leaf.Length);
+
+                if (line.Bottom > viewport.Top && line.Top < viewport.Bottom)
+                {
+                    if (first < 0)
+                    {
+                        first = position;
+                    }
+
+                    to = lineEnd;
+                }
+
+                position = lineEnd;
+            }
+
+            from = Math.Max(first, 0);
+            return first >= 0;
         }
 
         public ITextRangeProvider RangeFromChild(IRawElementProviderSimple childElement)
@@ -338,9 +488,177 @@ namespace Telegram.Controls.RichEditor
                 case AutomationTextAttributesEnum.StyleIdAttribute:
                     return (int)GetStyleId(leaf, text, list);
 
+                case AutomationTextAttributesEnum.AnnotationTypesAttribute:
+                    var limit = leaf.Length;
+                    return _owner.IsMisspelled(leaf, position.Offset, ref limit) ? SpellingError : NoAnnotations;
+
+                case AutomationTextAttributesEnum.LinkAttribute:
+                    if (leaf.TryGetLinkRange(position.Offset, out int linkStart, out int linkEnd))
+                    {
+                        var leafStart = flat - position.Offset;
+                        return new RichTextRangeProvider(this, leafStart + linkStart, leafStart + linkEnd);
+                    }
+
+                    return null;
+
+                case AutomationTextAttributesEnum.FontNameAttribute:
+                    if ((marks & RichMarks.Monospace) != 0)
+                    {
+                        return GetFaceName(Theme.MonospaceFontFamily.Source);
+                    }
+
+                    return _owner.TryGetLeafView(leaf, out RichLeafView named) ? GetFaceName(named.TextBlock?.FontFamily?.Source) : null;
+
+                case AutomationTextAttributesEnum.FontSizeAttribute:
+                    return _owner.TryGetLeafView(leaf, out RichLeafView sized) ? sized.TextBlock?.FontSize : null;
+
                 default:
                     return null;
             }
+        }
+
+        // A family source is a fallback list, "Segoe UI, ms-appx:///...#Segoe UI Emoji": the
+        // reader wants the face the text is set in.
+        private static string GetFaceName(string source)
+        {
+            var comma = source?.IndexOf(',') ?? -1;
+            return comma < 0 ? source : source.Substring(0, comma).Trim();
+        }
+
+        // XAML reads the types as a vector view of ints. Shared, so equal values are one instance.
+        private static readonly IReadOnlyList<int> SpellingError = new List<int> { (int)AnnotationType.SpellingError };
+        private static readonly IReadOnlyList<int> NoAnnotations = new List<int>();
+
+        /// <summary>
+        /// The attribute over [start, end): its value, or UnsetValue where it changes inside the
+        /// range, which XAML hands to UIA as mixed.
+        /// </summary>
+        internal object GetAttribute(int start, int end, int attributeId)
+        {
+            var value = GetAttribute(start, attributeId);
+
+            // Each span finds its leaf from the start of the document: a reader asking the whole
+            // of it for what is the same everywhere would wait on every run.
+            if (Document == null || !VariesInText(attributeId))
+            {
+                return value;
+            }
+
+            for (var position = GetSpanEnd(start, attributeId); position < end; position = GetSpanEnd(position, attributeId))
+            {
+                if (!IsSameValue(value, GetAttribute(position, attributeId)))
+                {
+                    return DependencyProperty.UnsetValue;
+                }
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Where the attribute at <paramref name="flat"/> can next change: the end of its run, or
+        /// of the misspelled word. The newline after a leaf is a span of its own.
+        /// </summary>
+        internal int GetSpanEnd(int flat, int attributeId)
+        {
+            var position = ToPosition(flat);
+            var leaf = position.Leaf;
+
+            if (position.Offset >= leaf.Length)
+            {
+                return flat + 1;
+            }
+
+            var index = leaf.FindRun(position.Offset, out int runStart);
+            var end = index >= 0 ? runStart + leaf.Runs[index].Length : leaf.Length;
+
+            if (attributeId == (int)AutomationTextAttributesEnum.AnnotationTypesAttribute)
+            {
+                _owner.IsMisspelled(leaf, position.Offset, ref end);
+            }
+
+            return flat - position.Offset + end;
+        }
+
+        private static bool VariesInText(int attributeId)
+        {
+            return (AutomationTextAttributesEnum)attributeId is AutomationTextAttributesEnum.FontWeightAttribute
+                or AutomationTextAttributesEnum.IsItalicAttribute
+                or AutomationTextAttributesEnum.UnderlineStyleAttribute
+                or AutomationTextAttributesEnum.StrikethroughStyleAttribute
+                or AutomationTextAttributesEnum.IsSubscriptAttribute
+                or AutomationTextAttributesEnum.IsSuperscriptAttribute
+                or AutomationTextAttributesEnum.BulletStyleAttribute
+                or AutomationTextAttributesEnum.HorizontalTextAlignmentAttribute
+                or AutomationTextAttributesEnum.StyleIdAttribute
+                or AutomationTextAttributesEnum.AnnotationTypesAttribute
+                or AutomationTextAttributesEnum.LinkAttribute
+                or AutomationTextAttributesEnum.FontNameAttribute
+                or AutomationTextAttributesEnum.FontSizeAttribute;
+        }
+
+        internal static bool IsSameValue(object x, object y)
+        {
+            return x is RichTextRangeProvider range
+                ? y is RichTextRangeProvider other && range.Compare(other)
+                : Equals(x, y);
+        }
+
+        /// <summary>
+        /// Which line a position at a wrap is on, which the offset alone does not say: here it
+        /// is the start of the next, as the line unit takes it.
+        /// </summary>
+        internal AutomationCaretPosition GetCaretPosition(int flat)
+        {
+            var position = ToPosition(flat);
+            var leaf = position.Leaf;
+
+            if (position.Offset == 0)
+            {
+                return AutomationCaretPosition.BeginningOfLine;
+            }
+
+            if (position.Offset >= leaf.Length)
+            {
+                return AutomationCaretPosition.EndOfLine;
+            }
+
+            if (_owner.TryGetLeafView(leaf, out RichLeafView view) && view.TextBlock?.GetLineLengths() is int[] lengths)
+            {
+                var lineStart = 0;
+
+                for (int i = 0; i < lengths.Length && lineStart < position.Offset; i++)
+                {
+                    lineStart += lengths[i];
+                }
+
+                if (lineStart == position.Offset)
+                {
+                    return AutomationCaretPosition.BeginningOfLine;
+                }
+            }
+
+            return AutomationCaretPosition.Unknown;
+        }
+
+        /// <summary>The end of the selection that moves when it is extended, for a range that is the selection.</summary>
+        internal AutomationActiveEnd GetActiveEnd(int start, int end)
+        {
+            var engine = _owner.Engine;
+            if (engine == null || start == end)
+            {
+                return AutomationActiveEnd.None;
+            }
+
+            var anchor = ToFlat(engine.Anchor);
+            var focus = ToFlat(engine.Focus);
+
+            if (Math.Min(anchor, focus) != start || Math.Max(anchor, focus) != end)
+            {
+                return AutomationActiveEnd.None;
+            }
+
+            return focus < anchor ? AutomationActiveEnd.Start : AutomationActiveEnd.End;
         }
 
         // UIA's StyleId_NumberedList. The XAML enum stops one short of it, at BulletedList, but
@@ -391,7 +709,8 @@ namespace Telegram.Controls.RichEditor
         public ITextRangeProvider RangeFromPoint(Point screenLocation)
         {
             var bounds = GetBoundingRectangle();
-            var local = new Point(screenLocation.X - bounds.X, screenLocation.Y - bounds.Y);
+            var scale = _owner.XamlRoot?.RasterizationScale ?? 1;
+            var local = new Point((screenLocation.X - bounds.X) / scale, (screenLocation.Y - bounds.Y) / scale);
 
             if (_owner.HitTestFromControl(local, out RichPosition position))
             {
@@ -418,10 +737,27 @@ namespace Telegram.Controls.RichEditor
             return DocumentRange;
         }
 
+        // ITextEditProvider: the text an IME is composing, and the clause in it being converted.
+        public ITextRangeProvider GetActiveComposition()
+        {
+            return _owner.TryGetComposition(false, out RichTextLeaf leaf, out int start, out int end) ? RangeIn(leaf, start, end) : null;
+        }
+
+        public ITextRangeProvider GetConversionTarget()
+        {
+            return _owner.TryGetComposition(true, out RichTextLeaf leaf, out int start, out int end) ? RangeIn(leaf, start, end) : null;
+        }
+
+        private RichTextRangeProvider RangeIn(RichTextLeaf leaf, int start, int end)
+        {
+            var flat = ToFlat(new RichPosition(leaf, 0));
+            return new RichTextRangeProvider(this, flat + start, flat + end);
+        }
+
         internal IRawElementProviderSimple Provider => ProviderFromPeer(this);
     }
 
-    public sealed partial class RichTextRangeProvider : ITextRangeProvider
+    public sealed partial class RichTextRangeProvider : ITextRangeProvider, ITextRangeProvider2
     {
         private readonly RichEditorAutomationPeer _peer;
 
@@ -462,7 +798,11 @@ namespace Telegram.Controls.RichEditor
             Unit(_start, unit, out _start, out _end);
         }
 
-        /// <summary>The unit of <paramref name="unit"/> kind that holds <paramref name="flat"/>.</summary>
+        /// <summary>
+        /// The unit of <paramref name="unit"/> kind that holds <paramref name="flat"/>. A unit that
+        /// ends a leaf takes the newline after it, so the next one starts on the next line rather
+        /// than at the newline; only as a character is the newline a unit of its own.
+        /// </summary>
         private void Unit(int flat, TextUnit unit, out int start, out int end)
         {
             var length = Length;
@@ -489,10 +829,10 @@ namespace Telegram.Controls.RichEditor
                     return;
 
                 case TextUnit.Word:
-                    RichEditorEngine.GetWordRange(leaf.Chars, position.Offset, out int wordStart, out int wordEnd);
+                    WordAt(leaf, position.Offset, out int wordStart, out int wordEnd);
                     start = leafStart + wordStart;
                     end = leafStart + wordEnd;
-                    return;
+                    break;
 
                 case TextUnit.Format:
                     {
@@ -501,19 +841,46 @@ namespace Telegram.Controls.RichEditor
 
                         start = leafStart + (index >= 0 ? runStart : 0);
                         end = start + runLength;
-                        return;
+                        break;
                     }
 
                 case TextUnit.Line:
                     LineAt(leaf, position.Offset, out int lineStart, out int lineEnd);
                     start = leafStart + lineStart;
                     end = leafStart + lineEnd;
-                    return;
+                    break;
 
                 default:
                     start = leafStart;
                     end = leafStart + leaf.Length;
-                    return;
+                    break;
+            }
+
+            if (end == leafStart + leaf.Length && end < length)
+            {
+                end++;
+            }
+        }
+
+        /// <summary>A word and the spaces after it, as UIA has a word; spaces that start a line are a word of their own.</summary>
+        private static void WordAt(RichTextLeaf leaf, int offset, out int start, out int end)
+        {
+            var chars = leaf.Chars;
+            RichEditorEngine.GetWordRange(chars, offset, out start, out end);
+
+            if (start < end && char.IsWhiteSpace(chars[start]))
+            {
+                if (start > 0 && !char.IsWhiteSpace(chars[start - 1]))
+                {
+                    RichEditorEngine.GetWordRange(chars, start - 1, out start, out _);
+                }
+
+                return;
+            }
+
+            while (end < chars.Length && char.IsWhiteSpace(chars[end]))
+            {
+                end++;
             }
         }
 
@@ -544,36 +911,43 @@ namespace Telegram.Controls.RichEditor
         }
 
         /// <summary>
-        /// The first run in the range whose attribute has <paramref name="value"/>: how a reader
-        /// jumps to the next heading, or the next bold word.
+        /// The first stretch of the range whose attribute has <paramref name="value"/>, or the
+        /// last one backward: how a reader jumps to the next heading, or the next misspelling.
         /// </summary>
         public ITextRangeProvider FindAttribute(int attributeId, object value, bool backward)
         {
-            var position = backward ? _end : _start;
-
-            while (backward ? position > _start : position < _end)
+            if (_peer.Document == null)
             {
-                Unit(backward ? position - 1 : position, TextUnit.Format, out int start, out int end);
-
-                start = Math.Max(start, _start);
-                end = Math.Min(end, _end);
-
-                if (end <= start)
-                {
-                    // The newline between two leaves belongs to no run.
-                    position += backward ? -1 : 1;
-                    continue;
-                }
-
-                if (Equals(_peer.GetAttribute(start, attributeId), value))
-                {
-                    return new RichTextRangeProvider(_peer, start, end);
-                }
-
-                position = backward ? start : end;
+                return null;
             }
 
-            return null;
+            var found = -1;
+            var foundEnd = -1;
+            var position = _start;
+
+            // Walked forward either way: a span is only known from where it starts.
+            while (position < _end)
+            {
+                var end = Math.Min(_peer.GetSpanEnd(position, attributeId), _end);
+
+                if (RichEditorAutomationPeer.IsSameValue(_peer.GetAttribute(position, attributeId), value))
+                {
+                    if (found < 0 || foundEnd != position)
+                    {
+                        found = position;
+                    }
+
+                    foundEnd = end;
+                }
+                else if (found >= 0 && !backward)
+                {
+                    break;
+                }
+
+                position = end;
+            }
+
+            return found < 0 ? null : new RichTextRangeProvider(_peer, found, foundEnd);
         }
 
         public ITextRangeProvider FindText(string text, bool backward, bool ignoreCase)
@@ -583,25 +957,57 @@ namespace Telegram.Controls.RichEditor
                 return null;
             }
 
-            // Searched in the flat text: objects read wider than one position, so a match is only
-            // exact on text without objects - which is all a find command types.
-            var haystack = _peer.GetText(_start, _end);
+            var positions = new List<int>();
+            var haystack = _peer.GetText(_start, _end, positions);
             var comparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
             var index = backward ? haystack.LastIndexOf(text, comparison) : haystack.IndexOf(text, comparison);
-            return index < 0 ? null : new RichTextRangeProvider(_peer, _start + index, _start + index + text.Length);
+            if (index < 0)
+            {
+                return null;
+            }
+
+            return new RichTextRangeProvider(_peer, positions[index], positions[index + text.Length - 1] + 1);
         }
 
         public object GetAttributeValue(int attributeId)
         {
-            return _peer.GetAttribute(_start, attributeId);
+            // XAML hands UIA a missing link as a null range, which Windows 10's GetAttributeValues
+            // dereferences inside the reader. NotSupportedException carries the HRESULT XAML turns
+            // into UIA's NotSupported value, which readers take for no link.
+            if (attributeId == (int)AutomationTextAttributesEnum.LinkAttribute)
+            {
+                return _peer.Document != null && _peer.GetAttribute(_start, _end, attributeId) is RichTextRangeProvider link
+                    ? link
+                    : throw new NotSupportedException();
+            }
+
+            if (_peer.Document == null)
+            {
+                return null;
+            }
+
+            switch ((AutomationTextAttributesEnum)attributeId)
+            {
+                case AutomationTextAttributesEnum.CaretPositionAttribute:
+                    return (int)_peer.GetCaretPosition(_start);
+
+                case AutomationTextAttributesEnum.SelectionActiveEndAttribute:
+                    return (int)_peer.GetActiveEnd(_start, _end);
+
+                default:
+                    return _peer.GetAttribute(_start, _end, attributeId);
+            }
         }
 
         public void GetBoundingRectangles(out double[] rectangles)
         {
             var result = new List<double>();
-            var bounds = _peer.GetBoundingRectangle();
             var owner = _peer.Owner;
+
+            // The peer's bounds are in screen pixels, the layout in effective pixels.
+            var bounds = _peer.GetBoundingRectangle();
+            var scale = owner.XamlRoot?.RasterizationScale ?? 1;
 
             var start = _peer.ToPosition(_start);
             var end = _peer.ToPosition(_end);
@@ -617,6 +1023,13 @@ namespace Telegram.Controls.RichEditor
                 var from = i == start.Leaf.Index ? start.Offset : 0;
                 var to = i == end.Leaf.Index ? end.Offset : leaves[i].Length;
 
+                // A range ending on a newline ends at the start of the next leaf, where it has
+                // nothing to show.
+                if (to <= from && _end > _start)
+                {
+                    continue;
+                }
+
                 // A degenerate range is the caret: a reader still wants to know where it is.
                 Rect[] rects = to > from
                     ? view.GetRangeRects(from, to)
@@ -628,10 +1041,10 @@ namespace Telegram.Controls.RichEditor
                 {
                     var origin = transform.TransformPoint(new Point(rect.X, rect.Y));
 
-                    result.Add(bounds.X + origin.X);
-                    result.Add(bounds.Y + origin.Y);
-                    result.Add(Math.Max(1, rect.Width));
-                    result.Add(rect.Height);
+                    result.Add(bounds.X + origin.X * scale);
+                    result.Add(bounds.Y + origin.Y * scale);
+                    result.Add(Math.Max(1, rect.Width * scale));
+                    result.Add(rect.Height * scale);
                 }
             }
 
@@ -667,13 +1080,10 @@ namespace Telegram.Controls.RichEditor
                 return 0;
             }
 
-            // A degenerate range moves by whole units from where it is; a wide one collapses to
-            // the end it moves away from first.
-            var position = count > 0 ? _end : _start;
-            if (_end > _start && count > 0)
-            {
-                Unit(_end - 1, unit, out _, out position);
-            }
+            // As UIA has it: collapsed to the start, back to the start of the unit there, moved by
+            // whole units, then expanded to one. Moving forward from the expanded end instead
+            // skips a unit, the next line read being the one after it.
+            Unit(_start, unit, out int position, out _);
 
             var moved = 0;
             for (int i = 0; i < Math.Abs(count); i++)
@@ -684,16 +1094,21 @@ namespace Telegram.Controls.RichEditor
                     break;
                 }
 
+                // The end of the document starts no unit, unless the last line is empty.
+                if (count > 0)
+                {
+                    Unit(next, unit, out int start, out _);
+                    if (start != next)
+                    {
+                        break;
+                    }
+                }
+
                 position = next;
                 moved++;
             }
 
             Unit(position, unit, out _start, out _end);
-
-            if (count > 0 && moved == 0)
-            {
-                return 0;
-            }
 
             return count > 0 ? moved : -moved;
         }
@@ -742,8 +1157,6 @@ namespace Telegram.Controls.RichEditor
                 }
 
                 Unit(position, unit, out _, out int end);
-
-                // At the end of a leaf the next unit starts after the newline.
                 return end > position ? Math.Min(end, length) : Math.Min(position + 1, length);
             }
 
@@ -802,5 +1215,12 @@ namespace Telegram.Controls.RichEditor
         }
 
         public IRawElementProviderSimple[] GetChildren() => _peer.GetChildren(_start, _end);
+
+        // ITextRangeProvider2. The menu acts on the selection, so the range becomes it first.
+        public void ShowContextMenu()
+        {
+            Select();
+            _peer.Owner.RequestKeyboardMenu();
+        }
     }
 }

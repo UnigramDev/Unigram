@@ -41,6 +41,11 @@ namespace Telegram.Controls.RichEditor
         private bool _imeUpdating;
         private bool _composing;
 
+        // Where the composition is in the context leaf, which the service never says: followed
+        // through its edits, for a screen reader.
+        private int _compositionStart;
+        private int _compositionEnd;
+
         // One per range the service formatted. An IME formats a composition clause by clause, a
         // call each - the clause being converted set apart from the rest - so each range keeps its
         // own look, and they are drawn together.
@@ -633,6 +638,17 @@ namespace Telegram.Controls.RichEditor
                 _imeUpdating = false;
             }
 
+            if (_composing && _contextLeaf is RichTextLeaf composed && ReferenceEquals(_engine.Focus.Leaf, composed))
+            {
+                var range = args.Range;
+                var delta = text.Length - (range.EndCaretPosition - range.StartCaretPosition);
+
+                _compositionStart = Math.Clamp(Math.Min(_compositionStart, range.StartCaretPosition), 0, composed.Length);
+                _compositionEnd = Math.Clamp(Math.Max(_compositionEnd + delta, range.StartCaretPosition + text.Length), _compositionStart, composed.Length);
+
+                Peer?.RaiseComposition(composed.ToPlainText(_compositionStart, _compositionEnd), false);
+            }
+
             // Whatever the update ended in is the text the service now believes in, unless the
             // update moved to another leaf or rebuilt the line: then it is told so, once this
             // handler has returned - the service is in the middle of its own edit.
@@ -721,6 +737,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             _composition.Add(new CompositionSegment(range, args.UnderlineType ?? UnderlineType.None, args.UnderlineColor, args.BackgroundColor));
+            Peer?.RaiseConversionTargetChanged();
 
             // The text this formats may not be laid out yet - a format follows the update that
             // typed it - so it is drawn once layout has run.
@@ -899,13 +916,72 @@ namespace Telegram.Controls.RichEditor
         private void OnCompositionStarted(CoreTextEditContext sender, CoreTextCompositionStartedEventArgs args)
         {
             _composing = true;
+            _compositionStart = _compositionEnd = GetContextSelection().StartCaretPosition;
             ClearComposition();
         }
 
         private void OnCompositionCompleted(CoreTextEditContext sender, CoreTextCompositionCompletedEventArgs args)
         {
+            if (_composing && _contextLeaf is RichTextLeaf composed)
+            {
+                var start = Math.Min(_compositionStart, composed.Length);
+                var end = Math.Clamp(_compositionEnd, start, composed.Length);
+
+                Peer?.RaiseComposition(composed.ToPlainText(start, end), true);
+            }
+
             _composing = false;
             ClearComposition();
+        }
+
+        /// <summary>
+        /// The text being composed or, with <paramref name="target"/>, the clause of it being
+        /// converted, in the leaf the input service is in.
+        /// </summary>
+        internal bool TryGetComposition(bool target, out RichTextLeaf leaf, out int start, out int end)
+        {
+            leaf = _contextLeaf;
+            start = end = 0;
+
+            if (!_composing || leaf == null)
+            {
+                return false;
+            }
+
+            if (!target)
+            {
+                start = Math.Min(_compositionStart, leaf.Length);
+                end = Math.Clamp(_compositionEnd, start, leaf.Length);
+                return true;
+            }
+
+            // An IME sets the clause it is converting apart from the rest by a background, or
+            // failing that by a heavier underline.
+            var found = -1;
+
+            for (int i = 0; i < _composition.Count; i++)
+            {
+                if (_composition[i].Background != null)
+                {
+                    found = i;
+                    break;
+                }
+
+                if (found < 0 && _composition[i].Underline is UnderlineType.Thick or UnderlineType.Double)
+                {
+                    found = i;
+                }
+            }
+
+            if (found < 0)
+            {
+                return false;
+            }
+
+            var range = _composition[found].Range;
+            start = Math.Clamp(range.StartCaretPosition, 0, leaf.Length);
+            end = Math.Clamp(range.EndCaretPosition, start, leaf.Length);
+            return true;
         }
 
         private void OnFocusRemoved(CoreTextEditContext sender, object args)

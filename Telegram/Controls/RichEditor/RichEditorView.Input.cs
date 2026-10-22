@@ -969,16 +969,25 @@ namespace Telegram.Controls.RichEditor
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var keyboard = !args.TryGetPosition(Surface, out Point point);
-            if (keyboard)
+            if (args.TryGetPosition(Surface, out Point point))
             {
-                // From the keyboard: at the caret, or under the selected block.
-                var caret = GetCaretRect();
-                point = caret.IsEmpty ? new Point(0, 0) : new Point(caret.X, caret.Bottom);
+                MenuRequested?.Invoke(this, new RichMenuRequestedEventArgs(point, false));
+            }
+            else
+            {
+                RequestKeyboardMenu();
             }
 
-            MenuRequested?.Invoke(this, new RichMenuRequestedEventArgs(point, false) { IsKeyboard = keyboard });
             args.Handled = true;
+        }
+
+        /// <summary>The menu from the keyboard or a screen reader: at the caret, or under the selected block.</summary>
+        internal void RequestKeyboardMenu()
+        {
+            var caret = GetCaretRect();
+            var point = caret.IsEmpty ? new Point(0, 0) : new Point(caret.X, caret.Bottom);
+
+            MenuRequested?.Invoke(this, new RichMenuRequestedEventArgs(point, false) { IsKeyboard = true });
         }
 
         /// <summary>

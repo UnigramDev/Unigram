@@ -713,6 +713,40 @@ namespace Telegram.Controls.RichEditor
         // =====================================================================================
 
         /// <summary>
+        /// Whether the character at <paramref name="offset"/> is in a word the last check found
+        /// misspelled, with <paramref name="limit"/> brought in to where that next changes: for
+        /// a screen reader, which says so as it reads.
+        /// </summary>
+        internal bool IsMisspelled(RichTextLeaf leaf, int offset, ref int limit)
+        {
+            if (!Rebase(leaf))
+            {
+                return false;
+            }
+
+            var ranges = _spelling[leaf].Ranges;
+            var misspelled = false;
+
+            for (int i = 0; i + 1 < ranges.Length; i += 2)
+            {
+                var start = ranges[i];
+                var end = start + ranges[i + 1];
+
+                if (offset >= start && offset < end)
+                {
+                    misspelled = true;
+                    limit = Math.Min(limit, end);
+                }
+                else if (start > offset)
+                {
+                    limit = Math.Min(limit, start);
+                }
+            }
+
+            return misspelled;
+        }
+
+        /// <summary>
         /// The misspelled word at the caret, or the one selected, as its last check found it; the
         /// host offers suggestions for it.
         /// </summary>
