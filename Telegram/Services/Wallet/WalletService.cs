@@ -688,9 +688,9 @@ namespace Telegram.Services.Wallet
             // An empty password is TDLib's first attempt, answered with PASSWORD_MISSING when one
             // is needed, so it is passed through rather than refused here.
             var response = await _clientService.SendAsync(new GetTonWalletSecretPhrase(password ?? string.Empty));
-            if (response is Text phrase)
+            if (response is TonWalletSecretPhrase phrase)
             {
-                return Split(phrase.TextValue);
+                return Split(phrase.SecretPhrase);
             }
 
             // Which failure it was decides what the caller does next: a wrong password is worth
@@ -4163,7 +4163,7 @@ namespace Telegram.Services.Wallet
 #if DEBUG
         // Lets SendAsync be exercised end to end without spending: the account still receives
         // the request and answers it, but with a refusal.
-        private static readonly bool DebugSpoilTransfers = true;
+        private static readonly bool DebugSpoilTransfers = false;
 
         // One byte short of the length the header declares, so no bag-of-cells deserializer will
         // read it, the account's or a node's. A flipped byte in the body is not as safe: one
