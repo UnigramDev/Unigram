@@ -115,6 +115,7 @@ namespace winrt::Telegram::Native::Media::implementation
         void OnDetach(SwapChainPanel const& oldPanel, winrt::event_token& scaleToken, winrt::event_token& sizeToken);
 
         void UpdateSize(int width, int height);
+        void GetScale(float& scaleX, float& scaleY) const;
 
         void OnCompositionScaleChanged(SwapChainPanel const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void OnSizeChanged(winrt::Windows::Foundation::IInspectable const& sender, SizeChangedEventArgs const& args);

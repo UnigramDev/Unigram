@@ -554,8 +554,14 @@ namespace winrt::Telegram::Native::Media::implementation
             return;
         }
 
-        int w = static_cast<int>(m_panel.ActualWidth() * m_panel.CompositionScaleX());
-        int h = static_cast<int>(m_panel.ActualHeight() * m_panel.CompositionScaleY());
+        // The scale UpdateScale maps the buffer back by. CompositionScale also carries the scale of
+        // the panel's ancestors, which composition applies to the swap chain on top of that, so a
+        // panel under a zoomed-out parent got a buffer that filled only part of it.
+        float scaleX, scaleY;
+        GetScale(scaleX, scaleY);
+
+        int w = static_cast<int>(m_panel.ActualWidth() * scaleX);
+        int h = static_cast<int>(m_panel.ActualHeight() * scaleY);
 
         UpdateSize(w, h);
     }
@@ -598,12 +604,21 @@ namespace winrt::Telegram::Native::Media::implementation
             return;
         }
 
-        // TODO: experiment
-        // CompositionScale changes when the SwapChainPanel is inside a ScrollViewer and ZoomLevel changes.
-        // We don't want this to happen, so let's try to use XamlRoot.RasterizationScale instead.
-
         float scaleX, scaleY;
+        GetScale(scaleX, scaleY);
 
+        DXGI_MATRIX_3X2_F matrix = {};
+        matrix._11 = 1.0f / scaleX;
+        matrix._22 = 1.0f / scaleY;
+
+        winrt::check_hresult(m_swapChain2->SetMatrixTransform(&matrix));
+    }
+
+    // TODO: experiment
+    // CompositionScale changes when the SwapChainPanel is inside a ScrollViewer and ZoomLevel changes.
+    // We don't want this to happen, so let's try to use XamlRoot.RasterizationScale instead.
+    void AsyncMediaPlayerSwapChain::GetScale(float& scaleX, float& scaleY) const
+    {
         if (auto xamlRoot = m_panel.XamlRoot())
         {
             scaleX = static_cast<float>(xamlRoot.RasterizationScale());
@@ -614,12 +629,6 @@ namespace winrt::Telegram::Native::Media::implementation
             scaleX = m_panel.CompositionScaleX();
             scaleY = m_panel.CompositionScaleY();
         }
-
-        DXGI_MATRIX_3X2_F matrix = {};
-        matrix._11 = 1.0f / scaleX;
-        matrix._22 = 1.0f / scaleY;
-
-        winrt::check_hresult(m_swapChain2->SetMatrixTransform(&matrix));
     }
 
     void AsyncMediaPlayerSwapChain::BeginOnUIThread(UIElement element, DispatchedHandler handler)
