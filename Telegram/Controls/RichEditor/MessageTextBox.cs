@@ -153,6 +153,15 @@ namespace Telegram.Controls.RichEditor
                 {
                     AutomationProperties.GetControlledPeers(Editor).Add(_controlledList);
                 }
+
+                // Not left to Loaded, which comes after the first render: a custom emoji in text
+                // set before then needs the service to draw.
+                if (_clientService == null && WindowContext.GetNavigationService(this)?.Session is ISession session)
+                {
+                    _clientService = session.Resolve<IClientService>();
+                    _settings ??= session.Settings;
+                }
+
                 Editor.Initialize(_clientService, _engine);
                 Hook(Editor);
                 UpdateSuggestions();

@@ -42,6 +42,7 @@ namespace Telegram.Views.Folders
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.Session);
             TagPreviewText.DataContext = ViewModel;
 
+            TitleField.ViewModel = ViewModel;
             TitleField.AllowedEntities = FormattedTextEntity.CustomEmoji;
             TitleField.CustomEmoji = CustomEmoji;
             TitleField.SetText(ViewModel.Title);
