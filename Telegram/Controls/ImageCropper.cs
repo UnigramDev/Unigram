@@ -93,6 +93,7 @@ namespace Telegram.Controls
         private Grid ThumbsContainer;
         private UIElement MajorGrid;
         private UIElement MinorGrid;
+        private UIElement RectangleGrid;
 
         private MatrixTransform m_imageTransform;
         private RectangleGeometry m_layoutClip;
@@ -182,6 +183,7 @@ namespace Telegram.Controls
             ThumbsContainer = GetTemplateChild(nameof(ThumbsContainer)) as Grid;
             MajorGrid = GetTemplateChild(nameof(MajorGrid)) as UIElement;
             MinorGrid = GetTemplateChild(nameof(MinorGrid)) as UIElement;
+            RectangleGrid = GetTemplateChild(nameof(RectangleGrid)) as UIElement;
 
             Clip = GetTemplateChild(nameof(Clip)) as Path;
 
@@ -316,8 +318,9 @@ namespace Telegram.Controls
         /// the image, then slides the centre back inside. A turned rectangle fits inside an upright
         /// one exactly when its bounding box does.
         ///
-        /// A frame may instead be larger than the image along either axis, up to holding all of it.
-        /// Along such an axis the image stays inside the frame rather than covering it.
+        /// A frame is measured along its own axes instead, against the image's bounds there: it may
+        /// be larger than them along either axis, up to holding all of them, and along such an axis
+        /// the bounds stay inside the frame rather than covering it.
         /// </summary>
         private void Constrain()
         {
@@ -329,7 +332,6 @@ namespace Telegram.Controls
 
             if (m_frame)
             {
-                // The image's bounds along the frame's own axes.
                 var imageWidth = oriented.Width * cos + oriented.Height * sin;
                 var imageHeight = oriented.Width * sin + oriented.Height * cos;
 
@@ -338,20 +340,29 @@ namespace Telegram.Controls
                 {
                     m_cropSize = new Size(m_cropSize.Width * fit, m_cropSize.Height * fit);
                 }
+
+                // The image's centre from the frame's, turned into the frame's axes. Clamped in the
+                // image's axes instead, a turned frame would stand in for its own bounding box, much
+                // larger at 45 degrees: the image could leave the frame, and stop short of its edges.
+                var offset = Rotate(oriented.Width / 2 - m_center.X, oriented.Height / 2 - m_center.Y, m_angle);
+                var limitX = Math.Abs(imageWidth - m_cropSize.Width) / 2;
+                var limitY = Math.Abs(imageHeight - m_cropSize.Height) / 2;
+
+                var clamped = Rotate(Math.Clamp(offset.X, -limitX, limitX), Math.Clamp(offset.Y, -limitY, limitY), -m_angle);
+
+                m_center = new Point(oriented.Width / 2 - clamped.X, oriented.Height / 2 - clamped.Y);
+                return;
             }
 
             var boundsWidth = m_cropSize.Width * cos + m_cropSize.Height * sin;
             var boundsHeight = m_cropSize.Width * sin + m_cropSize.Height * cos;
 
-            if (!m_frame)
+            var shrink = Math.Min(oriented.Width / boundsWidth, oriented.Height / boundsHeight);
+            if (shrink < 1)
             {
-                var shrink = Math.Min(oriented.Width / boundsWidth, oriented.Height / boundsHeight);
-                if (shrink < 1)
-                {
-                    m_cropSize = new Size(m_cropSize.Width * shrink, m_cropSize.Height * shrink);
-                    boundsWidth *= shrink;
-                    boundsHeight *= shrink;
-                }
+                m_cropSize = new Size(m_cropSize.Width * shrink, m_cropSize.Height * shrink);
+                boundsWidth *= shrink;
+                boundsHeight *= shrink;
             }
 
             var halfWidth = boundsWidth / 2;
@@ -1826,12 +1837,20 @@ namespace Telegram.Controls
             }
         }
 
-        // Only the handles: the grids inside the same container still show while panning and turning.
+        // The handles and the outline, which would read as a crop that can be resized: the grids
+        // inside the same container still show while panning and turning.
         private void UpdateThumbs()
         {
+            var visibility = m_frame ? Visibility.Collapsed : Visibility.Visible;
+
             foreach (var thumb in m_thumbs)
             {
-                thumb.Visibility = m_frame ? Visibility.Collapsed : Visibility.Visible;
+                thumb.Visibility = visibility;
+            }
+
+            if (RectangleGrid != null)
+            {
+                RectangleGrid.Visibility = visibility;
             }
         }
 
