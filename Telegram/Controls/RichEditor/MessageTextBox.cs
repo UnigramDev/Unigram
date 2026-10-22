@@ -145,6 +145,10 @@ namespace Telegram.Controls.RichEditor
                 Editor.TextInputScope = _textInputScope;
                 Editor.PreventKeyboardDisplayOnProgrammaticFocus = _preventKeyboardDisplayOnProgrammaticFocus;
 
+                // The editor is what UI Automation sees, so it answers to the box's name.
+                var automationId = AutomationProperties.GetAutomationId(this);
+                AutomationProperties.SetAutomationId(Editor, string.IsNullOrEmpty(automationId) ? Name : automationId);
+
                 if (_controlledList != null)
                 {
                     AutomationProperties.GetControlledPeers(Editor).Add(_controlledList);

@@ -170,6 +170,11 @@ namespace Telegram.Controls
                 _input = box;
             }
 
+            // Scripts and add-ons find the box by the name the page gave it, which the old box
+            // carried itself before this host took its place.
+            var automationId = AutomationProperties.GetAutomationId(this);
+            AutomationProperties.SetAutomationId(element, string.IsNullOrEmpty(automationId) ? Name : automationId);
+
             foreach (var property in _forwarded)
             {
                 if (ReadLocalValue(property) != DependencyProperty.UnsetValue)
