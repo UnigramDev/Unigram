@@ -599,6 +599,16 @@ namespace Telegram.Navigation
             return (Window.Current.CoreWindow.GetAsyncKeyState(key) & CoreVirtualKeyStates.Down) != 0;
         }
 
+        /// <summary>
+        /// The key's state as of the key event being handled. Only valid inside a key handler:
+        /// <see cref="IsKeyDown"/> reads the state now, and an injected Ctrl+V has released Ctrl by
+        /// the time its V is handled.
+        /// </summary>
+        public static bool IsKeyDownForEvent(VirtualKey key)
+        {
+            return (Window.Current.CoreWindow.GetKeyState(key) & CoreVirtualKeyStates.Down) != 0;
+        }
+
         public static VirtualKeyModifiers KeyModifiers()
         {
             //return (InputKeyboardSource.GetKeyStateForCurrentThread(key) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;

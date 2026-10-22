@@ -497,6 +497,11 @@ namespace Telegram.Navigation
             return (Win32.GetAsyncKeyState((int)key) & 0x8000) != 0;
         }
 
+        public static bool IsKeyDownForEvent(VirtualKey key)
+        {
+            return IsKeyDown(key);
+        }
+
         public static VirtualKeyModifiers KeyModifiers()
         {
             var modifiers = VirtualKeyModifiers.None;

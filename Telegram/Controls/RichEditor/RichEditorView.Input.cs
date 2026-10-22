@@ -1067,9 +1067,9 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
-            var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
-            var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+            var ctrl = WindowContext.IsKeyDownForEvent(VirtualKey.Control);
+            var shift = WindowContext.IsKeyDownForEvent(VirtualKey.Shift);
+            var alt = WindowContext.IsKeyDownForEvent(VirtualKey.Menu);
 
             if (e.Key == VirtualKey.M && ctrl && shift && alt && AppSettings.Diagnostics.EditorMeter)
             {

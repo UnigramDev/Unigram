@@ -715,9 +715,9 @@ namespace Telegram.Controls.RichEditor
         // The box's own keys, before the editor's: Enter is sending here, not a new paragraph.
         private void OnEditorPreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
-            var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
-            var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+            var ctrl = WindowContext.IsKeyDownForEvent(VirtualKey.Control);
+            var shift = WindowContext.IsKeyDownForEvent(VirtualKey.Shift);
+            var alt = WindowContext.IsKeyDownForEvent(VirtualKey.Menu);
 
             // Enter and Tab pick a suggestion while there is one, before they send.
             if (Editor.ProcessSuggestionKey(e.Key, ctrl, shift, alt))
