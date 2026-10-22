@@ -825,6 +825,10 @@ namespace Telegram.Controls.Stories
 
             if (_player != null && !_unloaded && _viewModel != null && stream != null)
             {
+                // The player reports no buffering while it opens, only once it is ready to play,
+                // and a preloaded prefix does not mean it is.
+                ShowSkeleton();
+
                 _player.Play(new RemoteFileSource(_viewModel.ClientService, stream.Video));
             }
         }
@@ -1195,9 +1199,11 @@ namespace Telegram.Controls.Stories
             {
                 ShowSkeleton();
 
-                //VideoPanel.Opacity = 0;
-                //Texture1.Opacity = 0;
-                //Texture2.Opacity = 0;
+                // The thumbnail stands in until the photo is downloaded: see UpdateVideo.
+                Texture1.Source = null;
+                Texture2.Source = null;
+
+                _player?.Context.Clear();
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -1250,18 +1256,15 @@ namespace Telegram.Controls.Stories
             Canvas.SetZIndex(next, 0);
             Canvas.SetZIndex(prev, -1);
 
-            // Preloaded?
-            if (file.Local.DownloadedPrefixSize >= video.PreloadPrefixSize)
-            {
-                if (_type == StoryType.Photo && Video != null)
-                {
-                    _player?.Context.Clear();
-                }
-            }
-            else
-            {
-                _player?.Context.Clear();
-            }
+            // The thumbnail stands in until the first frame. It is LayoutRoot's background, which
+            // every child draws over whatever its ZIndex, so the story before must leave nothing
+            // behind: its player is stopped first, or it keeps presenting frames until Play
+            // replaces it, over the panel just cleared.
+            Texture1.Source = null;
+            Texture2.Source = null;
+
+            _player?.Stop();
+            _player?.Context.Clear();
 
             story.ClientService.DownloadFile(file.Id, 32, 0, video.PreloadPrefixSize);
 
@@ -1601,9 +1604,13 @@ namespace Telegram.Controls.Stories
         {
             //Logger.Debug(e.Cache);
 
-            if (e.Cache == 100 && _loading)
+            // Not gated on _loading: the first frame hides the skeleton before preroll completes.
+            if (e.Cache == 100)
             {
-                HideSkeleton();
+                if (_loading)
+                {
+                    HideSkeleton();
+                }
 
                 if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.PosterChatId != _openedChatId && _viewModel.SelectedItem.Id != _openedStoryId)
                 {
