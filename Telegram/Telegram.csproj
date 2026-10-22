@@ -781,6 +781,10 @@
     <Compile Include="Controls\Stories\StoryInteractionBar.xaml.cs">
       <DependentUpon>StoryInteractionBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Stories\ActiveStoriesAvatar.xaml.cs">
+      <DependentUpon>ActiveStoriesAvatar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Stories\StoriesStack.cs" />
     <Compile Include="Controls\Stories\StoriesStrip.xaml.cs">
       <DependentUpon>StoriesStrip.xaml</DependentUpon>
     </Compile>
@@ -3785,6 +3789,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SearchChatsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\ActiveStoriesAvatar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

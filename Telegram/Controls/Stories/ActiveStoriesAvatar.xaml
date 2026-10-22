@@ -1,0 +1,91 @@
+﻿<Grid x:Class="Telegram.Controls.Stories.ActiveStoriesAvatar"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Telegram.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Width="48"
+      Height="48">
+
+    <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+            CornerRadius="24">
+        <Grid x:Name="PhotoRoot"
+              x:FieldModifier="public"
+              Width="48"
+              Height="48">
+            <controls:ProfilePicture x:Name="Photo"
+                                     Size="40"
+                                     Shape="Ellipse" />
+            <Grid x:Name="SegmentsRoot"
+                  x:FieldModifier="public">
+                <!-- The thinner ring an avatar in the stack shows while it is small. -->
+                <controls:ActiveStoriesSegments x:Name="SegmentsSmall"
+                                                x:FieldModifier="public"
+                                                x:Load="False"
+                                                IsLiveBadgeVisible="False"
+                                                IsEnabled="False"
+                                                IsHitTestVisible="False"
+                                                IsTabStop="False"
+                                                Width="48"
+                                                Height="48"
+                                                Canvas.ZIndex="1" />
+                <controls:ActiveStoriesSegments x:Name="Segments"
+                                                x:FieldModifier="public"
+                                                IsLiveBadgeVisible="False"
+                                                IsEnabled="False"
+                                                IsHitTestVisible="False"
+                                                IsTabStop="False"
+                                                Width="48"
+                                                Height="48" />
+                <controls:StoryProgressBarRing x:Name="UploadProgress"
+                                               x:Load="False"
+                                               Radius="23"
+                                               Center="24"
+                                               Width="48"
+                                               Height="48" />
+            </Grid>
+        </Grid>
+    </Border>
+
+    <Border x:Name="AddBadge"
+            x:Load="False"
+            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+            CornerRadius="10"
+            Padding="2"
+            Width="20"
+            Height="20"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="30,30,-2,-2">
+        <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
+                CornerRadius="8">
+            <FontIcon Glyph="&#xF7AA;"
+                      FontFamily="{StaticResource SymbolThemeFontFamily}"
+                      Foreground="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                      FontSize="12" />
+        </Border>
+    </Border>
+
+    <Border x:Name="LiveBadge"
+            x:FieldModifier="public"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Background="#FF2C55"
+            BorderBrush="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+            BorderThickness="2"
+            CornerRadius="8"
+            Height="16"
+            MinWidth="16"
+            Margin="0,0,0,-2">
+        <TextBlock Foreground="#FFFFFF"
+                   Text="{CustomResource LiveStoryBadge}"
+                   TextLineBounds="Tight"
+                   TextAlignment="Center"
+                   OpticalMarginAlignment="TrimSideBearings"
+                   FontSize="9"
+                   Padding="4,0,4,0"
+                   VerticalAlignment="Center"
+                   Typography.NumeralAlignment="Tabular" />
+    </Border>
+</Grid>

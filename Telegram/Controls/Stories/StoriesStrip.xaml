@@ -5,6 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:cells="using:Telegram.Controls.Cells"
                         xmlns:controls="using:Telegram.Controls"
+                        xmlns:stories="using:Telegram.Controls.Stories"
                         xmlns:viewModels="using:Telegram.ViewModels.Stories"
                         mc:Ignorable="d"
                         d:DesignHeight="300"
@@ -23,7 +24,7 @@
                   SelectionMode="None"
                   IsItemClickEnabled="True"
                   ItemClick="ScrollingHost_ItemClick"
-                  Padding="0,0,0,4">
+                  Padding="12,0,0,4">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal" />
@@ -45,6 +46,8 @@
                 <TransitionCollection />
             </ListView.ItemContainerTransitions>
         </ListView>
+
+        <stories:StoriesStack x:Name="Stack" />
 
         <HyperlinkButton x:Name="Show"
                          Click="Show_Click"
