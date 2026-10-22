@@ -9,6 +9,50 @@ using namespace winrt::Windows::UI::Composition;
 
 namespace winrt::Telegram::Native::implementation
 {
+    // Per thread, because surfaces are drawn on their view's thread only, under Direct2D's lock over
+    // the device. It grows to the largest frame drawn, and a replaced device gets a new one.
+    static ID3D11Texture2D* UploadTexture(winrt::com_ptr<ID3D11Device> const& device, UINT width, UINT height)
+    {
+        thread_local winrt::com_ptr<ID3D11Texture2D> s_texture;
+        thread_local winrt::com_ptr<ID3D11Device> s_device;
+        thread_local UINT s_width = 0;
+        thread_local UINT s_height = 0;
+
+        if (s_device != device)
+        {
+            s_texture = nullptr;
+            s_device = device;
+            s_width = 0;
+            s_height = 0;
+        }
+
+        if (s_texture == nullptr || width > s_width || height > s_height)
+        {
+            D3D11_TEXTURE2D_DESC description{};
+            description.Width = std::max(width, s_width);
+            description.Height = std::max(height, s_height);
+            description.MipLevels = 1;
+            description.ArraySize = 1;
+            description.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+            description.SampleDesc.Count = 1;
+            description.Usage = D3D11_USAGE_DEFAULT;
+            description.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+            s_texture = nullptr;
+
+            if (FAILED(device->CreateTexture2D(&description, nullptr, s_texture.put())))
+            {
+                s_texture = nullptr;
+                return nullptr;
+            }
+
+            s_width = description.Width;
+            s_height = description.Height;
+        }
+
+        return s_texture.get();
+    }
+
     FrameSurface::FrameSurface(CompositionDrawingSurface surface, winrt::com_ptr<ID2D1Factory1> const& factory, int32_t pixelWidth, int32_t pixelHeight, int32_t rotation)
         : m_surface(surface)
         , m_interop(surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>())
@@ -55,33 +99,21 @@ namespace winrt::Telegram::Native::implementation
                 m_multithread->Enter();
             }
 
-            if (m_texture == nullptr || device != m_textureDevice)
-            {
-                D3D11_TEXTURE2D_DESC description{};
-                description.Width = m_pixelWidth;
-                description.Height = m_pixelHeight;
-                description.MipLevels = 1;
-                description.ArraySize = 1;
-                description.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-                description.SampleDesc.Count = 1;
-                description.Usage = D3D11_USAGE_DEFAULT;
-                description.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-
-                m_texture = nullptr;
-                m_textureDevice = device;
-                result = device->CreateTexture2D(&description, nullptr, m_texture.put());
-            }
-            else
-            {
-                result = S_OK;
-            }
+            auto width = static_cast<UINT>(m_pixelWidth);
+            auto height = static_cast<UINT>(m_pixelHeight);
 
             // Not straight into the surface's texture: UpdateSubresource into it on the UI thread
             // held about a frame of memory per draw for as long as drawing went on, Flush or not.
-            if (SUCCEEDED(result))
+            // And one texture for the thread rather than one per surface: surfaces come and go by
+            // the hundred, and the memory of each texture created and released with one was kept.
+            auto upload = UploadTexture(device, width, height);
+            if (upload)
             {
-                context->UpdateSubresource(m_texture.get(), 0, nullptr, buffer.data(), m_pixelWidth * 4, 0);
-                context->CopySubresourceRegion(texture.get(), 0, static_cast<UINT>(offset.x), static_cast<UINT>(offset.y), 0, m_texture.get(), 0, nullptr);
+                D3D11_BOX box{ 0, 0, 0, width, height, 1 };
+                context->UpdateSubresource(upload, 0, &box, buffer.data(), width * 4, 0);
+                context->CopySubresourceRegion(texture.get(), 0, static_cast<UINT>(offset.x), static_cast<UINT>(offset.y), 0, upload, 0, &box);
+
+                result = S_OK;
             }
 
             if (m_multithread)
@@ -170,8 +202,6 @@ namespace winrt::Telegram::Native::implementation
         m_closed = true;
         m_bitmap = nullptr;
         m_bitmapDevice = nullptr;
-        m_texture = nullptr;
-        m_textureDevice = nullptr;
         m_interop = nullptr;
 
         if (m_surface)

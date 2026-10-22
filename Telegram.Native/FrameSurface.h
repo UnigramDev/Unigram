@@ -21,9 +21,9 @@ namespace winrt::Telegram::Native::implementation
 
         winrt::Windows::UI::Composition::CompositionDrawingSurface Surface();
 
-        // The frame is uploaded into a texture of this surface's own and copied from there into the
-        // surface's texture on the GPU: no Direct2D context is set up for the session. A rotated
-        // frame is drawn through Direct2D instead, which turns it on the GPU.
+        // The frame is uploaded into a texture shared by the thread's surfaces and copied from there
+        // into the surface's texture on the GPU: no Direct2D context is set up for the session. A
+        // rotated frame is drawn through Direct2D instead, which turns it on the GPU.
         bool Draw(winrt::Windows::Storage::Streams::IBuffer buffer);
 
         void Close();
@@ -39,10 +39,6 @@ namespace winrt::Telegram::Native::implementation
         // on, which is how a device loss shows up here: the surface survives it, the bitmap not.
         winrt::com_ptr<ID2D1Bitmap1> m_bitmap;
         winrt::com_ptr<ID2D1Device> m_bitmapDevice;
-
-        // The same, for the unrotated path.
-        winrt::com_ptr<ID3D11Texture2D> m_texture;
-        winrt::com_ptr<ID3D11Device> m_textureDevice;
 
         // Direct2D's own lock over the device it shares with this code: the immediate context is
         // not thread safe, and Direct2D uses it from other threads under this lock.
