@@ -419,9 +419,6 @@ namespace winrt::Telegram::Native::implementation
 
         void WaitForCompositorClock();
 
-        bool RequestCommit();
-        bool WaitForCommit(int32_t inFlight, int32_t timeoutMs);
-
         winrt::Telegram::Native::SurfaceImage Create(int32_t pixelWidth, int32_t pixelHeight);
         HRESULT Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer);
 
@@ -472,10 +469,6 @@ namespace winrt::Telegram::Native::implementation
     public:
         Compositor m_compositor;
         winrt::Windows::System::DispatcherQueue m_dispatcherQueue{ nullptr };
-
-        // The same queue, never cleared: RequestCommit reads it on the flusher's thread, with
-        // nothing ordering that against Close.
-        winrt::Windows::System::DispatcherQueue m_commitQueue{ nullptr };
         CompositionEffectFactory m_alphaMaskFactory;
         CompositionGraphicsDevice m_compositionDevice;
         // Strong, under m_criticalSection: CompositionGraphicsDevice has no IWeakReferenceSource, and

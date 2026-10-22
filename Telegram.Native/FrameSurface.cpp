@@ -50,21 +50,44 @@ namespace winrt::Telegram::Native::implementation
             winrt::com_ptr<ID3D11DeviceContext> context;
             device->GetImmediateContext(context.put());
 
-            D3D11_BOX box{ static_cast<UINT>(offset.x), static_cast<UINT>(offset.y), 0, static_cast<UINT>(offset.x + m_pixelWidth), static_cast<UINT>(offset.y + m_pixelHeight), 1 };
-
             if (m_multithread)
             {
                 m_multithread->Enter();
             }
 
-            context->UpdateSubresource(texture.get(), 0, &box, buffer.data(), m_pixelWidth * 4, 0);
+            if (m_texture == nullptr || device != m_textureDevice)
+            {
+                D3D11_TEXTURE2D_DESC description{};
+                description.Width = m_pixelWidth;
+                description.Height = m_pixelHeight;
+                description.MipLevels = 1;
+                description.ArraySize = 1;
+                description.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+                description.SampleDesc.Count = 1;
+                description.Usage = D3D11_USAGE_DEFAULT;
+                description.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+                m_texture = nullptr;
+                m_textureDevice = device;
+                result = device->CreateTexture2D(&description, nullptr, m_texture.put());
+            }
+            else
+            {
+                result = S_OK;
+            }
+
+            // Not straight into the surface's texture: UpdateSubresource into it on the UI thread
+            // held about a frame of memory per draw for as long as drawing went on, Flush or not.
+            if (SUCCEEDED(result))
+            {
+                context->UpdateSubresource(m_texture.get(), 0, nullptr, buffer.data(), m_pixelWidth * 4, 0);
+                context->CopySubresourceRegion(texture.get(), 0, static_cast<UINT>(offset.x), static_cast<UINT>(offset.y), 0, m_texture.get(), 0, nullptr);
+            }
 
             if (m_multithread)
             {
                 m_multithread->Leave();
             }
-
-            result = S_OK;
         }
 
         if (FAILED(m_interop->EndDraw()) || FAILED(result))
@@ -147,6 +170,8 @@ namespace winrt::Telegram::Native::implementation
         m_closed = true;
         m_bitmap = nullptr;
         m_bitmapDevice = nullptr;
+        m_texture = nullptr;
+        m_textureDevice = nullptr;
         m_interop = nullptr;
 
         if (m_surface)

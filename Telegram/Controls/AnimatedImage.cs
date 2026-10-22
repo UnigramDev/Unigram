@@ -25,6 +25,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -1345,15 +1346,12 @@ namespace Telegram.Controls
 
         private AnimatedImageSurface _surface;
         private volatile bool _surfaceShown;
-        private int _surfaceUpdatePending;
-        private int _surfaceCreatePending;
         private int _redraw;
 
-        // On the flusher's thread, never concurrently with another presenter of the same window:
-        // the composition device takes one drawing session at a time, and a second BeginDraw while
-        // one is open fails - which lost the only frame a still sticker ever draws.
-        // Returns false when the frame has to be drawn again later.
-        internal bool FlushFrame()
+        // On the UI thread, from the frame loop's tick: drawing here and nowhere else means a stalled
+        // UI thread cannot leave surface updates behind for a commit that is not coming.
+        // Returns false when the frame has to be drawn again later; drawn says whether anything was.
+        internal bool FlushFrame(ref bool drawn)
         {
             var surface = Volatile.Read(ref _surface);
             var next = Interlocked.Exchange(ref _foregroundNext, null);
@@ -1369,6 +1367,8 @@ namespace Telegram.Controls
                         Volatile.Write(ref _redraw, 1);
                         return false;
                     }
+
+                    drawn = true;
                 }
 
                 return true;
@@ -1391,11 +1391,7 @@ namespace Telegram.Controls
                     Interlocked.Exchange(ref _backgroundNext, next);
                 }
 
-                if (Interlocked.Exchange(ref _surfaceCreatePending, 1) == 0)
-                {
-                    _dispatcherQueue.TryEnqueue(CreateSurface);
-                }
-
+                CreateSurface();
                 return true;
             }
 
@@ -1415,6 +1411,8 @@ namespace Telegram.Controls
                 return false;
             }
 
+            drawn = true;
+
             if (_foregroundPrev != null)
             {
                 Interlocked.Exchange(ref _backgroundNext, _foregroundPrev);
@@ -1424,7 +1422,7 @@ namespace Telegram.Controls
 
             if (!_surfaceShown || PositionChanged != null)
             {
-                RequestSurfaceUpdate();
+                SurfaceUpdated();
             }
 
             return true;
@@ -1439,8 +1437,6 @@ namespace Telegram.Controls
 
         private void CreateSurface()
         {
-            Volatile.Write(ref _surfaceCreatePending, 0);
-
             var task = Volatile.Read(ref _task);
             if (task == null || _disposed || _surface != null)
             {
@@ -1455,18 +1451,8 @@ namespace Telegram.Controls
             }
         }
 
-        private void RequestSurfaceUpdate()
-        {
-            if (Interlocked.Exchange(ref _surfaceUpdatePending, 1) == 0)
-            {
-                _dispatcherQueue.TryEnqueue(SurfaceUpdated);
-            }
-        }
-
         private void SurfaceUpdated()
         {
-            Volatile.Write(ref _surfaceUpdatePending, 0);
-
             var surface = Volatile.Read(ref _surface);
             if (surface == null || _disposed)
             {
@@ -2934,15 +2920,16 @@ namespace Telegram.Controls
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             _window = window;
 
-            // Taken here because Direct2D.Current is per view thread, and frames are drawn on the
-            // flusher's, which has none.
+            // Taken here because Direct2D.Current is per view thread, and the clock's thread has none.
             _device = Direct2D.Current;
-            Flusher = new FrameFlusher(Device);
 
-            // Not the view's own: the flusher draws from its thread, and a BeginDraw that overlaps
-            // one of the UI thread's on the same graphics device fails.
+            // Not the view's own: a BeginDraw that overlaps another on the same graphics device fails,
+            // and frames are drawn on the UI thread but not every user of the view's device is known
+            // to draw only there.
             _graphicsDevice = Device.CreateGraphicsDevice();
             _graphicsDevice.RenderingDeviceReplaced += OnRenderingDeviceReplaced;
+
+            Flusher = new FrameFlusher(Device, _graphicsDevice.Compositor, _dispatcherQueue);
 
             Debug.Assert(_dispatcherQueue != null);
         }
@@ -2968,14 +2955,19 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// The window's frame loop. Each vblank it draws every presenter's pending frame into its
-        /// surface, commits, and queues the decodes for the next one, so frames are decoded on the
-        /// compositor's clock: decoding on a timer of its own, which drifted against it, lost a
-        /// frame whenever two ticks fell between two passes. Drawing stays on this one thread
-        /// because the composition device allows a single drawing session at a time: workers
-        /// drawing their own frames failed whenever two overlapped, and queued on the device lock
-        /// ahead of XAML's own commit when they did not.
+        /// The window's frame loop. Its thread only keeps time: on each 60 Hz tick of the compositor
+        /// clock that has work, it posts one item to the UI thread, which draws every presenter's
+        /// pending frame into its surface, asks for one commit, and queues the decodes for the next
+        /// tick. Not CompositionTarget.Rendering, which makes XAML run a frame on every vblank of a
+        /// 240 Hz display for content that needs 60 at most.
         /// </summary>
+        /// <remarks>
+        /// Drawing and the commit request belong to the UI thread. RequestCommitAsync from any other
+        /// thread wakes it inside whatever synchronous COM call it is making, and a XAML timer that
+        /// runs there under an event handler fails fast in OnReentrancyProtectedWindowMessage - 13.1
+        /// crashed on link clicks this way. A surface drawn from another thread is held by DComp
+        /// until a commit takes it, and a stalled UI thread takes none.
+        /// </remarks>
         public sealed class FrameFlusher
         {
             private readonly object _lock = new();
@@ -2983,10 +2975,16 @@ namespace Telegram.Controls
             private readonly HashSet<AnimatedImagePresenter> _playing = new();
             private readonly AutoResetEvent _signal = new(false);
             private readonly Direct2DDevice _device;
+            private readonly Compositor _compositor;
+            private readonly DispatcherQueue _dispatcherQueue;
+            private readonly DispatcherQueueHandler _tick;
             private Thread _thread;
             private volatile bool _closed;
 
-            // A pass's worth of frames each: what a stalled UI thread can leave uncommitted.
+            // A tick's worth of frames each. DComp keeps every surface update until a commit takes
+            // it, and a minimized window takes none, so the clock stops posting while this many are
+            // unconfirmed. Not 1: a release build confirms a commit 22-42 ms after the request, and
+            // waiting for each one halved the frame rate.
             private const int CommitsInFlight = 3;
 
             // Presenters per thread-pool work item: a panel is a handful of items a frame, and one
@@ -2998,9 +2996,27 @@ namespace Telegram.Controls
             // Not in use, handed back by the pool threads that ran them.
             private readonly Stack<DecodeBatch> _batches = new();
 
-            public FrameFlusher(Direct2DDevice device)
+            // The UI thread's, reused by every tick.
+            private readonly List<AnimatedImagePresenter> _batch = new();
+            private readonly List<AnimatedImagePresenter> _retry = new();
+            private readonly List<AnimatedImagePresenter> _due = new();
+
+            // The vblank the posted tick plans for, and whether that tick has yet to run: at most one
+            // is ever queued, so a stalled UI thread finds one item waiting, not a backlog.
+            private long _time;
+            private int _posted;
+
+            public FrameFlusher(Direct2DDevice device, Compositor compositor, DispatcherQueue dispatcherQueue)
             {
                 _device = device;
+                _compositor = compositor;
+                _dispatcherQueue = dispatcherQueue;
+                _tick = Tick;
+
+                for (int i = 0; i < _waiters.Length; i++)
+                {
+                    _waiters[i] = new CommitWaiter(this);
+                }
             }
 
             /// <summary>Draws the presenter's pending frame on the next pass.</summary>
@@ -3060,9 +3076,9 @@ namespace Telegram.Controls
 
             private void Run()
             {
-                var batch = new List<AnimatedImagePresenter>();
-                var retry = new List<AnimatedImagePresenter>();
-                var playing = new List<AnimatedImagePresenter>();
+                var interval = Stopwatch.Frequency / 60;
+                var next = 0L;
+                var stuck = 0L;
 
                 while (!_closed)
                 {
@@ -3073,7 +3089,7 @@ namespace Telegram.Controls
                         idle = _pending.Count == 0 && _playing.Count == 0;
                     }
 
-                    // Asleep only while nothing plays: a playing presenter is polled every pass,
+                    // Asleep only while nothing plays: a playing presenter is polled every tick,
                     // whether or not it had a frame for the last one.
                     if (idle)
                     {
@@ -3081,76 +3097,242 @@ namespace Telegram.Controls
                         continue;
                     }
 
-                    // One pass per compositor frame: every pass is a commit, and every commit a XAML
-                    // frame on the UI thread, so frames decoded meanwhile have to share it.
                     _device.WaitForCompositorClock();
 
-                    // The vblank the decodes queued below render for. Taken before the wait for
-                    // commits, which only adds jitter to it.
+                    // The vblank the decodes queued by the tick render for.
                     var time = Stopwatch.GetTimestamp();
 
-                    // DComp keeps every surface update until a commit takes it, and the clock above
-                    // keeps ticking when none do - behind a stalled UI thread, in a minimized window -
-                    // so a pass per tick piled up gigabytes of frames. A pass does not draw while
-                    // CommitsInFlight passes are still uncommitted. More than one, because a commit
-                    // takes two frames or more to be confirmed in the shipping build, and waiting for
-                    // each made every pass that long. The timeout is so that Close is noticed, and so
-                    // that WaitForCommit can find out about completions that never arrive.
-                    while (!_closed && !_device.WaitForCommit(CommitsInFlight - 1, 250))
+                    // 60 a second at most, whatever the display's rate. A quarter of a tick early
+                    // still counts, or a 60 Hz clock that drifts a hair from this one would miss.
+                    if (time + interval / 4 < next)
                     {
+                        continue;
                     }
 
-                    lock (_lock)
-                    {
-                        batch.AddRange(_pending);
-                        _pending.Clear();
+                    next = time - next > interval
+                        ? time + interval
+                        : next + interval;
 
-                        foreach (var presenter in _playing)
+                    if (Volatile.Read(ref _posted) != 0)
+                    {
+                        continue;
+                    }
+
+                    if (InFlight >= CommitsInFlight)
+                    {
+                        // A completion can be lost - those for commits requested as the system went
+                        // to sleep never arrive - so a quarter of a second in, a tick goes anyway to
+                        // ask for an empty commit, whose completion accounts for them.
+                        if (stuck == 0)
                         {
-                            playing.Add(presenter);
+                            stuck = time;
                         }
-                    }
-
-                    foreach (var presenter in batch)
-                    {
-                        if (!presenter.FlushFrame())
+                        else if (time - stuck > Stopwatch.Frequency / 4)
                         {
-                            retry.Add(presenter);
-                        }
-                    }
-
-                    if (batch.Count > 0)
-                    {
-                        _device.RequestCommit();
-                    }
-
-                    batch.Clear();
-
-                    // After drawing, which is what handed each presenter its free buffer back. The
-                    // decodes then have most of a frame to finish before the next pass draws them.
-                    Queue(playing, time);
-                    playing.Clear();
-
-                    if (retry.Count > 0)
-                    {
-                        // A draw fails while the device is being replaced; give it a frame's time.
-                        Thread.Sleep(16);
-
-                        lock (_lock)
-                        {
-                            foreach (var presenter in retry)
-                            {
-                                _pending.Add(presenter);
-                            }
+                            stuck = time;
+                            Post(time);
                         }
 
-                        retry.Clear();
-                        _signal.Set();
+                        continue;
                     }
+
+                    stuck = 0;
+                    Post(time);
                 }
 
                 Drain();
             }
+
+            private void Post(long time)
+            {
+                Volatile.Write(ref _time, time);
+                Volatile.Write(ref _posted, 1);
+
+                try
+                {
+                    if (_dispatcherQueue.TryEnqueue(_tick))
+                    {
+                        return;
+                    }
+                }
+                catch
+                {
+                    // The thread is going away with its window.
+                }
+
+                Volatile.Write(ref _posted, 0);
+            }
+
+            private void Tick()
+            {
+                try
+                {
+                    TickCore();
+                }
+                finally
+                {
+                    Volatile.Write(ref _posted, 0);
+                }
+            }
+
+            private void TickCore()
+            {
+                if (_closed)
+                {
+                    return;
+                }
+
+                if (InFlight >= CommitsInFlight)
+                {
+                    // Posted only to find out about lost completions, one empty request at a time.
+                    // A compositor that is not committing at all - a minimized window - leaves it
+                    // waiting with the rest.
+                    if (Volatile.Read(ref _taken) >= _probe)
+                    {
+                        RequestCommit();
+                        _probe = _requested;
+                    }
+
+                    return;
+                }
+
+                var time = Volatile.Read(ref _time);
+
+                lock (_lock)
+                {
+                    _batch.AddRange(_pending);
+                    _pending.Clear();
+
+                    foreach (var presenter in _playing)
+                    {
+                        _due.Add(presenter);
+                    }
+                }
+
+                var drawn = false;
+
+                foreach (var presenter in _batch)
+                {
+                    try
+                    {
+                        if (!presenter.FlushFrame(ref drawn))
+                        {
+                            _retry.Add(presenter);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // One presenter's failure is not the tick's.
+                        Logger.Info($"Animation threw exception: {ex.Message}");
+                    }
+                }
+
+                _batch.Clear();
+
+                // All of the tick's updates in one commit.
+                if (drawn)
+                {
+                    RequestCommit();
+                }
+
+                if (_retry.Count > 0)
+                {
+                    // A draw fails while the device is being replaced: the next tick tries again.
+                    lock (_lock)
+                    {
+                        foreach (var presenter in _retry)
+                        {
+                            _pending.Add(presenter);
+                        }
+                    }
+
+                    _retry.Clear();
+                }
+
+                // After drawing, which is what handed each presenter its free buffer back. The
+                // decodes then have most of a tick to finish before the next one draws them.
+                Queue(_due, time);
+                _due.Clear();
+            }
+
+            #region Commits
+
+            // Sequence numbers rather than a count. Commits are taken in order, so a completion also
+            // accounts for the requests before it, including any whose own completion never arrives:
+            // those made as the system went to sleep did not, and counting them shut the gate for good.
+            // _requested and _probe are written on the UI thread only.
+            private long _requested;
+            private long _taken;
+            private long _probe;
+
+            private readonly CommitWaiter[] _waiters = new CommitWaiter[16];
+
+            private long InFlight => Volatile.Read(ref _requested) - Volatile.Read(ref _taken);
+
+            private void RequestCommit()
+            {
+                var sequence = _requested + 1;
+
+                try
+                {
+                    var action = _compositor.RequestCommitAsync();
+                    var waiter = _waiters[sequence % _waiters.Length];
+
+                    waiter.Sequence = sequence;
+                    Volatile.Write(ref _requested, sequence);
+
+                    action.Completed = waiter.Handler;
+                }
+                catch
+                {
+                    // The compositor is going away with its window, and there is nothing to wait for.
+                }
+            }
+
+            private void Take(long sequence)
+            {
+                var taken = Volatile.Read(ref _taken);
+
+                while (taken < sequence)
+                {
+                    var seen = Interlocked.CompareExchange(ref _taken, sequence, taken);
+                    if (seen == taken)
+                    {
+                        break;
+                    }
+
+                    taken = seen;
+                }
+            }
+
+            /// <summary>
+            /// The completion of one commit request, reused round-robin so that a request allocates no
+            /// handler. A waiter is rewritten 16 requests after its last one, and with at most
+            /// CommitsInFlight unconfirmed only a completion that was lost can still be attached to
+            /// it: should that one arrive after all, it reports a later sequence than its own, which
+            /// lets at most one commit too many through.
+            /// </summary>
+            private sealed class CommitWaiter
+            {
+                private readonly FrameFlusher _owner;
+
+                public CommitWaiter(FrameFlusher owner)
+                {
+                    _owner = owner;
+                    Handler = OnCompleted;
+                }
+
+                public long Sequence;
+
+                public AsyncActionCompletedHandler Handler { get; }
+
+                private void OnCompleted(IAsyncAction action, AsyncStatus status)
+                {
+                    _owner.Take(Volatile.Read(ref Sequence));
+                }
+            }
+
+            #endregion
 
             private void Queue(List<AnimatedImagePresenter> playing, long time)
             {

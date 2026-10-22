@@ -12,8 +12,7 @@ namespace winrt::Telegram::Native::implementation
 {
     // An animation frame shown through Composition rather than XAML. A WriteableBitmap behind an
     // ImageBrush has to be invalidated on the UI thread, and each invalidation costs a full XAML
-    // render pass; a frame drawn here reaches the screen with the compositor's next commit, from
-    // whichever thread decoded it.
+    // render pass; a frame drawn here reaches the screen with the compositor's next commit.
     struct FrameSurface : FrameSurfaceT<FrameSurface>
     {
         // pixelWidth and pixelHeight are the frame's, before rotation; the surface is the rotated
@@ -22,9 +21,9 @@ namespace winrt::Telegram::Native::implementation
 
         winrt::Windows::UI::Composition::CompositionDrawingSurface Surface();
 
-        // The frame is copied straight into the surface's texture: no Direct2D context is set up
-        // for the session, and the copy is a single UpdateSubresource. A rotated frame is drawn
-        // through Direct2D instead, which turns it on the GPU.
+        // The frame is uploaded into a texture of this surface's own and copied from there into the
+        // surface's texture on the GPU: no Direct2D context is set up for the session. A rotated
+        // frame is drawn through Direct2D instead, which turns it on the GPU.
         bool Draw(winrt::Windows::Storage::Streams::IBuffer buffer);
 
         void Close();
@@ -40,6 +39,10 @@ namespace winrt::Telegram::Native::implementation
         // on, which is how a device loss shows up here: the surface survives it, the bitmap not.
         winrt::com_ptr<ID2D1Bitmap1> m_bitmap;
         winrt::com_ptr<ID2D1Device> m_bitmapDevice;
+
+        // The same, for the unrotated path.
+        winrt::com_ptr<ID3D11Texture2D> m_texture;
+        winrt::com_ptr<ID3D11Device> m_textureDevice;
 
         // Direct2D's own lock over the device it shares with this code: the immediate context is
         // not thread safe, and Direct2D uses it from other threads under this lock.

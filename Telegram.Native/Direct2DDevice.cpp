@@ -491,121 +491,6 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    struct CommitState
-    {
-        winrt::handle completed{ CreateEventW(nullptr, FALSE, FALSE, nullptr) };
-
-        // Sequence numbers rather than a count. Commits are taken in order, so a completion also
-        // accounts for the requests before it, including any whose own completion never arrives:
-        // those made as the system went to sleep did not, and counting them shut the gate for good.
-        int64_t requested{ 0 };
-        std::atomic<int64_t> taken{ 0 };
-
-        // The last request WaitForCommit made with nothing drawn, to find out whether the
-        // compositor is committing at all.
-        int64_t probe{ 0 };
-    };
-
-    static std::shared_ptr<CommitState> const& Commits()
-    {
-        // Per thread, because Win32 windows share a device and each has its own flusher. Shared with
-        // the completions, which can outlive both the wait and the thread once the wait times out.
-        thread_local auto s_commits = std::make_shared<CommitState>();
-        return s_commits;
-    }
-
-    static void TakeCommit(std::shared_ptr<CommitState> const& commits, int64_t sequence)
-    {
-        auto taken = commits->taken.load();
-        while (taken < sequence && !commits->taken.compare_exchange_weak(taken, sequence))
-        {
-        }
-
-        SetEvent(commits->completed.get());
-    }
-
-    static bool SendCommit(Compositor const& compositor, winrt::Windows::System::DispatcherQueue const& queue, std::shared_ptr<CommitState> const& commits)
-    {
-        auto sequence = ++commits->requested;
-
-        // Asked for on the compositor's own thread, never from this one. From here, each request
-        // wakes the UI thread inside whatever synchronous COM call it is making, and a XAML timer
-        // that runs there under an event handler - LaunchUriAsync in a link's Click - fails fast
-        // in OnReentrancyProtectedWindowMessage. A queued item waits for the message loop.
-        try
-        {
-            if (queue.TryEnqueue([compositor, commits, sequence]
-            {
-                try
-                {
-                    compositor.RequestCommitAsync().Completed([commits, sequence](auto&&, auto&&)
-                    {
-                        TakeCommit(commits, sequence);
-                    });
-                }
-                catch (winrt::hresult_error const&)
-                {
-                    // The compositor is going away with its window, and there is nothing left to wait for.
-                    TakeCommit(commits, sequence);
-                }
-            }))
-            {
-                return true;
-            }
-        }
-        catch (winrt::hresult_error const&)
-        {
-        }
-
-        // The thread is shutting down with its window.
-        commits->requested--;
-        return false;
-    }
-
-    bool Direct2DDevice::RequestCommit()
-    {
-        auto const& commits = Commits();
-
-        if (m_compositor == nullptr || m_commitQueue == nullptr || !commits->completed)
-        {
-            return false;
-        }
-
-        return SendCommit(m_compositor, m_commitQueue, commits);
-    }
-
-    bool Direct2DDevice::WaitForCommit(int32_t inFlight, int32_t timeoutMs)
-    {
-        auto const& commits = Commits();
-
-        if (!commits->completed)
-        {
-            return true;
-        }
-
-        auto deadline = GetTickCount64() + timeoutMs;
-
-        while (commits->requested - commits->taken.load() > inFlight)
-        {
-            auto now = GetTickCount64();
-            if (now >= deadline || WaitForSingleObject(commits->completed.get(), static_cast<DWORD>(deadline - now)) != WAIT_OBJECT_0)
-            {
-                // An empty commit, one at a time, so that lost completions are not waited for
-                // forever: taken, it accounts for them. A compositor that is not committing at all -
-                // a minimized window, a stalled UI thread - leaves it waiting with the rest, and the
-                // gate shut.
-                if (m_compositor && m_commitQueue && commits->taken.load() >= commits->probe && SendCommit(m_compositor, m_commitQueue, commits))
-                {
-                    commits->probe = commits->requested;
-                }
-
-                return commits->requested - commits->taken.load() <= inFlight;
-            }
-        }
-
-        return true;
-    }
-
     winrt::Telegram::Native::SurfaceImage Direct2DDevice::Create(int32_t pixelWidth, int32_t pixelHeight)
     {
         std::lock_guard const guard(m_criticalSection);
@@ -1286,7 +1171,6 @@ namespace winrt::Telegram::Native::implementation
         if (m_compositor)
         {
             m_dispatcherQueue = winrt::Windows::System::DispatcherQueue::GetForCurrentThread();
-            m_commitQueue = m_dispatcherQueue;
         }
 
         if (m_dispatcherQueue)

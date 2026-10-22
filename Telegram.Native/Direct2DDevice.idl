@@ -55,15 +55,6 @@ namespace Telegram.Native
         // Until the compositor's next frame, or a 60th of a second before Windows 11.
         void WaitForCompositorClock();
 
-        // Asks the compositor to commit what was drawn so far: false when there is no compositor, and
-        // so nothing for WaitForCommit to wait for. Both have to be called from the same thread.
-        Boolean RequestCommit();
-
-        // Until no more than inFlight of the commits RequestCommit asked for are still to be taken:
-        // false if timeoutMs passed first, after asking for an empty commit, so that a call after a
-        // timeout counts any whose completion was lost.
-        Boolean WaitForCommit(Int32 inFlight, Int32 timeoutMs);
-
         SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
         void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
 
