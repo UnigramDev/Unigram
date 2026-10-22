@@ -34,6 +34,8 @@ namespace Telegram.Controls
         private StorageMedia _media;
         private AsyncMediaPlayer _player;
 
+        private bool _shown;
+
         public MediaEditorSurface()
         {
             InitializeComponent();
@@ -203,6 +205,15 @@ namespace Telegram.Controls
 
         private void Cropper_ViewChanged(object sender, EventArgs e)
         {
+            // The first view is the first layout of the media; see the XAML.
+            if (!_shown)
+            {
+                _shown = true;
+
+                Opacity = 1;
+                IsHitTestVisible = true;
+            }
+
             var transform = Cropper.ContentTransform;
 
             if (IsFrame)
