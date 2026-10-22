@@ -89,16 +89,10 @@ namespace Telegram.ViewModels.Stories
 
         public override Chat Chat { get; set; }
 
-        // Your own stories have no order while the first of them is still being posted, or when only
-        // failed posts are left, but they still lead the list.
-        public long Order
-        {
-            get
-            {
-                var order = _activeStories?.Order ?? 0;
-                return order == 0 && IsMyStory && _activeStories != null && Items.Count > 0 ? long.MaxValue : order;
-            }
-        }
+        // Your own stories lead the list, even while TDLib gives them no order: the first of them
+        // still being posted, only failed posts left, or none at all. Whether the cell is in the
+        // list then is the list's to decide.
+        public long Order => IsMyStory ? long.MaxValue : _activeStories?.Order ?? 0;
 
         /// <summary>
         /// True, if the stories are shown in the main story list and can be archived; otherwise, the stories can be hidden from the main story list -only by calling removeTopChat with topChatCategoryUsers and the chat_id. Stories of the current user can't be archived nor hidden using removeTopChat

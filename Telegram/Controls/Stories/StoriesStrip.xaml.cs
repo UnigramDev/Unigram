@@ -281,6 +281,10 @@ namespace Telegram.Controls.Stories
                 {
                     Expand();
                 }
+                else if (activeStories.IsMyStory && activeStories.Items.Count == 0)
+                {
+                    ViewModel.AddStory();
+                }
                 else
                 {
                     OpenStory(activeStories);

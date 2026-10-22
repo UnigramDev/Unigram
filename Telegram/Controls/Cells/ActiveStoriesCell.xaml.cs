@@ -141,6 +141,20 @@ namespace Telegram.Controls.Cells
                 UploadProgress.Visibility = Visibility.Collapsed;
             }
 
+            // Your own cell with nothing in it is there to add a story from.
+            var empty = _viewModel.IsMyStory && _viewModel.Items.Count == 0;
+            if (empty && AddBadge == null)
+            {
+                FindName(nameof(AddBadge));
+            }
+
+            if (AddBadge != null)
+            {
+                AddBadge.Visibility = empty
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+
             // TDLib posts a chat's stories one at a time, so the first in flight is the one moving.
             if (_posting != posting)
             {

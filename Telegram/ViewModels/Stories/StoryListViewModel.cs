@@ -352,7 +352,8 @@ namespace Telegram.ViewModels.Stories
 
         public void OpenStory(ActiveStoriesViewModel activeStories, Rect origin, Func<ActiveStoriesViewModel, Rect> closing)
         {
-            var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, Items.ToArray());
+            // Your own cell can be in the strip with no stories, to add one from.
+            var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, Items.Where(x => x.Items.Count > 0).ToArray());
             viewModel.NavigationService = NavigationService;
             viewModel.UpdateSelectedItem();
 
@@ -429,6 +430,12 @@ namespace Telegram.ViewModels.Stories
                 var token = _token;
                 var totalCount = 0u;
 
+                // Your own cell needs the Saved Messages chat, which nothing may have loaded yet.
+                if (_storyList is StoryListMain && !_clientService.TryGetChat(_clientService.Options.MyId, out Chat _))
+                {
+                    await _clientService.SendAsync(new CreatePrivateChat(_clientService.Options.MyId, true));
+                }
+
                 var response = await _clientService.GetStoryListAsync(_storyList, Count, 20);
                 if (response is Telegram.Td.Api.Chats chats && !token.IsCancellationRequested)
                 {
@@ -458,6 +465,8 @@ namespace Telegram.ViewModels.Stories
                             _lastOrder = order;
                         }
                     }
+
+                    UpdateMyStory();
 
                     IsEmpty = Count == 0;
 
@@ -503,18 +512,67 @@ namespace Telegram.ViewModels.Stories
 
             private void UpdateChatOrder(ChatActiveStories activeStories)
             {
+                var mine = activeStories.ChatId == _clientService.Options.MyId;
                 var inList = (activeStories.List is StoryListMain && _storyList is StoryListMain) || (activeStories.List is StoryListArchive && _storyList is StoryListArchive);
 
-                // The item's order, not TDLib's: your own stories can have one while TDLib has none.
                 if (_chats.TryGetValue(activeStories.ChatId, out var item))
                 {
                     item.Update(activeStories);
-                    UpdateChatOrder(item, inList ? item.Order : 0, true);
+                    UpdateChatOrder(item, inList ? GetOrder(item) : 0, true);
                 }
-                else if (inList && (activeStories.Order != 0 || activeStories.ChatId == _clientService.Options.MyId) && _clientService.TryGetChat(activeStories.ChatId, out Chat chat))
+                else if (inList && (activeStories.Order != 0 || mine) && _clientService.TryGetChat(activeStories.ChatId, out Chat chat))
                 {
                     item = _viewModel.Create(activeStories, chat);
-                    UpdateChatOrder(item, item.Order, true);
+                    UpdateChatOrder(item, GetOrder(item), true);
+                }
+
+                if (!mine)
+                {
+                    UpdateMyStory();
+                }
+            }
+
+            // The item's order, not TDLib's. Your own cell leads the main list while it has stories
+            // of its own, including any still posting or failed, which TDLib gives no order, or
+            // while anyone else's are in the list, to add a story from.
+            private long GetOrder(ActiveStoriesViewModel item)
+            {
+                if (item.IsMyStory)
+                {
+                    var others = _chats.ContainsKey(item.ChatId) ? Count - 1 : Count;
+                    return item.Items.Count > 0 || others > 0 ? long.MaxValue : 0;
+                }
+
+                return item.Order;
+            }
+
+            // Adds your own cell when the first of anyone else's stories arrives, and takes it away
+            // again with the last, if it has none of its own.
+            private void UpdateMyStory()
+            {
+                if (_storyList is not StoryListMain)
+                {
+                    return;
+                }
+
+                var myId = _clientService.Options.MyId;
+
+                if (_chats.TryGetValue(myId, out var item))
+                {
+                    if (GetOrder(item) == 0)
+                    {
+                        UpdateChatOrder(item, 0, true);
+                    }
+                }
+                else if (Count > 0 && _clientService.TryGetChat(myId, out Chat chat))
+                {
+                    if (!_clientService.TryGetActiveStories(myId, out ChatActiveStories activeStories))
+                    {
+                        activeStories = new ChatActiveStories(myId, new StoryListMain(), 0, false, 0, Vector<StoryInfo>.Empty);
+                    }
+
+                    item = _viewModel.Create(activeStories, chat);
+                    UpdateChatOrder(item, GetOrder(item), true);
                 }
             }
 

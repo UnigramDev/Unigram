@@ -15,42 +15,64 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border x:Name="PhotoCiccio"
-                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                CornerRadius="24"
-                Width="48"
-                Height="48">
-            <Grid x:Name="PhotoRoot"
-                  Width="48"
-                  Height="48">
-                <controls:ProfilePicture x:Name="Photo"
-                                         Size="40"
-                                         Shape="Ellipse" />
-                <Grid x:Name="SegmentsRoot">
-                    <controls:ActiveStoriesSegments x:Name="SegmentsSmall"
-                                                    IsLiveBadgeVisible="False"
-                                                    IsEnabled="False"
-                                                    IsHitTestVisible="False"
-                                                    IsTabStop="False"
-                                                    Width="48"
-                                                    Height="48"
-                                                    Canvas.ZIndex="1" />
-                    <controls:ActiveStoriesSegments x:Name="Segments"
-                                                    IsLiveBadgeVisible="False"
-                                                    IsEnabled="False"
-                                                    IsHitTestVisible="False"
-                                                    IsTabStop="False"
-                                                    Width="48"
-                                                    Height="48" />
-                    <controls:StoryProgressBarRing x:Name="UploadProgress"
-                                                   x:Load="False"
-                                                   Radius="23"
-                                                   Center="24"
-                                                   Width="48"
-                                                   Height="48" />
+        <!-- PhotoCiccio is what fades when the strip collapses, so the badge sits in it, beside the
+             photo's round Border rather than inside it. -->
+        <Grid x:Name="PhotoCiccio"
+              Width="48"
+              Height="48">
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                    CornerRadius="24">
+                <Grid x:Name="PhotoRoot"
+                      Width="48"
+                      Height="48">
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Size="40"
+                                             Shape="Ellipse" />
+                    <Grid x:Name="SegmentsRoot">
+                        <controls:ActiveStoriesSegments x:Name="SegmentsSmall"
+                                                        IsLiveBadgeVisible="False"
+                                                        IsEnabled="False"
+                                                        IsHitTestVisible="False"
+                                                        IsTabStop="False"
+                                                        Width="48"
+                                                        Height="48"
+                                                        Canvas.ZIndex="1" />
+                        <controls:ActiveStoriesSegments x:Name="Segments"
+                                                        IsLiveBadgeVisible="False"
+                                                        IsEnabled="False"
+                                                        IsHitTestVisible="False"
+                                                        IsTabStop="False"
+                                                        Width="48"
+                                                        Height="48" />
+                        <controls:StoryProgressBarRing x:Name="UploadProgress"
+                                                       x:Load="False"
+                                                       Radius="23"
+                                                       Center="24"
+                                                       Width="48"
+                                                       Height="48" />
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Border>
+            </Border>
+
+            <Border x:Name="AddBadge"
+                    x:Load="False"
+                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                    CornerRadius="10"
+                    Padding="2"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Margin="30,30,-2,-2">
+                <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
+                        CornerRadius="8">
+                    <FontIcon Glyph="&#xF7AA;"
+                              FontFamily="{StaticResource SymbolThemeFontFamily}"
+                              Foreground="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                              FontSize="12" />
+                </Border>
+            </Border>
+        </Grid>
 
         <Border x:Name="LiveBadge"
                 HorizontalAlignment="Center"

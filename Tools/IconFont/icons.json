@@ -706,6 +706,7 @@
     {"name": "ic_fluent_square_20_filled", "code": "F7A7", "src": "fluent:square_20_filled"},
     {"name": "tl_fluent_star_14_regular", "code": "F7A8", "src": "icons/tl_fluent_star_14_regular.svg"},
     {"name": "tl_fluent_gram_14_regular", "code": "F7A9", "src": "icons/tl_fluent_gram_14_regular.svg"},
+    {"name": "ic_fluent_add_12_filled", "code": "F7AA", "src": "fluent:add_12_filled"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }
