@@ -2459,8 +2459,11 @@ namespace Telegram.Views.Calls
             translation.InsertKeyFrame(show ? 1 : 0, 0);
             translation.Duration = Constants.SoftAnimation;
 
+            // Not zero: XAML takes the scale the animation leaves on the hand-off visual into the
+            // panel's transform, and the effective viewport walk for the editor inside it crashes
+            // on a transform it cannot invert.
             var scale = compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            scale.InsertKeyFrame(show ? 0 : 1, new Vector3(0.001f));
             scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
 
             //if (!show)
