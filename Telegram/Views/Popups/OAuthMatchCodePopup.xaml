@@ -37,13 +37,12 @@
                         <Grid Width="40"
                               Height="40">
                             <TextBlock Text="{x:Bind Code}"
-                                       Visibility="{x:Bind IsGlyphVisible, Mode=OneWay}"
+                                       Visibility="{x:Bind IsText}"
                                        Style="{StaticResource BaseTextBlockStyle}"
                                        FontSize="28"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
-                            <controls:AnimatedImage Source="{x:Bind Source, Mode=OneWay}"
-                                                    Ready="Animation_Ready"
+                            <controls:AnimatedImage Source="{x:Bind Source}"
                                                     FrameSize="40,40"
                                                     DecodeFrameType="Logical"
                                                     AutoPlay="True" />

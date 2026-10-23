@@ -17,28 +17,22 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class OAuthMatchCode : BindableBase
+    public sealed partial class OAuthMatchCode
     {
-        public OAuthMatchCode(string code)
+        public OAuthMatchCode(string code, AnimatedImageSource source)
         {
             Code = code;
+            Source = source;
         }
 
         public string Code { get; }
 
-        private AnimatedImageSource _source;
-        public AnimatedImageSource Source
-        {
-            get => _source;
-            set => Set(ref _source, value);
-        }
+        /// <summary>
+        /// The emoji's animation, or null for a code that is not an emoji, which shows as text.
+        /// </summary>
+        public AnimatedImageSource Source { get; }
 
-        private bool _isGlyphVisible = true;
-        public bool IsGlyphVisible
-        {
-            get => _isGlyphVisible;
-            set => Set(ref _isGlyphVisible, value);
-        }
+        public bool IsText => Source == null;
     }
 
     /// <summary>
@@ -63,13 +57,18 @@ namespace Telegram.Views.Popups
             _url = url;
             _check = check;
 
-            var codes = new List<OAuthMatchCode>(info.MatchCodes.Count);
             var emoji = true;
 
             foreach (var code in info.MatchCodes)
             {
-                codes.Add(new OAuthMatchCode(code));
                 emoji &= Emoji.ContainsSingleEmoji(code);
+            }
+
+            var codes = new List<OAuthMatchCode>(info.MatchCodes.Count);
+
+            foreach (var code in info.MatchCodes)
+            {
+                codes.Add(new OAuthMatchCode(code, emoji ? new AnimatedEmojiFileSource(clientService, code) : null));
             }
 
             Codes.ItemsSource = codes;
@@ -89,48 +88,11 @@ namespace Telegram.Views.Popups
             {
                 CloseButtonText = Strings.Cancel;
             }
-
-            if (emoji)
-            {
-                LoadAnimations(codes);
-            }
         }
 
         public string MatchCode { get; private set; }
 
         public bool IsFailed { get; private set; }
-
-        private async void LoadAnimations(List<OAuthMatchCode> codes)
-        {
-            var response = await _clientService.SendAsync(new SearchStickerSet("RestrictedEmoji", false));
-            if (response is not StickerSet stickerSet)
-            {
-                return;
-            }
-
-            foreach (var code in codes)
-            {
-                var emoji = code.Code.Replace("️", string.Empty);
-
-                foreach (var sticker in stickerSet.Stickers)
-                {
-                    if (string.Equals(sticker.Emoji.Replace("️", string.Empty), emoji))
-                    {
-                        code.Source = new DelayedFileSource(_clientService, sticker);
-                        break;
-                    }
-                }
-            }
-        }
-
-        private void Animation_Ready(object sender, EventArgs e)
-        {
-            // The emoji stays until the animation has a frame to show in its place.
-            if (sender is FrameworkElement { DataContext: OAuthMatchCode code })
-            {
-                code.IsGlyphVisible = false;
-            }
-        }
 
         private async void Code_Click(object sender, RoutedEventArgs e)
         {
