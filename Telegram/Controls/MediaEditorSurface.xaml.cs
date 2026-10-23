@@ -17,8 +17,10 @@ using Telegram.Streams;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
@@ -37,6 +39,20 @@ namespace Telegram.Controls
         public MediaEditorSurface()
         {
             InitializeComponent();
+
+            // Seen even when the drawing or an object took the press.
+            AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
+        }
+
+        // Nothing the press lands on can hold focus, so it stays wherever it was, which after a
+        // popup closes is outside the editor, and its keys never reach the editor. A text being
+        // written keeps it.
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (!Entities.IsEditing)
+            {
+                Cropper.Focus(FocusState.Pointer);
+            }
         }
 
         public AsyncMediaPlayer Player => _player;
