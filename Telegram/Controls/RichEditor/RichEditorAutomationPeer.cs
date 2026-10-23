@@ -974,10 +974,13 @@ namespace Telegram.Controls.RichEditor
         {
             // XAML hands UIA a missing link as a null range, which Windows 10's GetAttributeValues
             // dereferences inside the reader. NotSupportedException carries the HRESULT XAML turns
-            // into UIA's NotSupported value, which readers take for no link.
+            // into UIA's NotSupported value, which readers take for no link. Mixed must still
+            // come back as mixed: NVDA reads a line whole and only splits it by run on mixed, so
+            // a line partly linked would otherwise read as having no link at all.
             if (attributeId == (int)AutomationTextAttributesEnum.LinkAttribute)
             {
-                return _peer.Document != null && _peer.GetAttribute(_start, _end, attributeId) is RichTextRangeProvider link
+                var link = _peer.Document != null ? _peer.GetAttribute(_start, _end, attributeId) : null;
+                return link is RichTextRangeProvider || link == DependencyProperty.UnsetValue
                     ? link
                     : throw new NotSupportedException();
             }
