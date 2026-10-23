@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Common;
@@ -40,6 +41,7 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -134,6 +136,7 @@ namespace Telegram.Views.Host
             Editor.MediaAddRequested += OnMediaAddRequested;
             Editor.LinkRequested += OnLinkRequested;
             Editor.PasteRequested += OnPasteRequested;
+            Editor.MarkdownPasted += OnMarkdownPasted;
 
             Editor.Suggestions = new RichSuggestionContext(_clientService.Session.Settings, _chatId);
             Editor.Uploads = new RichMediaUploads(Editor, _clientService);
@@ -160,6 +163,9 @@ namespace Telegram.Views.Host
             Editor.MediaAddRequested -= OnMediaAddRequested;
             Editor.LinkRequested -= OnLinkRequested;
             Editor.PasteRequested -= OnPasteRequested;
+            Editor.MarkdownPasted -= OnMarkdownPasted;
+
+            CancelPlainPasteOffer();
 
             _lockTimer.Stop();
             _lockTimer.Tick -= OnLockTimerTick;
@@ -1030,6 +1036,57 @@ namespace Telegram.Views.Host
             catch
             {
                 // The clipboard or the drag source went away mid-read.
+            }
+        }
+
+        private CancellationTokenSource _plainPasteOffer;
+
+        // Any edit after the paste closes the toast, since the undo would no longer be the paste's.
+        private async void OnMarkdownPasted(object sender, RichMarkdownPastedEventArgs e)
+        {
+            CancelPlainPasteOffer();
+
+            var offer = _plainPasteOffer = new CancellationTokenSource();
+            _engine.Changed += OnPlainPasteOfferChanged;
+
+            var label = new TextBlock { TextWrapping = TextWrapping.Wrap };
+            label.Inlines.Add(new Run { Text = Strings.RichPasteToastMarkdown, FontWeight = FontWeights.SemiBold });
+            label.Inlines.Add(new LineBreak());
+            label.Inlines.Add(new Run { Text = Strings.RichPasteToastPlain });
+
+            var confirm = await ToastPopup.ShowActionAsync(XamlRoot, label, Strings.Undo, null, ToastPlacementMode.Center,
+                dismissAfter: TimeSpan.FromSeconds(9), cancellationToken: offer.Token);
+
+            var current = offer == _plainPasteOffer && !offer.IsCancellationRequested;
+            if (current)
+            {
+                CancelPlainPasteOffer();
+            }
+
+            if (confirm == ContentDialogResult.Primary && current)
+            {
+                _engine.Undo();
+                Editor.InsertPlainText(e.Text);
+                Editor.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void OnPlainPasteOfferChanged(object sender, RichEditorChangedEventArgs e)
+        {
+            if ((e.Changes & (RichEditorChanges.Text | RichEditorChanges.Structure)) != 0)
+            {
+                CancelPlainPasteOffer();
+            }
+        }
+
+        private void CancelPlainPasteOffer()
+        {
+            if (_plainPasteOffer != null)
+            {
+                _engine.Changed -= OnPlainPasteOfferChanged;
+                _plainPasteOffer.Cancel();
+                _plainPasteOffer.Dispose();
+                _plainPasteOffer = null;
             }
         }
 

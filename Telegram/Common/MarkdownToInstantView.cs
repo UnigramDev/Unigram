@@ -6,9 +6,11 @@
 //
 
 using Markdig;
+using Markdig.Extensions.EmphasisExtras;
 using Markdig.Extensions.Mathematics;
 using Markdig.Extensions.Tables;
 using Markdig.Extensions.TaskLists;
+using Markdig.Parsers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using System.Collections.Generic;
@@ -45,9 +47,82 @@ namespace Telegram.Common
             var doc = Markdown.Parse(markdown, _pipeline);
             foreach (var block in doc)
             {
-                ConvertBlock(block, result);
+                ConvertBlock(block, result, false);
             }
             return result;
+        }
+
+        // GFM and math only: the rest of the advanced set has syntax that ordinary text trips
+        // over (a. lists, ~sub~), and indented code and HTML blocks would turn an indented or
+        // tagged line of a plain paste into code.
+        private static readonly MarkdownPipeline _editorPipeline = CreateEditorPipeline();
+
+        private const int EditorLengthLimit = 256 * 1024;
+
+        private static MarkdownPipeline CreateEditorPipeline()
+        {
+            var builder = new MarkdownPipelineBuilder()
+                .UsePipeTables()
+                .UseTaskLists()
+                .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough)
+                .UseMathematics();
+
+            builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+            builder.BlockParsers.TryRemove<HtmlBlockParser>();
+
+            return builder.Build();
+        }
+
+        /// <summary>
+        /// Pasted text as the rich editor takes it: every line a paragraph, as a plain paste
+        /// makes them, and no anchors. Null when the text has no markdown in it, so that it
+        /// pastes as the text it is.
+        /// </summary>
+        public static Vector<PageBlock> ParseForEditor(string markdown)
+        {
+            if (string.IsNullOrEmpty(markdown) || markdown.Length > EditorLengthLimit)
+            {
+                return null;
+            }
+
+            var doc = Markdown.Parse(markdown, _editorPipeline);
+            if (!HasMarkdown(doc))
+            {
+                return null;
+            }
+
+            var result = new MutableVector<PageBlock>();
+            foreach (var block in doc)
+            {
+                ConvertBlock(block, result, true);
+            }
+            return result;
+        }
+
+        // Escapes and entities do not count: alone, they are text that happens to hold a
+        // backslash or an ampersand.
+        private static bool HasMarkdown(MarkdownDocument document)
+        {
+            foreach (var node in document.Descendants())
+            {
+                switch (node)
+                {
+                    case ParagraphBlock:
+                    case LinkReferenceDefinitionGroup:
+                    case LinkReferenceDefinition:
+                    case BlankLineBlock:
+                    case ContainerInline { Parent: null }:
+                    case LiteralInline:
+                    case LineBreakInline:
+                    case HtmlInline:
+                    case HtmlEntityInline:
+                        continue;
+                    default:
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         // ----------------------------------------------------------------
@@ -250,14 +325,21 @@ namespace Telegram.Common
         // Block conversion
         // ----------------------------------------------------------------
 
-        private static void ConvertBlock(Block block, MutableVector<PageBlock> output)
+        private static void ConvertBlock(Block block, MutableVector<PageBlock> output, bool editor)
         {
             switch (block)
             {
                 case HeadingBlock h:
                     var inline = ConvertInlinesTopLevel(h.Inline);
-                    output.Add(new PageBlockAnchor(Slugify(inline.ToPlainText())));
+                    if (!editor)
+                    {
+                        output.Add(new PageBlockAnchor(Slugify(inline.ToPlainText())));
+                    }
                     output.Add(MakeHeading(h.Level, inline));
+                    break;
+
+                case ParagraphBlock p when editor:
+                    ConvertLines(p.Inline, output);
                     break;
 
                 case ParagraphBlock p:
@@ -265,11 +347,11 @@ namespace Telegram.Common
                     break;
 
                 case QuoteBlock q:
-                    ConvertQuote(q, output);
+                    ConvertQuote(q, output, editor);
                     break;
 
                 case ListBlock l:
-                    ConvertList(l, output);
+                    ConvertList(l, output, editor);
                     break;
 
                 case MathBlock math:
@@ -313,11 +395,44 @@ namespace Telegram.Common
                     // Fallback: recursively convert children.
                     foreach (var child in container)
                     {
-                        ConvertBlock(child, output);
+                        ConvertBlock(child, output, editor);
                     }
                     break;
 
                     // LinkReferenceDefinitionGroup, etc. — silently ignored, already resolved by Markdig.
+            }
+        }
+
+        // A paragraph per line, where CommonMark joins them with a space.
+        private static void ConvertLines(ContainerInline container, MutableVector<PageBlock> output)
+        {
+            if (container == null)
+            {
+                return;
+            }
+
+            var parts = new List<RichText>();
+            foreach (var inline in container)
+            {
+                if (inline is LineBreakInline)
+                {
+                    AddLine(parts, output);
+                }
+                else if (ConvertInline(inline) is RichText rt)
+                {
+                    parts.Add(rt);
+                }
+            }
+
+            AddLine(parts, output);
+        }
+
+        private static void AddLine(List<RichText> parts, MutableVector<PageBlock> output)
+        {
+            if (parts.Count > 0)
+            {
+                output.Add(new PageBlockParagraph { Text = AutolinkBareUrls(Compact(parts)) });
+                parts.Clear();
             }
         }
 
@@ -346,13 +461,13 @@ namespace Telegram.Common
 
         // --- Blockquote ---
 
-        private static void ConvertQuote(QuoteBlock quote, MutableVector<PageBlock> output)
+        private static void ConvertQuote(QuoteBlock quote, MutableVector<PageBlock> output, bool editor)
         {
             var trailing = new MutableVector<PageBlock>();
 
             foreach (var child in quote)
             {
-                ConvertBlock(child, trailing);
+                ConvertBlock(child, trailing, editor);
             }
 
             output.Add(new PageBlockBlockQuote(trailing, null));
@@ -360,7 +475,7 @@ namespace Telegram.Common
 
         // --- Lists ---
 
-        private static void ConvertList(ListBlock list, MutableVector<PageBlock> output)
+        private static void ConvertList(ListBlock list, MutableVector<PageBlock> output, bool editor)
         {
             bool ordered = list.IsOrdered;
             bool loose = list.IsLoose;
@@ -373,7 +488,13 @@ namespace Telegram.Common
                 {
                     if (!(item is ListItemBlock li)) continue;
                     ExtractTaskMarker(li, out bool checkbox, out bool isChecked);
-                    items.Add(BuildListItem(li, autoNum.ToString(), checkbox, isChecked));
+
+                    // The label is what the viewer draws; the editor reads the numbering off these.
+                    var listItem = BuildListItem(li, autoNum.ToString(), checkbox, isChecked, editor);
+                    listItem.Type = "1";
+                    listItem.Value = autoNum;
+
+                    items.Add(listItem);
                     autoNum++;
                 }
                 output.Add(new PageBlockList { Items = items });
@@ -385,7 +506,7 @@ namespace Telegram.Common
                 {
                     if (!(item is ListItemBlock li)) continue;
                     ExtractTaskMarker(li, out bool checkbox, out bool isChecked);
-                    items.Add(BuildListItem(li, "•", checkbox, isChecked));
+                    items.Add(BuildListItem(li, "•", checkbox, isChecked, editor));
                 }
                 output.Add(new PageBlockList { Items = items });
             }
@@ -426,7 +547,7 @@ namespace Telegram.Common
             }
         }
 
-        private static PageBlockListItem BuildListItem(ListItemBlock item, string num, bool checkbox, bool isChecked)
+        private static PageBlockListItem BuildListItem(ListItemBlock item, string num, bool checkbox, bool isChecked, bool editor)
         {
             //// Tight list with single paragraph -> Text variant. Otherwise Blocks variant.
             //if (!loose && item.Count == 1 && item[0] is ParagraphBlock p)
@@ -454,7 +575,7 @@ namespace Telegram.Common
 
             foreach (var child in item)
             {
-                ConvertBlock(child, trailing);
+                ConvertBlock(child, trailing, editor);
             }
 
             return new PageBlockListItem
@@ -492,7 +613,7 @@ namespace Telegram.Common
                         Colspan = cell.ColumnSpan > 0 ? cell.ColumnSpan : 1,
                         Rowspan = cell.RowSpan > 0 ? cell.RowSpan : 1,
                         Align = ConvertAlign(align),
-                        Valign = new PageBlockVerticalAlignmentMiddle()
+                        Valign = new PageBlockVerticalAlignmentTop()
                     });
                     colIdx += cell.ColumnSpan > 0 ? cell.ColumnSpan : 1;
                 }
@@ -503,7 +624,7 @@ namespace Telegram.Common
             {
                 Caption = new RichTextPlain { Text = "" },
                 Cells = rows,
-                IsBordered = false,
+                IsBordered = true,
                 IsStriped = false
             });
         }

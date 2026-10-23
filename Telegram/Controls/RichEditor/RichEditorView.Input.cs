@@ -67,6 +67,12 @@ namespace Telegram.Controls.RichEditor
         /// <summary>Raised when clipboard content is not text - an image, files - for the host to turn into media.</summary>
         public event EventHandler<RichPasteRequestedEventArgs> PasteRequested;
 
+        /// <summary>
+        /// Raised once text pasted as markdown is in, as one undo step: the host offers the
+        /// plain paste instead.
+        /// </summary>
+        public event EventHandler<RichMarkdownPastedEventArgs> MarkdownPasted;
+
         private void HookPointer(FrameworkElement root)
         {
             root.PointerPressed += OnPointerPressed;
@@ -1807,17 +1813,66 @@ namespace Telegram.Controls.RichEditor
 
                     if (!document.IsEmpty)
                     {
-                        _engine.InsertFragment(document);
+                        // A code editor puts markdown source on the clipboard as HTML too, which
+                        // comes out as lines of paragraphs: the text says more.
+                        if (!IsFlatText(document) || !PasteMarkdown(await content.GetTextAsync()))
+                        {
+                            _engine.InsertFragment(document);
+                        }
+
                         return;
                     }
                 }
 
-                InsertPlainText(await content.GetTextAsync());
+                var text = await content.GetTextAsync();
+
+                if (plain || _engine.Schema != null || !PasteMarkdown(text))
+                {
+                    InsertPlainText(text);
+                }
             }
             catch
             {
                 // The clipboard changed, or its source went away, while being read.
             }
+        }
+
+        private bool PasteMarkdown(string text)
+        {
+            var blocks = MarkdownToInstantView.ParseForEditor(text);
+            if (blocks == null)
+            {
+                return false;
+            }
+
+            _engine.InsertFragment(RichDocumentConverter.FromPageBlocks(blocks));
+            MarkdownPasted?.Invoke(this, new RichMarkdownPastedEventArgs(text));
+            return true;
+        }
+
+        // Marks do not count: syntax highlighting comes through as bold.
+        private static bool IsFlatText(RichDocument document)
+        {
+            foreach (var block in document.Blocks)
+            {
+                if (block is not RichParagraphBlock { Kind: RichBlockKind.Paragraph })
+                {
+                    return false;
+                }
+            }
+
+            foreach (var leaf in document.Leaves)
+            {
+                foreach (var run in leaf.Runs)
+                {
+                    if (run.Link != null || run.Object != null)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -1897,5 +1952,16 @@ namespace Telegram.Controls.RichEditor
         }
 
         public DataPackageView Content { get; }
+    }
+
+    public sealed class RichMarkdownPastedEventArgs : EventArgs
+    {
+        public RichMarkdownPastedEventArgs(string text)
+        {
+            Text = text;
+        }
+
+        /// <summary>The text as it was on the clipboard, for the plain paste.</summary>
+        public string Text { get; }
     }
 }
