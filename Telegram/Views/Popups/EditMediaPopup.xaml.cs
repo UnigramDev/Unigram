@@ -307,7 +307,12 @@ namespace Telegram.Views.Popups
 
         protected override void OnBackRequestedOverride(object sender, BackRequestedRoutedEventArgs e)
         {
-            if (!Surface.HandleBack())
+            if (Surface.HandleBack())
+            {
+                // Spent on what was in hand: the next back is free to leave.
+                Cancel();
+            }
+            else
             {
                 Cancel_Click(null, null);
             }

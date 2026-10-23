@@ -514,6 +514,13 @@ namespace Telegram.Controls
         {
             var point = e.GetCurrentPoint(Canvas);
 
+            // Only the left button draws: the right one is the objects' menu, and the side ones
+            // are back and forward, which a capture here would keep from the window.
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse && !point.Properties.IsLeftButtonPressed)
+            {
+                return;
+            }
+
             if (_picking)
             {
                 Canvas.CapturePointer(e.Pointer);
