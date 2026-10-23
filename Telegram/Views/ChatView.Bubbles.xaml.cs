@@ -183,7 +183,10 @@ namespace Telegram.Views
                 const string heightExp = "(this.Target.Size.Y + 8)";
                 const string offsetExp = $"({viewportTopExp}) + {heightExp}";
                 const string translationExp = $"-{heightExp} * 2 + ({offsetExp} - {heightExp})";
-                const string scaleExp = $"({offsetExp} - {heightExp}) / ({heightExp} * 2)";
+                // Floored above zero: XAML takes the header's scale into its transform, and the
+                // effective viewport walk for the topic's custom emoji inside it crashes on a
+                // transform it cannot invert.
+                const string scaleExp = $"Max(0.001, ({offsetExp} - {heightExp}) / ({heightExp} * 2))";
 
                 //var reference = ElementComposition.GetElementVisual(container);
                 _forumTopicHeaderTranslation = _forumTopicHeader.Compositor.CreateExpressionAnimation(translationExp);
@@ -192,7 +195,7 @@ namespace Telegram.Views
                 _forumTopicHeaderTranslation.SetReferenceParameter("tracker", _dateHeaderRelative);
                 _forumTopicHeaderTranslation.SetReferenceParameter("props", _messagesPaddingSet);
 
-                _forumTopicHeaderScale = _forumTopicHeader.Compositor.CreateExpressionAnimation($"Vector3({scaleExp}, {scaleExp}, 0)");
+                _forumTopicHeaderScale = _forumTopicHeader.Compositor.CreateExpressionAnimation($"Vector3({scaleExp}, {scaleExp}, 1)");
                 //_forumTopicHeaderScale.SetReferenceParameter("reference", reference);
                 _forumTopicHeaderScale.SetReferenceParameter("scroll", Messages.ScrollingPropertySet);
                 _forumTopicHeaderScale.SetReferenceParameter("tracker", _dateHeaderRelative);
