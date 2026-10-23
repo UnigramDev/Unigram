@@ -73,15 +73,18 @@
                                            ItemClick="StickerPicker_ItemClick">
                         <drawers:StickerDrawer.Header>
                             <!-- The story widgets, which only the story editor shows. -->
-                            <StackPanel x:Name="WidgetsPanel"
-                                        Visibility="Collapsed"
-                                        Orientation="Horizontal"
-                                        Margin="10,8,10,0">
+                            <controls:WrapPanel x:Name="WidgetsPanel"
+                                                Visibility="Collapsed"
+                                                Orientation="Horizontal"
+                                                HorizontalContentAlignment="Center"
+                                                Margin="6,4,6,0">
                                 <Button x:Name="LinkWidget"
                                         Click="LinkWidget_Click"
-                                        VerticalAlignment="Stretch"
+                                        Height="40"
                                         Padding="8,4,8,4"
-                                        Margin="0,0,8,0">
+                                        Margin="4"
+                                        AutomationProperties.Name="{CustomResource StoryWidgetLink}"
+                                        ToolTipService.ToolTip="{CustomResource StoryWidgetLink}">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="&#xE71B;"
                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -106,11 +109,13 @@
                                 </Button>
                                 <Button x:Name="LocationWidget"
                                         Click="LocationWidget_Click"
-                                        VerticalAlignment="Stretch"
+                                        Height="40"
                                         Padding="8,4,8,4"
-                                        Margin="0,0,8,0">
+                                        Margin="4"
+                                        AutomationProperties.Name="{CustomResource StoryWidgetLocation}"
+                                        ToolTipService.ToolTip="{CustomResource StoryWidgetLocation}">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE9F0;"
+                                        <TextBlock Text="&#xE1C4;"
                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                    FontSize="20"
                                                    VerticalAlignment="Center"
@@ -126,9 +131,9 @@
                                 </Button>
                                 <Button x:Name="WeatherWidget"
                                         Click="WeatherWidget_Click"
-                                        VerticalAlignment="Stretch"
+                                        Height="40"
                                         Padding="8,4,8,4"
-                                        Margin="0,0,8,0">
+                                        Margin="4">
                                     <StackPanel x:Name="WeatherWidgetContent"
                                                 SizeChanged="WeatherWidgetContent_SizeChanged"
                                                 Orientation="Horizontal">
@@ -149,9 +154,33 @@
                                                    VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
+                                <Button x:Name="PhotoWidget"
+                                        Click="PhotoWidget_Click"
+                                        Height="40"
+                                        Padding="8,4,8,4"
+                                        Margin="4"
+                                        AutomationProperties.Name="{CustomResource StoryWidgetPhoto}"
+                                        ToolTipService.ToolTip="{CustomResource StoryWidgetPhoto}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xEB9F;"
+                                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                   FontSize="20"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,4,0" />
+                                        <TextBlock x:Name="PhotoWidgetText"
+                                                   FontFamily="Bahnschrift"
+                                                   FontStretch="Condensed"
+                                                   FontWeight="Bold"
+                                                   FontSize="16"
+                                                   TextLineBounds="Tight"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
                                 <Button x:Name="ReactionWidget"
                                         Click="ReactionWidget_Click"
+                                        Height="40"
                                         Padding="8,6,8,6"
+                                        Margin="4"
                                         AutomationProperties.Name="{CustomResource Reactions}"
                                         ToolTipService.ToolTip="{CustomResource Reactions}">
                                     <widgets:StoryReactionWidget x:Name="ReactionWidgetPreview"
@@ -159,7 +188,7 @@
                                                                  Height="24"
                                                                  Margin="0,0,0,2" />
                                 </Button>
-                            </StackPanel>
+                            </controls:WrapPanel>
                         </drawers:StickerDrawer.Header>
                     </drawers:StickerDrawer>
 

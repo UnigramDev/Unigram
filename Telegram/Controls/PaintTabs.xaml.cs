@@ -19,8 +19,12 @@ using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
 using Telegram.Views.Stories.Popups;
 using System.Threading.Tasks;
+using System;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -163,10 +167,10 @@ namespace Telegram.Controls
                         ? Visibility.Collapsed
                         : Visibility.Visible;
 
-                    AutomationProperties.SetName(LinkWidget, Strings.StoryWidgetLink);
 
                     LocationWidgetText.Text = Strings.StoryWidgetLocation.ToUpper();
-                    AutomationProperties.SetName(LocationWidget, Strings.StoryWidgetLocation);
+
+                    PhotoWidgetText.Text = Strings.StoryWidgetPhoto.ToUpper();
                     WeatherWidget.Visibility = _surface.Entities.HasAny(PaintEntityType.Weather)
                         ? Visibility.Collapsed
                         : Visibility.Visible;
@@ -273,6 +277,9 @@ namespace Telegram.Controls
             }
 
             WeatherWidgetText.Text = StoryWeatherWidget.FormatTemperature(temperature);
+
+            // The emoji is an animation, so the temperature alone names it.
+            AutomationProperties.SetName(WeatherWidget, WeatherWidgetText.Text);
         }
 
         // The text only turns transparent, so the skeleton covers the place it keeps. Hiding the
@@ -388,6 +395,77 @@ namespace Telegram.Controls
                 popup.ApplyTo(location);
                 _surface.Entities.AddLocation(location);
             }
+        }
+
+        private async void PhotoWidget_Click(object sender, RoutedEventArgs e)
+        {
+            StickerFlyout.Hide();
+
+            try
+            {
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
+
+                var file = await picker.PickSingleFileAsync(XamlRoot);
+                if (file == null)
+                {
+                    return;
+                }
+
+                var photo = await ImportPhotoAsync(file, _clientService.Session.Id);
+                if (photo != null)
+                {
+                    _surface.Entities.AddPhoto(photo.Path, photo.Width, photo.Height);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+        }
+
+        private sealed class ImportedPhoto
+        {
+            public string Path { get; init; }
+
+            public int Width { get; init; }
+
+            public int Height { get; init; }
+        }
+
+        // An upright copy, at most as large as a story is drawn: the story may be generated after a
+        // restart, when the picked file can no longer be opened. It goes among TDLib's own photos,
+        // which TDLib clears out in time and the storage settings can clear at once. PNG, so that
+        // a transparent photo stays transparent.
+        private static async Task<ImportedPhoto> ImportPhotoAsync(StorageFile file, int sessionId)
+        {
+            using var input = await file.OpenReadAsync();
+
+            var decoder = await BitmapDecoder.CreateAsync(input);
+            var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder, 1920);
+
+            using var bitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+            var session = await ApplicationData.Current.LocalFolder.CreateFolderAsync($"{sessionId}", CreationCollisionOption.OpenIfExists);
+            var folder = await session.CreateFolderAsync("photos", CreationCollisionOption.OpenIfExists);
+            var output = await folder.CreateFileAsync("photo.png", CreationCollisionOption.GenerateUniqueName);
+
+            using (var stream = await output.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                encoder.SetSoftwareBitmap(bitmap);
+
+                await encoder.FlushAsync();
+            }
+
+            return new ImportedPhoto
+            {
+                Path = output.Path,
+                Width = bitmap.PixelWidth,
+                Height = bitmap.PixelHeight
+            };
         }
 
         private async void Entities_EditRequested(object sender, PaintEntityEventArgs e)

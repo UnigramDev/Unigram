@@ -65,7 +65,12 @@ namespace Telegram.Entities
         /// <summary>
         /// A story's venue, drawn into the story, with an area over it that opens the map.
         /// </summary>
-        Location
+        Location,
+
+        /// <summary>
+        /// A photo from the device, placed over a story like a sticker.
+        /// </summary>
+        Photo
     }
 
     /// <summary>
@@ -150,6 +155,9 @@ namespace Telegram.Entities
 
         public string StickerRemoteId { get; set; }
 
+        /// <summary>
+        /// A sticker's, a GIF's or a photo's size, of which only the shape counts.
+        /// </summary>
         public int StickerWidth { get; set; }
 
         public int StickerHeight { get; set; }
@@ -312,6 +320,12 @@ namespace Telegram.Entities
         public long LocationQueryId { get; set; }
 
         public string LocationResultId { get; set; }
+
+        /// <summary>
+        /// The photo's upright copy in the app's own folders, which the story is drawn from
+        /// whenever it is generated.
+        /// </summary>
+        public string PhotoPath { get; set; }
 
         public PaintEntity Clone()
         {

@@ -444,7 +444,7 @@ namespace Telegram.Controls
                 bounds = PaintEntityRenderer.GetShapeBounds(entity);
                 return true;
             }
-            else if (PaintEntityRenderer.IsSticker(entity))
+            else if (PaintEntityRenderer.IsSticker(entity) || entity.Type == PaintEntityType.Photo)
             {
                 bounds = PaintEntityRenderer.GetStickerBounds(entity);
                 return true;
@@ -783,19 +783,18 @@ namespace Telegram.Controls
             return visual;
         }
 
-        // A link preview's photo: drawn once it is in.
+        // A link preview's photo, or a photo object's: drawn once it is in.
         private async void LoadWidgetImage(PaintEntity entity)
         {
-            if (ClientService == null || entity.Type != PaintEntityType.Link)
-            {
-                return;
-            }
-
             CanvasBitmap bitmap = null;
 
             try
             {
-                if (await PaintEntityRenderer.LoadLinkPhotoFileAsync(ClientService, entity))
+                if (entity.Type == PaintEntityType.Photo && !string.IsNullOrEmpty(entity.PhotoPath))
+                {
+                    bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), entity.PhotoPath);
+                }
+                else if (entity.Type == PaintEntityType.Link && ClientService != null && await PaintEntityRenderer.LoadLinkPhotoFileAsync(ClientService, entity))
                 {
                     bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), entity.LinkPhotoFile.Local.Path);
                 }
@@ -1292,6 +1291,43 @@ namespace Telegram.Controls
         }
 
         /// <summary>
+        /// Places a photo where the view is looking: half the image wide when it is wide, half
+        /// the image tall when it is tall.
+        /// </summary>
+        public void AddPhoto(string path, int width, int height)
+        {
+            EndEditing();
+
+            if (!TryGetPlacement(out Vector2 position, out float scale))
+            {
+                return;
+            }
+
+            // Its box's longer side is half the image's width: a tall photo is grown to half its
+            // height instead.
+            if (height > width && ImageSize.X > 0)
+            {
+                scale *= ImageSize.Y / ImageSize.X;
+            }
+
+            var entity = new PaintEntity
+            {
+                Type = PaintEntityType.Photo,
+                PhotoPath = path,
+                StickerWidth = width,
+                StickerHeight = height,
+                Position = position,
+                Rotation = GetRotation(0),
+                Scale = Math.Clamp(scale, MinimumScale, MaximumScale)
+            };
+
+            AddEntity(entity);
+            EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
+
+            Select(entity);
+        }
+
+        /// <summary>
         /// Places a place where the view is looking, as large as the other clients first show it.
         /// </summary>
         public void AddLocation(PaintEntity entity)
@@ -1582,7 +1618,7 @@ namespace Telegram.Controls
         /// </summary>
         public void FlipSelected()
         {
-            if (_selected == null || !IsRound(_selected))
+            if (_selected == null || (!IsRound(_selected) && _selected.Type != PaintEntityType.Photo))
             {
                 return;
             }
@@ -1721,7 +1757,7 @@ namespace Telegram.Controls
             {
                 flyout.CreateFlyoutItem(EditSelected, Strings.PaintEdit, Icons.Edit);
             }
-            else if (PaintEntityRenderer.IsSticker(entity))
+            else if (PaintEntityRenderer.IsSticker(entity) || entity.Type == PaintEntityType.Photo)
             {
                 flyout.CreateFlyoutItem(FlipSelected, Strings.AccDescrFlip, Icons.FlipHorizontal);
             }
@@ -2761,6 +2797,13 @@ namespace Telegram.Controls
                 session.Transform = Matrix3x2.CreateScale(PaintLocationVisual.Unit) * session.Transform;
                 GetLocationVisual(entity).Draw(session, entity);
             }
+            else if (entity.Type == PaintEntityType.Photo)
+            {
+                if (_widgetImages.TryGetValue(entity, out CanvasBitmap photo))
+                {
+                    session.DrawImage(photo, bounds, photo.Bounds);
+                }
+            }
             else if (GetVisual(entity) is PaintTextVisual visual)
             {
                 // The text box draws the glyphs of the text being written.
@@ -3704,7 +3747,7 @@ namespace Telegram.Controls
         /// </summary>
         public static bool IsWidget(PaintEntity entity)
         {
-            return entity.Type is PaintEntityType.Reaction or PaintEntityType.Weather or PaintEntityType.Link or PaintEntityType.Location;
+            return entity.Type is PaintEntityType.Reaction or PaintEntityType.Weather or PaintEntityType.Link or PaintEntityType.Location or PaintEntityType.Photo;
         }
 
         /// <summary>
@@ -3810,7 +3853,26 @@ namespace Telegram.Controls
 
             foreach (var entity in entities)
             {
-                if (entity.Type == PaintEntityType.Link)
+                if (entity.Type == PaintEntityType.Photo)
+                {
+                    if (!string.IsNullOrEmpty(entity.PhotoPath))
+                    {
+                        try
+                        {
+                            var image = await CanvasBitmap.LoadAsync(creator, entity.PhotoPath);
+
+                            bitmaps ??= new Dictionary<PaintEntity, CanvasBitmap>();
+                            bitmaps[entity] = image;
+                        }
+                        catch
+                        {
+                            // Left out, as a sticker that cannot be read is.
+                        }
+                    }
+
+                    continue;
+                }
+                else if (entity.Type == PaintEntityType.Link)
                 {
                     if (entity.LinkPhotoFile?.Local.IsDownloadingCompleted == true)
                     {
@@ -3935,6 +3997,20 @@ namespace Telegram.Controls
                     session.Transform = Matrix3x2.CreateScale(PaintLinkVisual.Unit) * GetTransform(entity, new Rect(0, 0, size.X, size.Y), imageSize, mirrored) * previous;
                     link.Draw(session, entity, photo);
                     session.Transform = previous;
+
+                    continue;
+                }
+                else if (entity.Type == PaintEntityType.Photo)
+                {
+                    if (stickers != null && stickers.TryGetValue(entity, out CanvasBitmap image))
+                    {
+                        var bounds = GetStickerBounds(entity);
+                        var previous = session.Transform;
+
+                        session.Transform = GetTransform(entity, bounds, imageSize, mirrored) * previous;
+                        session.DrawImage(image, bounds, image.Bounds);
+                        session.Transform = previous;
+                    }
 
                     continue;
                 }
