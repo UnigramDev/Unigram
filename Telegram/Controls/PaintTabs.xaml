@@ -77,6 +77,33 @@
                                         Visibility="Collapsed"
                                         Orientation="Horizontal"
                                         Margin="10,8,10,0">
+                                <Button x:Name="LinkWidget"
+                                        Click="LinkWidget_Click"
+                                        VerticalAlignment="Stretch"
+                                        Padding="8,4,8,4"
+                                        Margin="0,0,8,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE71B;"
+                                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                   FontSize="20"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,4,0" />
+                                        <TextBlock x:Name="LinkWidgetText"
+                                                   FontFamily="Bahnschrift"
+                                                   FontStretch="Condensed"
+                                                   FontWeight="Bold"
+                                                   FontSize="16"
+                                                   TextLineBounds="Tight"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock x:Name="LinkWidgetLock"
+                                                   Text="&#xE9DD;"
+                                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                   FontSize="12"
+                                                   Visibility="Collapsed"
+                                                   VerticalAlignment="Center"
+                                                   Margin="4,0,0,0" />
+                                    </StackPanel>
+                                </Button>
                                 <Button x:Name="WeatherWidget"
                                         Click="WeatherWidget_Click"
                                         VerticalAlignment="Stretch"

@@ -223,6 +223,7 @@
     <Compile Include="Controls\PaintEntityLayer.xaml.cs">
       <DependentUpon>PaintEntityLayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PaintLinkVisual.cs" />
     <Compile Include="Controls\PaintTabs.xaml.cs">
       <DependentUpon>PaintTabs.xaml</DependentUpon>
     </Compile>
@@ -2285,6 +2286,9 @@
     </Compile>
     <Compile Include="Views\Stories\Popups\PostStoryPopup.xaml.cs">
       <DependentUpon>PostStoryPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stories\Popups\StoryLinkPopup.xaml.cs">
+      <DependentUpon>StoryLinkPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\Premium\PremiumFeatureUpgradedStoriesCell.xaml.cs">
       <DependentUpon>PremiumFeatureUpgradedStoriesCell.xaml</DependentUpon>
@@ -4854,6 +4858,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stories\Popups\PostStoryPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stories\Popups\StoryLinkPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

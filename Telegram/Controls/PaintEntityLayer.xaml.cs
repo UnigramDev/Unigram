@@ -112,6 +112,7 @@ namespace Telegram.Controls
         private const float ReactionMaximumScale = 1.8f;
 
         private const float WeatherMaximumScale = 1.5f;
+        private const float LinkMaximumScale = 1.5f;
 
         private static readonly double[] StickyAngles = { -Math.PI / 2, 0, Math.PI / 2, Math.PI, -Math.PI };
 
@@ -119,6 +120,11 @@ namespace Telegram.Controls
         private readonly Dictionary<PaintEntity, PaintTextVisual> _visuals = new();
         private readonly Dictionary<PaintEntity, Border> _elements = new();
         private readonly Dictionary<PaintEntity, float> _rasters = new();
+
+        // A link's layout and its preview's photo, on Win2D's shared device, which the elements'
+        // canvases draw with too.
+        private readonly Dictionary<PaintEntity, PaintLinkVisual> _links = new();
+        private readonly Dictionary<PaintEntity, CanvasBitmap> _linkPhotos = new();
         private List<PaintEntity> _saved = new();
 
         private readonly Stopwatch _clock = Stopwatch.StartNew();
@@ -186,6 +192,12 @@ namespace Telegram.Controls
         /// held for the object should be dropped.
         /// </summary>
         public event EventHandler<PaintEntityEventArgs> EntityDeleted;
+
+        /// <summary>
+        /// Raised for a link the person asks to edit, which is done outside this layer and then
+        /// handed to <see cref="RefreshLink"/>.
+        /// </summary>
+        public event EventHandler<PaintEntityEventArgs> LinkEditRequested;
 
         public PaintEntity Selected => _selected;
 
@@ -276,6 +288,8 @@ namespace Telegram.Controls
             {
                 DetachElement(element);
             }
+
+            ClearLinks();
 
             _entities.Clear();
             _visuals.Clear();
@@ -440,6 +454,13 @@ namespace Telegram.Controls
                 bounds = PaintEntityRenderer.GetWidgetBounds(entity);
                 return true;
             }
+            else if (entity.Type == PaintEntityType.Link)
+            {
+                var size = GetLinkVisual(entity).Size * PaintLinkVisual.Unit;
+
+                bounds = new Rect(0, 0, size.X, size.Y);
+                return true;
+            }
 
             var visual = GetVisual(entity);
             bounds = visual?.Bounds ?? default;
@@ -480,6 +501,7 @@ namespace Telegram.Controls
             {
                 PaintEntityType.Reaction => Math.Clamp(scale, ReactionMinimumScale, ReactionMaximumScale),
                 PaintEntityType.Weather => Math.Clamp(scale, MinimumScale, WeatherMaximumScale),
+                PaintEntityType.Link => Math.Clamp(scale, MinimumScale, LinkMaximumScale),
                 _ => Math.Clamp(scale, MinimumScale, MaximumScale)
             };
         }
@@ -713,8 +735,110 @@ namespace Telegram.Controls
             _elements[entity] = element;
             Objects.Children.Add(element);
 
+            if (entity.Type == PaintEntityType.Link)
+            {
+                LoadLinkPhoto(entity);
+            }
+
             UpdateElement(entity, true);
             Canvas.Invalidate();
+        }
+
+        // Laid out once, with its measured size kept on the object for its story area.
+        private PaintLinkVisual GetLinkVisual(PaintEntity entity)
+        {
+            if (_links.TryGetValue(entity, out PaintLinkVisual visual))
+            {
+                return visual;
+            }
+
+            visual = PaintLinkVisual.Create(CanvasDevice.GetSharedDevice(), entity);
+            entity.WidgetSize = visual.Size;
+
+            _links[entity] = visual;
+            return visual;
+        }
+
+        private async void LoadLinkPhoto(PaintEntity entity)
+        {
+            if (ClientService == null || string.IsNullOrEmpty(entity.LinkPhotoRemoteId))
+            {
+                return;
+            }
+
+            if (!await PaintEntityRenderer.LoadLinkPhotoFileAsync(ClientService, entity))
+            {
+                return;
+            }
+
+            CanvasBitmap bitmap;
+
+            try
+            {
+                bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), entity.LinkPhotoFile.Local.Path);
+            }
+            catch
+            {
+                return;
+            }
+
+            // Taken away, or edited to another photo, while it loaded.
+            if (!_elements.ContainsKey(entity) || _linkPhotos.ContainsKey(entity))
+            {
+                bitmap.Dispose();
+                return;
+            }
+
+            _linkPhotos[entity] = bitmap;
+            Invalidate(entity);
+        }
+
+        private void ReleaseLink(PaintEntity entity)
+        {
+            if (_links.TryGetValue(entity, out PaintLinkVisual visual))
+            {
+                visual.Dispose();
+                _links.Remove(entity);
+            }
+
+            if (_linkPhotos.TryGetValue(entity, out CanvasBitmap photo))
+            {
+                photo.Dispose();
+                _linkPhotos.Remove(entity);
+            }
+        }
+
+        private void ClearLinks()
+        {
+            foreach (var visual in _links.Values)
+            {
+                visual.Dispose();
+            }
+
+            foreach (var photo in _linkPhotos.Values)
+            {
+                photo.Dispose();
+            }
+
+            _links.Clear();
+            _linkPhotos.Clear();
+        }
+
+        /// <summary>
+        /// Lays a link out again after its address, text or preview changed.
+        /// </summary>
+        public void RefreshLink(PaintEntity entity)
+        {
+            if (!_elements.ContainsKey(entity))
+            {
+                return;
+            }
+
+            ReleaseLink(entity);
+            LoadLinkPhoto(entity);
+
+            UpdateElement(entity, true);
+            Invalidate(entity);
         }
 
         // Shown as soon as the file is on disk, downloading it if it is not yet.
@@ -770,6 +894,8 @@ namespace Telegram.Controls
                 visual.Dispose();
                 _visuals.Remove(entity);
             }
+
+            ReleaseLink(entity);
 
             if (_elements.TryGetValue(entity, out Border element))
             {
@@ -1113,10 +1239,69 @@ namespace Telegram.Controls
 
         private void CycleSelectedStyle()
         {
-            if (_selected?.Type == PaintEntityType.Weather)
+            if (_selected is { Type: PaintEntityType.Link, LinkHasPreview: true })
+            {
+                _selected.LinkDark = !_selected.LinkDark;
+                Invalidate(_selected);
+            }
+            else if (_selected?.Type is PaintEntityType.Weather or PaintEntityType.Link)
             {
                 _selected.WidgetStyle = (PaintWidgetStyle)(((int)_selected.WidgetStyle + 1) % 3);
-                UpdateElement(_selected);
+                Invalidate(_selected);
+            }
+        }
+
+        /// <summary>
+        /// Places a link where the view is looking, as large as the other clients first show it,
+        /// unless the story already holds as many as it can.
+        /// </summary>
+        public void AddLink(PaintEntity entity)
+        {
+            EndEditing();
+
+            if (!CanAddLink() || !TryGetPlacement(out Vector2 position, out float scale))
+            {
+                return;
+            }
+
+            entity.Type = PaintEntityType.Link;
+            entity.Position = position;
+            entity.Rotation = GetRotation(0);
+            entity.Scale = Math.Min(scale, LinkMaximumScale);
+
+            AddEntity(entity);
+            EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
+
+            Select(entity);
+        }
+
+        public bool CanAddLink()
+        {
+            var maximum = ClientService?.Options.StoryLinkAreaCountMax ?? 0;
+            var count = 0;
+
+            foreach (var entity in _entities)
+            {
+                if (entity.Type == PaintEntityType.Link)
+                {
+                    count++;
+                }
+            }
+
+            if (count < maximum)
+            {
+                return true;
+            }
+
+            ToastPopup.Show(XamlRoot, Locale.Declension(Strings.R.StoryLinkLimitMessage, maximum), ToastPopupIcon.Info);
+            return false;
+        }
+
+        private void EditSelectedLink()
+        {
+            if (_selected?.Type == PaintEntityType.Link)
+            {
+                LinkEditRequested?.Invoke(this, new PaintEntityEventArgs(_selected));
             }
         }
 
@@ -1207,7 +1392,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (source.Type == PaintEntityType.Weather || (source.Type == PaintEntityType.Reaction && !CanAddReaction()))
+            if (source.Type == PaintEntityType.Weather || (source.Type == PaintEntityType.Reaction && !CanAddReaction()) || (source.Type == PaintEntityType.Link && !CanAddLink()))
             {
                 return;
             }
@@ -1474,6 +1659,10 @@ namespace Telegram.Controls
 
                 // The reactions to choose from go above the menu, as over a message's.
                 flyout.Opened += ReactionMenu_Opened;
+            }
+            else if (entity.Type == PaintEntityType.Link)
+            {
+                flyout.CreateFlyoutItem(EditSelectedLink, Strings.PaintEdit, Icons.Edit);
             }
 
             // A story takes one weather.
@@ -1810,14 +1999,14 @@ namespace Telegram.Controls
                 }
                 else if (_pressedSelected && (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse || _clock.Elapsed.TotalMilliseconds - _pressTime < MenuDelay))
                 {
-                    // A second tap writes in a text and turns the weather to its next fill; anything
-                    // else gets its menu. A long press is left to RightTapped, or the menu would
-                    // open twice.
+                    // A second tap writes in a text and turns the weather or a link to its next fill;
+                    // anything else gets its menu. A long press is left to RightTapped, or the menu
+                    // would open twice.
                     if (_selected.Type == PaintEntityType.Text)
                     {
                         BeginEditing(_selected);
                     }
-                    else if (_selected.Type == PaintEntityType.Weather)
+                    else if (_selected.Type is PaintEntityType.Weather or PaintEntityType.Link)
                     {
                         CycleSelectedStyle();
                     }
@@ -2478,6 +2667,13 @@ namespace Telegram.Controls
             if (entity.Type == PaintEntityType.Shape)
             {
                 PaintEntityRenderer.DrawShape(session, entity);
+            }
+            else if (entity.Type == PaintEntityType.Link)
+            {
+                _linkPhotos.TryGetValue(entity, out CanvasBitmap photo);
+
+                session.Transform = Matrix3x2.CreateScale(PaintLinkVisual.Unit) * session.Transform;
+                GetLinkVisual(entity).Draw(session, entity, photo);
             }
             else if (GetVisual(entity) is PaintTextVisual visual)
             {
@@ -3400,9 +3596,11 @@ namespace Telegram.Controls
         /// </summary>
         public static Rect GetWidgetBounds(PaintEntity entity)
         {
-            const float Unit = Reference / 240;
+            var unit = entity.Type == PaintEntityType.Link
+                ? PaintLinkVisual.Unit
+                : Reference / 240;
 
-            return new Rect(0, 0, entity.WidgetSize.X * Unit, entity.WidgetSize.Y * Unit);
+            return new Rect(0, 0, entity.WidgetSize.X * unit, entity.WidgetSize.Y * unit);
         }
 
         public static Color GetWidgetBackground(PaintWidgetStyle style)
@@ -3420,7 +3618,7 @@ namespace Telegram.Controls
         /// </summary>
         public static bool IsWidget(PaintEntity entity)
         {
-            return entity.Type is PaintEntityType.Reaction or PaintEntityType.Weather;
+            return entity.Type is PaintEntityType.Reaction or PaintEntityType.Weather or PaintEntityType.Link;
         }
 
         /// <summary>
@@ -3444,7 +3642,13 @@ namespace Telegram.Controls
 
             foreach (var entity in entities)
             {
-                if (!IsSticker(entity))
+                // A link goes out without its preview's photo rather than not at all.
+                if (entity.Type == PaintEntityType.Link)
+                {
+                    await LoadLinkPhotoFileAsync(clientService, entity);
+                    continue;
+                }
+                else if (!IsSticker(entity))
                 {
                     continue;
                 }
@@ -3478,8 +3682,41 @@ namespace Telegram.Controls
         }
 
         /// <summary>
+        /// Brings a link preview's photo to disk, looking it up by its remote id when the edit was
+        /// read back without it. False when it cannot be had.
+        /// </summary>
+        public static async Task<bool> LoadLinkPhotoFileAsync(IClientService clientService, PaintEntity entity)
+        {
+            if (entity.LinkPhotoFile == null && !string.IsNullOrEmpty(entity.LinkPhotoRemoteId))
+            {
+                var response = await clientService.SendAsync(new GetRemoteFile(entity.LinkPhotoRemoteId, null));
+                entity.LinkPhotoFile = response as File;
+            }
+
+            var file = entity.LinkPhotoFile;
+            if (file == null)
+            {
+                return false;
+            }
+
+            if (!file.Local.IsDownloadingCompleted)
+            {
+                file = await clientService.DownloadFileAsync(file, 32);
+            }
+
+            if (file?.Local.IsDownloadingCompleted != true)
+            {
+                return false;
+            }
+
+            entity.LinkPhotoFile = file;
+            return true;
+        }
+
+        /// <summary>
         /// Decodes each sticker's first frame at about the size it will be drawn, given how many
-        /// output pixels a unit of the renderer's comes to at a scale of one.
+        /// output pixels a unit of the renderer's comes to at a scale of one, and each link
+        /// preview's photo.
         /// </summary>
         public static async Task<Dictionary<PaintEntity, CanvasBitmap>> LoadStickersAsync(ICanvasResourceCreator creator, IReadOnlyList<PaintEntity> entities, float pixelsPerUnit)
         {
@@ -3487,6 +3724,26 @@ namespace Telegram.Controls
 
             foreach (var entity in entities)
             {
+                if (entity.Type == PaintEntityType.Link)
+                {
+                    if (entity.LinkPhotoFile?.Local.IsDownloadingCompleted == true)
+                    {
+                        try
+                        {
+                            var photo = await CanvasBitmap.LoadAsync(creator, entity.LinkPhotoFile.Local.Path);
+
+                            bitmaps ??= new Dictionary<PaintEntity, CanvasBitmap>();
+                            bitmaps[entity] = photo;
+                        }
+                        catch
+                        {
+                            // Drawn without it.
+                        }
+                    }
+
+                    continue;
+                }
+
                 var file = entity.StickerFile;
                 if (!IsSticker(entity) || file?.Local.IsDownloadingCompleted != true)
                 {
@@ -3577,6 +3834,22 @@ namespace Telegram.Controls
             {
                 if (IsDrawnByViewers(entity))
                 {
+                    continue;
+                }
+                else if (entity.Type == PaintEntityType.Link)
+                {
+                    using var link = PaintLinkVisual.Create(session, entity);
+
+                    var size = link.Size * PaintLinkVisual.Unit;
+                    var previous = session.Transform;
+
+                    CanvasBitmap photo = null;
+                    stickers?.TryGetValue(entity, out photo);
+
+                    session.Transform = Matrix3x2.CreateScale(PaintLinkVisual.Unit) * GetTransform(entity, new Rect(0, 0, size.X, size.Y), imageSize, mirrored) * previous;
+                    link.Draw(session, entity, photo);
+                    session.Transform = previous;
+
                     continue;
                 }
                 else if (entity.Type == PaintEntityType.Shape)

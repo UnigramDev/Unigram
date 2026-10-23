@@ -1,0 +1,84 @@
+﻿<controls:ModalPopup x:Class="Telegram.Views.Stories.Popups.StoryLinkPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     mc:Ignorable="d"
+                     FocusPrimaryButton="False"
+                     PrimaryButtonClick="OnPrimaryButtonClick">
+
+    <StackPanel>
+        <!-- The page's preview: loading, then what the card will show, its options on a click. -->
+        <Button x:Name="PreviewRoot"
+                Click="Preview_Click"
+                Visibility="Collapsed"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Padding="12,8,8,8"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="PreviewSkeleton"
+                        Height="52" />
+
+                <StackPanel x:Name="PreviewContent"
+                            Visibility="Collapsed">
+                    <TextBlock x:Name="PreviewSiteName"
+                               Foreground="{ThemeResource AccentButtonBackground}"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap" />
+                    <TextBlock x:Name="PreviewTitle"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap" />
+                    <TextBlock x:Name="PreviewDescription"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="Wrap"
+                               MaxLines="2" />
+                </StackPanel>
+
+                <TextBlock Text="&#xE712;"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="16"
+                           VerticalAlignment="Center"
+                           Margin="8,0,0,0"
+                           Grid.Column="1" />
+            </Grid>
+        </Button>
+
+        <Grid>
+            <TextBox x:Name="UrlField"
+                     PlaceholderText="{CustomResource StoryLinkURLPlaceholder}"
+                     TextChanged="UrlField_TextChanged"
+                     KeyDown="Field_KeyDown"
+                     InputScope="Url" />
+
+            <HyperlinkButton x:Name="PasteButton"
+                             Content="{CustomResource Paste}"
+                             Click="Paste_Click"
+                             Visibility="Collapsed"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Center"
+                             Margin="0,0,4,0" />
+        </Grid>
+
+        <CheckBox x:Name="NameCheck"
+                  Content="{CustomResource StoryLinkNameHeader}"
+                  Checked="NameCheck_Toggled"
+                  Unchecked="NameCheck_Toggled"
+                  Margin="0,12,0,0" />
+
+        <TextBox x:Name="NameField"
+                 PlaceholderText="{CustomResource StoryLinkNamePlaceholder}"
+                 KeyDown="Field_KeyDown"
+                 Visibility="Collapsed"
+                 Margin="0,4,0,0" />
+    </StackPanel>
+</controls:ModalPopup>

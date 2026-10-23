@@ -16,8 +16,10 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
+using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media.Imaging;
@@ -58,6 +60,8 @@ namespace Telegram.Controls
             _toolbar = toolbar;
             _surface = surface;
             _clientService = clientService;
+
+            _surface.Entities.LinkEditRequested += Entities_LinkEditRequested;
         }
 
         public void Deactivate()
@@ -65,6 +69,11 @@ namespace Telegram.Controls
             StickerPicker?.Deactivate();
             EmojiPicker?.Deactivate();
             GifPicker?.Deactivate();
+
+            if (_surface != null)
+            {
+                _surface.Entities.LinkEditRequested -= Entities_LinkEditRequested;
+            }
         }
 
         public void UpdateSelection(PaintEntity selected)
@@ -144,6 +153,13 @@ namespace Telegram.Controls
                 if (ShowsWidgets)
                 {
                     WidgetsPanel.Visibility = Visibility.Visible;
+
+                    LinkWidgetText.Text = Strings.StoryWidgetLink.ToUpper();
+                    LinkWidgetLock.Visibility = _clientService.IsPremium
+                        ? Visibility.Collapsed
+                        : Visibility.Visible;
+
+                    AutomationProperties.SetName(LinkWidget, Strings.StoryWidgetLink);
                     WeatherWidget.Visibility = _surface.Entities.HasAny(PaintEntityType.Weather)
                         ? Visibility.Collapsed
                         : Visibility.Visible;
@@ -311,6 +327,50 @@ namespace Telegram.Controls
             if (!_surface.Entities.HasAny(PaintEntityType.Weather))
             {
                 _surface.Entities.AddWeather(weather);
+            }
+        }
+
+        private async void LinkWidget_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = WindowContext.GetNavigationService(this);
+
+            if (!_clientService.IsPremium)
+            {
+                ToastPopup.ShowFeaturePromo(navigationService, Strings.StoryLinkPremium, new PremiumFeatureUpgradedStories());
+                return;
+            }
+            else if (!_surface.Entities.CanAddLink())
+            {
+                return;
+            }
+
+            StickerFlyout.Hide();
+
+            var popup = new StoryLinkPopup(_clientService, null);
+
+            var confirm = await navigationService.ShowPopupAsync(popup, requestedTheme: ElementTheme.Dark);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                // Its first fill, on the other clients too.
+                var link = new PaintEntity
+                {
+                    WidgetStyle = PaintWidgetStyle.White
+                };
+
+                popup.ApplyTo(link);
+                _surface.Entities.AddLink(link);
+            }
+        }
+
+        private async void Entities_LinkEditRequested(object sender, PaintEntityEventArgs e)
+        {
+            var popup = new StoryLinkPopup(_clientService, e.Entity);
+
+            var confirm = await WindowContext.GetNavigationService(this).ShowPopupAsync(popup, requestedTheme: ElementTheme.Dark);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                popup.ApplyTo(e.Entity);
+                _surface.Entities.RefreshLink(e.Entity);
             }
         }
 

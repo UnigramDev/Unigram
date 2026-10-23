@@ -141,6 +141,19 @@ namespace Telegram.Services.Factories
                     areas ??= new List<InputStoryArea>();
                     areas.Add(new InputStoryArea(GetPosition(entity, bounds, state.FrameSize, bounds.Height * 0.2), type));
                 }
+                else if (entity.Type == PaintEntityType.Link && !string.IsNullOrEmpty(entity.LinkUrl))
+                {
+                    var bounds = PaintEntityRenderer.GetWidgetBounds(entity);
+                    var radius = PaintLinkVisual.GetRadius(entity, entity.WidgetSize) * PaintLinkVisual.Unit;
+
+                    // An address typed without its scheme is still a web one.
+                    var url = entity.LinkUrl.Contains("://")
+                        ? entity.LinkUrl
+                        : "https://" + entity.LinkUrl;
+
+                    areas ??= new List<InputStoryArea>();
+                    areas.Add(new InputStoryArea(GetPosition(entity, bounds, state.FrameSize, radius), new InputStoryAreaTypeLink(url)));
+                }
             }
 
             return areas != null

@@ -6146,6 +6146,15 @@
     <string name="TryAgain">Try Again</string>
     <string name="StoryCancelTooLate">This story has finished uploading and will be posted.</string>
     <string name="StoryReactionsWidgetLimit2_other">You can’t add up more than {0} reactions tags to a story.</string>
+    <string name="StoryWidgetLink">Link</string>
+    <string name="StoryLinkCreate">Create Link</string>
+    <string name="StoryLinkAdd">Add Link</string>
+    <string name="StoryLinkEdit">Update Link</string>
+    <string name="StoryLinkURLPlaceholder">Enter URL</string>
+    <string name="StoryLinkNameHeader">Customize Link Text</string>
+    <string name="StoryLinkNamePlaceholder">Link Text</string>
+    <string name="StoryLinkPremium">Subscribe to **Telegram Premium** to add links to stories.</string>
+    <string name="StoryLinkLimitMessage_other">You can’t add more than {0} links to a story.</string>
     <string name="LimitReachedStoriesCount2First_one">You can post **{0}** story in **24** hours.</string>
     <string name="LimitReachedStoriesCount2First_other">You can post **{0}** stories in **24** hours.</string>
     <string name="LimitReachedStoriesCount2Second_one">Subscribe to **Telegram Premium** to increase this limit to **{0}**.</string>

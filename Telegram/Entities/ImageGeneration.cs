@@ -55,7 +55,12 @@ namespace Telegram.Entities
         /// <summary>
         /// A story's weather, which viewers draw from its area.
         /// </summary>
-        Weather
+        Weather,
+
+        /// <summary>
+        /// A story's link, drawn into the story, with an area over it that opens the link.
+        /// </summary>
+        Link
     }
 
     /// <summary>
@@ -237,6 +242,54 @@ namespace Telegram.Entities
         /// In degrees Celsius.
         /// </summary>
         public double WeatherTemperature { get; set; }
+
+        public string LinkUrl { get; set; }
+
+        /// <summary>
+        /// Shown in place of the link, or null for the link itself.
+        /// </summary>
+        public string LinkName { get; set; }
+
+        /// <summary>
+        /// Shown as a card with the page's preview, rather than as a label. The preview is kept
+        /// here as it was when placed, so that drawing the story needs nothing fetched.
+        /// </summary>
+        public bool LinkHasPreview { get; set; }
+
+        public string LinkSiteName { get; set; }
+
+        public string LinkTitle { get; set; }
+
+        public string LinkDescription { get; set; }
+
+        /// <summary>
+        /// The preview's photo. Never serialized, as a sticker's file is not.
+        /// </summary>
+        [JsonIgnore]
+        public File LinkPhotoFile { get; set; }
+
+        public string LinkPhotoRemoteId { get; set; }
+
+        public int LinkPhotoWidth { get; set; }
+
+        public int LinkPhotoHeight { get; set; }
+
+        public bool LinkLargePhoto { get; set; }
+
+        /// <summary>
+        /// The link above the preview rather than under it.
+        /// </summary>
+        public bool LinkTextAbove { get; set; } = true;
+
+        /// <summary>
+        /// The card on a dark fill rather than a white one.
+        /// </summary>
+        public bool LinkDark { get; set; }
+
+        /// <summary>
+        /// The colour the preview's site name and bar take: the poster's own.
+        /// </summary>
+        public Color LinkAccentColor { get; set; }
 
         public PaintEntity Clone()
         {
