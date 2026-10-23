@@ -273,7 +273,7 @@ namespace Telegram.Views
                 {
                     // We calculate the item position relative to the current viewport manually
                     // instead of relying on TransformToVisual. This should save us some milliseconds.
-                    top = (container.ActualOffset.Y - Messages.ScrollingHost.VerticalOffset) - (_dateHeaderRelative.Offset.Y - _messagesHeaderRootPadding);
+                    top = (container.ActualOffset.Y - Messages.ScrollingHost.VerticalOffset) - (ClipperOuter.GetStackedOffset(DateHeaderRelative) - _messagesHeaderRootPadding);
                     bottom = (container.ActualOffset.Y - Messages.ScrollingHost.VerticalOffset) - (_messagesVisual.Size.Y - _messagesHeaderRootPadding);
                 }
 

@@ -135,6 +135,11 @@ namespace Telegram.Controls
         // which is the correct state for the topmost visible child.
         private Visual[] _anchors = Array.Empty<Visual>();
 
+        // Where each child comes to rest, for code: its visual's Offset.Y is the origin that
+        // ArrangeOverride gives it, since the stacked value lives in the expression and is never
+        // written back.
+        private float[] _offsets = Array.Empty<float>();
+
         private ExpressionAnimation _anchorAnimation;
 
         protected override Size MeasureOverride(Size availableSize)
@@ -146,6 +151,7 @@ namespace Telegram.Controls
                 Array.Resize(ref _children, count);
                 Array.Resize(ref _visuals, count);
                 Array.Resize(ref _anchors, count);
+                Array.Resize(ref _offsets, count);
             }
 
             var width = 0d;
@@ -208,13 +214,41 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            var offset = 0f;
+
             for (int i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
-                child.Arrange(new Rect(0, 0, finalSize.Width, child.DesiredSize.Height));
+                var height = child.DesiredSize.Height;
+
+                child.Arrange(new Rect(0, 0, finalSize.Width, height));
+
+                if (i < _offsets.Length)
+                {
+                    _offsets[i] = offset;
+                }
+
+                offset += (float)height;
             }
 
             return finalSize;
+        }
+
+        /// <summary>
+        /// The Offset.Y the child settles at once no header is sliding, 0 for one this panel does
+        /// not hold.
+        /// </summary>
+        public float GetStackedOffset(UIElement element)
+        {
+            for (int i = 0; i < _children.Length; i++)
+            {
+                if (_children[i] == element)
+                {
+                    return _offsets[i];
+                }
+            }
+
+            return 0;
         }
 
         #region IsVisible
