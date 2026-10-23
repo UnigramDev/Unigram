@@ -5,9 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.Graphics.Canvas.Geometry;
+using Telegram.Common;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
+using Telegram.Controls.Stories.Widgets;
 using Telegram.Entities;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -32,6 +36,9 @@ namespace Telegram.Controls
         private IClientService _clientService;
 
         private bool _updatingShapeFill;
+
+        private bool _weatherLoading;
+        private string _weatherEmoji;
 
         // The reaction a new reaction widget starts with.
         private const string DefaultReaction = "❤";
@@ -63,7 +70,7 @@ namespace Telegram.Controls
         public void UpdateSelection(PaintEntity selected)
         {
             DrawTab.IsChecked = selected == null;
-            StickerTab.IsChecked = selected != null && (PaintEntityRenderer.IsSticker(selected) || selected.Type == PaintEntityType.Reaction);
+            StickerTab.IsChecked = selected != null && (PaintEntityRenderer.IsSticker(selected) || PaintEntityRenderer.IsWidget(selected));
             TextTab.IsChecked = selected?.Type == PaintEntityType.Text;
             ShapesTab.IsChecked = selected?.Type == PaintEntityType.Shape;
         }
@@ -108,6 +115,14 @@ namespace Telegram.Controls
             {
                 PickerTabs.SelectedIndex = 0;
             }
+
+            // A story takes one weather.
+            if (WeatherWidget != null)
+            {
+                WeatherWidget.Visibility = _surface.Entities.HasAny(PaintEntityType.Weather)
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            }
         }
 
         // Each drawer is made the first time its tab is opened.
@@ -129,6 +144,14 @@ namespace Telegram.Controls
                 if (ShowsWidgets)
                 {
                     WidgetsPanel.Visibility = Visibility.Visible;
+                    WeatherWidget.Visibility = _surface.Entities.HasAny(PaintEntityType.Weather)
+                        ? Visibility.Collapsed
+                        : Visibility.Visible;
+
+                    // What the other clients show until the weather is known: 24 degrees Celsius,
+                    // or 72 Fahrenheit. It also sizes the skeleton while the weather loads.
+                    ShowWeather("\U0001F324", StoryWeatherWidget.IsFahrenheit ? 22.2 : 24);
+                    PreloadWeather();
 
                     ReactionWidgetPreview.Child = new AnimatedImage
                     {
@@ -193,6 +216,101 @@ namespace Telegram.Controls
                 // A custom emoji that takes the text's colour is shown white.
                 var tinted = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
                 AddSticker(PaintEntityType.Sticker, file, sticker.Width, sticker.Height, tinted);
+            }
+        }
+
+        // Loaded at once where it needs no asking, and shown loading meanwhile rather than as the
+        // placeholder.
+        private async void PreloadWeather()
+        {
+            var service = _clientService.Session.Resolve<ILocationService>();
+            if (!_clientService.Options.CanPreloadWeather || !service.HasLocationAccess)
+            {
+                return;
+            }
+
+            SetWeatherLoading(true);
+
+            var weather = await service.GetCurrentWeatherAsync(null);
+
+            SetWeatherLoading(false);
+
+            if (weather != null)
+            {
+                ShowWeather(weather.Emoji, weather.Temperature);
+            }
+        }
+
+        private void ShowWeather(string emoji, double temperature)
+        {
+            if (_weatherEmoji != emoji)
+            {
+                _weatherEmoji = emoji;
+                WeatherWidgetEmoji.Source = new AnimatedEmojiFileSource(_clientService, emoji);
+            }
+
+            WeatherWidgetText.Text = StoryWeatherWidget.FormatTemperature(temperature);
+        }
+
+        // The text only turns transparent, so the skeleton covers the place it keeps. Hiding the
+        // panel instead would hide the skeleton with it.
+        private void SetWeatherLoading(bool loading)
+        {
+            _weatherLoading = loading;
+
+            WeatherWidget.IsEnabled = !loading;
+            WeatherWidgetEmoji.Opacity = loading ? 0 : 1;
+            WeatherWidgetText.Opacity = loading ? 0 : 1;
+
+            if (loading)
+            {
+                UpdateWeatherSkeleton();
+            }
+            else
+            {
+                VisualUtilities.HideSkeleton(WeatherWidgetContent);
+            }
+        }
+
+        // The header may not be laid out yet when the weather starts loading.
+        private void WeatherWidgetContent_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_weatherLoading)
+            {
+                UpdateWeatherSkeleton();
+            }
+        }
+
+        private void UpdateWeatherSkeleton()
+        {
+            var size = WeatherWidgetContent.ActualSize;
+            if (size.X > 0 && size.Y > 0)
+            {
+                VisualUtilities.SetSkeleton(WeatherWidgetContent, size, CanvasGeometry.CreateRoundedRectangle(null, 0, 0, size.X, size.Y, 4, 4));
+            }
+        }
+
+        // The flyout stays open while the location and the weather come in, which can take a few
+        // seconds.
+        private async void WeatherWidget_Click(object sender, RoutedEventArgs e)
+        {
+            SetWeatherLoading(true);
+
+            var weather = await _clientService.Session.Resolve<ILocationService>().GetCurrentWeatherAsync(WindowContext.GetNavigationService(this));
+
+            SetWeatherLoading(false);
+
+            if (weather == null)
+            {
+                return;
+            }
+
+            ShowWeather(weather.Emoji, weather.Temperature);
+            StickerFlyout.Hide();
+
+            if (!_surface.Entities.HasAny(PaintEntityType.Weather))
+            {
+                _surface.Entities.AddWeather(weather);
             }
         }
 

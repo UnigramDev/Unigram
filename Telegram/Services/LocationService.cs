@@ -38,6 +38,19 @@ namespace Telegram.Services
 
         Task<Location> GetPositionAsync(INavigationService navigation);
 
+        /// <summary>
+        /// Whether location access has been granted already, so the position can be had without
+        /// asking.
+        /// </summary>
+        bool HasLocationAccess { get; }
+
+        /// <summary>
+        /// The weather where the device is, kept for the rest of the hour at about the same place.
+        /// Without <paramref name="navigation"/> it asks for nothing, and needs location access to
+        /// have been granted already.
+        /// </summary>
+        Task<CurrentWeather> GetCurrentWeatherAsync(INavigationService navigation);
+
         Task<GetVenuesResult> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null, string offset = null);
     }
 
@@ -105,16 +118,67 @@ namespace Telegram.Services
                 var accessStatus = await CheckDeviceAccessAsync(navigation);
                 if (accessStatus)
                 {
-                    var geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
-                    var location = await geolocator.GetGeopositionAsync();
-
-                    return new Location(
-                        location.Coordinate.Point.Position.Latitude,
-                        location.Coordinate.Point.Position.Longitude,
-                        location.Coordinate.Accuracy);
+                    return await GetGeopositionAsync();
                 }
             }
             catch { }
+
+            return null;
+        }
+
+        private static async Task<Location> GetGeopositionAsync()
+        {
+            var geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
+            var location = await geolocator.GetGeopositionAsync();
+
+            return new Location(
+                location.Coordinate.Point.Position.Latitude,
+                location.Coordinate.Point.Position.Longitude,
+                location.Coordinate.Accuracy);
+        }
+
+        public bool HasLocationAccess => DeviceAccessInformation.CreateFromDeviceClass(DeviceClass.Location).CurrentStatus == DeviceAccessStatus.Allowed;
+
+        private CurrentWeather _weather;
+        private string _weatherKey;
+
+        public async Task<CurrentWeather> GetCurrentWeatherAsync(INavigationService navigation)
+        {
+            Location location = null;
+
+            if (navigation != null)
+            {
+                location = await GetPositionAsync(navigation);
+            }
+            else if (HasLocationAccess)
+            {
+                try
+                {
+                    location = await GetGeopositionAsync();
+                }
+                catch { }
+            }
+
+            if (location == null)
+            {
+                return null;
+            }
+
+            // About a hundred metres, within the same hour.
+            var key = string.Format("{0}:{1}:{2}", Math.Round(location.Latitude * 1000), Math.Round(location.Longitude * 1000), DateTime.UtcNow.Ticks / TimeSpan.TicksPerHour);
+            if (_weather != null && _weatherKey == key)
+            {
+                return _weather;
+            }
+
+            var response = await _clientService.SendAsync(new GetCurrentWeather(new Location(location.Latitude, location.Longitude, 0)));
+            if (response is CurrentWeather weather)
+            {
+                _weather = weather;
+                _weatherKey = key;
+
+                return weather;
+            }
 
             return null;
         }

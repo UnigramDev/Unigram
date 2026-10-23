@@ -2,19 +2,49 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Telegram.Controls.Stories.Widgets"
+             xmlns:controls="using:Telegram.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400">
 
+    <!-- Laid out at one size, in units of a 240th of the story's width, and scaled to fit. -->
     <Grid x:Name="RootGrid"
-          Padding="4,4,8,4">
-        <Viewbox>
+          Padding="4,4.33,7.66,3"
+          SizeChanged="RootGrid_SizeChanged">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- The emoji overflows its box by a fifth, as it is drawn on the other clients. Its
+             negative margins give it the room, which the box would otherwise clip. -->
+        <Grid x:Name="EmojiBox"
+              Width="21.33"
+              Height="21.33"
+              Margin="2.25,0,3.25,0">
+            <controls:AnimatedImage x:Name="Emoji"
+                                    AutoPlay="True"
+                                    FrameSize="64,64"
+                                    DecodeFrameType="Logical"
+                                    Width="25.6"
+                                    Height="25.6"
+                                    Margin="-2.13" />
+        </Grid>
+
+        <!-- Centred by its glyphs, from cap height to baseline, in a line as tall as the other
+             clients' font gives: Bahnschrift's own line sits it off centre. -->
+        <Grid x:Name="LabelBox"
+              Height="28.1"
+              Grid.Column="1">
             <TextBlock x:Name="Label"
-                       TextAlignment="Center"
-                       FontFamily="{StaticResource EmojiThemeFontFamily}"
-                       FontWeight="SemiBold" />
-        </Viewbox>
+                       FontFamily="Bahnschrift"
+                       FontStretch="Condensed"
+                       FontWeight="Bold"
+                       FontSize="24"
+                       TextLineBounds="Tight"
+                       VerticalAlignment="Center" />
+        </Grid>
     </Grid>
 </UserControl>

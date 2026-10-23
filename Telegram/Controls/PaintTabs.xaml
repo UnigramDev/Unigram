@@ -77,6 +77,31 @@
                                         Visibility="Collapsed"
                                         Orientation="Horizontal"
                                         Margin="10,8,10,0">
+                                <Button x:Name="WeatherWidget"
+                                        Click="WeatherWidget_Click"
+                                        VerticalAlignment="Stretch"
+                                        Padding="8,4,8,4"
+                                        Margin="0,0,8,0">
+                                    <StackPanel x:Name="WeatherWidgetContent"
+                                                SizeChanged="WeatherWidgetContent_SizeChanged"
+                                                Orientation="Horizontal">
+                                        <controls:AnimatedImage x:Name="WeatherWidgetEmoji"
+                                                                AutoPlay="True"
+                                                                FrameSize="20,20"
+                                                                DecodeFrameType="Logical"
+                                                                Width="20"
+                                                                Height="20"
+                                                                VerticalAlignment="Center"
+                                                                Margin="0,0,4,0" />
+                                        <TextBlock x:Name="WeatherWidgetText"
+                                                   FontFamily="Bahnschrift"
+                                                   FontStretch="Condensed"
+                                                   FontWeight="Bold"
+                                                   FontSize="16"
+                                                   TextLineBounds="Tight"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
                                 <Button x:Name="ReactionWidget"
                                         Click="ReactionWidget_Click"
                                         Padding="8,6,8,6"

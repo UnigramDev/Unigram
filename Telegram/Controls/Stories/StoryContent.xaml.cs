@@ -502,7 +502,13 @@ namespace Telegram.Controls.Stories
                 }
                 else if (area.Type is StoryAreaTypeWeather weather)
                 {
-                    element = new StoryWeatherWidget(weather, new CornerRadius(area.Position.CornerRadiusPercentage / 100 * ActualWidth));
+                    var widget = new StoryWeatherWidget();
+                    widget.Update(story.ClientService, weather.Emoji, weather.Temperature, weather.BackgroundColor.ToColor(true));
+
+                    element = new Viewbox
+                    {
+                        Child = widget
+                    };
                 }
                 else
                 {

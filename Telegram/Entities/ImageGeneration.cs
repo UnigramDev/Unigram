@@ -50,7 +50,22 @@ namespace Telegram.Entities
         /// <summary>
         /// A story's suggested reaction, which viewers draw from its area.
         /// </summary>
-        Reaction
+        Reaction,
+
+        /// <summary>
+        /// A story's weather, which viewers draw from its area.
+        /// </summary>
+        Weather
+    }
+
+    /// <summary>
+    /// The fills a story widget can take, in the order a click cycles through them.
+    /// </summary>
+    public enum PaintWidgetStyle
+    {
+        Black,
+        Translucent,
+        White
     }
 
     public enum PaintShapeKind
@@ -207,6 +222,21 @@ namespace Telegram.Entities
             ReactionEmoji = (reaction as ReactionTypeEmoji)?.Emoji;
             ReactionCustomEmojiId = (reaction as ReactionTypeCustomEmoji)?.CustomEmojiId ?? 0;
         }
+
+        public PaintWidgetStyle WidgetStyle { get; set; }
+
+        /// <summary>
+        /// A widget's size as measured when it was placed, in its own units: a 240th of the image's
+        /// width at a scale of one.
+        /// </summary>
+        public Vector2 WidgetSize { get; set; }
+
+        public string WeatherEmoji { get; set; }
+
+        /// <summary>
+        /// In degrees Celsius.
+        /// </summary>
+        public double WeatherTemperature { get; set; }
 
         public PaintEntity Clone()
         {

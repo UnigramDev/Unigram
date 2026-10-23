@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Entities;
 using Telegram.Td.Api;
@@ -127,7 +128,18 @@ namespace Telegram.Services.Factories
                     var type = new InputStoryAreaTypeSuggestedReaction(entity.GetReactionType(), entity.ReactionDark, entity.Mirror);
 
                     areas ??= new List<InputStoryArea>();
-                    areas.Add(new InputStoryArea(GetPosition(entity, PaintEntityRenderer.GetReactionBounds(), state.FrameSize), type));
+                    areas.Add(new InputStoryArea(GetPosition(entity, PaintEntityRenderer.GetReactionBounds(), state.FrameSize, 0), type));
+                }
+                else if (entity.Type == PaintEntityType.Weather)
+                {
+                    var bounds = PaintEntityRenderer.GetWidgetBounds(entity);
+                    var background = PaintEntityRenderer.GetWidgetBackground(entity.WidgetStyle);
+
+                    // In whole degrees, as it was shown.
+                    var type = new InputStoryAreaTypeWeather(Math.Floor(entity.WeatherTemperature + 0.5), entity.WeatherEmoji, background.ToValue(true));
+
+                    areas ??= new List<InputStoryArea>();
+                    areas.Add(new InputStoryArea(GetPosition(entity, bounds, state.FrameSize, bounds.Height * 0.2), type));
                 }
             }
 
@@ -137,8 +149,9 @@ namespace Telegram.Services.Factories
         }
 
         // An object laid out in the frame, as shares of the frame: its centre, the size of what it
-        // covers, and its clockwise turn in degrees.
-        private static AreaPosition GetPosition(PaintEntity entity, Rect bounds, Size frame)
+        // covers, its clockwise turn in degrees, and its corner radius against the frame's width.
+        // The radius is in the renderer's units, as the bounds are.
+        private static AreaPosition GetPosition(PaintEntity entity, Rect bounds, Size frame, double radius)
         {
             // The renderer's units to shares of the frame's width.
             var scale = entity.Scale / PaintEntityRenderer.Reference;
@@ -151,7 +164,7 @@ namespace Telegram.Services.Factories
                 bounds.Width * scale * 100,
                 bounds.Height * scale * frame.Width / frame.Height * 100,
                 degrees < 0 ? degrees + 360 : degrees,
-                0);
+                radius * scale * 100);
         }
     }
 }

@@ -111,6 +111,8 @@ namespace Telegram.Controls
         private const float ReactionMinimumScale = 0.5f;
         private const float ReactionMaximumScale = 1.8f;
 
+        private const float WeatherMaximumScale = 1.5f;
+
         private static readonly double[] StickyAngles = { -Math.PI / 2, 0, Math.PI / 2, Math.PI, -Math.PI };
 
         private readonly List<PaintEntity> _entities = new();
@@ -433,6 +435,11 @@ namespace Telegram.Controls
                 bounds = PaintEntityRenderer.GetReactionBounds();
                 return true;
             }
+            else if (entity.Type == PaintEntityType.Weather)
+            {
+                bounds = PaintEntityRenderer.GetWidgetBounds(entity);
+                return true;
+            }
 
             var visual = GetVisual(entity);
             bounds = visual?.Bounds ?? default;
@@ -469,9 +476,12 @@ namespace Telegram.Controls
 
         private static float ClampScale(PaintEntity entity, float scale)
         {
-            return entity.Type == PaintEntityType.Reaction
-                ? Math.Clamp(scale, ReactionMinimumScale, ReactionMaximumScale)
-                : Math.Clamp(scale, MinimumScale, MaximumScale);
+            return entity.Type switch
+            {
+                PaintEntityType.Reaction => Math.Clamp(scale, ReactionMinimumScale, ReactionMaximumScale),
+                PaintEntityType.Weather => Math.Clamp(scale, MinimumScale, WeatherMaximumScale),
+                _ => Math.Clamp(scale, MinimumScale, MaximumScale)
+            };
         }
 
         private PaintTextVisual GetVisual(PaintEntity entity)
@@ -623,6 +633,23 @@ namespace Telegram.Controls
                         FrameSize = new Size(160, 160),
                         DecodeFrameType = DecodePixelType.Logical
                     }
+                };
+            }
+            else if (entity.Type == PaintEntityType.Weather)
+            {
+                var widget = new StoryWeatherWidget();
+                widget.Update(ClientService, entity.WeatherEmoji, entity.WeatherTemperature, PaintEntityRenderer.GetWidgetBackground(entity.WidgetStyle));
+
+                // Measured once, when placed: its size then goes into the story area.
+                if (entity.WidgetSize == Vector2.Zero)
+                {
+                    var size = widget.GetNaturalSize();
+                    entity.WidgetSize = new Vector2((float)size.Width, (float)size.Height);
+                }
+
+                element.Child = new Viewbox
+                {
+                    Child = widget
                 };
             }
             else if (entity.Type == PaintEntityType.Animation)
@@ -785,7 +812,7 @@ namespace Telegram.Controls
 
             float raster;
 
-            if (IsRound(entity))
+            if (IsRound(entity) || entity.Type == PaintEntityType.Weather)
             {
                 raster = k;
             }
@@ -815,6 +842,10 @@ namespace Telegram.Controls
             if (element.Child is StoryReactionWidget widget)
             {
                 UpdateReaction(entity, widget);
+            }
+            else if (element.Child is Viewbox { Child: StoryWeatherWidget weather })
+            {
+                weather.UpdateBackground(PaintEntityRenderer.GetWidgetBackground(entity.WidgetStyle));
             }
             else if (element.Child is Grid grid && grid.Children.Count > 1 && grid.Children[1] is Polyline line)
             {
@@ -1038,6 +1069,57 @@ namespace Telegram.Controls
             Select(entity);
         }
 
+        /// <summary>
+        /// Places the weather where the view is looking, as large as the other clients first show
+        /// it.
+        /// </summary>
+        public void AddWeather(CurrentWeather weather)
+        {
+            EndEditing();
+
+            if (!TryGetPlacement(out Vector2 position, out float scale))
+            {
+                return;
+            }
+
+            var entity = new PaintEntity
+            {
+                Type = PaintEntityType.Weather,
+                WeatherEmoji = weather.Emoji,
+                WeatherTemperature = weather.Temperature,
+                Position = position,
+                Rotation = GetRotation(0),
+                Scale = Math.Min(scale, WeatherMaximumScale)
+            };
+
+            AddEntity(entity);
+            EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
+
+            Select(entity);
+        }
+
+        public bool HasAny(PaintEntityType type)
+        {
+            foreach (var entity in _entities)
+            {
+                if (entity.Type == type)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void CycleSelectedStyle()
+        {
+            if (_selected?.Type == PaintEntityType.Weather)
+            {
+                _selected.WidgetStyle = (PaintWidgetStyle)(((int)_selected.WidgetStyle + 1) % 3);
+                UpdateElement(_selected);
+            }
+        }
+
         private bool CanAddReaction()
         {
             var maximum = ClientService?.Options.StorySuggestedReactionAreaCountMax ?? 0;
@@ -1125,7 +1207,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (source.Type == PaintEntityType.Reaction && !CanAddReaction())
+            if (source.Type == PaintEntityType.Weather || (source.Type == PaintEntityType.Reaction && !CanAddReaction()))
             {
                 return;
             }
@@ -1394,7 +1476,12 @@ namespace Telegram.Controls
                 flyout.Opened += ReactionMenu_Opened;
             }
 
-            flyout.CreateFlyoutItem(DuplicateSelected, Strings.PaintDuplicate, Icons.DocumentCopy, VirtualKey.D);
+            // A story takes one weather.
+            if (entity.Type != PaintEntityType.Weather)
+            {
+                flyout.CreateFlyoutItem(DuplicateSelected, Strings.PaintDuplicate, Icons.DocumentCopy, VirtualKey.D);
+            }
+
             flyout.CreateFlyoutItem(DeleteSelected, Strings.PaintDelete, Icons.Delete, VirtualKey.Delete, VirtualKeyModifiers.None, destructive: true);
 
             flyout.ShowAt(this, position);
@@ -1723,11 +1810,16 @@ namespace Telegram.Controls
                 }
                 else if (_pressedSelected && (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse || _clock.Elapsed.TotalMilliseconds - _pressTime < MenuDelay))
                 {
-                    // A second tap writes in a text; anything else gets its menu. A long press is
-                    // left to RightTapped, or the menu would open twice.
+                    // A second tap writes in a text and turns the weather to its next fill; anything
+                    // else gets its menu. A long press is left to RightTapped, or the menu would
+                    // open twice.
                     if (_selected.Type == PaintEntityType.Text)
                     {
                         BeginEditing(_selected);
+                    }
+                    else if (_selected.Type == PaintEntityType.Weather)
+                    {
+                        CycleSelectedStyle();
                     }
                     else
                     {
@@ -3304,11 +3396,39 @@ namespace Telegram.Controls
         }
 
         /// <summary>
+        /// A widget at the size it was measured at, in the renderer's units.
+        /// </summary>
+        public static Rect GetWidgetBounds(PaintEntity entity)
+        {
+            const float Unit = Reference / 240;
+
+            return new Rect(0, 0, entity.WidgetSize.X * Unit, entity.WidgetSize.Y * Unit);
+        }
+
+        public static Color GetWidgetBackground(PaintWidgetStyle style)
+        {
+            return style switch
+            {
+                PaintWidgetStyle.Translucent => Color.FromArgb(0x4C, 0, 0, 0),
+                PaintWidgetStyle.White => Colors.White,
+                _ => Colors.Black
+            };
+        }
+
+        /// <summary>
+        /// A story widget, which has no tools of its own.
+        /// </summary>
+        public static bool IsWidget(PaintEntity entity)
+        {
+            return entity.Type is PaintEntityType.Reaction or PaintEntityType.Weather;
+        }
+
+        /// <summary>
         /// Left out of the posted image: viewers draw it from its story area.
         /// </summary>
         public static bool IsDrawnByViewers(PaintEntity entity)
         {
-            return entity.Type == PaintEntityType.Reaction;
+            return entity.Type is PaintEntityType.Reaction or PaintEntityType.Weather;
         }
 
         /// <summary>
