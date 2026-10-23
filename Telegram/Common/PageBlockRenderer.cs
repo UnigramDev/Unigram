@@ -554,9 +554,9 @@ namespace Telegram.Common
         }
 
         // A table takes the width its content needs: the columns get their natural widths when
-        // they fit, share out what there is when they do not, and the ScrollViewer only comes
-        // into play once even the narrowest layout is too wide - which is what the Android, iOS
-        // and desktop apps all do. Nothing under the ScrollViewer can decide this, as it
+        // they fit, share out what there is when they do not, and the ScrollViewer comes into
+        // play once the columns cannot be squeezed to fit without wrapping their text narrower
+        // than a reader can follow. Nothing under the ScrollViewer can decide this, as it
         // measures the grid with an infinite width, so the panel that sees the real constraint
         // resolves the columns and hands the grid absolute widths.
         private sealed partial class TableRoot : Panel
@@ -666,15 +666,13 @@ namespace Telegram.Common
                 return finalSize;
             }
 
-            // The three outcomes, in the order a browser picks them.
+            // The three outcomes: natural widths, squeezed to fit, or scrolling.
             private double Resolve(double available)
             {
-                var totalMin = 0d;
                 var totalMax = 0d;
 
                 for (int i = 0; i < _columns; i++)
                 {
-                    totalMin += _min[i];
                     totalMax += _max[i];
                 }
 
@@ -686,27 +684,36 @@ namespace Telegram.Common
                     return totalMax;
                 }
 
-                // It does not fit even with every word broken: this is the one that scrolls.
-                if (totalMin >= available)
+                // No column is squeezed below its text laid out at two thirds of the room, or
+                // half less padding when there are two, so the floor is a readable width rather
+                // than the longest word. Floored at the longest word, a table of prose fits any
+                // bubble by wrapping each cell a word a line, and never scrolls.
+                var text = _columns == 2
+                    ? available / 2 - 4 * _paddingLeft
+                    : available / 1.5;
+
+                var totalFloor = 0d;
+
+                for (int i = 0; i < _columns; i++)
                 {
-                    Array.Copy(_min, _widths, _columns);
-                    _scrollable = true;
-                    return totalMin;
+                    _widths[i] = Math.Max(_min[i], Math.Min(_max[i], Snap(text + Overhead(i))));
+                    _deficit[i] = _max[i] - _widths[i];
+                    totalFloor += _widths[i];
                 }
 
-                // In between, every column gets its minimum and the room left over is handed
+                if (totalFloor >= available)
+                {
+                    _scrollable = true;
+                    return totalFloor;
+                }
+
+                // In between, every column gets its floor and the room left over is handed
                 // round in equal shares until each column has all it asked for or there is
                 // nothing left - so a narrow column beside a wide one is satisfied outright
                 // rather than left wrapping with a share proportional to a need it does not
                 // have. It is what tdesktop does, and what the tables here looked wrong without.
-                var extra = available - totalMin;
+                var extra = available - totalFloor;
                 var epsilon = 0.5 / _scale;
-
-                for (int i = 0; i < _columns; i++)
-                {
-                    _widths[i] = _min[i];
-                    _deficit[i] = _max[i] - _min[i];
-                }
 
                 while (extra > epsilon)
                 {
