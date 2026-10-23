@@ -10,6 +10,8 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Entities;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -34,6 +36,31 @@ namespace Telegram.Views.Popups
         private float _accuracyRadius;
 
         public InputMessageContent Media { get; private set; }
+
+        // Picking a story's venue, around where it starts.
+        private readonly bool _story;
+        private readonly Location _start;
+
+        private PaintEntity _place;
+
+        /// <summary>
+        /// Picks the venue a story's location shows, among those around <paramref name="start"/>,
+        /// or the device when it is null. <see cref="ApplyTo"/> hands it over.
+        /// </summary>
+        public SendLocationPopup(ISession session, Location start)
+            : this(session)
+        {
+            _story = true;
+            _start = start;
+
+            PrimaryButtonText = Strings.Done;
+            IsPrimaryButtonEnabled = false;
+
+            // Only the venues: neither the map nor the device's own location.
+            MapPresenter.Visibility = Visibility.Collapsed;
+            CurrentLocationButton.Visibility = Visibility.Collapsed;
+            NearbyHeader.Visibility = Visibility.Collapsed;
+        }
 
         public SendLocationPopup(ISession session)
         {
@@ -82,7 +109,25 @@ namespace Telegram.Views.Popups
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            FindLocation();
+            if (_story)
+            {
+                FindStoryLocation();
+            }
+            else
+            {
+                FindLocation();
+            }
+        }
+
+        // Once, rather than following the device as a message's location does: the venues are
+        // the ones around where it starts, which setting it searches for.
+        private async void FindStoryLocation()
+        {
+            var location = _start ?? await ViewModel.Session.Resolve<ILocationService>().GetPositionAsync(WindowContext.GetNavigationService(this));
+            if (location != null)
+            {
+                ViewModel.Location = location;
+            }
         }
 
         private async void FindLocation()
@@ -262,12 +307,49 @@ namespace Telegram.Views.Popups
             ElementCompositionPreview.SetElementChildVisual(MapShimmer, null);
         }
 
+        #region Story
+
+        /// <summary>
+        /// Writes the venue picked for a story into <paramref name="location"/>.
+        /// </summary>
+        public void ApplyTo(PaintEntity location)
+        {
+            if (_place == null)
+            {
+                return;
+            }
+
+            location.LocationTitle = _place.LocationTitle;
+            location.LocationLatitude = _place.LocationLatitude;
+            location.LocationLongitude = _place.LocationLongitude;
+            location.LocationQueryId = _place.LocationQueryId;
+            location.LocationResultId = _place.LocationResultId;
+        }
+
+        #endregion
+
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0 && e.AddedItems[0] is Venue venue)
             {
                 CurrentLocation.UpdateState(false, true, true);
                 Media = new InputMessageVenue(venue);
+
+                if (_story)
+                {
+                    ViewModel.TryGetResult(venue, out long queryId, out string resultId);
+
+                    _place = new PaintEntity
+                    {
+                        LocationTitle = venue.Title,
+                        LocationLatitude = venue.Location.Latitude,
+                        LocationLongitude = venue.Location.Longitude,
+                        LocationQueryId = queryId,
+                        LocationResultId = resultId
+                    };
+
+                    IsPrimaryButtonEnabled = true;
+                }
             }
         }
     }

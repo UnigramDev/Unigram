@@ -76,6 +76,8 @@ namespace Telegram.Controls
 
         public Color FrameBottomColor => FrameFillBottom?.Color ?? default;
 
+        public StorageMedia Media => _media;
+
         public void Initialize(IClientService clientService, StorageMedia media)
         {
             _media = media;

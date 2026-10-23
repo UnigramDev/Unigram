@@ -24,10 +24,20 @@ namespace Telegram.Services
 
         public List<Venue> Venues { get; }
 
-        public GetVenuesResult(string offset, List<Venue> venues)
+        /// <summary>
+        /// The inline query the venues came from, and each venue's result in it, in the same
+        /// order: a story area names a found venue by the two.
+        /// </summary>
+        public long QueryId { get; }
+
+        public List<string> ResultIds { get; }
+
+        public GetVenuesResult(string offset, List<Venue> venues, long queryId = 0, List<string> resultIds = null)
         {
             NextOffset = offset;
             Venues = venues;
+            QueryId = queryId;
+            ResultIds = resultIds;
         }
     }
 
@@ -244,15 +254,18 @@ namespace Telegram.Services
             var response = await _clientService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude, 0), query ?? string.Empty, offset ?? string.Empty));
             if (response is InlineQueryResults inlineResults)
             {
+                var ids = new List<string>();
+
                 foreach (var item in inlineResults.Results)
                 {
                     if (item is InlineQueryResultVenue venue)
                     {
                         results.Add(venue.Venue);
+                        ids.Add(venue.Id);
                     }
                 }
 
-                new GetVenuesResult(inlineResults.NextOffset, results);
+                return new GetVenuesResult(inlineResults.NextOffset, results, inlineResults.InlineQueryId, ids);
             }
 
             return new GetVenuesResult(null, results);

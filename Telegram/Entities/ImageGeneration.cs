@@ -60,7 +60,12 @@ namespace Telegram.Entities
         /// <summary>
         /// A story's link, drawn into the story, with an area over it that opens the link.
         /// </summary>
-        Link
+        Link,
+
+        /// <summary>
+        /// A story's venue, drawn into the story, with an area over it that opens the map.
+        /// </summary>
+        Location
     }
 
     /// <summary>
@@ -290,6 +295,23 @@ namespace Telegram.Entities
         /// The colour the preview's site name and bar take: the poster's own.
         /// </summary>
         public Color LinkAccentColor { get; set; }
+
+        /// <summary>
+        /// The venue's name.
+        /// </summary>
+        public string LocationTitle { get; set; }
+
+        public double LocationLatitude { get; set; }
+
+        public double LocationLongitude { get; set; }
+
+        /// <summary>
+        /// The venue bot's inline query that found the venue, and its result in it, which the
+        /// story area names it by.
+        /// </summary>
+        public long LocationQueryId { get; set; }
+
+        public string LocationResultId { get; set; }
 
         public PaintEntity Clone()
         {

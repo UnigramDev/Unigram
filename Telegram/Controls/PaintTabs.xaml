@@ -104,6 +104,26 @@
                                                    Margin="4,0,0,0" />
                                     </StackPanel>
                                 </Button>
+                                <Button x:Name="LocationWidget"
+                                        Click="LocationWidget_Click"
+                                        VerticalAlignment="Stretch"
+                                        Padding="8,4,8,4"
+                                        Margin="0,0,8,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE9F0;"
+                                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                   FontSize="20"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,4,0" />
+                                        <TextBlock x:Name="LocationWidgetText"
+                                                   FontFamily="Bahnschrift"
+                                                   FontStretch="Condensed"
+                                                   FontWeight="Bold"
+                                                   FontSize="16"
+                                                   TextLineBounds="Tight"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
                                 <Button x:Name="WeatherWidget"
                                         Click="WeatherWidget_Click"
                                         VerticalAlignment="Stretch"

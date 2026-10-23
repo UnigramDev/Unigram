@@ -6147,6 +6147,7 @@
     <string name="StoryCancelTooLate">This story has finished uploading and will be posted.</string>
     <string name="StoryReactionsWidgetLimit2_other">You can’t add up more than {0} reactions tags to a story.</string>
     <string name="StoryWidgetLink">Link</string>
+    <string name="StoryWidgetLocation">Location</string>
     <string name="StoryLinkCreate">Create Link</string>
     <string name="StoryLinkAdd">Add Link</string>
     <string name="StoryLinkEdit">Update Link</string>

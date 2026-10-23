@@ -224,6 +224,7 @@
       <DependentUpon>PaintEntityLayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PaintLinkVisual.cs" />
+    <Compile Include="Controls\PaintLocationVisual.cs" />
     <Compile Include="Controls\PaintTabs.xaml.cs">
       <DependentUpon>PaintTabs.xaml</DependentUpon>
     </Compile>

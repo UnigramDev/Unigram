@@ -101,7 +101,8 @@
 
 
                         <Border Visibility="{x:Bind ViewModel.Items.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                            <TextBlock Text="{CustomResource NearbyPlaces}"
+                            <TextBlock x:Name="NearbyHeader"
+                                       Text="{CustomResource NearbyPlaces}"
                                        Padding="12,8,0,0"
                                        Style="{StaticResource BaseTextBlockStyle}" />
                         </Border>

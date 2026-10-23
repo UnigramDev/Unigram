@@ -113,6 +113,10 @@ namespace Telegram.Controls
 
         private const float WeatherMaximumScale = 1.5f;
         private const float LinkMaximumScale = 1.5f;
+        private const float LocationMaximumScale = 1.5f;
+
+        // The most places a story's areas take.
+        private const int MaximumLocations = 10;
 
         private static readonly double[] StickyAngles = { -Math.PI / 2, 0, Math.PI / 2, Math.PI, -Math.PI };
 
@@ -121,10 +125,11 @@ namespace Telegram.Controls
         private readonly Dictionary<PaintEntity, Border> _elements = new();
         private readonly Dictionary<PaintEntity, float> _rasters = new();
 
-        // A link's layout and its preview's photo, on Win2D's shared device, which the elements'
-        // canvases draw with too.
+        // A link's layout and its preview's photo, and a venue's layout, on Win2D's shared device,
+        // which the elements' canvases draw with too.
         private readonly Dictionary<PaintEntity, PaintLinkVisual> _links = new();
-        private readonly Dictionary<PaintEntity, CanvasBitmap> _linkPhotos = new();
+        private readonly Dictionary<PaintEntity, PaintLocationVisual> _locations = new();
+        private readonly Dictionary<PaintEntity, CanvasBitmap> _widgetImages = new();
         private List<PaintEntity> _saved = new();
 
         private readonly Stopwatch _clock = Stopwatch.StartNew();
@@ -194,10 +199,10 @@ namespace Telegram.Controls
         public event EventHandler<PaintEntityEventArgs> EntityDeleted;
 
         /// <summary>
-        /// Raised for a link the person asks to edit, which is done outside this layer and then
-        /// handed to <see cref="RefreshLink"/>.
+        /// Raised for a link or a place the person asks to edit, which is done outside this layer
+        /// and then handed to <see cref="RefreshWidget"/>.
         /// </summary>
-        public event EventHandler<PaintEntityEventArgs> LinkEditRequested;
+        public event EventHandler<PaintEntityEventArgs> EditRequested;
 
         public PaintEntity Selected => _selected;
 
@@ -289,7 +294,7 @@ namespace Telegram.Controls
                 DetachElement(element);
             }
 
-            ClearLinks();
+            ClearWidgets();
 
             _entities.Clear();
             _visuals.Clear();
@@ -461,6 +466,13 @@ namespace Telegram.Controls
                 bounds = new Rect(0, 0, size.X, size.Y);
                 return true;
             }
+            else if (entity.Type == PaintEntityType.Location)
+            {
+                var size = GetLocationVisual(entity).Size * PaintLocationVisual.Unit;
+
+                bounds = new Rect(0, 0, size.X, size.Y);
+                return true;
+            }
 
             var visual = GetVisual(entity);
             bounds = visual?.Bounds ?? default;
@@ -502,6 +514,7 @@ namespace Telegram.Controls
                 PaintEntityType.Reaction => Math.Clamp(scale, ReactionMinimumScale, ReactionMaximumScale),
                 PaintEntityType.Weather => Math.Clamp(scale, MinimumScale, WeatherMaximumScale),
                 PaintEntityType.Link => Math.Clamp(scale, MinimumScale, LinkMaximumScale),
+                PaintEntityType.Location => Math.Clamp(scale, MinimumScale, LocationMaximumScale),
                 _ => Math.Clamp(scale, MinimumScale, MaximumScale)
             };
         }
@@ -735,10 +748,7 @@ namespace Telegram.Controls
             _elements[entity] = element;
             Objects.Children.Add(element);
 
-            if (entity.Type == PaintEntityType.Link)
-            {
-                LoadLinkPhoto(entity);
-            }
+            LoadWidgetImage(entity);
 
             UpdateElement(entity, true);
             Canvas.Invalidate();
@@ -759,83 +769,113 @@ namespace Telegram.Controls
             return visual;
         }
 
-        private async void LoadLinkPhoto(PaintEntity entity)
+        private PaintLocationVisual GetLocationVisual(PaintEntity entity)
         {
-            if (ClientService == null || string.IsNullOrEmpty(entity.LinkPhotoRemoteId))
+            if (_locations.TryGetValue(entity, out PaintLocationVisual visual))
+            {
+                return visual;
+            }
+
+            visual = PaintLocationVisual.Create(CanvasDevice.GetSharedDevice(), entity);
+            entity.WidgetSize = visual.Size;
+
+            _locations[entity] = visual;
+            return visual;
+        }
+
+        // A link preview's photo: drawn once it is in.
+        private async void LoadWidgetImage(PaintEntity entity)
+        {
+            if (ClientService == null || entity.Type != PaintEntityType.Link)
             {
                 return;
             }
 
-            if (!await PaintEntityRenderer.LoadLinkPhotoFileAsync(ClientService, entity))
-            {
-                return;
-            }
-
-            CanvasBitmap bitmap;
+            CanvasBitmap bitmap = null;
 
             try
             {
-                bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), entity.LinkPhotoFile.Local.Path);
+                if (await PaintEntityRenderer.LoadLinkPhotoFileAsync(ClientService, entity))
+                {
+                    bitmap = await CanvasBitmap.LoadAsync(CanvasDevice.GetSharedDevice(), entity.LinkPhotoFile.Local.Path);
+                }
             }
             catch
+            {
+                // Drawn without it.
+            }
+
+            if (bitmap == null)
             {
                 return;
             }
 
-            // Taken away, or edited to another photo, while it loaded.
-            if (!_elements.ContainsKey(entity) || _linkPhotos.ContainsKey(entity))
+            // Taken away, or edited to another one, while it loaded.
+            if (!_elements.ContainsKey(entity) || _widgetImages.ContainsKey(entity))
             {
                 bitmap.Dispose();
                 return;
             }
 
-            _linkPhotos[entity] = bitmap;
+            _widgetImages[entity] = bitmap;
             Invalidate(entity);
         }
 
-        private void ReleaseLink(PaintEntity entity)
+        private void ReleaseWidget(PaintEntity entity)
         {
-            if (_links.TryGetValue(entity, out PaintLinkVisual visual))
+            if (_links.TryGetValue(entity, out PaintLinkVisual link))
             {
-                visual.Dispose();
+                link.Dispose();
                 _links.Remove(entity);
             }
 
-            if (_linkPhotos.TryGetValue(entity, out CanvasBitmap photo))
+            if (_locations.TryGetValue(entity, out PaintLocationVisual location))
             {
-                photo.Dispose();
-                _linkPhotos.Remove(entity);
+                location.Dispose();
+                _locations.Remove(entity);
+            }
+
+            if (_widgetImages.TryGetValue(entity, out CanvasBitmap image))
+            {
+                image.Dispose();
+                _widgetImages.Remove(entity);
             }
         }
 
-        private void ClearLinks()
+        private void ClearWidgets()
         {
-            foreach (var visual in _links.Values)
+            foreach (var link in _links.Values)
             {
-                visual.Dispose();
+                link.Dispose();
             }
 
-            foreach (var photo in _linkPhotos.Values)
+            foreach (var location in _locations.Values)
             {
-                photo.Dispose();
+                location.Dispose();
+            }
+
+            foreach (var image in _widgetImages.Values)
+            {
+                image.Dispose();
             }
 
             _links.Clear();
-            _linkPhotos.Clear();
+            _locations.Clear();
+            _widgetImages.Clear();
         }
 
         /// <summary>
-        /// Lays a link out again after its address, text or preview changed.
+        /// Lays a link or a place out again after it was edited.
         /// </summary>
-        public void RefreshLink(PaintEntity entity)
+        public void RefreshWidget(PaintEntity entity)
         {
             if (!_elements.ContainsKey(entity))
             {
                 return;
             }
 
-            ReleaseLink(entity);
-            LoadLinkPhoto(entity);
+            ReleaseWidget(entity);
+            LoadWidgetImage(entity);
 
             UpdateElement(entity, true);
             Invalidate(entity);
@@ -895,7 +935,7 @@ namespace Telegram.Controls
                 _visuals.Remove(entity);
             }
 
-            ReleaseLink(entity);
+            ReleaseWidget(entity);
 
             if (_elements.TryGetValue(entity, out Border element))
             {
@@ -1244,11 +1284,49 @@ namespace Telegram.Controls
                 _selected.LinkDark = !_selected.LinkDark;
                 Invalidate(_selected);
             }
-            else if (_selected?.Type is PaintEntityType.Weather or PaintEntityType.Link)
+            else if (_selected?.Type is PaintEntityType.Weather or PaintEntityType.Link or PaintEntityType.Location)
             {
                 _selected.WidgetStyle = (PaintWidgetStyle)(((int)_selected.WidgetStyle + 1) % 3);
                 Invalidate(_selected);
             }
+        }
+
+        /// <summary>
+        /// Places a place where the view is looking, as large as the other clients first show it.
+        /// </summary>
+        public void AddLocation(PaintEntity entity)
+        {
+            EndEditing();
+
+            if (CountOf(PaintEntityType.Location) >= MaximumLocations || !TryGetPlacement(out Vector2 position, out float scale))
+            {
+                return;
+            }
+
+            entity.Type = PaintEntityType.Location;
+            entity.Position = position;
+            entity.Rotation = GetRotation(0);
+            entity.Scale = Math.Min(scale, LocationMaximumScale);
+
+            AddEntity(entity);
+            EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
+
+            Select(entity);
+        }
+
+        private int CountOf(PaintEntityType type)
+        {
+            var count = 0;
+
+            foreach (var entity in _entities)
+            {
+                if (entity.Type == type)
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         /// <summary>
@@ -1297,11 +1375,11 @@ namespace Telegram.Controls
             return false;
         }
 
-        private void EditSelectedLink()
+        private void EditSelectedWidget()
         {
-            if (_selected?.Type == PaintEntityType.Link)
+            if (_selected?.Type is PaintEntityType.Link or PaintEntityType.Location)
             {
-                LinkEditRequested?.Invoke(this, new PaintEntityEventArgs(_selected));
+                EditRequested?.Invoke(this, new PaintEntityEventArgs(_selected));
             }
         }
 
@@ -1392,7 +1470,10 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (source.Type == PaintEntityType.Weather || (source.Type == PaintEntityType.Reaction && !CanAddReaction()) || (source.Type == PaintEntityType.Link && !CanAddLink()))
+            if (source.Type == PaintEntityType.Weather
+                || (source.Type == PaintEntityType.Reaction && !CanAddReaction())
+                || (source.Type == PaintEntityType.Link && !CanAddLink())
+                || (source.Type == PaintEntityType.Location && CountOf(PaintEntityType.Location) >= MaximumLocations))
             {
                 return;
             }
@@ -1660,9 +1741,9 @@ namespace Telegram.Controls
                 // The reactions to choose from go above the menu, as over a message's.
                 flyout.Opened += ReactionMenu_Opened;
             }
-            else if (entity.Type == PaintEntityType.Link)
+            else if (entity.Type is PaintEntityType.Link or PaintEntityType.Location)
             {
-                flyout.CreateFlyoutItem(EditSelectedLink, Strings.PaintEdit, Icons.Edit);
+                flyout.CreateFlyoutItem(EditSelectedWidget, Strings.PaintEdit, Icons.Edit);
             }
 
             // A story takes one weather.
@@ -1999,14 +2080,14 @@ namespace Telegram.Controls
                 }
                 else if (_pressedSelected && (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse || _clock.Elapsed.TotalMilliseconds - _pressTime < MenuDelay))
                 {
-                    // A second tap writes in a text and turns the weather or a link to its next fill;
-                    // anything else gets its menu. A long press is left to RightTapped, or the menu
-                    // would open twice.
+                    // A second tap writes in a text and turns the weather, a link or a place to its
+                    // next fill; anything else gets its menu. A long press is left to RightTapped,
+                    // or the menu would open twice.
                     if (_selected.Type == PaintEntityType.Text)
                     {
                         BeginEditing(_selected);
                     }
-                    else if (_selected.Type is PaintEntityType.Weather or PaintEntityType.Link)
+                    else if (_selected.Type is PaintEntityType.Weather or PaintEntityType.Link or PaintEntityType.Location)
                     {
                         CycleSelectedStyle();
                     }
@@ -2670,10 +2751,15 @@ namespace Telegram.Controls
             }
             else if (entity.Type == PaintEntityType.Link)
             {
-                _linkPhotos.TryGetValue(entity, out CanvasBitmap photo);
+                _widgetImages.TryGetValue(entity, out CanvasBitmap photo);
 
                 session.Transform = Matrix3x2.CreateScale(PaintLinkVisual.Unit) * session.Transform;
                 GetLinkVisual(entity).Draw(session, entity, photo);
+            }
+            else if (entity.Type == PaintEntityType.Location)
+            {
+                session.Transform = Matrix3x2.CreateScale(PaintLocationVisual.Unit) * session.Transform;
+                GetLocationVisual(entity).Draw(session, entity);
             }
             else if (GetVisual(entity) is PaintTextVisual visual)
             {
@@ -3618,7 +3704,7 @@ namespace Telegram.Controls
         /// </summary>
         public static bool IsWidget(PaintEntity entity)
         {
-            return entity.Type is PaintEntityType.Reaction or PaintEntityType.Weather or PaintEntityType.Link;
+            return entity.Type is PaintEntityType.Reaction or PaintEntityType.Weather or PaintEntityType.Link or PaintEntityType.Location;
         }
 
         /// <summary>
@@ -3848,6 +3934,19 @@ namespace Telegram.Controls
 
                     session.Transform = Matrix3x2.CreateScale(PaintLinkVisual.Unit) * GetTransform(entity, new Rect(0, 0, size.X, size.Y), imageSize, mirrored) * previous;
                     link.Draw(session, entity, photo);
+                    session.Transform = previous;
+
+                    continue;
+                }
+                else if (entity.Type == PaintEntityType.Location)
+                {
+                    using var location = PaintLocationVisual.Create(session, entity);
+
+                    var size = location.Size * PaintLocationVisual.Unit;
+                    var previous = session.Transform;
+
+                    session.Transform = Matrix3x2.CreateScale(PaintLocationVisual.Unit) * GetTransform(entity, new Rect(0, 0, size.X, size.Y), imageSize, mirrored) * previous;
+                    location.Draw(session, entity);
                     session.Transform = previous;
 
                     continue;

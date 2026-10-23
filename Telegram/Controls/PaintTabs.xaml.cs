@@ -16,13 +16,17 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
+using Telegram.Views.Popups;
 using Telegram.Views.Stories.Popups;
+using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media.Imaging;
+using System;
 
 namespace Telegram.Controls
 {
@@ -61,7 +65,7 @@ namespace Telegram.Controls
             _surface = surface;
             _clientService = clientService;
 
-            _surface.Entities.LinkEditRequested += Entities_LinkEditRequested;
+            _surface.Entities.EditRequested += Entities_EditRequested;
         }
 
         public void Deactivate()
@@ -72,7 +76,7 @@ namespace Telegram.Controls
 
             if (_surface != null)
             {
-                _surface.Entities.LinkEditRequested -= Entities_LinkEditRequested;
+                _surface.Entities.EditRequested -= Entities_EditRequested;
             }
         }
 
@@ -160,6 +164,9 @@ namespace Telegram.Controls
                         : Visibility.Visible;
 
                     AutomationProperties.SetName(LinkWidget, Strings.StoryWidgetLink);
+
+                    LocationWidgetText.Text = Strings.StoryWidgetLocation.ToUpper();
+                    AutomationProperties.SetName(LocationWidget, Strings.StoryWidgetLocation);
                     WeatherWidget.Visibility = _surface.Entities.HasAny(PaintEntityType.Weather)
                         ? Visibility.Collapsed
                         : Visibility.Visible;
@@ -362,16 +369,88 @@ namespace Telegram.Controls
             }
         }
 
-        private async void Entities_LinkEditRequested(object sender, PaintEntityEventArgs e)
+        private async void LocationWidget_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new StoryLinkPopup(_clientService, e.Entity);
+            StickerFlyout.Hide();
 
-            var confirm = await WindowContext.GetNavigationService(this).ShowPopupAsync(popup, requestedTheme: ElementTheme.Dark);
+            var navigationService = WindowContext.GetNavigationService(this);
+            var popup = new SendLocationPopup(_clientService.Session, await GetMediaLocationAsync(_surface.Media?.File));
+
+            var confirm = await navigationService.ShowPopupAsync(popup, requestedTheme: ElementTheme.Dark);
             if (confirm == ContentDialogResult.Primary)
             {
-                popup.ApplyTo(e.Entity);
-                _surface.Entities.RefreshLink(e.Entity);
+                // Its first fill, on the other clients too.
+                var location = new PaintEntity
+                {
+                    WidgetStyle = PaintWidgetStyle.Black
+                };
+
+                popup.ApplyTo(location);
+                _surface.Entities.AddLocation(location);
             }
+        }
+
+        private async void Entities_EditRequested(object sender, PaintEntityEventArgs e)
+        {
+            var navigationService = WindowContext.GetNavigationService(this);
+            var entity = e.Entity;
+
+            if (entity.Type == PaintEntityType.Link)
+            {
+                var popup = new StoryLinkPopup(_clientService, entity);
+                if (await navigationService.ShowPopupAsync(popup, requestedTheme: ElementTheme.Dark) == ContentDialogResult.Primary)
+                {
+                    popup.ApplyTo(entity);
+                    _surface.Entities.RefreshWidget(entity);
+                }
+            }
+            else if (entity.Type == PaintEntityType.Location)
+            {
+                var popup = new SendLocationPopup(_clientService.Session, new Location(entity.LocationLatitude, entity.LocationLongitude, 0));
+                if (await navigationService.ShowPopupAsync(popup, requestedTheme: ElementTheme.Dark) == ContentDialogResult.Primary)
+                {
+                    popup.ApplyTo(entity);
+                    _surface.Entities.RefreshWidget(entity);
+                }
+            }
+        }
+
+        // Where the media was taken, as its tags say, or null to start from the device.
+        private static async Task<Location> GetMediaLocationAsync(StorageFile file)
+        {
+            if (file == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                double? latitude, longitude;
+
+                if (file.HasExtension(Constants.VideoTypes))
+                {
+                    var properties = await file.Properties.GetVideoPropertiesAsync();
+                    latitude = properties.Latitude;
+                    longitude = properties.Longitude;
+                }
+                else
+                {
+                    var properties = await file.Properties.GetImagePropertiesAsync();
+                    latitude = properties.Latitude;
+                    longitude = properties.Longitude;
+                }
+
+                if (latitude is double lat && longitude is double lng)
+                {
+                    return new Location(lat, lng, 0);
+                }
+            }
+            catch
+            {
+                // Read as untagged.
+            }
+
+            return null;
         }
 
         private void ReactionWidget_Click(object sender, RoutedEventArgs e)

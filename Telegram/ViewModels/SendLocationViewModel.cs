@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Navigation;
@@ -31,10 +32,27 @@ namespace Telegram.ViewModels
         {
             if (_location != null)
             {
-                return new VenueCollection(_locationService, _location.Latitude, _location.Longitude, query);
+                return new VenueCollection(_locationService, _location.Latitude, _location.Longitude, query, _results);
             }
 
             return null;
+        }
+
+        // Each venue's inline query and result in it, which a story area names a found venue by.
+        private readonly Dictionary<Venue, VenueResult> _results = new();
+
+        public bool TryGetResult(Venue venue, out long queryId, out string resultId)
+        {
+            if (_results.TryGetValue(venue, out VenueResult result))
+            {
+                queryId = result.QueryId;
+                resultId = result.ResultId;
+                return true;
+            }
+
+            queryId = 0;
+            resultId = null;
+            return false;
         }
 
         private Location _location;
@@ -52,20 +70,35 @@ namespace Telegram.ViewModels
         }
     }
 
+    public sealed partial class VenueResult
+    {
+        public VenueResult(long queryId, string resultId)
+        {
+            QueryId = queryId;
+            ResultId = resultId;
+        }
+
+        public long QueryId { get; }
+
+        public string ResultId { get; }
+    }
+
     public partial class VenueCollection : IncrementalCollection<Venue>
     {
         private readonly ILocationService _locationService;
         private readonly double _latitude;
         private readonly double _longitude;
         private readonly string _query;
+        private readonly Dictionary<Venue, VenueResult> _results;
 
         private string _nextOffset;
-        public VenueCollection(ILocationService locationService, double latitude, double longitude, string query)
+        public VenueCollection(ILocationService locationService, double latitude, double longitude, string query, Dictionary<Venue, VenueResult> results)
         {
             _locationService = locationService;
             _latitude = latitude;
             _longitude = longitude;
             _query = query;
+            _results = results;
         }
 
         protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
@@ -74,8 +107,15 @@ namespace Telegram.ViewModels
 
             var response = await _locationService.GetVenuesAsync(0, _latitude, _longitude, _query, _nextOffset);
 
-            foreach (var item in response.Venues)
+            for (int i = 0; i < response.Venues.Count; i++)
             {
+                var item = response.Venues[i];
+
+                if (response.ResultIds != null && i < response.ResultIds.Count)
+                {
+                    _results[item] = new VenueResult(response.QueryId, response.ResultIds[i]);
+                }
+
                 Add(item);
                 totalCount++;
             }

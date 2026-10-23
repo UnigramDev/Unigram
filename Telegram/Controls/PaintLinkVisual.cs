@@ -116,7 +116,7 @@ namespace Telegram.Controls
 
             var chrome = LabelPaddingLeft + IconSize + IconPadding + LabelPaddingRight;
 
-            _label = CreateLine(creator, text, "Bahnschrift", FontWeights.Bold, FontStretch.Condensed, 24, MaxWidth - chrome);
+            _label = CreateLabelLine(creator, text, MaxWidth - chrome);
 
             using (var geometry = CompositionPathParser.Parse(creator, IconData))
             {
@@ -126,15 +126,31 @@ namespace Telegram.Controls
             var width = chrome + (float)Math.Min(_label.LayoutBounds.Width, MaxWidth - chrome);
             var height = LabelPaddingTop + LabelPaddingBottom + Math.Max(IconSize, LabelLineHeight);
 
-            // Centred by its capitals, from cap height to baseline, whatever the font's own line.
-            using var capitals = CreateLine(creator, "H", "Bahnschrift", FontWeights.Bold, FontStretch.Condensed, 24, MaxWidth);
+            _labelTop = GetCapitalsTop(creator, height / 2);
+
+            Size = new Vector2(width, height);
+        }
+
+        /// <summary>
+        /// Where a line of the labels' text goes for its capitals, from cap height to baseline, to
+        /// be centred on <paramref name="middle"/>, whatever the font's own line.
+        /// </summary>
+        internal static float GetCapitalsTop(ICanvasResourceCreator creator, float middle)
+        {
+            using var capitals = CreateLabelLine(creator, "H", float.PositiveInfinity);
 
             var baseline = capitals.LineMetrics[0].Baseline;
             var capHeight = baseline - (float)capitals.DrawBounds.Top;
 
-            _labelTop = height / 2 - baseline + capHeight / 2;
+            return middle - baseline + capHeight / 2;
+        }
 
-            Size = new Vector2(width, height);
+        /// <summary>
+        /// A line in the labels' typeface, trimmed to <paramref name="maxWidth"/>.
+        /// </summary>
+        internal static CanvasTextLayout CreateLabelLine(ICanvasResourceCreator creator, string text, float maxWidth)
+        {
+            return CreateLine(creator, text, "Bahnschrift", FontWeights.Bold, FontStretch.Condensed, 24, maxWidth);
         }
 
         private void LayoutCard(ICanvasResourceCreator creator, PaintEntity entity)
