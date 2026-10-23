@@ -713,6 +713,12 @@ namespace Telegram.Controls
                 _xamlRoot.Changed -= OnXamlRootChanged;
             }
 
+            if (_resizeBatch != null)
+            {
+                _resizeBatch.Completed -= OnResizeAnimationCompleted;
+                _resizeBatch = null;
+            }
+
             if (animate && _entered && !(_chromeHidden && _smokeHidden))
             {
                 PlayCloseAnimation();
@@ -1250,7 +1256,8 @@ namespace Telegram.Controls
 
             _cardGeometry.Offset = new Vector2(thickness, thickness);
             _cardGeometry.CornerRadius = new Vector2(radius, radius);
-            _cardGeometry.Size = new Vector2(size.X - thickness * 2, size.Y - thickness * 2);
+            // A geometry's Size setter throws on a negative value rather than clamping it.
+            _cardGeometry.Size = Vector2.Max(Vector2.Zero, new Vector2(size.X - thickness * 2, size.Y - thickness * 2));
 
             // A ShapeVisual clips to its own Size, and the card is drawn beyond the element's
             // bounds while a shrink is running.
