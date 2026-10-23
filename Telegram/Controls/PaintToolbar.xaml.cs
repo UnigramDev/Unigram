@@ -92,6 +92,15 @@ namespace Telegram.Controls
 
         public void Open()
         {
+            Resume();
+            ResetHistory();
+        }
+
+        /// <summary>
+        /// Shows the tools again after <see cref="Suspend"/>, with the undo history as it was.
+        /// </summary>
+        public void Resume()
+        {
             Canvas.IsEnabled = true;
             Entities.IsHitTestVisible = true;
 
@@ -102,16 +111,29 @@ namespace Telegram.Controls
             Canvas.EraserThickness = PencilTools.GetThickness(PencilTool.Eraser, AppSettings.Pencil.GetWeight(PencilTool.Eraser));
             SelectTool(_tool);
             _surface.LoadBlurSource();
+        }
 
-            ResetHistory();
+        /// <summary>
+        /// Hides the tools and leaves what was drawn and placed alone, undo history included, for
+        /// another mode of the editor to take over until <see cref="Resume"/>.
+        /// </summary>
+        public void Suspend()
+        {
+            Entities.Deselect();
+            Close();
+        }
+
+        // Keeps what was drawn and placed so far, the tools staying open.
+        public void Save()
+        {
+            Canvas.SaveState();
+            Entities.SaveState();
         }
 
         // Keeps what was drawn and placed since Open.
         public void Commit()
         {
-            Canvas.SaveState();
-            Entities.SaveState();
-
+            Save();
             Close();
         }
 

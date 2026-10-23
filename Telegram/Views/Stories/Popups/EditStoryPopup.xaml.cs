@@ -88,6 +88,9 @@ namespace Telegram.Views.Stories.Popups
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            // Before the media, so the editor never shows the crop tools first.
+            ShowDrawTools();
+
             await Surface.Cropper.SetSourceAsync(_media.File, proportions: BitmapProportions.NineOverSixteen);
         }
 
@@ -106,7 +109,7 @@ namespace Telegram.Views.Stories.Popups
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs args)
         {
-            if (TrimToolbar?.Visibility == Visibility.Visible && args.Key == VirtualKey.Space)
+            if (TrimToolbar?.Visibility == Visibility.Visible && args.Key == VirtualKey.Space && !Surface.Entities.IsEditorFocused)
             {
                 Surface.Player?.Toggle();
                 args.Handled = true;
@@ -126,10 +129,9 @@ namespace Telegram.Views.Stories.Popups
                 Accept_Click(null, null);
                 args.Handled = true;
             }
-            // Draw mode, which the tabs mark: the toolbar itself hides while a sticker is selected.
-            else if (PaintTabs?.Visibility == Visibility.Visible)
+            else if (!Surface.Cropper.IsCropEnabled && PaintToolbar.ProcessKeyboardAccelerator(args.Key, args.Modifiers))
             {
-                args.Handled = PaintToolbar.ProcessKeyboardAccelerator(args.Key, args.Modifiers);
+                args.Handled = true;
             }
             else if (TrimToolbar?.Visibility == Visibility.Visible && TrimToolbar.ProcessKeyboardAccelerator(args.Key, args.Modifiers))
             {
@@ -137,12 +139,17 @@ namespace Telegram.Views.Stories.Popups
             }
             else if (args.Key == VirtualKey.R && args.Modifiers == VirtualKeyModifiers.Control)
             {
+                if (!Surface.Cropper.IsCropEnabled)
+                {
+                    ShowCropTools();
+                }
+
                 Rotate_Click(null, null);
                 args.Handled = true;
             }
-            else if (args.Key == VirtualKey.D && args.Modifiers == VirtualKeyModifiers.Control)
+            else if (args.Key == VirtualKey.D && args.Modifiers == VirtualKeyModifiers.Control && Surface.Cropper.IsCropEnabled)
             {
-                Draw_Click(null, null);
+                ShowDrawTools();
                 args.Handled = true;
             }
         }
@@ -161,78 +168,78 @@ namespace Telegram.Views.Stories.Popups
         {
             if (Surface.Cropper.IsCropEnabled)
             {
-                // Waiting for the files below leaves room for a second press.
-                if (_accepting)
-                {
-                    return;
-                }
-
-                _accepting = true;
-
-                var entities = Surface.Entities.Items;
-
-                if (_clientService != null)
-                {
-                    await PaintEntityRenderer.LoadFilesAsync(_clientService, entities);
-                }
-
-                TimeSpan trimStartTime = default;
-                TimeSpan trimStopTime = default;
-
-                if (TrimToolbar != null)
-                {
-                    trimStartTime = TrimToolbar.TrimStartTime;
-                    trimStopTime = TrimToolbar.TrimStopTime;
-                }
-
-                _media.EditState = new ImageGeneration
-                {
-                    Rectangle = Surface.Cropper.CropRectangle,
-                    Proportions = Surface.Cropper.Proportions,
-                    Strokes = Surface.Canvas.Strokes,
-                    Entities = entities,
-                    Flip = Surface.Cropper.Flip,
-                    Rotation = Surface.Cropper.Orientation,
-                    Angle = Surface.Cropper.Angle,
-                    TrimStartTime = trimStartTime,
-                    TrimStopTime = trimStopTime,
-                    FrameSize = FrameSize,
-                    FrameTopColor = Surface.FrameTopColor,
-                    FrameBottomColor = Surface.FrameBottomColor
-                };
-
-                if (_media is StorageVideo video && TrimToolbar?.CanMute == true)
-                {
-                    video.IsMuted = TrimToolbar.IsMuted;
-                }
-
-                // Over the editor rather than after it, so that backing out of it is going back to
-                // editing.
-                _postOptions ??= new PostStoryPopup(_clientService, _navigationService);
-
-                // Paused under the sheet, and resumed only on going back to editing.
-                var playing = Surface.Player?.IsPlaying == true;
-                if (playing)
-                {
-                    Surface.Player.Pause(true);
-                }
-
-                var confirm = await _navigationService.ShowPopupAsync(_postOptions, requestedTheme: ElementTheme.Dark);
-                _accepting = false;
-
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    Hide(ContentDialogResult.Primary);
-                }
-                else if (playing)
-                {
-                    Surface.Player?.Pause(false);
-                }
+                ShowDrawTools();
+                return;
             }
-            else
+
+            // Waiting for the files below leaves room for a second press.
+            if (_accepting)
             {
-                PaintToolbar.Commit();
-                ShowCropTools();
+                return;
+            }
+
+            _accepting = true;
+
+            PaintToolbar.Save();
+
+            var entities = Surface.Entities.Items;
+
+            if (_clientService != null)
+            {
+                await PaintEntityRenderer.LoadFilesAsync(_clientService, entities);
+            }
+
+            TimeSpan trimStartTime = default;
+            TimeSpan trimStopTime = default;
+
+            if (TrimToolbar != null)
+            {
+                trimStartTime = TrimToolbar.TrimStartTime;
+                trimStopTime = TrimToolbar.TrimStopTime;
+            }
+
+            _media.EditState = new ImageGeneration
+            {
+                Rectangle = Surface.Cropper.CropRectangle,
+                Proportions = Surface.Cropper.Proportions,
+                Strokes = Surface.Canvas.Strokes,
+                Entities = entities,
+                Flip = Surface.Cropper.Flip,
+                Rotation = Surface.Cropper.Orientation,
+                Angle = Surface.Cropper.Angle,
+                TrimStartTime = trimStartTime,
+                TrimStopTime = trimStopTime,
+                FrameSize = FrameSize,
+                FrameTopColor = Surface.FrameTopColor,
+                FrameBottomColor = Surface.FrameBottomColor
+            };
+
+            if (_media is StorageVideo video && TrimToolbar?.CanMute == true)
+            {
+                video.IsMuted = TrimToolbar.IsMuted;
+            }
+
+            // Over the editor rather than after it, so that backing out of it is going back to
+            // editing.
+            _postOptions ??= new PostStoryPopup(_clientService, _navigationService);
+
+            // Paused under the sheet, and resumed only on going back to editing.
+            var playing = Surface.Player?.IsPlaying == true;
+            if (playing)
+            {
+                Surface.Player.Pause(true);
+            }
+
+            var confirm = await _navigationService.ShowPopupAsync(_postOptions, requestedTheme: ElementTheme.Dark);
+            _accepting = false;
+
+            if (confirm == ContentDialogResult.Primary)
+            {
+                Hide(ContentDialogResult.Primary);
+            }
+            else if (playing)
+            {
+                Surface.Player?.Pause(false);
             }
         }
 
@@ -240,25 +247,61 @@ namespace Telegram.Views.Stories.Popups
         {
             if (Surface.Cropper.IsCropEnabled)
             {
-                Hide(ContentDialogResult.Secondary);
+                Surface.Cropper.RestoreState();
+                ShowDrawTools();
+
+                // Going back to drawing, not leaving the editor.
+                Cancel();
             }
             else
             {
-                PaintToolbar.Revert();
-                ShowCropTools();
-
-                Cancel();
+                Hide(ContentDialogResult.Secondary);
             }
+        }
+
+        // The editor's main screen. The crop is a mode entered from it, whose Done and Cancel come
+        // back here.
+        private void ShowDrawTools()
+        {
+            Surface.Cropper.IsCropEnabled = false;
+
+            CropToolbar.Visibility = Visibility.Collapsed;
+            BasicToolbar.Visibility = Visibility.Collapsed;
+
+            if (PaintToolbar == null)
+            {
+                FindName(nameof(PaintToolbar));
+                FindName(nameof(PaintTabs));
+
+                PaintToolbar.Attach(Surface, PaintTabs, _clientService);
+                PaintToolbar.Open();
+            }
+            else
+            {
+                PaintToolbar.Resume();
+            }
+
+            PaintTabs.Visibility = Visibility.Visible;
+            Crop.Visibility = Visibility.Visible;
         }
 
         private void ShowCropTools()
         {
+            // The drawing stays as it is: the crop moves the media under it.
+            PaintToolbar.Suspend();
+
+            Surface.Cropper.SaveState();
             Surface.Cropper.IsCropEnabled = true;
 
             CropToolbar.Visibility = Visibility.Visible;
             BasicToolbar.Visibility = Visibility.Visible;
-            TrimToolbar?.Visibility = Visibility.Visible;
             PaintTabs.Visibility = Visibility.Collapsed;
+            Crop.Visibility = Visibility.Collapsed;
+        }
+
+        private void Crop_Click(object sender, RoutedEventArgs e)
+        {
+            ShowCropTools();
         }
 
         private void Rotate_Click(object sender, RoutedEventArgs e)
@@ -275,26 +318,6 @@ namespace Telegram.Views.Stories.Popups
         {
             Rotate.IsChecked = Surface.Cropper.Orientation != ImageRotation.None;
             Flip.IsChecked = Surface.Cropper.Flip != ImageFlip.None;
-        }
-
-        private void Draw_Click(object sender, RoutedEventArgs e)
-        {
-            Surface.Cropper.IsCropEnabled = false;
-
-            CropToolbar.Visibility = Visibility.Collapsed;
-            BasicToolbar.Visibility = Visibility.Collapsed;
-            TrimToolbar?.Visibility = Visibility.Collapsed;
-
-            if (PaintToolbar == null)
-            {
-                FindName(nameof(PaintToolbar));
-                FindName(nameof(PaintTabs));
-
-                PaintToolbar.Attach(Surface, PaintTabs, _clientService);
-            }
-
-            PaintTabs.Visibility = Visibility.Visible;
-            PaintToolbar.Open();
         }
     }
 }

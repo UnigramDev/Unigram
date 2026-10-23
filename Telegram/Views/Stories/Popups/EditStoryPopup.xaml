@@ -23,6 +23,7 @@
         <controls:MediaEditorSurface x:Name="Surface" />
 
         <controls:CropToolbar x:Name="CropToolbar"
+                              Visibility="Collapsed"
                               Margin="12,0,12,8"
                               Grid.Row="1" />
 
@@ -49,6 +50,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <controls:GlyphButton Click="Cancel_Click"
@@ -64,9 +66,9 @@
                        Grid.Column="1" />
 
             <Grid x:Name="BasicToolbar"
+                  Visibility="Collapsed"
                   Grid.Column="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -86,13 +88,6 @@
                                             AutomationProperties.Name="{CustomResource AccDescrFlip}"
                                             ToolTipService.ToolTip="{CustomResource AccDescrFlip}"
                                             Grid.Column="1" />
-
-                <controls:GlyphButton x:Name="Draw"
-                                      Click="Draw_Click"
-                                      Glyph="&#xEE56;"
-                                      AutomationProperties.Name="{CustomResource AccDescrPhotoEditor}"
-                                      ToolTipService.ToolTip="{CustomResource AccDescrPhotoEditor}"
-                                      Grid.Column="2" />
             </Grid>
 
             <controls:PaintTabs x:Name="PaintTabs"
@@ -100,10 +95,18 @@
                                 ShowsWidgets="True"
                                 Grid.Column="2" />
 
+            <controls:GlyphButton x:Name="Crop"
+                                  Click="Crop_Click"
+                                  Glyph="&#xE7A8;"
+                                  Visibility="Collapsed"
+                                  AutomationProperties.Name="{CustomResource CropImage}"
+                                  ToolTipService.ToolTip="{CustomResource CropImage}"
+                                  Grid.Column="3" />
+
             <Rectangle Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                        Margin="4,12,4,12"
                        Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
-                       Grid.Column="3" />
+                       Grid.Column="4" />
 
             <controls:GlyphButton Click="Accept_Click"
                                   Glyph="&#xE10B;"
@@ -114,7 +117,7 @@
                                   Margin="-4,0,0,0"
                                   AutomationProperties.Name="{CustomResource Next}"
                                   ToolTipService.ToolTip="{CustomResource Next}"
-                                  Grid.Column="4" />
+                                  Grid.Column="5" />
         </Grid>
     </Grid>
 </controls:OverlayWindow>

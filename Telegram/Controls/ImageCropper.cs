@@ -1572,6 +1572,48 @@ namespace Telegram.Controls
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
+        private int m_savedQuarterTurns;
+        private bool m_savedMirrored;
+        private double m_savedAngle;
+        private Point m_savedCenter;
+        private Size m_savedCropSize;
+        private BitmapProportions m_savedProportions;
+
+        /// <summary>
+        /// Remembers the crop, the turns and the mirror for <see cref="RestoreState"/>.
+        /// </summary>
+        public void SaveState()
+        {
+            m_savedQuarterTurns = m_quarterTurns;
+            m_savedMirrored = m_mirrored;
+            m_savedAngle = m_angle;
+            m_savedCenter = m_center;
+            m_savedCropSize = m_cropSize;
+            m_savedProportions = m_proportions;
+        }
+
+        /// <summary>
+        /// Puts back what <see cref="SaveState"/> remembered, at once.
+        /// </summary>
+        public void RestoreState()
+        {
+            if (!m_hasSource)
+            {
+                return;
+            }
+
+            m_quarterTurns = m_savedQuarterTurns;
+            m_mirrored = m_savedMirrored;
+            m_angle = m_savedAngle;
+            m_center = m_savedCenter;
+            m_cropSize = m_savedCropSize;
+            m_proportions = m_savedProportions;
+
+            Refit();
+
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+
         #endregion
 
         #region Proportions
