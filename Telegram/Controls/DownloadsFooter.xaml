@@ -11,7 +11,7 @@
                  MinHeight="40"
                  HorizontalContentAlignment="Stretch"
                  VerticalContentAlignment="Stretch"
-                 HorizontalAlignment="Stretch"
+                 HorizontalAlignment="Center"
                  VerticalAlignment="Top"
                  BorderThickness="0"
                  Padding="0"
@@ -36,38 +36,39 @@
     </HyperlinkButton.Template>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Border x:Name="CardShadow"
-                CornerRadius="20"
-                Grid.ColumnSpan="4" />
-        <Border x:Name="CardBackground"
-                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="1"
-                CornerRadius="20"
-                Grid.ColumnSpan="4" />
+        <Border x:Name="CardShadow" />
 
-        <local:DownloadsIndicator x:Name="Icon"
-                                  Width="40" />
+        <Grid x:Name="Card">
+            <Border x:Name="CardBackground"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                    CornerRadius="20" />
+            <Border x:Name="CardStrokeLeft"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="20" />
+            <Border x:Name="CardStrokeRight"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="20" />
 
-        <local:AnimatedTextBlock x:Name="Count"
-                                 TextStyle="{StaticResource BaseTextBlockStyle}"
-                                 TextWrapping="NoWrap"
-                                 VerticalAlignment="Center"
-                                 Margin="0,0,12,0"
-                                 Grid.Column="1" />
+            <StackPanel x:Name="CardContent"
+                        Orientation="Horizontal">
+                <local:DownloadsIndicator x:Name="Icon"
+                                          Width="40" />
 
-        <TextBlock x:Name="Size"
-                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                   TextWrapping="NoWrap"
-                   Typography.NumeralAlignment="Tabular"
-                   VerticalAlignment="Center"
-                   Margin="0,0,12,0"
-                   Grid.Column="2" />
+                <local:AnimatedTextBlock x:Name="Count"
+                                         TextStyle="{StaticResource BaseTextBlockStyle}"
+                                         TextWrapping="NoWrap"
+                                         VerticalAlignment="Center"
+                                         Margin="0,0,12,0" />
+
+                <TextBlock x:Name="Size"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextWrapping="NoWrap"
+                           Typography.NumeralAlignment="Tabular"
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </HyperlinkButton>
