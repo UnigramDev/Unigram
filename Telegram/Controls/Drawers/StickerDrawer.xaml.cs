@@ -56,6 +56,8 @@ namespace Telegram.Controls.Drawers
 
         private bool _isActive;
 
+        private UIElement _header;
+
         public StickerDrawer()
         {
             InitializeComponent();
@@ -368,6 +370,19 @@ namespace Telegram.Controls.Drawers
             }
         }
 
+        /// <summary>
+        /// Shown under the search box and scrolled with the stickers, while nothing is searched.
+        /// </summary>
+        public UIElement Header
+        {
+            get => _header;
+            set
+            {
+                _header = value;
+                HeaderRoot.Child = value;
+            }
+        }
+
         private void SearchField_TextChanged(object sender, TextChangedEventArgs e)
         {
             // Clearing the field is instant; only a query worth sending waits out the debounce,
@@ -440,6 +455,11 @@ namespace Telegram.Controls.Drawers
 
             SearchField.SetLoading(loading);
             ShowHideEmpty(false);
+
+            if (loading)
+            {
+                HeaderRoot.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void EndSearch()
@@ -453,6 +473,10 @@ namespace Telegram.Controls.Drawers
 
             SearchField.SetLoading(false);
             ShowHideEmpty(results is { Count: 0 });
+
+            HeaderRoot.Visibility = results == null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void ShowHideEmpty(bool show)

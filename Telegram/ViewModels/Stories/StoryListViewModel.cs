@@ -310,7 +310,7 @@ namespace Telegram.ViewModels.Stories
                     var content = await StoryFactory.CreateContentAsync(media);
 
                     // Posted as the current user through the Saved Messages chat, whose id is the user's.
-                    var request = new PostStory(ClientService.Options.MyId, content, null, options.Caption, options.PrivacySettings, Vector<int>.Empty, options.ActivePeriod, null, options.IsPostedToChatPage, options.ProtectContent);
+                    var request = new PostStory(ClientService.Options.MyId, content, StoryFactory.CreateAreas(media), options.Caption, options.PrivacySettings, Vector<int>.Empty, options.ActivePeriod, null, options.IsPostedToChatPage, options.ProtectContent);
 
                     var response = await ClientService.SendAsync(request);
                     if (response is Story story)

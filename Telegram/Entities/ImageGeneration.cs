@@ -45,7 +45,12 @@ namespace Telegram.Entities
         /// </summary>
         Animation,
 
-        Shape
+        Shape,
+
+        /// <summary>
+        /// A story's suggested reaction, which viewers draw from its area.
+        /// </summary>
+        Reaction
     }
 
     public enum PaintShapeKind
@@ -106,7 +111,8 @@ namespace Telegram.Entities
         public float Rotation { get; set; }
 
         /// <summary>
-        /// Flipped by the person, which only a sticker can be.
+        /// Flipped by the person, which only a sticker or a reaction can be. A reaction's bubble
+        /// turns its tail to the other side, and the reaction itself stays as it is.
         /// </summary>
         public bool Mirror { get; set; }
 
@@ -176,6 +182,31 @@ namespace Telegram.Entities
         /// where the text wraps.
         /// </summary>
         public float TextSize { get; set; } = 1;
+
+        /// <summary>
+        /// A reaction's emoji, or null for a custom emoji.
+        /// </summary>
+        public string ReactionEmoji { get; set; }
+
+        public long ReactionCustomEmojiId { get; set; }
+
+        /// <summary>
+        /// A reaction on a translucent black bubble rather than a white one.
+        /// </summary>
+        public bool ReactionDark { get; set; }
+
+        public ReactionType GetReactionType()
+        {
+            return ReactionCustomEmojiId != 0
+                ? new ReactionTypeCustomEmoji(ReactionCustomEmojiId)
+                : new ReactionTypeEmoji(ReactionEmoji);
+        }
+
+        public void SetReactionType(ReactionType reaction)
+        {
+            ReactionEmoji = (reaction as ReactionTypeEmoji)?.Emoji;
+            ReactionCustomEmojiId = (reaction as ReactionTypeCustomEmoji)?.CustomEmojiId ?? 0;
+        }
 
         public PaintEntity Clone()
         {

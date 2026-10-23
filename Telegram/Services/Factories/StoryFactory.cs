@@ -6,8 +6,10 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Entities;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -102,6 +104,54 @@ namespace Telegram.Services.Factories
             var input = await GenerationService.PrepareAsync(media.File, ConversionType.Compress, photo);
 
             return new InputStoryContentPhoto(input, MessageFactory.GetAddedStickers(state.Entities));
+        }
+
+        /// <summary>
+        /// The story's clickable areas, from the objects in the edit in
+        /// <see cref="StorageMedia.EditState"/>, or null when there are none.
+        /// </summary>
+        public static InputStoryAreas CreateAreas(StorageMedia media)
+        {
+            var state = media.EditState;
+            if (state?.Entities == null || !state.HasFrame)
+            {
+                return null;
+            }
+
+            List<InputStoryArea> areas = null;
+
+            foreach (var entity in state.Entities)
+            {
+                if (entity.Type == PaintEntityType.Reaction)
+                {
+                    var type = new InputStoryAreaTypeSuggestedReaction(entity.GetReactionType(), entity.ReactionDark, entity.Mirror);
+
+                    areas ??= new List<InputStoryArea>();
+                    areas.Add(new InputStoryArea(GetPosition(entity, PaintEntityRenderer.GetReactionBounds(), state.FrameSize), type));
+                }
+            }
+
+            return areas != null
+                ? new InputStoryAreas(new Vector<InputStoryArea>(areas))
+                : null;
+        }
+
+        // An object laid out in the frame, as shares of the frame: its centre, the size of what it
+        // covers, and its clockwise turn in degrees.
+        private static AreaPosition GetPosition(PaintEntity entity, Rect bounds, Size frame)
+        {
+            // The renderer's units to shares of the frame's width.
+            var scale = entity.Scale / PaintEntityRenderer.Reference;
+
+            var degrees = entity.Rotation * 180 / Math.PI % 360;
+
+            return new AreaPosition(
+                entity.Position.X * 100,
+                entity.Position.Y * 100,
+                bounds.Width * scale * 100,
+                bounds.Height * scale * frame.Width / frame.Height * 100,
+                degrees < 0 ? degrees + 360 : degrees,
+                0);
         }
     }
 }

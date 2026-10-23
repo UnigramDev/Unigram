@@ -654,6 +654,7 @@
     <Compile Include="Td\Api\PremiumLimitTypeFileSize.cs" />
     <Compile Include="Td\Api\ReactionTypeEqualityComparer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
+    <Compile Include="Controls\Stories\Widgets\StoryReactionWidget.cs" />
     <Compile Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml.cs">
       <DependentUpon>StoryWeatherWidget.xaml</DependentUpon>
     </Compile>

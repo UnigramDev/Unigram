@@ -9,11 +9,14 @@ using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Entities;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
@@ -30,10 +33,18 @@ namespace Telegram.Controls
 
         private bool _updatingShapeFill;
 
+        // The reaction a new reaction widget starts with.
+        private const string DefaultReaction = "❤";
+
         public PaintTabs()
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// Offers the story widgets above the stickers.
+        /// </summary>
+        public bool ShowsWidgets { get; set; }
 
         public void Attach(PaintToolbar toolbar, MediaEditorSurface surface, IClientService clientService)
         {
@@ -52,7 +63,7 @@ namespace Telegram.Controls
         public void UpdateSelection(PaintEntity selected)
         {
             DrawTab.IsChecked = selected == null;
-            StickerTab.IsChecked = selected != null && PaintEntityRenderer.IsSticker(selected);
+            StickerTab.IsChecked = selected != null && (PaintEntityRenderer.IsSticker(selected) || selected.Type == PaintEntityType.Reaction);
             TextTab.IsChecked = selected?.Type == PaintEntityType.Text;
             ShapesTab.IsChecked = selected?.Type == PaintEntityType.Shape;
         }
@@ -114,6 +125,24 @@ namespace Telegram.Controls
 
                 StickerPicker.DataContext = StickerDrawerViewModel.Create(_clientService.Session);
                 StickerPicker.Activate(null, EmojiSearchType.Default);
+
+                if (ShowsWidgets)
+                {
+                    WidgetsPanel.Visibility = Visibility.Visible;
+
+                    ReactionWidgetPreview.Child = new AnimatedImage
+                    {
+                        AutoPlay = true,
+                        LoopCount = 1,
+                        FrameSize = new Size(24, 24),
+                        DecodeFrameType = DecodePixelType.Logical,
+                        Source = new ReactionFileSource(_clientService, new ReactionTypeEmoji(DefaultReaction))
+                        {
+                            UseCenterAnimation = true,
+                            IsAnimated = false
+                        }
+                    };
+                }
             }
             else if (index == 1 && EmojiPicker == null)
             {
@@ -165,6 +194,12 @@ namespace Telegram.Controls
                 var tinted = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
                 AddSticker(PaintEntityType.Sticker, file, sticker.Width, sticker.Height, tinted);
             }
+        }
+
+        private void ReactionWidget_Click(object sender, RoutedEventArgs e)
+        {
+            StickerFlyout.Hide();
+            _surface.Entities.AddReaction(new ReactionTypeEmoji(DefaultReaction));
         }
 
         private void AddSticker(PaintEntityType type, File file, int width, int height, bool tinted)

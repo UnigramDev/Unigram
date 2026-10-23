@@ -93,6 +93,27 @@ namespace Telegram.Controls.Messages
             Initialize(reactions, story.ClientService, flyout);
         }
 
+        /// <summary>
+        /// Offers <paramref name="reactions"/> over <paramref name="flyout"/> to choose one, which
+        /// <see cref="ItemClick"/> reports. Nothing is sent.
+        /// </summary>
+        public static ReactionsMenuFlyout ShowAt(IClientService clientService, AvailableReactions reactions, MenuFlyout flyout)
+        {
+            return new ReactionsMenuFlyout(clientService, reactions, flyout);
+        }
+
+        private ReactionsMenuFlyout(IClientService clientService, AvailableReactions reactions, MenuFlyout flyout)
+        {
+            _reactions = reactions;
+            _flyout = flyout;
+
+            _viewModel = EmojiDrawerViewModel.Create(clientService.Session, EmojiDrawerMode.Reactions);
+            _clientService = clientService;
+
+            InitializeComponent();
+            Initialize(reactions, clientService, flyout);
+        }
+
         private async void Initialize(AvailableReactions available, IClientService clientService, MenuFlyout flyout)
         {
             var first = flyout.Items[0];
@@ -1129,7 +1150,7 @@ namespace Telegram.Controls.Messages
                     .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
                     .ToList();
 
-                var flyout = EmojiMenuFlyout.ShowAt(_clientService, EmojiDrawerMode.Reactions, this, EmojiFlyoutAlignment.Top, _viewModel);
+                var flyout = EmojiMenuFlyout.ShowAt(_clientService, EmojiDrawerMode.Reactions, this, EmojiFlyoutAlignment.Center, _viewModel);
                 flyout.ItemClick += ItemClick;
                 flyout.Loaded += (s, args) =>
                 {

@@ -3,6 +3,7 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             xmlns:controls="using:Telegram.Controls"
             xmlns:drawers="using:Telegram.Controls.Drawers"
+            xmlns:widgets="using:Telegram.Controls.Stories.Widgets"
             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             mc:Ignorable="d"
@@ -69,7 +70,26 @@
 
                     <drawers:StickerDrawer x:Name="StickerPicker"
                                            x:Load="False"
-                                           ItemClick="StickerPicker_ItemClick" />
+                                           ItemClick="StickerPicker_ItemClick">
+                        <drawers:StickerDrawer.Header>
+                            <!-- The story widgets, which only the story editor shows. -->
+                            <StackPanel x:Name="WidgetsPanel"
+                                        Visibility="Collapsed"
+                                        Orientation="Horizontal"
+                                        Margin="10,8,10,0">
+                                <Button x:Name="ReactionWidget"
+                                        Click="ReactionWidget_Click"
+                                        Padding="8,6,8,6"
+                                        AutomationProperties.Name="{CustomResource Reactions}"
+                                        ToolTipService.ToolTip="{CustomResource Reactions}">
+                                    <widgets:StoryReactionWidget x:Name="ReactionWidgetPreview"
+                                                                 Width="24"
+                                                                 Height="24"
+                                                                 Margin="0,0,0,2" />
+                                </Button>
+                            </StackPanel>
+                        </drawers:StickerDrawer.Header>
+                    </drawers:StickerDrawer>
 
                     <drawers:ChatPhotoEmojiDrawer x:Name="EmojiPicker"
                                                   x:Load="False"

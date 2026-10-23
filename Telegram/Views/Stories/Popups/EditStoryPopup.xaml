@@ -97,6 +97,7 @@
 
             <controls:PaintTabs x:Name="PaintTabs"
                                 x:Load="False"
+                                ShowsWidgets="True"
                                 Grid.Column="2" />
 
             <Rectangle Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"

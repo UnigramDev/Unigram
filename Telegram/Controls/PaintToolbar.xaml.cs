@@ -243,7 +243,7 @@ namespace Telegram.Controls
             var selected = Entities.Selected;
             var text = selected?.Type == PaintEntityType.Text;
             var shape = selected?.Type == PaintEntityType.Shape;
-            var sticker = selected != null && PaintEntityRenderer.IsSticker(selected);
+            var sticker = selected != null && (PaintEntityRenderer.IsSticker(selected) || selected.Type == PaintEntityType.Reaction);
 
             _tabs.UpdateSelection(selected);
 
@@ -263,8 +263,8 @@ namespace Telegram.Controls
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            // A sticker has no tools: no colour or size, flipping is in its menu, and another one
-            // comes from the tab.
+            // A sticker or a reaction has no tools: no colour or size, the rest is in its menu, and
+            // another one comes from the tab.
             ToolsPanel.Visibility = sticker
                 ? Visibility.Collapsed
                 : Visibility.Visible;

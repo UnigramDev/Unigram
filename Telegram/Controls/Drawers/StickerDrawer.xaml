@@ -39,12 +39,16 @@
                 <common:FluidGridViewTrigger RowsOrColumns="5" />
             </common:FluidGridView.Triggers>
             <GridView.Header>
-                <controls:EmojiSearchBox x:Name="SearchField"
-                                         AllowFocusOnInteraction="True"
-                                         PlaceholderText="{CustomResource Search}"
-                                         TextChanged="SearchField_TextChanged"
-                                         CategorySelected="SearchField_CategorySelected"
-                                         Margin="10,8,10,0" />
+                <StackPanel>
+                    <controls:EmojiSearchBox x:Name="SearchField"
+                                             AllowFocusOnInteraction="True"
+                                             PlaceholderText="{CustomResource Search}"
+                                             TextChanged="SearchField_TextChanged"
+                                             CategorySelected="SearchField_CategorySelected"
+                                             Margin="10,8,10,0" />
+
+                    <Border x:Name="HeaderRoot" />
+                </StackPanel>
             </GridView.Header>
             <GridView.ItemTemplate>
                 <DataTemplate>

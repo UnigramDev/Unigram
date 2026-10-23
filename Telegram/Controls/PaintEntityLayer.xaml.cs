@@ -18,8 +18,11 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Controls.Messages;
+using Telegram.Controls.Stories.Widgets;
 using Telegram.Entities;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -103,6 +106,10 @@ namespace Telegram.Controls
 
         private const float MinimumScale = 0.1f;
         private const float MaximumScale = 30;
+
+        // A reaction's, against the size of a story area.
+        private const float ReactionMinimumScale = 0.5f;
+        private const float ReactionMaximumScale = 1.8f;
 
         private static readonly double[] StickyAngles = { -Math.PI / 2, 0, Math.PI / 2, Math.PI, -Math.PI };
 
@@ -421,6 +428,11 @@ namespace Telegram.Controls
                 bounds = PaintEntityRenderer.GetStickerBounds(entity);
                 return true;
             }
+            else if (entity.Type == PaintEntityType.Reaction)
+            {
+                bounds = PaintEntityRenderer.GetReactionBounds();
+                return true;
+            }
 
             var visual = GetVisual(entity);
             bounds = visual?.Bounds ?? default;
@@ -428,12 +440,13 @@ namespace Telegram.Controls
             return visual != null;
         }
 
-        // The selection's frame: around a text or a shape, or the square around a sticker's circle.
+        // The selection's frame: around a text or a shape, or the square around a sticker's or a
+        // reaction's circle.
         private Rect GetFrame(PaintEntity entity, Rect bounds)
         {
             var unit = GetUnit(entity);
 
-            if (PaintEntityRenderer.IsSticker(entity))
+            if (IsRound(entity))
             {
                 var radius = Math.Max(bounds.Width, bounds.Height) / 2 + FramePaddingX * unit;
                 var x = bounds.X + bounds.Width / 2;
@@ -447,6 +460,18 @@ namespace Telegram.Controls
                 bounds.Y - FramePaddingY * unit,
                 bounds.Width + FramePaddingX * unit * 2,
                 bounds.Height + FramePaddingY * unit * 2);
+        }
+
+        private static bool IsRound(PaintEntity entity)
+        {
+            return PaintEntityRenderer.IsSticker(entity) || entity.Type == PaintEntityType.Reaction;
+        }
+
+        private static float ClampScale(PaintEntity entity, float scale)
+        {
+            return entity.Type == PaintEntityType.Reaction
+                ? Math.Clamp(scale, ReactionMinimumScale, ReactionMaximumScale)
+                : Math.Clamp(scale, MinimumScale, MaximumScale);
         }
 
         private PaintTextVisual GetVisual(PaintEntity entity)
@@ -588,7 +613,19 @@ namespace Telegram.Controls
                 RenderTransform = new MatrixTransform()
             };
 
-            if (entity.Type == PaintEntityType.Animation)
+            if (entity.Type == PaintEntityType.Reaction)
+            {
+                element.Child = new StoryReactionWidget
+                {
+                    Child = new AnimatedImage
+                    {
+                        AutoPlay = true,
+                        FrameSize = new Size(160, 160),
+                        DecodeFrameType = DecodePixelType.Logical
+                    }
+                };
+            }
+            else if (entity.Type == PaintEntityType.Animation)
             {
                 // Played as the GIF drawer plays them: uncached, at their own size.
                 element.Child = new AnimatedImage
@@ -748,7 +785,7 @@ namespace Telegram.Controls
 
             float raster;
 
-            if (PaintEntityRenderer.IsSticker(entity))
+            if (IsRound(entity))
             {
                 raster = k;
             }
@@ -775,7 +812,11 @@ namespace Telegram.Controls
 
             ((MatrixTransform)element.RenderTransform).Matrix = ToMatrix(matrix);
 
-            if (element.Child is Grid grid && grid.Children.Count > 1 && grid.Children[1] is Polyline line)
+            if (element.Child is StoryReactionWidget widget)
+            {
+                UpdateReaction(entity, widget);
+            }
+            else if (element.Child is Grid grid && grid.Children.Count > 1 && grid.Children[1] is Polyline line)
             {
                 var points = new PointCollection();
 
@@ -790,7 +831,8 @@ namespace Telegram.Controls
         }
 
         // A flip turns the sticker over like a card: squeezed through its width with a slight
-        // shear, from the side it was on to the new one.
+        // shear, from the side it was on to the new one. A reaction is never shown back to front:
+        // its bubble turns over at the halfway point, while it is edge on.
         private Matrix3x2 GetFlip(PaintEntity entity, Rect bounds)
         {
             if (entity != _flipping || _flipProgress >= 1)
@@ -798,11 +840,52 @@ namespace Telegram.Controls
                 return Matrix3x2.Identity;
             }
 
-            var t = 1 - Math.Pow(1 - _flipProgress, 5);
+            var t = GetFlipTurn();
+            var squeeze = entity.Type == PaintEntityType.Reaction
+                ? Math.Abs(2 * t - 1)
+                : 2 * t - 1;
+
             var center = new Vector2((float)(bounds.X + bounds.Width / 2), (float)(bounds.Y + bounds.Height / 2));
 
-            return Matrix3x2.CreateScale((float)(2 * t - 1), 1, center)
+            return Matrix3x2.CreateScale((float)squeeze, 1, center)
                 * Matrix3x2.CreateSkew(0, (float)Math.Atan(t * (1 - t)), center);
+        }
+
+        private double GetFlipTurn()
+        {
+            return 1 - Math.Pow(1 - _flipProgress, 5);
+        }
+
+        private void UpdateReaction(PaintEntity entity, StoryReactionWidget widget)
+        {
+            var turning = entity == _flipping && _flipProgress < 1 && GetFlipTurn() < 0.5;
+
+            widget.IsDark = entity.ReactionDark;
+            widget.IsFlipped = entity.Mirror != turning;
+
+            if (widget.Child is not AnimatedImage icon)
+            {
+                return;
+            }
+
+            var reaction = entity.GetReactionType();
+
+            if (icon.Tag is not ReactionType shown || !shown.AreTheSame(reaction))
+            {
+                icon.Tag = reaction;
+
+                // A custom emoji plays on, while an emoji's animation comes to rest.
+                icon.LoopCount = reaction is ReactionTypeCustomEmoji ? 0 : 1;
+                icon.Source = ClientService != null
+                    ? new ReactionFileSource(ClientService, reaction) { UseCenterAnimation = true, IsAnimated = false }
+                    : null;
+            }
+
+            // A reaction drawn in a single colour takes the bubble's.
+            if (icon.ReplacementColor is not SolidColorBrush tint || tint.Color != widget.TintColor)
+            {
+                icon.ReplacementColor = new SolidColorBrush(widget.TintColor);
+            }
         }
 
         private void UpdateElements()
@@ -926,6 +1009,57 @@ namespace Telegram.Controls
             Select(entity);
         }
 
+        /// <summary>
+        /// Places a suggested reaction where the view is looking, at the size of a story area,
+        /// unless the story already holds as many as it can.
+        /// </summary>
+        public void AddReaction(ReactionType reaction)
+        {
+            EndEditing();
+
+            if (!CanAddReaction() || !TryGetPlacement(out Vector2 position, out float scale))
+            {
+                return;
+            }
+
+            var entity = new PaintEntity
+            {
+                Type = PaintEntityType.Reaction,
+                Position = position,
+                Rotation = GetRotation(0),
+                Scale = Math.Clamp(scale, ReactionMinimumScale, ReactionMaximumScale)
+            };
+
+            entity.SetReactionType(reaction);
+
+            AddEntity(entity);
+            EntityCreated?.Invoke(this, new PaintEntityEventArgs(entity));
+
+            Select(entity);
+        }
+
+        private bool CanAddReaction()
+        {
+            var maximum = ClientService?.Options.StorySuggestedReactionAreaCountMax ?? 0;
+            var count = 0;
+
+            foreach (var entity in _entities)
+            {
+                if (entity.Type == PaintEntityType.Reaction)
+                {
+                    count++;
+                }
+            }
+
+            if (count < maximum)
+            {
+                return true;
+            }
+
+            ToastPopup.Show(XamlRoot, Locale.Declension(Strings.R.StoryReactionsWidgetLimit2, maximum), ToastPopupIcon.Info);
+            return false;
+        }
+
         private bool IsOccupied(Vector2 center, double clearance)
         {
             foreach (var entity in _entities)
@@ -987,6 +1121,11 @@ namespace Telegram.Controls
 
             // Ending the edit takes away a text left empty.
             if (!_entities.Contains(source))
+            {
+                return;
+            }
+
+            if (source.Type == PaintEntityType.Reaction && !CanAddReaction())
             {
                 return;
             }
@@ -1095,7 +1234,7 @@ namespace Telegram.Controls
         /// </summary>
         public void FlipSelected()
         {
-            if (_selected == null || !PaintEntityRenderer.IsSticker(_selected))
+            if (_selected == null || !IsRound(_selected))
             {
                 return;
             }
@@ -1238,11 +1377,71 @@ namespace Telegram.Controls
             {
                 flyout.CreateFlyoutItem(FlipSelected, Strings.AccDescrFlip, Icons.FlipHorizontal);
             }
+            else if (entity.Type == PaintEntityType.Reaction)
+            {
+                var dark = new ToggleMenuFlyoutItem
+                {
+                    Text = Strings.ThemeDark,
+                    IsChecked = entity.ReactionDark
+                };
+
+                dark.Click += Dark_Click;
+
+                flyout.Items.Add(dark);
+                flyout.CreateFlyoutItem(FlipSelected, Strings.AccDescrFlip, Icons.FlipHorizontal);
+
+                // The reactions to choose from go above the menu, as over a message's.
+                flyout.Opened += ReactionMenu_Opened;
+            }
 
             flyout.CreateFlyoutItem(DuplicateSelected, Strings.PaintDuplicate, Icons.DocumentCopy, VirtualKey.D);
             flyout.CreateFlyoutItem(DeleteSelected, Strings.PaintDelete, Icons.Delete, VirtualKey.Delete, VirtualKeyModifiers.None, destructive: true);
 
             flyout.ShowAt(this, position);
+        }
+
+        private void Dark_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selected?.Type == PaintEntityType.Reaction)
+            {
+                _selected.ReactionDark = !_selected.ReactionDark;
+                UpdateElement(_selected);
+            }
+        }
+
+        private async void ReactionMenu_Opened(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+            flyout.Opened -= ReactionMenu_Opened;
+
+            if (ClientService == null)
+            {
+                return;
+            }
+
+            var response = await ClientService.SendAsync(new GetStoryAvailableReactions(8));
+            if (response is AvailableReactions reactions && flyout.IsOpen && reactions.TopReactions.Count + reactions.RecentReactions.Count + reactions.PopularReactions.Count > 0)
+            {
+                var picker = ReactionsMenuFlyout.ShowAt(ClientService, reactions, flyout);
+                picker.ItemClick += Picker_ItemClick;
+            }
+        }
+
+        private void Picker_ItemClick(object sender, AvailableReaction e)
+        {
+            if (_selected?.Type != PaintEntityType.Reaction)
+            {
+                return;
+            }
+
+            if (e.NeedsPremium && !ClientService.IsPremium)
+            {
+                ToastPopup.ShowFeaturePromo(WindowContext.GetNavigationService(this), new PremiumFeatureUniqueReactions());
+                return;
+            }
+
+            _selected.SetReactionType(e.Type);
+            UpdateElement(_selected);
         }
 
         #endregion
@@ -1667,7 +1866,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            _selected.Scale = Math.Clamp(_handleScale * distance / _handleDistance, MinimumScale, MaximumScale);
+            _selected.Scale = ClampScale(_selected, _handleScale * distance / _handleDistance);
             _rawAngle = Normalize(Math.Atan2(offset.Y, offset.X) - (_leftHandle ? Math.PI : 0));
 
             ApplyAngle();
@@ -2019,7 +2218,7 @@ namespace Telegram.Controls
 
             var center = GetViewCenter(_selected) + (view - previous) / 2;
 
-            _selected.Scale = Math.Clamp(_selected.Scale * after.Length() / before.Length(), MinimumScale, MaximumScale);
+            _selected.Scale = ClampScale(_selected, _selected.Scale * after.Length() / before.Length());
             _selected.Rotation = (float)Normalize(_selected.Rotation + Sign * (Math.Atan2(after.Y, after.X) - Math.Atan2(before.Y, before.X)));
 
             SetViewCenter(_selected, center);
@@ -2227,7 +2426,7 @@ namespace Telegram.Controls
             var shadowColor = Color.FromArgb((byte)(0x50 * progress), 0, 0, 0);
             var frameColor = Color.FromArgb(alpha, 255, 255, 255);
 
-            if (PaintEntityRenderer.IsSticker(entity))
+            if (IsRound(entity))
             {
                 var circle = (float)frame.Width / 2;
 
@@ -2849,8 +3048,11 @@ namespace Telegram.Controls
 
             var scale = entity.Scale * imageSize.X / Reference;
 
+            // A reaction's flip turns its bubble, which the bubble draws itself.
+            var mirror = entity.Mirror && entity.Type != PaintEntityType.Reaction;
+
             return Matrix3x2.CreateTranslation(-center)
-                * Matrix3x2.CreateScale(mirrored != entity.Mirror ? -1 : 1, 1)
+                * Matrix3x2.CreateScale(mirrored != mirror ? -1 : 1, 1)
                 * Matrix3x2.CreateScale(scale)
                 * Matrix3x2.CreateRotation(entity.Rotation)
                 * Matrix3x2.CreateTranslation(entity.Position * imageSize);
@@ -3091,6 +3293,25 @@ namespace Telegram.Controls
         }
 
         /// <summary>
+        /// A reaction's bubble, without its tail: 84 dp on a phone 411 dp wide, as large as its
+        /// story area.
+        /// </summary>
+        public static Rect GetReactionBounds()
+        {
+            const float Side = Reference * 84 / 411;
+
+            return new Rect(0, 0, Side, Side);
+        }
+
+        /// <summary>
+        /// Left out of the posted image: viewers draw it from its story area.
+        /// </summary>
+        public static bool IsDrawnByViewers(PaintEntity entity)
+        {
+            return entity.Type == PaintEntityType.Reaction;
+        }
+
+        /// <summary>
         /// Brings every sticker's and GIF's file to disk, looking it up by its remote id when the
         /// edit was read back without it. False when one cannot be had.
         /// </summary>
@@ -3234,7 +3455,11 @@ namespace Telegram.Controls
 
             foreach (var entity in entities)
             {
-                if (entity.Type == PaintEntityType.Shape)
+                if (IsDrawnByViewers(entity))
+                {
+                    continue;
+                }
+                else if (entity.Type == PaintEntityType.Shape)
                 {
                     var previous = session.Transform;
 

@@ -473,114 +473,32 @@ namespace Telegram.Controls.Stories
             foreach (var area in story.Areas)
             {
                 FrameworkElement element;
-                bool autoSize = true;
 
                 if (area.Type is StoryAreaTypeSuggestedReaction suggestedReaction)
                 {
-                    autoSize = false;
-
-                    var desiredWidth = area.Position.WidthPercentage / 100 * ActualWidth;
-                    var desiredHeight = area.Position.HeightPercentage / 100 * ActualHeight;
-
-                    var flipped = suggestedReaction.IsFlipped;
-                    var test = new Grid
+                    var widget = new StoryReactionWidget
                     {
-                        //Background = new SolidColorBrush(Color.FromArgb(0x7F, 0xFF, 0, 0)),
-                        Width = 115,
-                        Height = 115,
-                        RenderTransformOrigin = new Point(0.5, 0.5),
-                        RenderTransform = new CompositeTransform
-                        {
-                            Rotation = area.Position.RotationAngle,
-                            ScaleX = desiredWidth / 115,
-                            ScaleY = desiredHeight / 115
-                        }
+                        IsDark = suggestedReaction.IsDark,
+                        IsFlipped = suggestedReaction.IsFlipped
                     };
 
-                    var data = new GeometryGroup
+                    // The button is laid out at a fixed size and scaled into the widget's slot.
+                    var button = new StoryReactionButton
                     {
-                        FillRule = FillRule.Nonzero
-                    };
-                    data.Children.Add(new EllipseGeometry
-                    {
-                        Center = new Point(flipped ? 52 : 50, 50),
-                        RadiusX = 50,
-                        RadiusY = 50
-                    });
-                    data.Children.Add(new EllipseGeometry
-                    {
-                        Center = new Point(flipped ? 21 : 83, 83),
-                        RadiusX = 12.5,
-                        RadiusY = 12.5
-                    });
-                    data.Children.Add(new EllipseGeometry
-                    {
-                        Center = new Point(flipped ? 5 : 98, 98),
-                        RadiusX = 5,
-                        RadiusY = 5
-                    });
-
-                    var path = new Path
-                    {
-                        Data = data,
-                        Fill = new SolidColorBrush(suggestedReaction.IsDark ? Colors.Black : Colors.White),
-                        Opacity = suggestedReaction.IsDark ? 0.5 : 1,
-                        StrokeThickness = 0,
-                        Stretch = Stretch.Uniform,
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                        VerticalAlignment = VerticalAlignment.Stretch,
-                        Width = 103,
-                        Height = 103
-                    };
-
-                    var shadow = new Border();
-
-                    VisualUtilities.DropShadow(path, target: shadow);
-
-                    var test2 = new Grid();
-                    test2.Padding = new Thickness(6);
-
-                    var side = 70; //Math.Sqrt((100 * 100) / 2);
-                    var margin = (100 - side) / 2;
-
-                    //var lottie = new AnimatedImage
-                    //{
-                    //    Width = side,
-                    //    Height = side,
-                    //    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
-                    //    FrameSize = new Windows.Foundation.Size(side, side),
-                    //    Source = new ReactionFileSource(ViewModel.ClientService, suggestedReaction.ReactionType),
-                    //    HorizontalAlignment = HorizontalAlignment.Left,
-                    //    VerticalAlignment = VerticalAlignment.Top,
-                    //    Margin = new Thickness(flipped ? margin + 3 : margin, margin, 0, 0),
-                    //    AutoPlay = true 
-                    //};
-
-                    var lottie = new StoryReactionButton
-                    {
-                        Width = side,
-                        Height = side,
-                        Foreground = new SolidColorBrush(suggestedReaction.IsDark ? Colors.White : Colors.Black),
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        Margin = new Thickness(flipped ? margin + 3 : margin, margin, 0, 0),
+                        Width = 70,
+                        Height = 70,
+                        Foreground = new SolidColorBrush(widget.TintColor),
                         Style = Resources["SuggestedReactionButtonStyle"] as Style
                     };
 
-                    LoadButton(story, lottie, suggestedReaction);
+                    LoadButton(story, button, suggestedReaction);
 
-                    test2.Children.Add(shadow);
-                    test2.Children.Add(path);
-                    test2.Children.Add(lottie);
+                    widget.Child = new Viewbox
+                    {
+                        Child = button
+                    };
 
-                    //test.Children.Add(new Viewbox
-                    //{
-                    //    Child = test2
-                    //});
-
-                    test.Children.Add(test2);
-
-                    element = test;
+                    element = widget;
                 }
                 else if (area.Type is StoryAreaTypeWeather weather)
                 {
@@ -594,20 +512,17 @@ namespace Telegram.Controls.Stories
                     element = button;
                 }
 
-                if (autoSize)
+                element.Width = area.Position.WidthPercentage / 100 * ActualWidth;
+                element.Height = area.Position.HeightPercentage / 100 * ActualHeight;
+                element.RenderTransformOrigin = new Point(0.5, 0.5);
+                element.RenderTransform = new RotateTransform
                 {
-                    element.Width = area.Position.WidthPercentage / 100 * ActualWidth;
-                    element.Height = area.Position.HeightPercentage / 100 * ActualHeight;
-                    element.RenderTransformOrigin = new Point(0.5, 0.5);
-                    element.RenderTransform = new RotateTransform
-                    {
-                        Angle = area.Position.RotationAngle
-                    };
+                    Angle = area.Position.RotationAngle
+                };
 
-                    if (element is Control control)
-                    {
-                        control.CornerRadius = new CornerRadius(area.Position.CornerRadiusPercentage / 100 * ActualWidth);
-                    }
+                if (element is Control control)
+                {
+                    control.CornerRadius = new CornerRadius(area.Position.CornerRadiusPercentage / 100 * ActualWidth);
                 }
 
                 Canvas.SetLeft(element, area.Position.XPercentage / 100 * ActualWidth - element.Width / 2);

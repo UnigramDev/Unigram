@@ -6145,6 +6145,7 @@
     <string name="StoryError">Couldn’t upload</string>
     <string name="TryAgain">Try Again</string>
     <string name="StoryCancelTooLate">This story has finished uploading and will be posted.</string>
+    <string name="StoryReactionsWidgetLimit2_other">You can’t add up more than {0} reactions tags to a story.</string>
     <string name="LimitReachedStoriesCount2First_one">You can post **{0}** story in **24** hours.</string>
     <string name="LimitReachedStoriesCount2First_other">You can post **{0}** stories in **24** hours.</string>
     <string name="LimitReachedStoriesCount2Second_one">Subscribe to **Telegram Premium** to increase this limit to **{0}**.</string>
