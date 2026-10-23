@@ -6,15 +6,19 @@
 //
 
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Chats
@@ -37,13 +41,29 @@ namespace Telegram.Controls.Chats
         private readonly UIElement _element;
         private readonly IViewWithAutocomplete _view;
         private readonly ComposeViewModel _viewModel;
+        private readonly IClientService _clientService;
 
         public CaptionController(IFormattedTextInput input, UIElement element, IViewWithAutocomplete view, ComposeViewModel viewModel)
+            : this(input, element, view)
+        {
+            _viewModel = viewModel;
+        }
+
+        /// <summary>
+        /// For a caption outside any chat, a story's: having no members, it offers the contacts a
+        /// mention names, and the hashtags one starts.
+        /// </summary>
+        public CaptionController(IFormattedTextInput input, UIElement element, IViewWithAutocomplete view, IClientService clientService)
+            : this(input, element, view)
+        {
+            _clientService = clientService;
+        }
+
+        private CaptionController(IFormattedTextInput input, UIElement element, IViewWithAutocomplete view)
         {
             _input = input;
             _element = element;
             _view = view;
-            _viewModel = viewModel;
 
             _input.SelectionChanged += OnSelectionChanged;
 
@@ -62,6 +82,12 @@ namespace Telegram.Controls.Chats
 
         private void OnSelectionChanged(object sender, EventArgs e)
         {
+            if (_clientService != null)
+            {
+                UpdateWithoutChat();
+                return;
+            }
+
             var chat = _viewModel?.Chat;
             if (chat == null || !_input.IsSelectionEmpty || !_input.TryGetQuery(out AutocompleteEntity entity, out string query, out _) || entity != AutocompleteEntity.Username)
             {
@@ -79,6 +105,32 @@ namespace Telegram.Controls.Chats
             else if (_view.Autocomplete is not ChatTextBox.UsernameCollection prev || !prev.Query.Equals(query))
             {
                 _view.Autocomplete = new ChatTextBox.UsernameCollection(_viewModel.ClientService, chat.Id, _viewModel.TopicId, query, false, guestBots, members, false);
+            }
+        }
+
+        private void UpdateWithoutChat()
+        {
+            if (!_input.IsSelectionEmpty || !_input.TryGetQuery(out AutocompleteEntity entity, out string query, out _))
+            {
+                _view.Autocomplete = null;
+            }
+            else if (entity == AutocompleteEntity.Username)
+            {
+                if (_view.Autocomplete is not ContactCollection prev || !prev.Query.Equals(query))
+                {
+                    _view.Autocomplete = new ContactCollection(_clientService, query);
+                }
+            }
+            else if (entity == AutocompleteEntity.Hashtag)
+            {
+                if (_view.Autocomplete is not ChatTextBox.SearchHashtagsCollection prev || !prev.Query.Equals(query))
+                {
+                    _view.Autocomplete = new ChatTextBox.SearchHashtagsCollection(_clientService, query);
+                }
+            }
+            else
+            {
+                _view.Autocomplete = null;
             }
         }
 
@@ -129,10 +181,14 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        /// <summary>A member picked from the list, in place of what was typed.</summary>
+        /// <summary>A member or a hashtag picked from the list, in place of what was typed.</summary>
         public void Accept(object item)
         {
-            if (item is User user && _input.TryGetQuery(out AutocompleteEntity entity, out string query, out int index) && entity == AutocompleteEntity.Username)
+            if (item is string hashtag && _input.TryGetQuery(out AutocompleteEntity found, out _, out int start) && found == AutocompleteEntity.Hashtag)
+            {
+                _input.ReplaceQuery(start, new FormattedText($"{hashtag} ", Array.Empty<TextEntity>()));
+            }
+            else if (item is User user && _input.TryGetQuery(out AutocompleteEntity entity, out string query, out int index) && entity == AutocompleteEntity.Username)
             {
                 var username = user.ActiveUsername(query);
 
@@ -153,6 +209,56 @@ namespace Telegram.Controls.Chats
             }
 
             _view.Autocomplete = null;
+        }
+
+        // The contacts a mention names, as there are no members to offer.
+        private sealed partial class ContactCollection : RangeObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+        {
+            private readonly IClientService _clientService;
+            private readonly string _query;
+
+            private bool _hasMore = true;
+
+            public ContactCollection(IClientService clientService, string query)
+            {
+                _clientService = clientService;
+                _query = query;
+            }
+
+            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            {
+                return IncrementalLoading.Run(async token =>
+                {
+                    count = 0;
+                    _hasMore = false;
+
+                    var response = await _clientService.SendAsync(new SearchContacts(_query, 20));
+                    if (response is Users users)
+                    {
+                        foreach (var id in users.UserIds)
+                        {
+                            if (_clientService.TryGetUser(id, out User user))
+                            {
+                                Add(user);
+                                count++;
+                            }
+                        }
+                    }
+
+                    return new LoadMoreItemsResult
+                    {
+                        Count = count
+                    };
+                });
+            }
+
+            public bool HasMoreItems => _hasMore;
+
+            public string Query => _query;
+
+            public Orientation Orientation => Orientation.Vertical;
+
+            public bool InsertOnKeyDown => false;
         }
     }
 }

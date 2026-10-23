@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Chats;
 using Telegram.Controls.Drawers;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -20,6 +21,7 @@ using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Stories.Popups
 {
@@ -27,8 +29,18 @@ namespace Telegram.Views.Stories.Popups
     /// What is asked before a story is posted: its caption, who can view it, whether it can be
     /// saved, whether it stays on the profile, and how long it lasts.
     /// </summary>
-    public sealed partial class PostStoryPopup : ModalPopup
+    public sealed partial class PostStoryPopup : ModalPopup, IViewWithAutocomplete
     {
+        // The caption's counter shows once fewer than this many characters are left.
+        private const int CounterThreshold = 25;
+
+        private readonly int _captionLimit;
+        private int _captionLength;
+        private bool _captionLimitToast;
+
+        private CaptionController _caption;
+        private IAutocompleteCollection _autocomplete;
+
         // In hours. Only Premium picks one other than a day.
         private static readonly int[] Periods = { 6, 12, 24, 48 };
         private const int DefaultPeriod = 24;
@@ -56,7 +68,9 @@ namespace Telegram.Views.Stories.Popups
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(clientService.Session);
 
-            CaptionInput.MaxLength = (int)clientService.Options.StoryCaptionLengthMax;
+            // Not a hard limit: past it the counter turns negative and the story cannot be posted,
+            // so a pasted caption can still be trimmed rather than being cut off.
+            _captionLimit = (int)clientService.Options.StoryCaptionLengthMax;
 
             if (!clientService.Options.CanUseTextEntitiesInStoryCaption)
             {
@@ -280,8 +294,165 @@ namespace Telegram.Views.Stories.Popups
             Accept();
         }
 
+        #region Caption
+
+        public IAutocompleteCollection Autocomplete
+        {
+            get => _autocomplete;
+            set
+            {
+                _autocomplete = value;
+
+                ListAutocomplete.ItemsSource = value;
+                ListAutocomplete.Visibility = value != null
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                if (value != null)
+                {
+                    ListAutocomplete.Orientation = value.Orientation;
+                }
+            }
+        }
+
+        private void CaptionInput_Loaded(object sender, RoutedEventArgs e)
+        {
+            _caption ??= new CaptionController(CaptionInput, CaptionInput, this, _clientService)
+            {
+                ListAutocomplete = ListAutocomplete
+            };
+        }
+
+        private void CaptionInput_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _caption?.Detach();
+            _caption = null;
+
+            Autocomplete = null;
+        }
+
+        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            _caption?.Accept(e.ClickedItem);
+        }
+
+        private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            if (args.Item is User user && args.ItemContainer.ContentTemplateRoot is Grid content)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                var title = content.Children[1] as TextBlock;
+
+                var name = title.Inlines[0] as Run;
+                var username = title.Inlines[1] as Run;
+
+                name.Text = user.FullName();
+                username.Text = user.HasActiveUsername(out string usernameValue)
+                    ? $" @{usernameValue}"
+                    : string.Empty;
+
+                photo.Source = ProfilePictureSource.User(_clientService, user);
+            }
+            else if (args.Item is string hashtag && args.ItemContainer.ContentTemplateRoot is Grid hashtagContent)
+            {
+                var title = hashtagContent.Children[0] as TextBlock;
+                title.Text = hashtag;
+            }
+
+            args.Handled = true;
+        }
+
+        // Counted in code points, as the server does.
+        private void CaptionInput_ContentChanged(object sender, EventArgs e)
+        {
+            var text = CaptionInput.GetFormattedText()?.Text ?? string.Empty;
+            var length = 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (!char.IsLowSurrogate(text[i]))
+                {
+                    length++;
+                }
+            }
+
+            var previous = _captionLength;
+            _captionLength = length;
+
+            if (_captionLimit <= 0)
+            {
+                return;
+            }
+
+            var left = _captionLimit - length;
+            var full = left <= 0;
+
+            CaptionCounter.Visibility = left < CounterThreshold
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            CaptionCounterLeft.Text = CaptionCounterOver.Text = left.ToString();
+            CaptionCounterLeft.Visibility = full ? Visibility.Collapsed : Visibility.Visible;
+            CaptionCounterOver.Visibility = full ? Visibility.Visible : Visibility.Collapsed;
+
+            Send.IsEnabled = left >= 0;
+
+            if (left >= 0)
+            {
+                _captionLimitToast = false;
+            }
+            else if (length > previous && !_clientService.IsPremium && _clientService.IsPremiumAvailable)
+            {
+                ShowCaptionLimit();
+            }
+        }
+
+        // Once each time the caption goes over, while it grows: Premium allows a longer one.
+        private async void ShowCaptionLimit()
+        {
+            VisualUtilities.ShakeView(CaptionCounter);
+
+            if (_captionLimitToast)
+            {
+                return;
+            }
+
+            _captionLimitToast = true;
+
+            var response = await _clientService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeStoryCaptionLength()));
+            if (response is not PremiumLimit limit || limit.DefaultValue <= 0 || _captionLength >= limit.PremiumValue)
+            {
+                return;
+            }
+
+            var times = (int)Math.Round((double)limit.PremiumValue / limit.DefaultValue);
+            var text = $"**{Strings.CaptionPremiumTitle}**\n" + Locale.Declension(Strings.R.CaptionPremiumSubtitle, times, limit.PremiumValue);
+
+            ToastPopup.ShowPromo(_navigationService, text, Strings.PremiumMore, new PremiumSourceLimitExceeded(new PremiumLimitTypeStoryCaptionLength()));
+        }
+
+        #endregion
+
         private void Accept()
         {
+            if (_captionLimit > 0 && _captionLength > _captionLimit)
+            {
+                VisualUtilities.ShakeView(CaptionCounter);
+                return;
+            }
+
+            // Typed formatting is already refused, but a contact picked as a mention still adds an entity.
+            if (!_clientService.Options.CanUseTextEntitiesInStoryCaption && Caption?.Entities?.Count > 0)
+            {
+                ToastPopup.ShowFeaturePromo(_navigationService, Strings.StoryPremiumFormatting, new PremiumFeatureUpgradedStories());
+                return;
+            }
+
             // A story for selected contacts needs some to be for.
             if (SelectedContacts.IsChecked == true && _selectedContacts.Count == 0)
             {

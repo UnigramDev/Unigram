@@ -115,6 +115,35 @@
             </StackPanel>
         </ScrollViewer>
 
+        <!-- The people and hashtags offered as the caption is written. -->
+        <controls:OrientableListView x:Name="ListAutocomplete"
+                                     Visibility="Collapsed"
+                                     VerticalAlignment="Bottom"
+                                     MaxHeight="240"
+                                     Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
+                                     BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
+                                     BorderThickness="0,1,0,0"
+                                     ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                                     Style="{StaticResource ZoomableListViewStyle}"
+                                     BackgroundSizing="OuterBorderEdge"
+                                     AllowFocusOnInteraction="False"
+                                     IsItemClickEnabled="True"
+                                     ItemClick="Autocomplete_ItemClick"
+                                     ContainerContentChanging="Autocomplete_ContainerContentChanging">
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem"
+                       BasedOn="{StaticResource ZoomableListViewItemStyle}">
+                    <Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection />
+            </GridView.ItemContainerTransitions>
+        </controls:OrientableListView>
+
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
                                     Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     BottomInset="0" />
@@ -147,7 +176,11 @@
             <controls:FormattedTextInputHost x:Name="CaptionInput"
                                              Kind="Caption"
                                              Tier="Popups"
+                                             Loaded="CaptionInput_Loaded"
+                                             Unloaded="CaptionInput_Unloaded"
                                              Submitted="CaptionInput_Submitted"
+                                             ContentChanged="CaptionInput_ContentChanged"
+                                             ControlledList="{x:Bind ListAutocomplete}"
                                              InputScope="Chat"
                                              CustomEmoji="{x:Bind CustomEmoji}"
                                              FontFamily="{ThemeResource EmojiThemeFontFamily}"
@@ -166,6 +199,25 @@
             <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                         IsHitTestVisible="False"
                                         Margin="22,11,0,0" />
+
+            <!-- What is left of the caption's length, once little is. -->
+            <Grid x:Name="CaptionCounter"
+                  Visibility="Collapsed"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Margin="0,4,16,0"
+                  Grid.Column="1"
+                  Grid.ColumnSpan="2">
+                <TextBlock x:Name="CaptionCounterLeft"
+                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           FontSize="12"
+                           FontWeight="SemiBold" />
+                <TextBlock x:Name="CaptionCounterOver"
+                           Visibility="Collapsed"
+                           Foreground="{ThemeResource DangerButtonBackground}"
+                           FontSize="12"
+                           FontWeight="SemiBold" />
+            </Grid>
 
             <controls:GlyphButton x:Name="EmojiButton"
                                   Click="Emoji_Click"

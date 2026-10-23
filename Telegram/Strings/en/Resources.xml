@@ -5372,6 +5372,8 @@
     <string name="PremiumStickers">Premium Stickers</string>
     <string name="CaptionsLimitTitle">Captions</string>
     <string name="CaptionsLimitSubtitle">Use longer descriptions for your photos and videos</string>
+    <string name="CaptionPremiumTitle">Maximum Length Reach</string>
+    <string name="CaptionPremiumSubtitle_other">Increase this limit **{0}** times to **{1}** symbols by subscribing to __Telegram Premium.__</string>
 
 
 
@@ -6156,6 +6158,7 @@
     <string name="StoryLinkNameHeader">Customize Link Text</string>
     <string name="StoryLinkNamePlaceholder">Link Text</string>
     <string name="StoryLinkPremium">Subscribe to **Telegram Premium** to add links to stories.</string>
+    <string name="StoryPremiumFormatting">Subscribe to **Telegram Premium** to add links and text formatting to your stories.</string>
     <string name="StoryLinkLimitMessage_other">You can’t add more than {0} links to a story.</string>
     <string name="LimitReachedStoriesCount2First_one">You can post **{0}** story in **24** hours.</string>
     <string name="LimitReachedStoriesCount2First_other">You can post **{0}** stories in **24** hours.</string>
