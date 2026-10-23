@@ -68,8 +68,10 @@ namespace Telegram.Services.Factories
                 var serialized = JsonSerializer.Serialize(generation, GenerationJsonContext.Default.VideoGeneration);
                 var file = await GenerationService.PrepareAsync(video.File, ConversionType.Transcode, serialized);
 
-                // The cover is the first frame kept, until one can be picked.
-                return new InputStoryContentVideo(file, MessageFactory.GetAddedStickers(state.Entities), (stop - start).TotalSeconds, 0, video.IsMuted || !video.HasAudio);
+                // TDLib takes the cover from the start of the trimmed video.
+                var coverTimestamp = Math.Clamp((state.CoverTime - start).TotalSeconds, 0, (stop - start).TotalSeconds);
+
+                return new InputStoryContentVideo(file, MessageFactory.GetAddedStickers(state.Entities), (stop - start).TotalSeconds, coverTimestamp, video.IsMuted || !video.HasAudio);
             }
 
             // A photo with an animated sticker on it goes out as a video, as long as the stickers

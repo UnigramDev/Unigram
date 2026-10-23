@@ -219,6 +219,14 @@ namespace Telegram.Controls
             }
         }
 
+        /// <summary>
+        /// Where the frame is drawn, in <paramref name="relativeTo"/>'s coordinates.
+        /// </summary>
+        public Rect GetFrameBounds(UIElement relativeTo)
+        {
+            return FrameLayer.TransformToVisual(relativeTo).TransformBounds(new Rect(0, 0, FrameLayer.ActualWidth, FrameLayer.ActualHeight));
+        }
+
         private void Cropper_ViewChanged(object sender, EventArgs e)
         {
             // The first view is the first layout of the media; see the XAML.

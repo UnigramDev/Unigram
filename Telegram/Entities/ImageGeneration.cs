@@ -379,6 +379,11 @@ namespace Telegram.Entities
         public TimeSpan TrimStartTime { get; set; }
         public TimeSpan TrimStopTime { get; set; }
 
+        /// <summary>
+        /// A story video's cover, from the start of the video rather than of the trim.
+        /// </summary>
+        public TimeSpan CoverTime { get; set; }
+
         public bool IsEmpty
         {
             get => (Rectangle.IsEmpty || (Rectangle.X == 0 && Rectangle.Y == 0 && Rectangle.Width == 1 && Rectangle.Height == 1))

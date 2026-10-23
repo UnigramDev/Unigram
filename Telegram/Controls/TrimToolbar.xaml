@@ -39,7 +39,45 @@
                                    MinimumChanged="TrimRange_MinimumChanged"
                                    MaximumChanged="TrimRange_MaximumChanged"
                                    ViewChanged="TrimRange_ViewChanged"
+                                   CoverChanged="TrimRange_CoverChanged"
+                                   HeadDraggingChanged="TrimRange_HeadDraggingChanged"
+                                   SizeChanged="TrimRange_SizeChanged"
                                    Height="40"
                                    Width="296" />
+
+        <!-- Over the track, which clips to its corners, and a Canvas, which lets the bubble reach
+             past the strip without a layout clip. -->
+        <Canvas x:Name="CoverLayer"
+                x:Load="False"
+                IsHitTestVisible="False">
+            <Ellipse x:Name="CoverDot"
+                     Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                     Width="9"
+                     Height="9"
+                     Canvas.Top="-13">
+                <Ellipse.RenderTransform>
+                    <CompositeTransform x:Name="CoverDotTransform"
+                                        CenterX="4.5"
+                                        CenterY="4.5" />
+                </Ellipse.RenderTransform>
+            </Ellipse>
+
+            <Grid x:Name="CoverBubble"
+                  Visibility="Collapsed">
+                <Grid.RenderTransform>
+                    <CompositeTransform x:Name="CoverBubbleTransform" />
+                </Grid.RenderTransform>
+
+                <!-- Hosts the mirror of the editor's frame, a composition visual. -->
+                <Border x:Name="CoverBubbleContent" />
+
+                <Border x:Name="CoverBubbleFrame">
+                    <Border.BorderBrush>
+                        <SolidColorBrush x:Name="CoverBubbleStroke"
+                                         Color="White" />
+                    </Border.BorderBrush>
+                </Border>
+            </Grid>
+        </Canvas>
     </Grid>
 </Grid>

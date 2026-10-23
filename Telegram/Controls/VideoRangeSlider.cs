@@ -50,6 +50,8 @@ namespace Telegram.Controls
         private double _minLength = 0;
         private double _maxLength = 1;
 
+        private double _cover = 0;
+
         private const double THICKNESS = 12;
 
         private const double ZOOM_DELAY = 500;
@@ -77,6 +79,17 @@ namespace Telegram.Controls
 
         // Raised on every frame of a zoom, so that what is drawn under the track can follow it.
         public event EventHandler ViewChanged;
+
+        public event EventHandler CoverChanged;
+
+        // True when the playhead is taken, false when it is let go.
+        public event EventHandler<bool> HeadDraggingChanged;
+
+        /// <summary>
+        /// The frame a video is shown by before it plays: where the playhead was last dragged to,
+        /// and always inside the selection, as playback moves the playhead on.
+        /// </summary>
+        public double Cover => _cover;
 
         // How many times shorter the window a held handle zooms into is; 1 never zooms.
         public double ZoomFactor { get; set; } = 1;
@@ -118,6 +131,7 @@ namespace Telegram.Controls
 
             _value = Math.Clamp(_value, _minimum, _maximum);
 
+            ClampCover();
             Arrange();
         }
 
@@ -136,12 +150,16 @@ namespace Telegram.Controls
         protected override void OnMaximumChanged(double oldMaximum, double newMaximum)
         {
             _maximum = newMaximum;
+
+            ClampCover();
             Arrange();
         }
 
         protected override void OnMinimumChanged(double oldMinimum, double newMinimum)
         {
             _minimum = newMinimum;
+
+            ClampCover();
             Arrange();
         }
 
@@ -227,6 +245,11 @@ namespace Telegram.Controls
             {
                 ScheduleZoom();
             }
+
+            if (_target == MiddleThumb2)
+            {
+                HeadDraggingChanged?.Invoke(this, true);
+            }
         }
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
@@ -281,6 +304,11 @@ namespace Telegram.Controls
             _toolTip.IsOpen = false;
 
             ZoomOut();
+
+            if (_target == MiddleThumb2)
+            {
+                HeadDraggingChanged?.Invoke(this, false);
+            }
         }
 
         private void ScheduleZoom()
@@ -430,6 +458,15 @@ namespace Telegram.Controls
                 _value = _maximum;
             }
 
+            if (_target == MiddleThumb2)
+            {
+                SetCover(_value);
+            }
+            else
+            {
+                ClampCover();
+            }
+
             if (set)
             {
                 if (_maximum < Minimum)
@@ -449,6 +486,20 @@ namespace Telegram.Controls
             else
             {
                 MinimumChanged?.Invoke(this, _target == MaximumThumb ? _maximum : _target == MiddleThumb2 ? _value : _minimum);
+            }
+        }
+
+        private void ClampCover()
+        {
+            SetCover(Math.Clamp(_cover, Math.Min(_minimum, _maximum), _maximum));
+        }
+
+        private void SetCover(double cover)
+        {
+            if (_cover != cover)
+            {
+                _cover = cover;
+                CoverChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

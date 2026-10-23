@@ -6,14 +6,18 @@
 //
 
 using System;
+using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Native.Media;
+using Windows.Foundation;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -41,6 +45,45 @@ namespace Telegram.Controls
         private int _zoomVersion;
         private double _zoomStart;
         private double _zoomLength = 1;
+
+        // The cover: a dot over the track marks it. Letting go of the playhead flies the frame
+        // into a preview over the dot, which shrinks into it after a moment. The preview mirrors
+        // the editor's frame, and the player is held on the cover until it is gone, so nothing
+        // is decoded for it.
+        private const double DotSize = 9;
+        private const double DotRestingSize = 5;
+        private const double DotDuration = 500;
+
+        // From the strip's top up to the dot's centre; see the XAML.
+        private const double DotRise = 8.5;
+
+        private const double BubbleSide = 62;
+        private const double BubbleSkip = 8;
+        private const double BubbleBorder = 2;
+        private const double BubbleRadius = 4;
+        private const double BubbleDuration = 500;
+        private const int BubbleVisible = 600;
+
+        private const double CaptureDuration = 420;
+
+        private MediaEditorSurface _coverSurface;
+        private bool _coverDragging;
+
+        private CompositionVisualSurface _mirror;
+        private CompositionRoundedRectangleGeometry _mirrorShape;
+        private bool _mirroring;
+        private Size _bubbleSize;
+
+        private bool _bubbleVisible;
+        private DispatcherTimer _bubbleTimer;
+
+        // Where the frame flies into the bubble from, in CoverLayer.
+        private Rect _captureFrom;
+
+        private readonly Tween _dot = new();
+        private readonly Tween _bubble = new();
+        private readonly Tween _capture = new();
+        private bool _rendering;
 
         public TrimToolbar()
         {
@@ -75,6 +118,39 @@ namespace Telegram.Controls
             : default;
 
         private bool IsTrimmed => TrimRange.Minimum != 0 || TrimRange.Maximum != 1;
+
+        /// <summary>
+        /// From the start of the video, not of the trim.
+        /// </summary>
+        public TimeSpan CoverTime => TimeSpan.FromMilliseconds(TrimRange.Cover * _duration.TotalMilliseconds);
+
+        /// <summary>
+        /// Marks the cover over the track, and previews it from <paramref name="surface"/>'s frame.
+        /// </summary>
+        public void EnableCover(MediaEditorSurface surface)
+        {
+            _coverSurface = surface;
+
+            FindName(nameof(CoverLayer));
+
+            var compositor = ElementCompositionPreview.GetElementVisual(CoverBubbleContent).Compositor;
+
+            _mirror = compositor.CreateVisualSurface();
+            _mirrorShape = compositor.CreateRoundedRectangleGeometry();
+
+            var brush = compositor.CreateSurfaceBrush(_mirror);
+            brush.Stretch = CompositionStretch.Fill;
+
+            var visual = compositor.CreateSpriteVisual();
+            visual.Brush = brush;
+            visual.RelativeSizeAdjustment = Vector2.One;
+            visual.Clip = compositor.CreateGeometricClip(_mirrorShape);
+
+            ElementCompositionPreview.SetElementChildVisual(CoverBubbleContent, visual);
+
+            _dot.Jump(0);
+            UpdateDot();
+        }
 
         // The rasterization scale comes from xamlRoot: the toolbar may not be in the tree yet
         // when the first frames are decoded. maximumLength defaults to the whole video.
@@ -151,6 +227,26 @@ namespace Telegram.Controls
         public void Close()
         {
             _zoomVersion++;
+
+            if (_coverSurface != null)
+            {
+                _coverSurface = null;
+
+                StopRendering();
+
+                if (_bubbleTimer != null)
+                {
+                    _bubbleTimer.Stop();
+                    _bubbleTimer.Tick -= BubbleTimer_Tick;
+                }
+
+                ElementCompositionPreview.SetElementChildVisual(CoverBubbleContent, null);
+
+                _mirror.SourceVisual = null;
+                _mirror = null;
+                _mirrorShape = null;
+                _mirroring = false;
+            }
 
             if (_player != null)
             {
@@ -372,7 +468,9 @@ namespace Telegram.Controls
             UpdateLoop();
             _player.Position = _duration.TotalSeconds * e;
 
-            if (_resume)
+            // The cover's preview mirrors the player, so it stays on the cover until the
+            // preview is gone; see ResumeAfterCover.
+            if (_resume && !_coverDragging)
             {
                 _resume = false;
                 _player.Play();
@@ -410,6 +508,12 @@ namespace Telegram.Controls
             {
                 FollowTrim(TrimZoomThumbnailsTransform, _zoomStart, _zoomLength);
             }
+
+            if (_coverSurface != null)
+            {
+                UpdateDot();
+                ApplyBubble();
+            }
         }
 
         private void FollowTrim(CompositeTransform transform, double start, double length)
@@ -420,5 +524,345 @@ namespace Telegram.Controls
             transform.ScaleX = (TrimRange.GetPosition(1, TrimRange.ViewStart, TrimRange.ViewLength) - to) / (TrimRange.GetPosition(1, start, length) - from);
             transform.TranslateX = to - from * transform.ScaleX;
         }
+
+        #region Cover
+
+        private void TrimRange_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_coverSurface != null)
+            {
+                UpdateDot();
+            }
+        }
+
+        private void TrimRange_CoverChanged(object sender, EventArgs e)
+        {
+            if (_coverSurface == null)
+            {
+                return;
+            }
+
+            UpdateDot();
+
+            if (_coverDragging)
+            {
+                ApplyBubble();
+            }
+        }
+
+        private void TrimRange_HeadDraggingChanged(object sender, bool dragging)
+        {
+            if (_coverSurface == null)
+            {
+                return;
+            }
+
+            _coverDragging = dragging;
+
+            _dot.Begin(dragging ? 1 : 0, DotDuration);
+            StartRendering();
+
+            if (dragging)
+            {
+                // The editor shows the frame while dragging, so the preview gets out of the way.
+                if (_capture.IsRunning)
+                {
+                    _capture.Jump(0);
+                    _bubble.Jump(0);
+                    _bubbleVisible = false;
+                }
+
+                HideBubble();
+                ApplyBubble();
+            }
+            else
+            {
+                StartCapture();
+            }
+        }
+
+        // Again for every snapshot, as the frame may have moved or resized since.
+        private bool StartMirror()
+        {
+            var frame = _coverSurface.GetFrameBounds(_coverSurface);
+            if (frame.Width <= 0 || frame.Height <= 0)
+            {
+                return false;
+            }
+
+            var scale = BubbleSide / Math.Max(frame.Width, frame.Height);
+
+            _bubbleSize = new Size(Math.Max(1, Math.Round(frame.Width * scale)), Math.Max(1, Math.Round(frame.Height * scale)));
+
+            CoverBubble.Width = _bubbleSize.Width;
+            CoverBubble.Height = _bubbleSize.Height;
+
+            _mirrorShape.Size = new Vector2((float)_bubbleSize.Width, (float)_bubbleSize.Height);
+
+            _mirror.SourceVisual = ElementCompositionPreview.GetElementVisual(_coverSurface);
+            _mirror.SourceOffset = new Vector2((float)frame.X, (float)frame.Y);
+            _mirror.SourceSize = new Vector2((float)frame.Width, (float)frame.Height);
+
+            _mirroring = true;
+            return true;
+        }
+
+        // The surface renders the frame a second time for as long as it is mirrored.
+        private void StopMirror()
+        {
+            if (_mirroring)
+            {
+                _mirroring = false;
+                _mirror.SourceVisual = null;
+            }
+        }
+
+        // Paused for the drag and held on the cover while the preview showed it.
+        private void ResumeAfterCover()
+        {
+            if (_resume && !_coverDragging && _player != null)
+            {
+                _resume = false;
+                _player.Play();
+            }
+        }
+
+        private void UpdateDot()
+        {
+            var cover = TrimRange.Cover;
+            var start = TrimRange.ViewStart;
+            var length = TrimRange.ViewLength;
+
+            // Zoomed, the cover may be outside the window the track shows.
+            CoverDot.Visibility = cover >= start && cover <= start + length
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            var scale = (DotRestingSize + (DotSize - DotRestingSize) * _dot.Value) / DotSize;
+
+            CoverDotTransform.TranslateX = TrimRange.GetPosition(cover, start, length) - DotSize / 2;
+            CoverDotTransform.ScaleX = scale;
+            CoverDotTransform.ScaleY = scale;
+        }
+
+        private void HideBubble()
+        {
+            _bubbleTimer?.Stop();
+
+            if (_bubbleVisible)
+            {
+                _bubbleVisible = false;
+                _bubble.Begin(0, BubbleDuration);
+                StartRendering();
+            }
+        }
+
+        private void StartCapture()
+        {
+            var from = StartMirror()
+                ? _coverSurface.GetFrameBounds(CoverLayer)
+                : Rect.Empty;
+
+            if (from.IsEmpty || from.Width <= 0 || from.Height <= 0)
+            {
+                StopMirror();
+                ResumeAfterCover();
+                return;
+            }
+
+            _captureFrom = from;
+
+            _bubbleTimer?.Stop();
+            _bubbleVisible = false;
+            _bubble.Jump(0);
+
+            _capture.Jump(0);
+            _capture.Begin(1, CaptureDuration);
+            StartRendering();
+        }
+
+        // The frame is in the bubble, which now shows for a while.
+        private void OnCaptured()
+        {
+            _bubbleVisible = true;
+            _bubble.Jump(1);
+
+            if (_bubbleTimer == null)
+            {
+                _bubbleTimer = new DispatcherTimer();
+                _bubbleTimer.Interval = TimeSpan.FromMilliseconds(BubbleVisible);
+                _bubbleTimer.Tick += BubbleTimer_Tick;
+            }
+
+            _bubbleTimer.Start();
+        }
+
+        private void BubbleTimer_Tick(object sender, object e)
+        {
+            HideBubble();
+        }
+
+        // Positioned by its transform alone, so that following the playhead or animating lays
+        // nothing out. Its border and corners are divided by its scale to stay as they are.
+        private void ApplyBubble()
+        {
+            var capturing = _capture.IsRunning;
+            var shown = _bubble.Value;
+
+            if (!_mirroring || !capturing && shown <= 0)
+            {
+                CoverBubble.Visibility = Visibility.Collapsed;
+
+                StopMirror();
+                ResumeAfterCover();
+                return;
+            }
+
+            var width = _bubbleSize.Width;
+            var height = _bubbleSize.Height;
+
+            var dotX = TrimRange.GetPosition(TrimRange.Cover, TrimRange.ViewStart, TrimRange.ViewLength);
+            var left = dotX - width / 2;
+            var top = -DotRise - DotSize / 2 - BubbleSkip - height;
+
+            double scale;
+
+            if (capturing)
+            {
+                var value = _capture.Value;
+
+                var x = _captureFrom.X + (left - _captureFrom.X) * value;
+                var y = _captureFrom.Y + (top - _captureFrom.Y) * value;
+                var w = _captureFrom.Width + (width - _captureFrom.Width) * value;
+                var h = _captureFrom.Height + (height - _captureFrom.Height) * value;
+
+                scale = w / width;
+
+                CoverBubbleTransform.ScaleX = scale;
+                CoverBubbleTransform.ScaleY = h / height;
+                CoverBubbleTransform.TranslateX = x;
+                CoverBubbleTransform.TranslateY = y;
+
+                CoverBubble.Opacity = 1;
+                CoverBubbleStroke.Opacity = value * value;
+            }
+            else
+            {
+                // Shrinks into the dot, its centre falling from where it rests to the dot.
+                var dotY = -DotRise;
+                var centerY = dotY + (top + height / 2 - dotY) * shown;
+
+                scale = shown;
+
+                CoverBubbleTransform.ScaleX = scale;
+                CoverBubbleTransform.ScaleY = scale;
+                CoverBubbleTransform.TranslateX = dotX - width * shown / 2;
+                CoverBubbleTransform.TranslateY = centerY - height * shown / 2;
+
+                CoverBubble.Opacity = shown;
+                CoverBubbleStroke.Opacity = 1;
+            }
+
+            scale = Math.Max(scale, 0.01);
+
+            CoverBubbleFrame.BorderThickness = new Thickness(BubbleBorder / scale);
+            CoverBubbleFrame.CornerRadius = new CornerRadius(BubbleRadius / scale);
+            CoverBubble.Visibility = Visibility.Visible;
+
+            _mirrorShape.CornerRadius = new Vector2((float)(BubbleRadius / scale));
+        }
+
+        private void StartRendering()
+        {
+            if (!_rendering)
+            {
+                _rendering = true;
+                CompositionTarget.Rendering += OnRendering;
+            }
+        }
+
+        private void StopRendering()
+        {
+            if (_rendering)
+            {
+                _rendering = false;
+                CompositionTarget.Rendering -= OnRendering;
+            }
+        }
+
+        private void OnRendering(object sender, object e)
+        {
+            var time = ((RenderingEventArgs)e).RenderingTime;
+            var capturing = _capture.IsRunning;
+
+            _dot.Step(time);
+            _bubble.Step(time);
+            _capture.Step(time);
+
+            if (capturing && !_capture.IsRunning)
+            {
+                OnCaptured();
+            }
+
+            UpdateDot();
+            ApplyBubble();
+
+            if (!_dot.IsRunning && !_bubble.IsRunning && !_capture.IsRunning)
+            {
+                StopRendering();
+            }
+        }
+
+        // A value eased out (quintic) from where it is to a target, stepped by the frame clock.
+        private sealed class Tween
+        {
+            private double _from;
+            private double _to;
+            private double _duration;
+            private TimeSpan? _start;
+
+            public double Value { get; private set; }
+
+            public bool IsRunning { get; private set; }
+
+            public void Begin(double to, double duration)
+            {
+                _from = Value;
+                _to = to;
+                _duration = duration;
+                _start = null;
+
+                IsRunning = true;
+            }
+
+            public void Jump(double value)
+            {
+                Value = value;
+                IsRunning = false;
+            }
+
+            public void Step(TimeSpan time)
+            {
+                if (!IsRunning)
+                {
+                    return;
+                }
+
+                _start ??= time;
+
+                var t = Math.Min(1, (time - _start.Value).TotalMilliseconds / _duration);
+                var eased = 1 - Math.Pow(1 - t, 5);
+
+                Value = _from + (_to - _from) * eased;
+
+                if (t >= 1)
+                {
+                    Value = _to;
+                    IsRunning = false;
+                }
+            }
+        }
+
+        #endregion
     }
 }

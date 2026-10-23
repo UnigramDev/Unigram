@@ -67,6 +67,7 @@ namespace Telegram.Views.Stories.Popups
                 Surface.InitializePlayer(false);
 
                 TrimToolbar.Initialize(XamlRoot, Surface.Player, media, MaximumLength, false);
+                TrimToolbar.EnableCover(Surface);
 
                 if (media is StorageVideo video)
                 {
@@ -199,11 +200,13 @@ namespace Telegram.Views.Stories.Popups
 
             TimeSpan trimStartTime = default;
             TimeSpan trimStopTime = default;
+            TimeSpan coverTime = default;
 
             if (TrimToolbar != null)
             {
                 trimStartTime = TrimToolbar.TrimStartTime;
                 trimStopTime = TrimToolbar.TrimStopTime;
+                coverTime = TrimToolbar.CoverTime;
             }
 
             _media.EditState = new ImageGeneration
@@ -217,6 +220,7 @@ namespace Telegram.Views.Stories.Popups
                 Angle = Surface.Cropper.Angle,
                 TrimStartTime = trimStartTime,
                 TrimStopTime = trimStopTime,
+                CoverTime = coverTime,
                 FrameSize = FrameSize,
                 FrameTopColor = Surface.FrameTopColor,
                 FrameBottomColor = Surface.FrameBottomColor
