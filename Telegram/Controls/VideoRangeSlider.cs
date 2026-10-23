@@ -20,7 +20,6 @@ namespace Telegram.Controls
         private bool _pressed;
         private bool _holdable;
         private double _delta;
-        private double _distance;
         private double _lastX;
         private FrameworkElement _target;
 
@@ -195,13 +194,7 @@ namespace Telegram.Controls
                 _tempMax = Math.Max(0, _maximum - _minLength);
                 _target = MinimumThumb;
             }
-            else if (e.OriginalSource == MiddleThumb1)
-            {
-                _tempMin = 0;
-                _tempMax = 1 - (_maximum - _minimum);
-                _target = MiddleThumb1;
-            }
-            else if (e.OriginalSource == MiddleThumb2)
+            else if (e.OriginalSource == MiddleThumb1 || e.OriginalSource == MiddleThumb2)
             {
                 _tempMin = _minimum;
                 _tempMax = _maximum;
@@ -229,14 +222,15 @@ namespace Telegram.Controls
                 SetView(_zoomed ? _zoomStart : 0, _zoomed ? _zoomLength : 1);
             }
 
-            _delta = _target.Margin.Left - point.X;
-            _distance = _maximum - _minimum;
+            // Pressed anywhere inside the selection, the playhead jumps to put its centre under
+            // the pointer and is dragged from there. -THICKNESS / 2 is the delta that inverts
+            // Arrange's margin for that centre.
+            _delta = e.OriginalSource == MiddleThumb1
+                ? -THICKNESS / 2
+                : _target.Margin.Left - point.X;
             _lastX = point.X;
 
-            if (_target != MiddleThumb1)
-            {
-                _toolTip.IsOpen = true;
-            }
+            _toolTip.IsOpen = true;
 
             // Not the playhead: scrubbing is pausing to look at frames, and each pause would zoom.
             _holdable = _target == MinimumThumb || _target == MaximumThumb;
@@ -249,6 +243,12 @@ namespace Telegram.Controls
             if (_target == MiddleThumb2)
             {
                 HeadDraggingChanged?.Invoke(this, true);
+            }
+
+            if (e.OriginalSource == MiddleThumb1)
+            {
+                Calculate(point.X, false);
+                Arrange();
             }
         }
 
@@ -440,12 +440,6 @@ namespace Telegram.Controls
             if (_target == MinimumThumb)
             {
                 _minimum = value;
-                _value = _minimum;
-            }
-            else if (_target == MiddleThumb1)
-            {
-                _minimum = value;
-                _maximum = value + _distance;
                 _value = _minimum;
             }
             else if (_target == MiddleThumb2)
