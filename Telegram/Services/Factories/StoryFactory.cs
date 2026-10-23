@@ -69,7 +69,7 @@ namespace Telegram.Services.Factories
                 var file = await GenerationService.PrepareAsync(video.File, ConversionType.Transcode, serialized);
 
                 // The cover is the first frame kept, until one can be picked.
-                return new InputStoryContentVideo(file, MessageFactory.GetAddedStickers(state.Entities), (stop - start).TotalSeconds, 0, video.IsMuted);
+                return new InputStoryContentVideo(file, MessageFactory.GetAddedStickers(state.Entities), (stop - start).TotalSeconds, 0, video.IsMuted || !video.HasAudio);
             }
 
             // A photo with an animated sticker on it goes out as a video, as long as the stickers

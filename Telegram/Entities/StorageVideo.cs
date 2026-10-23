@@ -15,7 +15,7 @@ namespace Telegram.Entities
 {
     public partial class StorageVideo : StorageMedia
     {
-        private StorageVideo(StorageFile file, ulong fileSize, double totalMilliseconds, int width, int height)
+        private StorageVideo(StorageFile file, ulong fileSize, double totalMilliseconds, int width, int height, bool hasAudio)
             : base(file, fileSize)
         {
             TotalSeconds = (int)Math.Floor(totalMilliseconds / 1000);
@@ -23,6 +23,8 @@ namespace Telegram.Entities
 
             Width = width;
             Height = height;
+
+            HasAudio = hasAudio;
         }
 
         public override int Width { get; }
@@ -49,7 +51,7 @@ namespace Telegram.Entities
                             break;
                     }
 
-                    return new StorageVideo(file, fileSize, animation.Duration, width, height);
+                    return new StorageVideo(file, fileSize, animation.Duration, width, height, animation.HasAudio);
                 }
 
                 return null;
@@ -61,6 +63,8 @@ namespace Telegram.Entities
         }
 
         public int TotalSeconds { get; }
+
+        public bool HasAudio { get; }
 
         public double TotalMilliseconds { get; }
 
