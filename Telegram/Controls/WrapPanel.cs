@@ -47,6 +47,28 @@ namespace Telegram.Controls
             wrapPanel?.InvalidateArrange();
         }
 
+        /// <summary>
+        /// Where each row sits across the panel when it is narrower than the panel. Rows only:
+        /// a vertical panel's columns always start at its top.
+        /// </summary>
+        public HorizontalAlignment HorizontalContentAlignment
+        {
+            get => (HorizontalAlignment)GetValue(HorizontalContentAlignmentProperty);
+            set => SetValue(HorizontalContentAlignmentProperty, value);
+        }
+
+        public static readonly DependencyProperty HorizontalContentAlignmentProperty =
+            DependencyProperty.Register(
+                "HorizontalContentAlignment",
+                typeof(HorizontalAlignment),
+                typeof(WrapPanel),
+                new PropertyMetadata(HorizontalAlignment.Left, HorizontalContentAlignmentPropertyChanged));
+
+        private static void HorizontalContentAlignmentPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as WrapPanel)?.InvalidateArrange();
+        }
+
         /// <inheritdoc />
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -105,37 +127,70 @@ namespace Telegram.Controls
         /// <inheritdoc />
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var parentMeasure = new UvMeasure(Orientation, finalSize.Width, finalSize.Height);
-            var position = new UvMeasure();
+            var horizontal = Orientation == Orientation.Horizontal;
+            var available = horizontal ? finalSize.Width : finalSize.Height;
+            var children = Children;
+            var count = children.Count;
 
-            double currentV = 0;
-            foreach (var child in Children)
+            double v = 0;
+            var start = 0;
+
+            // A row at a time: first what fits in it, at least one child, then where it starts.
+            while (start < count)
             {
-                var desiredMeasure = new UvMeasure(Orientation, child.DesiredSize.Width, child.DesiredSize.Height);
-                if ((desiredMeasure.U + position.U) > parentMeasure.U)
+                double rowU = 0;
+                double rowV = 0;
+                var end = start;
+
+                while (end < count)
                 {
-                    // next row!
-                    position.U = 0;
-                    position.V += currentV;
-                    currentV = 0;
+                    var size = children[end].DesiredSize;
+                    var u = horizontal ? size.Width : size.Height;
+
+                    if (end > start && rowU + u > available)
+                    {
+                        break;
+                    }
+
+                    rowU += u;
+                    rowV = Math.Max(rowV, horizontal ? size.Height : size.Width);
+                    end++;
                 }
 
-                // Place the item
-                if (Orientation == Orientation.Horizontal)
+                var position = horizontal ? GetRowOffset(available - rowU) : 0;
+
+                for (int i = start; i < end; i++)
                 {
-                    child.Arrange(new Rect(position.U, position.V, child.DesiredSize.Width, child.DesiredSize.Height));
-                }
-                else
-                {
-                    child.Arrange(new Rect(position.V, position.U, child.DesiredSize.Width, child.DesiredSize.Height));
+                    var child = children[i];
+                    var size = child.DesiredSize;
+
+                    if (horizontal)
+                    {
+                        child.Arrange(new Rect(position, v, size.Width, size.Height));
+                        position += size.Width;
+                    }
+                    else
+                    {
+                        child.Arrange(new Rect(v, position, size.Width, size.Height));
+                        position += size.Height;
+                    }
                 }
 
-                // adjust the location for the next items
-                position.U += desiredMeasure.U;
-                currentV = Math.Max(desiredMeasure.V, currentV);
+                v += rowV;
+                start = end;
             }
 
             return finalSize;
+        }
+
+        private double GetRowOffset(double slack)
+        {
+            return HorizontalContentAlignment switch
+            {
+                HorizontalAlignment.Center => Math.Max(0, slack) / 2,
+                HorizontalAlignment.Right => Math.Max(0, slack),
+                _ => 0
+            };
         }
     }
 
