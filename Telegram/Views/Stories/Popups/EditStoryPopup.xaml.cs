@@ -88,10 +88,13 @@ namespace Telegram.Views.Stories.Popups
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Before the media, so the editor never shows the crop tools first.
+            // The decode first, as it runs off the UI thread, then the tools while it does: before
+            // the media is in, so the editor never shows the crop tools first.
+            var loading = Surface.Cropper.SetSourceAsync(_media.File, proportions: BitmapProportions.NineOverSixteen);
+
             ShowDrawTools();
 
-            await Surface.Cropper.SetSourceAsync(_media.File, proportions: BitmapProportions.NineOverSixteen);
+            await loading;
         }
 
         // The toolbars let go of the player before the surface closes it.

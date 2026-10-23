@@ -163,6 +163,12 @@ namespace Telegram.Controls
         public event EventHandler Changed;
 
         /// <summary>
+        /// Raised once the source is shown, with the image as decoded for it: upright and at most
+        /// 1280 pixels on its longer side.
+        /// </summary>
+        public event EventHandler<SoftwareBitmap> SourceDecoded;
+
+        /// <summary>
         /// Raised whenever the content moves on screen, every frame of an animation included.
         /// </summary>
         public event EventHandler ViewChanged;
@@ -1904,24 +1910,32 @@ namespace Telegram.Controls
         {
             try
             {
-                SoftwareBitmapSource source;
-                using (var fileStream = await ImageHelper.OpenReadAsync(file))
-                {
-                    var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                    var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+                // Off the UI thread from the start: a large PNG has no reduced decode, so it is
+                // read whole, and none of that should wait on the UI thread in between.
+                var software = await Task.Run(() => DecodeAsync(file));
 
-                    // Upright only: the edit's own turns and mirror are part of the view transform.
-                    var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                    source = new SoftwareBitmapSource();
-                    await source.SetBitmapAsync(software);
+                var source = new SoftwareBitmapSource();
+                await source.SetBitmapAsync(software);
 
-                    SetSource(source, software.PixelWidth, software.PixelHeight, rotation, flip, angle, proportions, cropRectangle);
-                }
+                SetSource(source, software.PixelWidth, software.PixelHeight, rotation, flip, angle, proportions, cropRectangle);
+
+                SourceDecoded?.Invoke(this, software);
             }
             catch
             {
                 // TODO: decide how to handle failures in opening the image
             }
+        }
+
+        // Upright only: the edit's own turns and mirror are part of the view transform.
+        private static async Task<SoftwareBitmap> DecodeAsync(StorageFile file)
+        {
+            using var fileStream = await ImageHelper.OpenReadAsync(file);
+
+            var decoder = await BitmapDecoder.CreateAsync(fileStream);
+            var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+
+            return await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
         }
 
         private void SetSource(ImageSource source, double width, double height, ImageRotation rotation, ImageFlip flip, double angle, BitmapProportions proportions, Rect? cropRectangle)

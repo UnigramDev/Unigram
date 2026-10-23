@@ -8,7 +8,6 @@
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Numerics;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
 using Telegram.Native;
@@ -16,7 +15,6 @@ using Telegram.Native.Media;
 using Telegram.Services;
 using Telegram.Streams;
 using Windows.Foundation;
-using Windows.Graphics.DirectX;
 using Windows.Graphics.Imaging;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
@@ -92,7 +90,7 @@ namespace Telegram.Controls
             MediaContent.Children.Remove(Layers);
             FrameLayer.Children.Add(Layers);
 
-            LoadFrameColors();
+            Cropper.SourceDecoded += Cropper_SourceDecoded;
         }
 
         // Starts nothing: the host subscribes to the player before Play.
@@ -236,88 +234,27 @@ namespace Telegram.Controls
         }
 
         // Sampled near the top and the bottom of the media, upright, and toned towards the middle
-        // so neither end of the gradient is glaring or muddy.
-        private async void LoadFrameColors()
+        // so neither end of the gradient is glaring or muddy. From the cropper's own decode, which
+        // for a video is its first frame: decoding the media a second time for two pixels cost as
+        // much as showing it.
+        private void Cropper_SourceDecoded(object sender, SoftwareBitmap software)
         {
+            Cropper.SourceDecoded -= Cropper_SourceDecoded;
+
             try
             {
-                var colors = IsVideo
-                    ? await GetVideoColorsAsync()
-                    : await GetPhotoColorsAsync();
+                using var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(ElementComposition.GetSharedDevice(), software);
 
-                if (colors != null)
-                {
-                    FrameFillTop.Color = AdaptFrameColor(colors[0]);
-                    FrameFillBottom.Color = AdaptFrameColor(colors[1]);
-                }
+                var width = software.PixelWidth;
+                var height = software.PixelHeight;
+
+                FrameFillTop.Color = AdaptFrameColor(bitmap.GetPixelColors(width / 2, (int)(height * 0.1), 1, 1)[0]);
+                FrameFillBottom.Color = AdaptFrameColor(bitmap.GetPixelColors(width / 2, (int)(height * 0.9), 1, 1)[0]);
             }
             catch
             {
                 // The frame stays black.
             }
-        }
-
-        private async Task<Color[]> GetPhotoColorsAsync()
-        {
-            using var stream = await ImageHelper.OpenReadAsync(_media.File);
-
-            var decoder = await BitmapDecoder.CreateAsync(stream);
-            var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder, 240);
-
-            using var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-            using var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(ElementComposition.GetSharedDevice(), software);
-
-            var width = software.PixelWidth;
-            var height = software.PixelHeight;
-
-            return new[]
-            {
-                bitmap.GetPixelColors(width / 2, (int)(height * 0.1), 1, 1)[0],
-                bitmap.GetPixelColors(width / 2, (int)(height * 0.9), 1, 1)[0]
-            };
-        }
-
-        private async Task<Color[]> GetVideoColorsAsync()
-        {
-            using var stream = await _media.File.OpenReadAsync();
-            using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), false, false, false));
-
-            var scale = Math.Min(1, 240d / Math.Max(animation.PixelWidth, animation.PixelHeight));
-            var width = Math.Max(1, (int)(animation.PixelWidth * scale));
-            var height = Math.Max(1, (int)(animation.PixelHeight * scale));
-
-            var buffer = BufferSurface.Create((uint)(width * height * 4));
-
-            if (!await Task.Run(() => animation.RenderSync(buffer, width, height, true, out _)))
-            {
-                return null;
-            }
-
-            using var bitmap = CanvasBitmap.CreateFromBytes(ElementComposition.GetSharedDevice(), buffer, width, height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
-
-            // The frame is decoded as stored; the points are taken on the video as it is shown.
-            var rotation = animation.Rotation;
-            var uprightWidth = rotation is 90 or 270 ? height : width;
-            var uprightHeight = rotation is 90 or 270 ? width : height;
-
-            Color Sample(int x, int y)
-            {
-                var (sourceX, sourceY) = rotation switch
-                {
-                    90 => (y, height - 1 - x),
-                    180 => (width - 1 - x, height - 1 - y),
-                    270 => (width - 1 - y, x),
-                    _ => (x, y)
-                };
-
-                return bitmap.GetPixelColors(Math.Clamp(sourceX, 0, width - 1), Math.Clamp(sourceY, 0, height - 1), 1, 1)[0];
-            }
-
-            return new[]
-            {
-                Sample(uprightWidth / 2, (int)(uprightHeight * 0.1)),
-                Sample(uprightWidth / 2, (int)(uprightHeight * 0.9))
-            };
         }
 
         private static Color AdaptFrameColor(Color color)
