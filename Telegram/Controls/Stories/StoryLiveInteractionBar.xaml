@@ -219,7 +219,6 @@
                                              NativeStyle="{StaticResource DefaultChatMessageTextBoxStyle}"
                                              Background="Transparent"
                                              BorderThickness="0"
-                                             Height="0"
                                              MinHeight="0"
                                              Padding="16,0,0,0"
                                              Grid.Column="1" />
