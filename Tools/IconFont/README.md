@@ -134,11 +134,15 @@ with colour off - draws the whole icon in one colour rather than nothing.
 
 ## Adding an icon
 
-1. Put the SVG in `icons/`, or find its name in the live source.
-2. Add an entry to `icons.json` with the next free codepoint.
+1. Move the live source to its newest version first, whenever adding an icon:
+   `py -m iconfont update`, then `--apply` if it finds one - see **Updating
+   Microsoft's icons**. Staying current keeps each update small enough to review.
+2. Put the SVG in `icons/`, or find its name in the live source.
+3. Add an entry to `icons.json` with the next free codepoint.
    Multicolour artwork needs `"color": true` - see **Colour glyphs**.
-3. `py -m iconfont build && py -m iconfont check`
-4. Add the constant to `Icons.cs` by hand.
+4. `py -m iconfont build && py -m iconfont check`, and `verify` against the font
+   from before both changes, so what the update redrew shows up next to the new glyph.
+5. Add the constant to `Icons.cs` by hand.
 
 **Codepoints are append-only.** Besides `Icons.cs`, 763 raw `&#xE9F1;`-style
 literals across 211 XAML files name codepoints directly, and `App.xaml` points

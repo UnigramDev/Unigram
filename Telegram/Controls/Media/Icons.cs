@@ -120,6 +120,7 @@ namespace Telegram.Controls.Media
         public const string Location = "\uE1C4";
         public const string Poll = "\uE91F";
         public const string Crop = "\uE7A8";
+        public const string Crop16 = "\uF7AB";
 
         public const string CheckmarkSquare = "\uEABE";
         public const string CheckmarkSquareFilled = "\uEABF";
@@ -233,6 +234,7 @@ namespace Telegram.Controls.Media
         public const string ArrowReply = "\uE248";
         public const string Thread = "\uE93D";
         public const string Edit = "\uE104";
+        public const string Edit16 = "\uF7AC";
         public const string EditFilled = "\uEA55";
         public const string Compose = "\uE932";
         public const string Compose16 = "\uE996";
@@ -284,6 +286,7 @@ namespace Telegram.Controls.Media
         public const string ArrowUpload = "\uEA01";
 
         public const string Sticker = "\uF4AA";
+        public const string Sticker16 = "\uF7AE";
         public const string Sticker24 = "\uE9E2";
         public const string Gif = "\uF4A9";
         public const string Gif24 = "\uE9E1";
@@ -434,6 +437,7 @@ namespace Telegram.Controls.Media
         public const string Calendar = "\uE787";
         public const string TextParagraph = "\uEB23";
         public const string TextFont = "\uE8D2";
+        public const string TextFont16 = "\uF7AD";
         public const string StarFilled = "\uE735";
         public const string StarFilled16 = "\uEA23";
         public const string PeopleFilled16 = "\uEA27";
@@ -501,6 +505,9 @@ namespace Telegram.Controls.Media
         public const string Square = "\uF7A6";
         public const string SquareFilled = "\uF7A7";
         public const string Shapes = "\uE9E8";
+        public const string Shapes16 = "\uF7AF";
+        public const string Hd = "\uF7B0";
+        public const string HdOff = "\uF7B1";
         public const string MathFormula = "\uEB07";
 
         public const string BotMarkup24 = "\uE9D5";

@@ -1,7 +1,7 @@
 {
   "font": {"family": "Telegram", "unitsPerEm": 1024, "ascent": 960, "descent": 64, "version": "2.186"},
   "sources": {
-    "fluent": {"type": "npm", "package": "@fluentui/svg-icons", "version": "1.1.338", "prefix": "icons/"}
+    "fluent": {"type": "npm", "package": "@fluentui/svg-icons", "version": "1.1.344", "prefix": "icons/"}
   },
   "icons": [
     {"name": "uniE001", "code": "E001", "src": "alias:E8FB", "note": "same glyph as ic_fluent_checkmark_20_regular"},
@@ -707,6 +707,13 @@
     {"name": "tl_fluent_star_14_regular", "code": "F7A8", "src": "icons/tl_fluent_star_14_regular.svg"},
     {"name": "tl_fluent_gram_14_regular", "code": "F7A9", "src": "icons/tl_fluent_gram_14_regular.svg"},
     {"name": "ic_fluent_add_12_filled", "code": "F7AA", "src": "fluent:add_12_filled"},
+    {"name": "ic_fluent_crop_16_regular", "code": "F7AB", "src": "fluent:crop_16_regular"},
+    {"name": "ic_fluent_edit_16_regular", "code": "F7AC", "src": "fluent:edit_16_regular"},
+    {"name": "ic_fluent_text_font_16_regular", "code": "F7AD", "src": "fluent:text_font_16_regular"},
+    {"name": "ic_fluent_sticker_16_regular", "code": "F7AE", "src": "fluent:sticker_16_regular"},
+    {"name": "ic_fluent_shapes_16_regular", "code": "F7AF", "src": "fluent:shapes_16_regular"},
+    {"name": "ic_fluent_hd_20_regular", "code": "F7B0", "src": "fluent:hd_20_regular"},
+    {"name": "ic_fluent_hd_off_20_regular", "code": "F7B1", "src": "fluent:hd_off_20_regular"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }
