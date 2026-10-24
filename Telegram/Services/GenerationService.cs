@@ -530,6 +530,10 @@ namespace Telegram.Services
                 var output = GetVideoOutputSize(generation, probe.Width, probe.Height);
                 var transform = GetVideoTransform(generation, (float)probe.Width, (float)probe.Height, output);
 
+                // Picked down to one of the two lowest levels. Only a pick: a video note, a story
+                // or a small video sent at its own size keeps its sound.
+                var lowLevel = generation.MaxSide > 0 && GetVideoLevel((int)output.Width, (int)output.Height) < LowLevels;
+
                 var options = new VideoTranscoderOptions
                 {
                     InputPath = file.Path,
@@ -545,6 +549,10 @@ namespace Telegram.Services
                         : generation.HasFrame
                         ? MakeStoryBitrate(probe.Bitrate, generation.Entities is { Count: > 0 })
                         : MakeVideoBitrate(probe.Height, probe.Width, probe.Bitrate, (int)output.Height, (int)output.Width),
+                    AudioBitrate = generation.AudioBitrate != 0
+                        ? (int)generation.AudioBitrate
+                        : lowLevel ? LowLevelAudioBitrate : 0,
+                    MonoAudio = lowLevel,
                     MaxFrameRate = generation.IsStill ? StillFrameRate : generation.HasFrame ? 59 : 60,
                     HardwareEncoding = allowHardware && !AppSettings.Diagnostics.DisableHardwareVideoEncoding
                 };
@@ -1109,35 +1117,56 @@ namespace Telegram.Services
             return Math.Clamp(originalBitrate, 500_000, 3_000_000);
         }
 
-        // As the official apps pick it: the source's bitrate for the pixels kept, within a range
-        // set by the output's shorter side.
-        private static int MakeVideoBitrate(double originalHeight, double originalWidth, int originalBitrate, int height, int width)
+        // The most a video's picture may take at each quality level, 240p to 1080p, by the longest
+        // side the level fits it to (StorageVideo.QualitySides).
+        private static readonly int[] LevelVideoBitrates = { 400_000, 700_000, 1_600_000, 3_000_000, 6_600_000 };
+
+        // Picked down to one of the two lowest levels, a video also takes its sound lighter: one
+        // channel, at this rate.
+        public const int LowLevels = 2;
+        public const int LowLevelAudioBitrate = 32_000;
+
+        /// <summary>
+        /// The quality level a video of this size comes out at: the lowest whose longest side
+        /// holds it.
+        /// </summary>
+        public static int GetVideoLevel(int width, int height)
+        {
+            var side = Math.Max(width, height);
+            var sides = StorageVideo.QualitySides;
+
+            for (int i = 0; i < sides.Length - 1; i++)
+            {
+                if (side <= sides[i])
+                {
+                    return i;
+                }
+            }
+
+            return sides.Length - 1;
+        }
+
+        // The source's bitrate for the pixels kept, within the bounds of the level it comes out
+        // at. The quality picker estimates the file from it too.
+        public static int MakeVideoBitrate(double originalHeight, double originalWidth, int originalBitrate, int height, int width)
         {
             float compressFactor;
             float minCompressFactor;
-            int maxBitrate;
 
-            if (Math.Min(height, width) >= 1080)
+            var maxBitrate = LevelVideoBitrates[GetVideoLevel(width, height)];
+
+            if (Math.Min(height, width) >= 720)
             {
-                maxBitrate = 6800000;
-                compressFactor = 1;
-                minCompressFactor = 1;
-            }
-            else if (Math.Min(height, width) >= 720)
-            {
-                maxBitrate = 2600000;
                 compressFactor = 1;
                 minCompressFactor = 1;
             }
             else if (Math.Min(height, width) >= 480)
             {
-                maxBitrate = 1000000;
                 compressFactor = 0.75f;
                 minCompressFactor = 0.9f;
             }
             else
             {
-                maxBitrate = 750000;
                 compressFactor = 0.6f;
                 minCompressFactor = 0.7f;
             }

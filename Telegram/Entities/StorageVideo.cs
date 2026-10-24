@@ -93,9 +93,16 @@ namespace Telegram.Entities
 
         /// <summary>
         /// The longest side of the cropped output at each quality level, lowest first. No level
-        /// scales the crop up.
+        /// scales the crop up. The lowest is called 240p though it is 480 long, as it is
+        /// elsewhere in Telegram.
         /// </summary>
-        public static readonly int[] QualitySides = { 480, 854, 1280, 1920 };
+        public static readonly int[] QualitySides = { 480, 640, 854, 1280, 1920 };
+
+        /// <summary>
+        /// The name of each level, by its place rather than the size it comes out at: a crop of
+        /// another shape, or the crop's own size at the top, keeps the name.
+        /// </summary>
+        public static readonly string[] QualityNames = { "240p", "360p", "480p", "720p", "1080p" };
 
         /// <summary>
         /// The crop in pixels of the frame once turned by <paramref name="rotation"/>.
@@ -114,10 +121,18 @@ namespace Telegram.Entities
             return new Size(rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
         }
 
+        // Every level smaller than the crop, and the last one, which is the crop's own size.
         public static int GetQualityLevels(Size crop)
         {
             var side = Math.Max(crop.Width, crop.Height);
-            return side > 1280 ? 4 : side > 854 ? 3 : side > 640 ? 2 : 1;
+            var levels = 1;
+
+            while (levels < QualitySides.Length && QualitySides[levels - 1] < side)
+            {
+                levels++;
+            }
+
+            return levels;
         }
 
         /// <summary>

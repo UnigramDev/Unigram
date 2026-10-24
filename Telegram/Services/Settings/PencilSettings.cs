@@ -49,14 +49,18 @@ namespace Telegram.Services.Settings
         /// <summary>
         /// The video quality last picked for a video with this many levels, or -1.
         /// </summary>
+        /// <remarks>
+        /// Keyed apart from "VideoQuality", the key from before the 240p and 360p levels: the same
+        /// index stood for a different size then.
+        /// </remarks>
         public int GetVideoQuality(int levels)
         {
-            return GetValueOrDefault("VideoQuality" + levels, -1);
+            return GetValueOrDefault("VideoQualityLevel" + levels, -1);
         }
 
         public void SetVideoQuality(int levels, int value)
         {
-            AddOrUpdateValue("VideoQuality" + levels, value);
+            AddOrUpdateValue("VideoQualityLevel" + levels, value);
         }
 
         public double GetWeight(PencilTool tool)
