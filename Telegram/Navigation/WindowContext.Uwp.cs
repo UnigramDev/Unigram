@@ -772,6 +772,8 @@ namespace Telegram.Navigation
         {
             // Replacing the window content to trigger Unloaded on the current tree
             window.Content = new Border();
+
+            NativeUtils.PrepareCoreWindowClose(window.CoreWindow);
             window.Close();
         }
 

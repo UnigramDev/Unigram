@@ -67,6 +67,8 @@ namespace winrt::Telegram::Native::implementation
         static void OverrideScaleForCurrentView(int32_t value);
         static int32_t GetScaleForCurrentView();
 
+        static void PrepareCoreWindowClose(winrt::Windows::UI::Core::CoreWindow const& window);
+
         static void SetFatalErrorCallback(FatalErrorCallback action);
         static void SetLogCallback(LogCallback action);
         static void LogMessageCallback(int verbosity_level, const char* message);

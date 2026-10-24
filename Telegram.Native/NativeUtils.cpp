@@ -1244,6 +1244,73 @@ namespace winrt::Telegram::Native::implementation
         return InternalsRT::Core::Windowing::CoreWindowHelpers::GetDpiForCurrentThread() / 96.0f * 100.0f;
     }
 
+    // The CoreWindow procedure passes a message on to DefWindowProc only if XAML's subclass, which
+    // runs first, did not mark it handled, and XAML removes that subclass without clearing the mark.
+    // When WM_PAINT, which XAML handles, is the last message to go through it - it races the style
+    // change of the close - the window's destroy messages never reach DefWindowProc. The window
+    // services are then never run down, the drag and drop manager they hold keeps an agile reference
+    // into the view's apartment, and RoUninitialize waits for it forever.
+    //
+    // A WM_NULL after each message, which XAML does not handle, leaves the mark clear whatever comes
+    // last. Only at the outermost level: a nested message already overwrites the mark of the one it
+    // interrupts, and clearing it there too would forward a handled message to DefWindowProc. XAML
+    // restores the procedure it replaced without looking for one above its own, so unhooking drops
+    // this one too; the WM_NCDESTROY branch is for a window it never subclassed.
+    namespace
+    {
+        using PFN_WndProc = LRESULT(CALLBACK*)(HWND, UINT, WPARAM, LPARAM);
+        using PFN_SetWindowLongPtrW = LONG_PTR(WINAPI*)(HWND, int, LONG_PTR);
+        using PFN_CallWindowProcW = LRESULT(WINAPI*)(PFN_WndProc, HWND, UINT, WPARAM, LPARAM);
+
+        constexpr int WindowProcIndex = -4; // GWLP_WNDPROC
+
+        struct ClosingWindowProc
+        {
+            static inline thread_local PFN_WndProc Next = nullptr;
+            static inline thread_local uint32_t Depth = 0;
+
+            static inline const LibraryInstance User32{ L"User32.dll", 0x00000001 };
+            static inline const auto SetProc = User32.GetMethod<PFN_SetWindowLongPtrW>("SetWindowLongPtrW");
+            static inline const auto CallProc = User32.GetMethod<PFN_CallWindowProcW>("CallWindowProcW");
+
+            static LRESULT CALLBACK Proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+            {
+                const auto next = Next;
+
+                if (message == WM_NCDESTROY)
+                {
+                    Next = nullptr;
+                    SetProc(hwnd, WindowProcIndex, reinterpret_cast<LONG_PTR>(next));
+
+                    return CallProc(next, hwnd, message, wParam, lParam);
+                }
+
+                ++Depth;
+                const auto result = CallProc(next, hwnd, message, wParam, lParam);
+
+                if (--Depth == 0 && message != WM_NULL)
+                {
+                    CallProc(next, hwnd, WM_NULL, 0, 0);
+                }
+
+                return result;
+            }
+        };
+    }
+
+    void NativeUtils::PrepareCoreWindowClose(winrt::Windows::UI::Core::CoreWindow const& window)
+    {
+        if (ClosingWindowProc::Next != nullptr || ClosingWindowProc::SetProc == nullptr || ClosingWindowProc::CallProc == nullptr)
+        {
+            return;
+        }
+
+        const auto hwnd = reinterpret_cast<HWND>(InternalsRT::Core::Windowing::CoreWindowHelpers::GetHwnd(window));
+        const auto previous = ClosingWindowProc::SetProc(hwnd, WindowProcIndex, reinterpret_cast<LONG_PTR>(&ClosingWindowProc::Proc));
+
+        ClosingWindowProc::Next = reinterpret_cast<PFN_WndProc>(previous);
+    }
+
     void NativeUtils::Crash()
     {
         std::thread([]() {

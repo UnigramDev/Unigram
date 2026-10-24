@@ -88,6 +88,10 @@ namespace Telegram.Native
         static void OverrideScaleForCurrentView(Int32 value);
         static Int32 GetScaleForCurrentView();
 
+        // On the window's thread, right before Window.Close of a secondary view. Without it a view
+        // can fail to uninitialize and its thread, and everything the view owns, is never released.
+        static void PrepareCoreWindowClose(Windows.UI.Core.CoreWindow window);
+
         static void SetFatalErrorCallback(FatalErrorCallback action);
         static void SetLogCallback(LogCallback callback);
         static void Log(Int32 level, String message, String member, String filePath, Int32 line);
