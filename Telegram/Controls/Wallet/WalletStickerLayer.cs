@@ -257,6 +257,11 @@ namespace Telegram.Controls.Wallet
         // The card's corners, as WalletCard rounds them.
         public const float CornerRadius = FaceWidth * (3.18f / 85.60f);
 
+        // The QR chip, which stickers on the card go under. WalletCardSurface draws it into this
+        // rect from a 50 x 38 design with corners of 9.
+        public static readonly Rect ChipRect = new(FaceWidth - 96, 80, 48, 36);
+        public static readonly Vector2 ChipCornerRadius = new((float)ChipRect.Width * 9 / 50, (float)ChipRect.Height * 9 / 38);
+
         public static bool IsOnCard(Vector2 point)
         {
             return point.X >= 0 && point.X <= FaceWidth && point.Y >= 0 && point.Y <= FaceHeight;

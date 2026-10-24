@@ -76,7 +76,7 @@
                             </TextBlock>
                         </Grid>
                         <!-- The surface draws the chip; this is what is clicked and focused. Where it is
-                             is WalletCard.QrRect. -->
+                             is WalletStickerLayer.ChipRect. -->
                         <HyperlinkButton x:Name="QrButton"
                                          Style="{StaticResource EmptyHyperlinkButtonStyle}"
                                          Width="48"

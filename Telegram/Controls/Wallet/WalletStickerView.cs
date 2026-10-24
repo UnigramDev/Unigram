@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -698,12 +699,16 @@ namespace Telegram.Controls.Wallet
                 _visual.Size = new Vector2(BaseSize + margin * 2);
                 _visual.Offset = new Vector3(-margin, -margin, 0);
 
-                // The card's face; Apply moves it into the sprite's space as the sticker moves.
-                var face = compositor.CreateRoundedRectangleGeometry();
-                face.Size = new Vector2(WalletStickerLayer.FaceWidth, WalletStickerLayer.FaceHeight);
-                face.CornerRadius = new Vector2(WalletStickerLayer.CornerRadius);
+                // The card's face less its chip; Apply moves it into the sprite's space as the
+                // sticker moves. Rooted with using: Win2D's UWP projection has no GC.KeepAlive.
+                var chip = WalletStickerLayer.ChipRect;
+                var chipRadius = WalletStickerLayer.ChipCornerRadius;
 
-                _clip = compositor.CreateGeometricClip(face);
+                using var face = CanvasGeometry.CreateRoundedRectangle(null, 0, 0, WalletStickerLayer.FaceWidth, WalletStickerLayer.FaceHeight, WalletStickerLayer.CornerRadius, WalletStickerLayer.CornerRadius);
+                using var socket = CanvasGeometry.CreateRoundedRectangle(null, (float)chip.X, (float)chip.Y, (float)chip.Width, (float)chip.Height, chipRadius.X, chipRadius.Y);
+                using var cut = face.CombineWith(socket, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
+
+                _clip = compositor.CreateGeometricClip(compositor.CreatePathGeometry(new CompositionPath(cut)));
 
                 ElementCompositionPreview.SetElementChildVisual(this, _visual);
 

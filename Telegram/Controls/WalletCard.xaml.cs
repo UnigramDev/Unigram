@@ -756,9 +756,6 @@ namespace Telegram.Controls
         private const double Thickness = 9;
         private static readonly double[] PlateDepths = { 1, 2 / 3.0, 1 / 3.0 };
 
-        // QrButton's place on the face, where the surface draws the chip.
-        private static readonly Rect QrRect = new(FaceWidth - 96, 80, 48, 36);
-
         // At rest the stars would cost a draw every frame for as long as the card is on screen, so
         // they twinkle only while the card is moving.
         private static readonly bool TwinkleWhileIdle = false;
@@ -925,7 +922,7 @@ namespace Telegram.Controls
 
             _units = width / FaceWidth;
             _scale = (float)(rasterization * _units);
-            _surface.SetLayout(new Size(FaceWidth, FaceHeight), WalletStickerLayer.CornerRadius, QrRect, _scale);
+            _surface.SetLayout(new Size(FaceWidth, FaceHeight), WalletStickerLayer.CornerRadius, WalletStickerLayer.ChipRect, _scale);
 
             var size = new Vector2(FaceWidth + margin * 2, FaceHeight + margin * 2) * _units;
             var offset = new Vector3(-margin * _units, -margin * _units, 0);
