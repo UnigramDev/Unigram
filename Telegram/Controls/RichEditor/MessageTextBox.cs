@@ -819,7 +819,9 @@ namespace Telegram.Controls.RichEditor
             }
 
             var status = _engine.GetStatus();
-            var canPaste = ClipboardEx.TryGetContent()?.Contains(StandardDataFormats.Text) ?? false;
+            var clipboard = ClipboardEx.TryGetContent();
+            var canPaste = clipboard != null && (clipboard.Contains(StandardDataFormats.Text)
+                || (PasteRequested != null && (clipboard.Contains(StandardDataFormats.Bitmap) || clipboard.Contains(StandardDataFormats.StorageItems))));
 
             flyout.CreateFlyoutItem(status.CanUndo, _engine.Undo, Strings.TextUndo, Icons.ArrowUndo, VirtualKey.Z);
             flyout.CreateFlyoutItem(status.CanRedo, _engine.Redo, Strings.Redo, Icons.ArrowRedo, VirtualKey.Y);
