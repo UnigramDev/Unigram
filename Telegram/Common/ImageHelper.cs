@@ -10,6 +10,7 @@ using Microsoft.Graphics.Canvas.Brushes;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Entities;
@@ -553,6 +554,37 @@ namespace Telegram.Common
         }
 
         /// <summary>
+        /// A story's frame as it is posted, gradient and media only, at <paramref name="size"/>,
+        /// with a video's frame at <paramref name="time"/>.
+        /// </summary>
+        public static async Task<SoftwareBitmap> RenderFrameAsync(StorageFile sourceFile, ImageGeneration generation, Size size, TimeSpan time)
+        {
+            var frame = new ImageGeneration
+            {
+                Rectangle = generation.Rectangle,
+                Rotation = generation.Rotation,
+                Flip = generation.Flip,
+                Angle = generation.Angle,
+                FrameSize = size,
+                FrameTopColor = generation.FrameTopColor,
+                FrameBottomColor = generation.FrameBottomColor
+            };
+
+            using (var source = await OpenReadAsync(sourceFile, time, true))
+            using (var target = await RenderRotatedAsync(source, frame, 0, 0, false))
+            {
+                var width = (int)target.SizeInPixels.Width;
+                var height = (int)target.SizeInPixels.Height;
+
+                var bitmap = SoftwareBitmap.CreateCopyFromBuffer(target.GetPixelBytes().AsBuffer(), BitmapPixelFormat.Bgra8, width, height, BitmapAlphaMode.Premultiplied);
+                bitmap.DpiX = 96;
+                bitmap.DpiY = 96;
+
+                return bitmap;
+            }
+        }
+
+        /// <summary>
         /// The decoder only turns by quarters, so a free angle is drawn by Win2D instead. The image
         /// is decoded upright, exactly as ImageCropper previews it, and one matrix then takes it
         /// through the mirror, the quarter turns, the crop and the angle — strokes and objects too,
@@ -746,7 +778,8 @@ namespace Telegram.Common
             };
         }
 
-        public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile, TimeSpan? trimStart = null)
+        // Not precise, a video's frame is the keyframe at or before trimStart.
+        public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile, TimeSpan? trimStart = null, bool precise = false)
         {
             // The same set EditMediaPopup uses to decide whether a file is a video, so
             // the two cannot disagree about what reaches the frame extraction below.
@@ -773,9 +806,18 @@ namespace Telegram.Common
                     // Callers pass the result straight to BitmapDecoder, so returning null
                     // would only move the failure. GenerationService and ImageCropper
                     // both catch this.
-                    if (!animation.RenderSync(frame, width, height, true, out _))
+                    if (!animation.RenderSync(frame, width, height, true, out double seconds))
                     {
                         throw new InvalidOperationException($"No frame could be rendered from '{sourceFile.Name}'.");
+                    }
+
+                    // A failed render leaves the buffer alone, so it keeps the last frame reached.
+                    while (precise && seconds * 1000 < trimStart?.TotalMilliseconds)
+                    {
+                        if (!animation.RenderSync(frame, width, height, true, out seconds))
+                        {
+                            break;
+                        }
                     }
 
                     var stream = new InMemoryRandomAccessStream();

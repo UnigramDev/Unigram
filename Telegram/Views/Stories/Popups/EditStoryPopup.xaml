@@ -8,116 +8,96 @@
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         Background="{x:Null}"
+                        OverlayBrush="#CC000000"
                         RequestedTheme="Dark"
                         PreviewKeyDown="OnPreviewKeyDown"
                         ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="60" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="56" />
+            <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:MediaEditorSurface x:Name="Surface" />
+        <controls:MediaEditorSurface x:Name="Surface"
+                                     Grid.Row="2" />
 
+        <!-- What applies to the whole edit, at the ends; the tabs between. -->
+        <Grid Padding="12,0,12,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <controls:GlyphButton Click="Cancel_Click"
+                                      Glyph="&#xE711;"
+                                      Width="40"
+                                      Height="40"
+                                      Padding="0"
+                                      AutomationProperties.Name="{CustomResource Close}"
+                                      ToolTipService.ToolTip="{CustomResource Close}" />
+
+                <Rectangle Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                           Margin="8,12,8,12"
+                           Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}" />
+
+                <controls:GlyphButton x:Name="UndoButton"
+                                      Click="Undo_Click"
+                                      Glyph="&#xE7A7;"
+                                      IsEnabled="False"
+                                      Width="40"
+                                      Height="40"
+                                      Padding="0"
+                                      AutomationProperties.Name="{CustomResource Undo}"
+                                      ToolTipService.ToolTip="{CustomResource Undo}" />
+
+                <controls:GlyphButton x:Name="RedoButton"
+                                      Click="Redo_Click"
+                                      Glyph="&#xE7A6;"
+                                      IsEnabled="False"
+                                      Width="40"
+                                      Height="40"
+                                      Padding="0"
+                                      AutomationProperties.Name="{CustomResource Redo}"
+                                      ToolTipService.ToolTip="{CustomResource Redo}" />
+            </StackPanel>
+
+            <controls:PaintTabs x:Name="PaintTabs"
+                                ShowsWidgets="True"
+                                CroppingChanged="PaintTabs_CroppingChanged"
+                                Grid.Column="1" />
+
+            <Button Click="Accept_Click"
+                    Content="{CustomResource Next}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    AllowFocusOnInteraction="False"
+                    MinWidth="80"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Grid.Column="2" />
+        </Grid>
+
+        <!-- The open tab's options, the crop's or the drawing's, which slide past each other. -->
         <controls:CropToolbar x:Name="CropToolbar"
                               Visibility="Collapsed"
-                              Margin="12,0,12,8"
+                              Margin="12,8,12,0"
                               Grid.Row="1" />
 
-        <!-- Over the media and the row under it, which it lays out as the same two rows. -->
+        <!-- Over the media too, where its size preview shows. -->
         <controls:PaintToolbar x:Name="PaintToolbar"
                                x:Load="False"
+                               Margin="12,8,12,0"
+                               Grid.Row="1"
                                Grid.RowSpan="2" />
 
         <controls:TrimToolbar x:Name="TrimToolbar"
                               x:Load="False"
-                              HorizontalAlignment="Center"
                               Margin="24,0,24,8"
-                              Grid.Row="2" />
-
-        <Grid x:Name="Commands"
-              Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}"
-              HorizontalAlignment="Center"
-              Margin="24,0,24,24"
-              CornerRadius="15"
-              Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <controls:GlyphButton Click="Cancel_Click"
-                                  Glyph="&#xE711;"
-                                  CornerRadius="13,4,4,13"
-                                  Margin="0,0,-4,0"
-                                  AutomationProperties.Name="{CustomResource Close}"
-                                  ToolTipService.ToolTip="{CustomResource Close}" />
-
-            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                       Margin="4,12,4,12"
-                       Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
-                       Grid.Column="1" />
-
-            <Grid x:Name="BasicToolbar"
-                  Visibility="Collapsed"
-                  Grid.Column="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <controls:GlyphToggleButton x:Name="Rotate"
-                                            Click="Rotate_Click"
-                                            Glyph="&#xE909;"
-                                            CheckedGlyph="&#xE909;"
-                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                            AutomationProperties.Name="{CustomResource AccDescrRotate}"
-                                            ToolTipService.ToolTip="{CustomResource AccDescrRotate}" />
-
-                <controls:GlyphToggleButton x:Name="Flip"
-                                            Click="Flip_Click"
-                                            Glyph="&#xE908;"
-                                            CheckedGlyph="&#xE908;"
-                                            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                            AutomationProperties.Name="{CustomResource AccDescrFlip}"
-                                            ToolTipService.ToolTip="{CustomResource AccDescrFlip}"
-                                            Grid.Column="1" />
-            </Grid>
-
-            <controls:PaintTabs x:Name="PaintTabs"
-                                x:Load="False"
-                                ShowsWidgets="True"
-                                Grid.Column="2" />
-
-            <controls:GlyphButton x:Name="Crop"
-                                  Click="Crop_Click"
-                                  Glyph="&#xE7A8;"
-                                  Visibility="Collapsed"
-                                  AutomationProperties.Name="{CustomResource CropImage}"
-                                  ToolTipService.ToolTip="{CustomResource CropImage}"
-                                  Grid.Column="3" />
-
-            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                       Margin="4,12,4,12"
-                       Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
-                       Grid.Column="4" />
-
-            <controls:GlyphButton Click="Accept_Click"
-                                  Glyph="&#xE10B;"
-                                  AllowFocusOnInteraction="False"
-                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                  HorizontalAlignment="Right"
-                                  CornerRadius="4,13,13,4"
-                                  Margin="-4,0,0,0"
-                                  AutomationProperties.Name="{CustomResource Next}"
-                                  ToolTipService.ToolTip="{CustomResource Next}"
-                                  Grid.Column="5" />
-        </Grid>
+                              Grid.Row="3" />
     </Grid>
 </controls:OverlayWindow>

@@ -53,6 +53,9 @@ namespace Telegram.Controls
 
         private const double THICKNESS = 12;
 
+        // The playhead's width in the template, which its position is centred by.
+        private const double HEAD_WIDTH = 3;
+
         private const double ZOOM_DELAY = 500;
         private const double ZOOM_DURATION = 300;
 
@@ -223,10 +226,10 @@ namespace Telegram.Controls
             }
 
             // Pressed anywhere inside the selection, the playhead jumps to put its centre under
-            // the pointer and is dragged from there. -THICKNESS / 2 is the delta that inverts
+            // the pointer and is dragged from there. -HEAD_WIDTH / 2 is the delta that inverts
             // Arrange's margin for that centre.
             _delta = e.OriginalSource == MiddleThumb1
-                ? -THICKNESS / 2
+                ? -HEAD_WIDTH / 2
                 : _target.Margin.Left - point.X;
             _lastX = point.X;
 
@@ -429,7 +432,7 @@ namespace Telegram.Controls
             // pointer.
             var track = ActualWidth - THICKNESS * 2;
             var origin = _target == MiddleThumb2
-                ? THICKNESS / 2
+                ? THICKNESS - HEAD_WIDTH / 2
                 : _target == MaximumThumb
                 ? THICKNESS
                 : 0;
@@ -515,7 +518,7 @@ namespace Telegram.Controls
             BackgroundMaximum.Margin = new Thickness((maximum * track) + THICKNESS, 0, 0, 0);
             MiddleThumb1.Margin = new Thickness(minimum * track, 0, (1 - maximum) * track, 0);
             MinimumThumb.Margin = new Thickness(minimum * track, 0, 0, 0);
-            MiddleThumb2.Margin = new Thickness(THICKNESS / 2 + value * track, 0, 0, 0);
+            MiddleThumb2.Margin = new Thickness(THICKNESS - HEAD_WIDTH / 2 + value * track, 0, 0, 0);
             MaximumThumb.Margin = new Thickness(THICKNESS + maximum * track, 0, 0, 0);
 
             _toolTip.Content = (_originalDuration * _value).ToDuration();

@@ -3941,7 +3941,7 @@
 
     <Style TargetType="local:VideoRangeSlider">
         <Setter Property="Foreground"
-                Value="{ThemeResource PageHeaderHighlightBrush}" />
+                Value="{ThemeResource AccentFillColorDefaultBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:VideoRangeSlider">
@@ -3963,17 +3963,29 @@
                                 Background="{TemplateBinding Foreground}"
                                 Width="12"
                                 HorizontalAlignment="Left"
-                                CornerRadius="4,0,0,4" />
+                                CornerRadius="4,0,0,4">
+                            <Rectangle Fill="Black"
+                                       Width="2"
+                                       Height="20"
+                                       RadiusX="1"
+                                       RadiusY="1" />
+                        </Border>
                         <Border x:Name="MaximumThumb"
                                 Background="{TemplateBinding Foreground}"
                                 Width="12"
                                 HorizontalAlignment="Left"
-                                CornerRadius="0,4,4,0" />
+                                CornerRadius="0,4,4,0">
+                            <Rectangle Fill="Black"
+                                       Width="2"
+                                       Height="20"
+                                       RadiusX="1"
+                                       RadiusY="1" />
+                        </Border>
                         <Border x:Name="MiddleThumb2"
                                 Background="White"
-                                Width="12"
+                                Width="3"
                                 HorizontalAlignment="Left"
-                                CornerRadius="4" />
+                                CornerRadius="1.5" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -7030,23 +7042,21 @@
 
     <Style TargetType="local:PencilWeightSlider">
         <Setter Property="Width"
-                Value="48" />
+                Value="160" />
+        <Setter Property="Height"
+                Value="40" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PencilWeightSlider">
                     <Canvas x:Name="LayoutRoot">
                         <Canvas IsHitTestVisible="False">
-                            <Canvas.RenderTransform>
-                                <TranslateTransform x:Name="PanelTransform" />
-                            </Canvas.RenderTransform>
                             <Path x:Name="Track"
                                   Fill="#40FFFFFF" />
                             <Ellipse x:Name="Thumb"
                                      Fill="#FFFFFFFF" />
                         </Canvas>
                         <Rectangle x:Name="HitArea"
-                                   Fill="Transparent"
-                                   Width="48" />
+                                   Fill="Transparent" />
                     </Canvas>
                 </ControlTemplate>
             </Setter.Value>

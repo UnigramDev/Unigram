@@ -18,8 +18,8 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
 using Telegram.Views.Stories.Popups;
+using System.Numerics;
 using System.Threading.Tasks;
-using System;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -29,21 +29,30 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media.Imaging;
 using System;
 
 namespace Telegram.Controls
 {
     /// <summary>
-    /// The tabs of a media editor's draw mode: drawing, stickers, text and shapes. A tab other
-    /// than Draw is lit while an object of its kind is selected; the tools for it are the
+    /// A media editor's tabs: crop, drawing, text, stickers and shapes. Crop is a mode of its
+    /// own, which the host opens and closes on <see cref="CroppingChanged"/>. Of the others, a
+    /// tab other than Draw is lit while an object of its kind is selected; their tools are the
     /// <see cref="PaintToolbar"/>'s.
     /// </summary>
-    public sealed partial class PaintTabs : StackPanel
+    public sealed partial class PaintTabs : Grid
     {
+        private const float IndicatorWidth = 16;
+
+        private static readonly TimeSpan IndicatorDuration = TimeSpan.FromMilliseconds(400);
+
         private PaintToolbar _toolbar;
         private MediaEditorSurface _surface;
         private IClientService _clientService;
+
+        // Where the indicator is, or -1 until it is first placed.
+        private int _indicatorIndex = -1;
 
         private bool _updatingShapeFill;
 
@@ -63,13 +72,33 @@ namespace Telegram.Controls
         /// </summary>
         public bool ShowsWidgets { get; set; }
 
-        public void Attach(PaintToolbar toolbar, MediaEditorSurface surface, IClientService clientService)
+        /// <summary>
+        /// The open tab, by its place: 0 is Crop.
+        /// </summary>
+        public int SelectedIndex { get; private set; }
+
+        public bool IsCropping { get; private set; }
+
+        /// <summary>
+        /// Raised as the crop tab opens or another tab is chosen over it, before that tab acts.
+        /// </summary>
+        public event EventHandler CroppingChanged;
+
+        public void Attach(MediaEditorSurface surface, IClientService clientService, bool cropping)
         {
-            _toolbar = toolbar;
             _surface = surface;
             _clientService = clientService;
 
             _surface.Entities.EditRequested += Entities_EditRequested;
+
+            IsCropping = cropping;
+            UpdateSelection(null);
+        }
+
+        // The toolbar is made the first time a tab other than Crop opens.
+        internal void SetToolbar(PaintToolbar toolbar)
+        {
+            _toolbar = toolbar;
         }
 
         public void Deactivate()
@@ -86,19 +115,70 @@ namespace Telegram.Controls
 
         public void UpdateSelection(PaintEntity selected)
         {
-            DrawTab.IsChecked = selected == null;
-            StickerTab.IsChecked = selected != null && (PaintEntityRenderer.IsSticker(selected) || PaintEntityRenderer.IsWidget(selected));
-            TextTab.IsChecked = selected?.Type == PaintEntityType.Text;
-            ShapesTab.IsChecked = selected?.Type == PaintEntityType.Shape;
+            var sticker = selected != null && (PaintEntityRenderer.IsSticker(selected) || PaintEntityRenderer.IsWidget(selected));
+            var text = selected?.Type == PaintEntityType.Text;
+            var shape = selected?.Type == PaintEntityType.Shape;
+
+            CropTab.IsChecked = IsCropping;
+            DrawTab.IsChecked = !IsCropping && selected == null;
+            TextTab.IsChecked = !IsCropping && text;
+            StickerTab.IsChecked = !IsCropping && sticker;
+            ShapesTab.IsChecked = !IsCropping && shape;
+
+            SelectedIndex = IsCropping ? 0 : text ? 2 : sticker ? 3 : shape ? 4 : 1;
+            MoveIndicator(true);
+        }
+
+        /// <summary>
+        /// The crop tab, as its button opens it.
+        /// </summary>
+        public void OpenCropping()
+        {
+            CropTab_Click(null, null);
+        }
+
+        /// <summary>
+        /// The draw tab, as its button opens it.
+        /// </summary>
+        public void OpenDrawing()
+        {
+            DrawTab_Click(null, null);
+        }
+
+        private void CropTab_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsCropping)
+            {
+                UpdateSelection(null);
+                return;
+            }
+
+            IsCropping = true;
+            CroppingChanged?.Invoke(this, EventArgs.Empty);
+
+            UpdateSelection(null);
+        }
+
+        // Any other tab closes the crop first, which makes the toolbar if this is its first time.
+        private void LeaveCropping()
+        {
+            if (IsCropping)
+            {
+                IsCropping = false;
+                CroppingChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void DrawTab_Click(object sender, RoutedEventArgs e)
         {
+            LeaveCropping();
             _toolbar.SelectDrawing();
         }
 
         private void TextTab_Click(object sender, RoutedEventArgs e)
         {
+            LeaveCropping();
+
             if (_surface.Entities.Selected is not { Type: PaintEntityType.Text })
             {
                 _toolbar.AddText();
@@ -112,8 +192,71 @@ namespace Telegram.Controls
         // selected; the tab itself only lights up once one is.
         private void StickerTab_Click(object sender, RoutedEventArgs e)
         {
+            LeaveCropping();
+
             ShowStickerPicker();
             _toolbar.UpdateTools();
+        }
+
+        private UIElement GetTab(int index) => index switch
+        {
+            0 => CropTab,
+            2 => TextTab,
+            3 => StickerTab,
+            4 => ShapesTab,
+            _ => DrawTab
+        };
+
+        // The tabs are laid out after the first selection is known.
+        private void TabsPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MoveIndicator(false);
+        }
+
+        // Slides under the open tab, stretching on the way: longest a little before halfway, back
+        // to its size as it lands.
+        private void MoveIndicator(bool animate)
+        {
+            var index = SelectedIndex;
+            var tab = GetTab(index);
+            var size = tab.ActualSize;
+
+            if (size.X == 0)
+            {
+                return;
+            }
+
+            var x = tab.ActualOffset.X + (size.X - IndicatorWidth) / 2;
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Indicator, true);
+            var visual = ElementComposition.GetElementVisual(Indicator);
+
+            if (!animate || _indicatorIndex < 0)
+            {
+                visual.Properties.InsertVector3("Translation", new Vector3(x, 0, 0));
+            }
+            else if (index != _indicatorIndex)
+            {
+                visual.Properties.TryGetVector3("Translation", out Vector3 from);
+
+                var compositor = visual.Compositor;
+                var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1));
+
+                var translation = compositor.CreateVector3KeyFrameAnimation();
+                translation.InsertKeyFrame(1, new Vector3(x, 0, 0), easing);
+                translation.Duration = IndicatorDuration;
+
+                var stretch = compositor.CreateScalarKeyFrameAnimation();
+                stretch.InsertKeyFrame(0.4f, 1 + Math.Min(Math.Abs(x - from.X) / IndicatorWidth, 4) / 2);
+                stretch.InsertKeyFrame(1, 1, easing);
+                stretch.Duration = IndicatorDuration;
+
+                visual.CenterPoint = new Vector3(IndicatorWidth / 2, 1.5f, 0);
+                visual.StartAnimation("Translation", translation);
+                visual.StartAnimation("Scale.X", stretch);
+            }
+
+            _indicatorIndex = index;
         }
 
         private void ShowStickerPicker()
@@ -551,6 +694,8 @@ namespace Telegram.Controls
         // selected.
         private void ShapesTab_Click(object sender, RoutedEventArgs e)
         {
+            LeaveCropping();
+
             FlyoutBase.ShowAttachedFlyout(ShapesTab);
             _toolbar.UpdateTools();
         }

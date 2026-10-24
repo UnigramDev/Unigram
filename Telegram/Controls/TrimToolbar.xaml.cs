@@ -12,6 +12,7 @@ using Telegram.Common;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Native.Media;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -85,9 +86,13 @@ namespace Telegram.Controls
         private readonly Tween _capture = new();
         private bool _rendering;
 
+        private readonly ThemeShadowEx _shadow;
+
         public TrimToolbar()
         {
             InitializeComponent();
+
+            _shadow = new ThemeShadowEx(Card, 16);
         }
 
         // Raised when the user toggles it, not when IsMuted is set.
@@ -97,6 +102,15 @@ namespace Telegram.Controls
         {
             get => MuteButton.Visibility == Visibility.Visible;
             set => MuteButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// What a host shows beside the strip, inside the toolbar.
+        /// </summary>
+        public object Accessory
+        {
+            get => AccessoryPresenter.Content;
+            set => AccessoryPresenter.Content = value;
         }
 
         public bool IsMuted
@@ -133,7 +147,12 @@ namespace Telegram.Controls
 
             FindName(nameof(CoverLayer));
 
-            var compositor = ElementCompositionPreview.GetElementVisual(CoverBubbleContent).Compositor;
+            // Room over the strip for the dot.
+            //var margin = LayoutRoot.Margin;
+            //margin.Top = 12;
+            //LayoutRoot.Margin = margin;
+
+            var compositor = BootStrapper.Current.Compositor;
 
             _mirror = compositor.CreateVisualSurface();
             _mirrorShape = compositor.CreateRoundedRectangleGeometry();

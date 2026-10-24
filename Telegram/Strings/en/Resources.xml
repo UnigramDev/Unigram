@@ -4732,6 +4732,9 @@
     <string name="PhotoEditorText">Text</string>
     <string name="PhotoEditorSticker">Sticker</string>
     <string name="PaintShapes">Shapes</string>
+    <string name="StoryCrop">Crop</string>
+    <string name="DiscardChanges">Discard changes</string>
+    <string name="PhotoEditorDiscardAlert">Are you sure you want to discard all changes?</string>
     <string name="PaintShapeFilled">Filled</string>
     <string name="PaintCircle">Circle</string>
     <string name="PaintRectangle">Rectangle</string>

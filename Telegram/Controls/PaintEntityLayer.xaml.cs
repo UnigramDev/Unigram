@@ -185,6 +185,11 @@ namespace Telegram.Controls
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Whether no object is placed now, unlike <see cref="Items"/>, which is as last saved.
+        /// </summary>
+        public bool IsEmpty => _entities.Count == 0;
+
         public event EventHandler SelectionChanged;
 
         /// <summary>

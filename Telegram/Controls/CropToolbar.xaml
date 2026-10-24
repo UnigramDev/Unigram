@@ -4,20 +4,84 @@
       xmlns:controls="using:Telegram.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      mc:Ignorable="d">
+      mc:Ignorable="d"
+      HorizontalAlignment="Center"
+      VerticalAlignment="Top">
+
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <Border x:Name="Card"
+            Background="{ThemeResource MenuFlyoutPresenterBackground}"
+            BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+            BorderThickness="1"
+            BackgroundSizing="InnerBorderEdge"
+            CornerRadius="8"
+            Grid.ColumnSpan="7" />
+
+    <controls:GlyphToggleButton x:Name="Rotate"
+                                Click="Rotate_Click"
+                                Glyph="&#xEA5B;"
+                                CheckedGlyph="&#xEA5B;"
+                                CheckedForeground="{ThemeResource AccentFillColorDefaultBrush}"
+                                Margin="0,0,-4,0"
+                                AutomationProperties.Name="{CustomResource AccDescrRotate}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrRotate}" />
+
+    <controls:GlyphToggleButton x:Name="Flip"
+                                Click="Flip_Click"
+                                Glyph="&#xE908;"
+                                CheckedGlyph="&#xE908;"
+                                CheckedForeground="{ThemeResource AccentFillColorDefaultBrush}"
+                                Margin="0,0,-4,0"
+                                AutomationProperties.Name="{CustomResource AccDescrFlip}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrFlip}"
+                                Grid.Column="1" />
+
+    <controls:GlyphToggleButton x:Name="Proportions"
+                                Click="Proportions_Click"
+                                Glyph="&#xEA89;"
+                                CheckedGlyph="&#xEA89;"
+                                CheckedForeground="{ThemeResource AccentFillColorDefaultBrush}"
+                                Visibility="Collapsed"
+                                Margin="0,0,-4,0"
+                                AutomationProperties.Name="{CustomResource AccDescrAspectRatio}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrAspectRatio}"
+                                Grid.Column="2" />
+
+    <Rectangle x:Name="WheelSeparator"
+               Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+               Margin="8,14,8,14"
+               Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
+               Grid.Column="3" />
 
     <controls:CropRotationWheel x:Name="RotationWheel"
                                 RotationStarted="RotationWheel_RotationStarted"
                                 RotationChanged="RotationWheel_RotationChanged"
                                 RotationCompleted="RotationWheel_RotationCompleted"
-                                MaxWidth="400"
-                                AutomationProperties.Name="{CustomResource AccDescrRotate}" />
+                                Width="320"
+                                VerticalAlignment="Center"
+                                AutomationProperties.Name="{CustomResource AccDescrRotate}"
+                                Grid.Column="4" />
 
+    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+               Margin="8,14,8,14"
+               Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}"
+               Grid.Column="5" />
+
+    <!-- Disabled rather than hidden, so the bar keeps its width. -->
     <Button x:Name="ResetCrop"
             Click="ResetCrop_Click"
             Content="{CustomResource Reset}"
             Style="{StaticResource AccentTextButtonStyle}"
-            Visibility="Collapsed"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Center" />
+            IsEnabled="False"
+            Margin="0,0,8,0"
+            VerticalAlignment="Center"
+            Grid.Column="6" />
 </Grid>

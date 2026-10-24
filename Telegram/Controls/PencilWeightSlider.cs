@@ -16,25 +16,24 @@ using Windows.UI.Xaml.Shapes;
 namespace Telegram.Controls
 {
     /// <summary>
-    /// The brush size, as a wedge along the left edge of the canvas: a thin line until the pointer
-    /// reaches it, then a track that widens towards the top. Dragging is relative, so grabbing it
-    /// anywhere does not make the size jump.
+    /// The brush size, as a wedge in the toolbar: a thin line until the pointer reaches it, then a
+    /// track that widens towards the right. Dragging is relative, so grabbing it anywhere does not
+    /// make the size jump.
     /// </summary>
     public partial class PencilWeightSlider : Control
     {
-        private const double BigRadius = 16;
+        private const double BigRadius = 14;
         private const double SmallRadius = 3;
-        private const double IdleRadius = 12;
+        private const double IdleRadius = 9;
 
-        // How far the track moves into the canvas once expanded.
-        private const double Inset = 32;
+        // Room at each end, so that the thumb's largest size fits inside the control.
+        private const double EndRoom = BigRadius;
         private const double Duration = 200;
 
         private Canvas LayoutRoot;
         private Rectangle HitArea;
         private Path Track;
         private Ellipse Thumb;
-        private TranslateTransform PanelTransform;
 
         private double _minimum = 0.05;
         private double _maximum = 1;
@@ -52,10 +51,11 @@ namespace Telegram.Controls
 
         private uint? _pointerId;
         private double _startValue;
-        private double _startY;
+        private double _startX;
 
-        private double _top;
-        private double _height;
+        private double _left;
+        private double _width;
+        private double _middle;
 
         public PencilWeightSlider()
         {
@@ -95,10 +95,9 @@ namespace Telegram.Controls
             HitArea = GetTemplateChild(nameof(HitArea)) as Rectangle;
             Track = GetTemplateChild(nameof(Track)) as Path;
             Thumb = GetTemplateChild(nameof(Thumb)) as Ellipse;
-            PanelTransform = GetTemplateChild(nameof(PanelTransform)) as TranslateTransform;
 
             LayoutRoot.SizeChanged += OnSizeChanged;
-            ArrangeParts(LayoutRoot.ActualHeight);
+            ArrangeParts(LayoutRoot.ActualWidth, LayoutRoot.ActualHeight);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -108,49 +107,53 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ArrangeParts(e.NewSize.Height);
+            ArrangeParts(e.NewSize.Width, e.NewSize.Height);
         }
 
-        private void ArrangeParts(double height)
+        private void ArrangeParts(double width, double height)
         {
             if (LayoutRoot == null)
             {
                 return;
             }
 
-            _height = Math.Round(height * 0.3);
-            _top = Math.Round((height - _height) / 2);
+            _left = EndRoom;
+            _width = Math.Max(0, width - EndRoom * 2);
+            _middle = Math.Round(height / 2);
 
-            Canvas.SetTop(HitArea, _top);
-            HitArea.Height = _height;
+            HitArea.Width = width;
+            HitArea.Height = height;
 
-            Canvas.SetTop(Track, _top);
+            Canvas.SetLeft(Track, _left);
+            Canvas.SetTop(Track, _middle);
 
             UpdateVisuals();
         }
 
-        // Centred on x = 0, with round ends of the given radii at the top and the bottom.
-        private static Geometry CreateTrack(double height, double top, double bottom)
+        // Centred on y = 0, with round ends of the given radii at the left and the right.
+        private static Geometry CreateTrack(double width, double left, double right)
         {
             var figure = new PathFigure
             {
-                StartPoint = new Point(-top, top),
+                StartPoint = new Point(left, -left),
                 IsClosed = true
             };
 
+            figure.Segments.Add(new LineSegment { Point = new Point(width - right, -right) });
+
             figure.Segments.Add(new ArcSegment
             {
-                Point = new Point(top, top),
-                Size = new Size(top, top),
+                Point = new Point(width - right, right),
+                Size = new Size(right, right),
                 SweepDirection = SweepDirection.Clockwise
             });
 
-            figure.Segments.Add(new LineSegment { Point = new Point(bottom, height - bottom) });
+            figure.Segments.Add(new LineSegment { Point = new Point(left, left) });
 
             figure.Segments.Add(new ArcSegment
             {
-                Point = new Point(-bottom, height - bottom),
-                Size = new Size(bottom, bottom),
+                Point = new Point(left, -left),
+                Size = new Size(left, left),
                 SweepDirection = SweepDirection.Clockwise
             });
 
@@ -161,7 +164,7 @@ namespace Telegram.Controls
 
         private void UpdateVisuals()
         {
-            if (Thumb == null || _height == 0)
+            if (Thumb == null || _width == 0)
             {
                 return;
             }
@@ -169,17 +172,20 @@ namespace Telegram.Controls
             var p = _progress;
             var value = (_value - _minimum) / (_maximum - _minimum);
 
-            Track.Data = CreateTrack(_height, Lerp(SmallRadius, BigRadius, p), SmallRadius);
-            PanelTransform.X = Inset * p;
+            var right = Lerp(SmallRadius, BigRadius, p);
+            Track.Data = CreateTrack(_width, SmallRadius, right);
 
-            var radius = Lerp(IdleRadius, Lerp(SmallRadius * 1.5, BigRadius, value), p);
-            var y = Math.Clamp(_top + _height * (1 - value), _top + BigRadius, _top + _height - SmallRadius * 1.5);
+            // Between the centres of the track's round ends, where its half-thickness grows
+            // linearly from one radius to the other: expanded, the thumb is exactly as wide as
+            // the wedge wherever it is, never past either end.
+            var x = _left + SmallRadius + (_width - SmallRadius - right) * value;
+            var radius = Lerp(IdleRadius, Lerp(SmallRadius, right, value), p);
 
             Thumb.Width = radius * 2;
             Thumb.Height = radius * 2;
 
-            Canvas.SetLeft(Thumb, -radius);
-            Canvas.SetTop(Thumb, y - radius);
+            Canvas.SetLeft(Thumb, x - radius);
+            Canvas.SetTop(Thumb, _middle - radius);
         }
 
         private static double Lerp(double from, double to, double progress)
@@ -258,7 +264,7 @@ namespace Telegram.Controls
             {
                 _pointerId = e.Pointer.PointerId;
                 _startValue = _value;
-                _startY = e.GetCurrentPoint(this).Position.Y;
+                _startX = e.GetCurrentPoint(this).Position.X;
 
                 SetExpanded(true);
                 DragStarted?.Invoke(this, EventArgs.Empty);
@@ -271,13 +277,13 @@ namespace Telegram.Controls
         {
             base.OnPointerMoved(e);
 
-            if (_pointerId != e.Pointer.PointerId || _height == 0)
+            if (_pointerId != e.Pointer.PointerId || _width == 0)
             {
                 return;
             }
 
-            var y = e.GetCurrentPoint(this).Position.Y;
-            ChangeValue(_startValue + (_startY - y) / _height * (_maximum - _minimum));
+            var x = e.GetCurrentPoint(this).Position.X;
+            ChangeValue(_startValue + (x - _startX) / _width * (_maximum - _minimum));
         }
 
         protected override void OnPointerReleased(PointerRoutedEventArgs e)

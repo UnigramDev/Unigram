@@ -234,6 +234,7 @@
     <Compile Include="Controls\MediaEditorSurface.xaml.cs">
       <DependentUpon>MediaEditorSurface.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MediaEditorTransitions.cs" />
     <Compile Include="Controls\CropToolbar.xaml.cs">
       <DependentUpon>CropToolbar.xaml</DependentUpon>
     </Compile>

@@ -6,27 +6,45 @@
 //
 
 using System;
+using Telegram.Common;
+using Telegram.Converters;
+using Telegram.Entities;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
 {
     /// <summary>
-    /// The free rotation wheel under an <see cref="ImageCropper"/>, and the button that resets the crop.
+    /// The options row of a media editor's crop tab: quarter turns, the mirror, the proportions,
+    /// the free rotation wheel and the button that resets the crop of an <see cref="ImageCropper"/>.
     /// </summary>
     public sealed partial class CropToolbar : Grid
     {
         private ImageCropper _cropper;
 
+        private readonly ThemeShadowEx _shadow;
+
         public CropToolbar()
         {
             InitializeComponent();
+
+            _shadow = new ThemeShadowEx(Card, 16);
         }
 
         public bool IsRotationVisible
         {
             get => RotationWheel.Visibility == Visibility.Visible;
-            set => RotationWheel.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+            set => RotationWheel.Visibility = WheelSeparator.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Offers the proportions, which a story's fixed frame and a round crop do not.
+        /// </summary>
+        public bool CanChangeProportions
+        {
+            get => Proportions.Visibility == Visibility.Visible;
+            set => Proportions.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void Attach(ImageCropper cropper)
@@ -47,9 +65,62 @@ namespace Telegram.Controls
         private void Cropper_Changed(object sender, EventArgs e)
         {
             RotationWheel.Angle = _cropper.Angle;
-            ResetCrop.Visibility = _cropper.IsDefault
-                ? Visibility.Collapsed
-                : Visibility.Visible;
+            ResetCrop.IsEnabled = !_cropper.IsDefault;
+
+            Rotate.IsChecked = _cropper.Orientation != ImageRotation.None;
+            Flip.IsChecked = _cropper.Flip != ImageFlip.None;
+            Proportions.IsChecked = _cropper.Proportions != BitmapProportions.Custom;
+        }
+
+        private void Rotate_Click(object sender, RoutedEventArgs e)
+        {
+            _cropper.RotateCounterclockwise();
+        }
+
+        private void Flip_Click(object sender, RoutedEventArgs e)
+        {
+            _cropper.Mirror();
+        }
+
+        private void Proportions_Click(object sender, RoutedEventArgs e)
+        {
+            if (_cropper.Proportions != BitmapProportions.Custom)
+            {
+                _cropper.SetProportions(BitmapProportions.Custom);
+                Proportions.IsChecked = false;
+                return;
+            }
+
+            // Still unchecked until a ratio is picked.
+            Proportions.IsChecked = false;
+
+            var flyout = new MenuFlyout();
+
+            foreach (var item in _cropper.GetProportions())
+            {
+                var option = new MenuFlyoutItem();
+                option.Click += ProportionsItem_Click;
+                option.Text = ProportionsToLabelConverter.Convert(item);
+                option.Tag = item;
+                option.MinWidth = 140;
+                option.HorizontalContentAlignment = HorizontalAlignment.Center;
+
+                flyout.Items.Add(option);
+            }
+
+            if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt(Proportions, FlyoutPlacementMode.Bottom);
+            }
+        }
+
+        private void ProportionsItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem { Tag: BitmapProportions proportions })
+            {
+                _cropper.SetProportions(proportions);
+                Proportions.IsChecked = true;
+            }
         }
 
         private void ResetCrop_Click(object sender, RoutedEventArgs e)

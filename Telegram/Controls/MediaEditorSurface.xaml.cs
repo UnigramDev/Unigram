@@ -7,7 +7,9 @@
 
 using Microsoft.Graphics.Canvas;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
 using Telegram.Native;
@@ -35,6 +37,22 @@ namespace Telegram.Controls
         private AsyncMediaPlayer _player;
 
         private bool _shown;
+
+        // Strokes, placed objects and the crop undo as one history, newest last. An entry is null
+        // for a stroke, which the canvas keeps the list of; the object its undo takes away; or the
+        // crop its undo goes back to.
+        private readonly List<object> _undo = new();
+        private readonly List<object> _redo = new();
+
+        // The crop the history last saw, or null until StartHistory.
+        private ImageCropperState _cropState;
+        private int _cropStepTime;
+
+        // A wheel turned notch by notch is one step.
+        private const int CropStepMerge = 600;
+
+        // The video was playing when the eyedropper paused it.
+        private bool _resumeAfterPick;
 
         public MediaEditorSurface()
         {
@@ -87,6 +105,13 @@ namespace Telegram.Controls
             Canvas.Strokes = media.EditState.Strokes;
             Entities.ClientService = clientService;
             Entities.Items = media.EditState.Entities;
+
+            Canvas.StrokeAdded += Canvas_StrokeAdded;
+            Canvas.StrokesChanged += Canvas_StrokesChanged;
+            Entities.EntityCreated += Entities_EntityCreated;
+            Entities.EntityDeleted += Entities_EntityDeleted;
+            Cropper.Changed += Cropper_Changed;
+            Canvas.ColorPicked += Canvas_ColorPicked;
         }
 
         /// <summary>
@@ -157,6 +182,13 @@ namespace Telegram.Controls
 
         public void Close()
         {
+            Canvas.StrokeAdded -= Canvas_StrokeAdded;
+            Canvas.StrokesChanged -= Canvas_StrokesChanged;
+            Entities.EntityCreated -= Entities_EntityCreated;
+            Entities.EntityDeleted -= Entities_EntityDeleted;
+            Cropper.Changed -= Cropper_Changed;
+            Canvas.ColorPicked -= Canvas_ColorPicked;
+
             if (_player != null)
             {
                 _player.Close();
@@ -172,6 +204,8 @@ namespace Telegram.Controls
             {
                 Canvas.CancelPick();
                 Entities.IsHitTestVisible = true;
+
+                ResumeAfterPick();
             }
             else if (Entities.IsEditing)
             {
@@ -216,6 +250,84 @@ namespace Telegram.Controls
             catch
             {
                 // Without it blur strokes are left out of the preview, not of the sent photo.
+            }
+        }
+
+        /// <summary>
+        /// Starts the eyedropper over what is on screen: a video is paused, so the frame it picks
+        /// from stays the one shown, and plays on once a colour is picked or the pick is put away.
+        /// </summary>
+        public async void BeginPick()
+        {
+            if (_player?.IsPlaying == true)
+            {
+                _player.Pause(true);
+                _resumeAfterPick = true;
+            }
+
+            SoftwareBitmap underlay = null;
+
+            try
+            {
+                underlay = await RenderUnderlayAsync();
+            }
+            catch
+            {
+                // Picked from the strokes alone.
+            }
+
+            Canvas.BeginPick(underlay);
+        }
+
+        // What lies under the canvas, laid out at its size, or null where the blur tool's photo
+        // already is that: the frame as posted, or a video's frame where the player is.
+        private async Task<SoftwareBitmap> RenderUnderlayAsync()
+        {
+            var time = TimeSpan.FromSeconds(_player?.Position ?? 0);
+
+            if (IsFrame)
+            {
+                var generation = new ImageGeneration
+                {
+                    Rectangle = Cropper.CropRectangle,
+                    Rotation = Cropper.Orientation,
+                    Flip = Cropper.Flip,
+                    Angle = Cropper.Angle,
+                    FrameTopColor = FrameTopColor,
+                    FrameBottomColor = FrameBottomColor
+                };
+
+                return await ImageHelper.RenderFrameAsync(_media.File, generation, new Size(FrameLayer.ActualWidth, FrameLayer.ActualHeight), time);
+            }
+            else if (!IsVideo)
+            {
+                return null;
+            }
+
+            // Upright, as the canvas lies over the whole media.
+            using var stream = await ImageHelper.OpenReadAsync(_media.File, time, true);
+
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+            var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+
+            var bitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+            bitmap.DpiX = 96;
+            bitmap.DpiY = 96;
+
+            return bitmap;
+        }
+
+        private void Canvas_ColorPicked(object sender, PencilColorPickedEventArgs e)
+        {
+            ResumeAfterPick();
+        }
+
+        private void ResumeAfterPick()
+        {
+            if (_resumeAfterPick)
+            {
+                _resumeAfterPick = false;
+                _player?.Pause(false);
             }
         }
 
@@ -320,5 +432,151 @@ namespace Telegram.Controls
             Cropper.ZoomView(e.Center, e.Scale);
             Cropper.PanView(e.X, e.Y);
         }
+
+        #region History
+
+        public event EventHandler HistoryChanged;
+
+        public bool CanUndo => _undo.Count > 0;
+
+        public bool CanRedo => _redo.Count > 0;
+
+        /// <summary>
+        /// Starts the history from the edit as it opened, once the media is in. The strokes already
+        /// there stay undoable; the objects already there and the crop do not.
+        /// </summary>
+        public void StartHistory()
+        {
+            _undo.Clear();
+            _redo.Clear();
+
+            Canvas.ClearRedo();
+
+            for (int i = 0; i < Canvas.StrokeCount; i++)
+            {
+                _undo.Add(null);
+            }
+
+            _cropState = Cropper.GetState();
+            HistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Undo()
+        {
+            if (_undo.Count == 0)
+            {
+                return;
+            }
+
+            var entry = _undo[_undo.Count - 1];
+            _undo.RemoveAt(_undo.Count - 1);
+            _redo.Add(Step(entry, Canvas.Undo, Entities.Remove));
+
+            HistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Redo()
+        {
+            if (_redo.Count == 0)
+            {
+                return;
+            }
+
+            var entry = _redo[_redo.Count - 1];
+            _redo.RemoveAt(_redo.Count - 1);
+            _undo.Add(Step(entry, Canvas.Redo, Entities.Restore));
+
+            HistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        // Applies one entry and returns the one that takes it back: the same stroke or object, or
+        // the crop it replaced.
+        private object Step(object entry, Action stroke, Action<PaintEntity> entity)
+        {
+            if (entry is ImageCropperState crop)
+            {
+                var current = Cropper.GetState();
+
+                // Set first, so that the change it raises is not taken for a new step.
+                _cropState = crop;
+                Cropper.SetState(crop);
+
+                return current;
+            }
+            else if (entry is PaintEntity paint)
+            {
+                entity(paint);
+            }
+            else
+            {
+                stroke();
+            }
+
+            return entry;
+        }
+
+        private void Canvas_StrokeAdded(object sender, EventArgs e)
+        {
+            _undo.Add(null);
+            _redo.Clear();
+
+            HistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Canvas_StrokesChanged(object sender, EventArgs e)
+        {
+            HistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Entities_EntityCreated(object sender, PaintEntityEventArgs e)
+        {
+            _undo.Add(e.Entity);
+            _redo.Clear();
+
+            Canvas.ClearRedo();
+            HistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        // A deleted object is gone from the history too.
+        private void Entities_EntityDeleted(object sender, PaintEntityEventArgs e)
+        {
+            _undo.Remove(e.Entity);
+            _redo.Remove(e.Entity);
+
+            HistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        // Raised once a gesture ends, and also by a view pan in draw mode, which leaves the crop as
+        // it was and so adds nothing.
+        private void Cropper_Changed(object sender, EventArgs e)
+        {
+            if (_cropState == null)
+            {
+                return;
+            }
+
+            var state = Cropper.GetState();
+            if (state.Matches(_cropState))
+            {
+                return;
+            }
+
+            var now = Environment.TickCount;
+
+            if (_undo.Count == 0 || _undo[_undo.Count - 1] is not ImageCropperState || now - _cropStepTime > CropStepMerge)
+            {
+                _undo.Add(_cropState);
+            }
+
+            _cropState = state;
+            _cropStepTime = now;
+
+            _redo.Clear();
+            Canvas.ClearRedo();
+
+            HistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        #endregion
     }
 }

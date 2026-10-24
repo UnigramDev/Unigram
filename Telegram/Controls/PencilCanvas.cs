@@ -302,9 +302,11 @@ namespace Telegram.Controls
         public bool IsPicking => _picking;
 
         /// <summary>
-        /// Turns the next press into picking a colour instead of drawing.
+        /// Turns the next press into picking a colour instead of drawing, from the strokes over
+        /// <paramref name="underlay"/>, what lies under the canvas laid out at its size, or else
+        /// over the photo the blur tool uses.
         /// </summary>
-        public void BeginPick()
+        public void BeginPick(SoftwareBitmap underlay = null)
         {
             if (_renderTarget == null)
             {
@@ -318,8 +320,13 @@ namespace Telegram.Controls
             {
                 session.Clear(Colors.Black);
 
+                if (underlay != null)
+                {
+                    using var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(Canvas, underlay);
+                    session.DrawImage(bitmap, new Rect(0, 0, Canvas.Size.Width, Canvas.Size.Height), bitmap.Bounds);
+                }
                 // GetBlurBrush makes the photo's bitmap as it makes the blur.
-                if (GetBlurBrush() != null && _blurBitmap != null)
+                else if (GetBlurBrush() != null && _blurBitmap != null)
                 {
                     session.DrawImage(_blurBitmap, new Rect(0, 0, Canvas.Size.Width, Canvas.Size.Height), _blurBitmap.Bounds);
                 }
@@ -1851,6 +1858,21 @@ namespace Telegram.Controls
                 {
                     MoveTo(point);
                 }
+            }
+
+            // A click, or a move too short to make a curve, is a dot: Direct2D draws no caps on a
+            // figure without segments, so it gets one, and a length, as a zero-length one draws
+            // nothing either. A ten-thousandth of the canvas is under a pixel at any size drawn.
+            if (_path.Count == 0)
+            {
+                if (point == _beginPoint)
+                {
+                    point += new Vector2(0.0001f, 0);
+                }
+
+                _path.Add(_beginPoint);
+                _path.Add(point);
+                _path.Add(point);
             }
         }
 

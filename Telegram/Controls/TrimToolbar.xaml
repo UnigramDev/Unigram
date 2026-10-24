@@ -4,80 +4,99 @@
       xmlns:controls="using:Telegram.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      mc:Ignorable="d">
+      mc:Ignorable="d"
+      HorizontalAlignment="Center">
 
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
-    </Grid.ColumnDefinitions>
-    <controls:GlyphToggleButton x:Name="MuteButton"
-                                Click="MuteButton_Click"
-                                Glyph="&#xE995;"
-                                CheckedGlyph="&#xE74F;"
-                                Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}"
-                                CornerRadius="15"
-                                Margin="0,0,8,0"
-                                VerticalAlignment="Center" />
+    <!-- Behind the toolbar rather than around it: a rounded parent clips its children, and the
+         cover's dot and preview reach past the strip. -->
+    <Border x:Name="Card"
+            Background="{ThemeResource MenuFlyoutPresenterBackground}"
+            BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+            BorderThickness="1"
+            BackgroundSizing="InnerBorderEdge"
+            CornerRadius="8"
+            Grid.ColumnSpan="10" />
 
-    <Grid Grid.Column="1">
-        <Grid Height="40"
-              Width="296"
-              CornerRadius="4">
-            <Grid x:Name="TrimThumbnails">
-                <Grid.RenderTransform>
-                    <CompositeTransform x:Name="TrimThumbnailsTransform" />
-                </Grid.RenderTransform>
+    <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Two-way: a glyph toggle only toggles itself if it is told to. -->
+        <controls:GlyphToggleButton x:Name="MuteButton"
+                                    Click="MuteButton_Click"
+                                    Glyph="&#xE995;"
+                                    CheckedGlyph="&#xE74F;"
+                                    IsOneWay="False"
+                                    Margin="0,0,0,0"
+                                    VerticalAlignment="Center" />
+
+        <Grid Grid.Column="1">
+            <Grid Height="40"
+                  Width="296"
+                  CornerRadius="4">
+                <Grid x:Name="TrimThumbnails">
+                    <Grid.RenderTransform>
+                        <CompositeTransform x:Name="TrimThumbnailsTransform" />
+                    </Grid.RenderTransform>
+                </Grid>
+                <Grid x:Name="TrimZoomThumbnails"
+                      Visibility="Collapsed">
+                    <Grid.RenderTransform>
+                        <CompositeTransform x:Name="TrimZoomThumbnailsTransform" />
+                    </Grid.RenderTransform>
+                </Grid>
             </Grid>
-            <Grid x:Name="TrimZoomThumbnails"
-                  Visibility="Collapsed">
-                <Grid.RenderTransform>
-                    <CompositeTransform x:Name="TrimZoomThumbnailsTransform" />
-                </Grid.RenderTransform>
-            </Grid>
+            <controls:VideoRangeSlider x:Name="TrimRange"
+                                       MinimumChanged="TrimRange_MinimumChanged"
+                                       MaximumChanged="TrimRange_MaximumChanged"
+                                       ViewChanged="TrimRange_ViewChanged"
+                                       CoverChanged="TrimRange_CoverChanged"
+                                       HeadDraggingChanged="TrimRange_HeadDraggingChanged"
+                                       SizeChanged="TrimRange_SizeChanged"
+                                       Height="40"
+                                       Width="296" />
+
+            <!-- Over the track, which clips to its corners, and a Canvas, which lets the bubble reach
+                 past the strip without a layout clip. -->
+            <Canvas x:Name="CoverLayer"
+                    x:Load="False"
+                    IsHitTestVisible="False">
+                <Ellipse x:Name="CoverDot"
+                         Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                         Width="9"
+                         Height="9"
+                         Canvas.Top="-13">
+                    <Ellipse.RenderTransform>
+                        <CompositeTransform x:Name="CoverDotTransform"
+                                            CenterX="4.5"
+                                            CenterY="4.5" />
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+
+                <Grid x:Name="CoverBubble"
+                      Visibility="Collapsed">
+                    <Grid.RenderTransform>
+                        <CompositeTransform x:Name="CoverBubbleTransform" />
+                    </Grid.RenderTransform>
+
+                    <!-- Hosts the mirror of the editor's frame, a composition visual. -->
+                    <Border x:Name="CoverBubbleContent" />
+
+                    <Border x:Name="CoverBubbleFrame">
+                        <Border.BorderBrush>
+                            <SolidColorBrush x:Name="CoverBubbleStroke"
+                                             Color="White" />
+                        </Border.BorderBrush>
+                    </Border>
+                </Grid>
+            </Canvas>
         </Grid>
-        <controls:VideoRangeSlider x:Name="TrimRange"
-                                   MinimumChanged="TrimRange_MinimumChanged"
-                                   MaximumChanged="TrimRange_MaximumChanged"
-                                   ViewChanged="TrimRange_ViewChanged"
-                                   CoverChanged="TrimRange_CoverChanged"
-                                   HeadDraggingChanged="TrimRange_HeadDraggingChanged"
-                                   SizeChanged="TrimRange_SizeChanged"
-                                   Height="40"
-                                   Width="296" />
 
-        <!-- Over the track, which clips to its corners, and a Canvas, which lets the bubble reach
-             past the strip without a layout clip. -->
-        <Canvas x:Name="CoverLayer"
-                x:Load="False"
-                IsHitTestVisible="False">
-            <Ellipse x:Name="CoverDot"
-                     Fill="{ThemeResource AccentFillColorDefaultBrush}"
-                     Width="9"
-                     Height="9"
-                     Canvas.Top="-13">
-                <Ellipse.RenderTransform>
-                    <CompositeTransform x:Name="CoverDotTransform"
-                                        CenterX="4.5"
-                                        CenterY="4.5" />
-                </Ellipse.RenderTransform>
-            </Ellipse>
-
-            <Grid x:Name="CoverBubble"
-                  Visibility="Collapsed">
-                <Grid.RenderTransform>
-                    <CompositeTransform x:Name="CoverBubbleTransform" />
-                </Grid.RenderTransform>
-
-                <!-- Hosts the mirror of the editor's frame, a composition visual. -->
-                <Border x:Name="CoverBubbleContent" />
-
-                <Border x:Name="CoverBubbleFrame">
-                    <Border.BorderBrush>
-                        <SolidColorBrush x:Name="CoverBubbleStroke"
-                                         Color="White" />
-                    </Border.BorderBrush>
-                </Border>
-            </Grid>
-        </Canvas>
+        <ContentPresenter x:Name="AccessoryPresenter"
+                          VerticalAlignment="Center"
+                          Grid.Column="2" />
     </Grid>
 </Grid>

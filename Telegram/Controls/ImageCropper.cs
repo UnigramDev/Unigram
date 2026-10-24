@@ -67,6 +67,45 @@ namespace Telegram.Controls
     /// as a centre and a size, plus a free angle the image turns by about that centre. That is
     /// <see cref="ImageGeneration"/>'s shape, so nothing is converted on the way out.
     /// </summary>
+    /// <summary>
+    /// A crop, its turns and its mirror, as <see cref="ImageCropper.GetState"/> took them.
+    /// </summary>
+    public sealed class ImageCropperState
+    {
+        internal ImageCropperState(int quarterTurns, bool mirrored, double angle, Point center, Size cropSize, BitmapProportions proportions)
+        {
+            QuarterTurns = quarterTurns;
+            Mirrored = mirrored;
+            Angle = angle;
+            Center = center;
+            CropSize = cropSize;
+            Proportions = proportions;
+        }
+
+        internal int QuarterTurns { get; }
+
+        internal bool Mirrored { get; }
+
+        internal double Angle { get; }
+
+        internal Point Center { get; }
+
+        internal Size CropSize { get; }
+
+        internal BitmapProportions Proportions { get; }
+
+        public bool Matches(ImageCropperState other)
+        {
+            return other != null
+                && QuarterTurns == other.QuarterTurns
+                && Mirrored == other.Mirrored
+                && Angle == other.Angle
+                && Center == other.Center
+                && CropSize == other.CropSize
+                && Proportions == other.Proportions;
+        }
+    }
+
     public partial class ImageCropper : ContentControl
     {
         private const double MaximumAngle = 45;
@@ -83,7 +122,6 @@ namespace Telegram.Controls
         }
 
         private readonly Dictionary<uint, Point> m_pointers = new();
-        private readonly List<ImageCropperThumb> m_thumbs = new();
 
         private Grid LayoutRoot;
         private FrameworkElement ImageThumb;
@@ -93,7 +131,6 @@ namespace Telegram.Controls
         private Grid ThumbsContainer;
         private UIElement MajorGrid;
         private UIElement MinorGrid;
-        private UIElement RectangleGrid;
 
         private MatrixTransform m_imageTransform;
         private RectangleGeometry m_layoutClip;
@@ -189,7 +226,6 @@ namespace Telegram.Controls
             ThumbsContainer = GetTemplateChild(nameof(ThumbsContainer)) as Grid;
             MajorGrid = GetTemplateChild(nameof(MajorGrid)) as UIElement;
             MinorGrid = GetTemplateChild(nameof(MinorGrid)) as UIElement;
-            RectangleGrid = GetTemplateChild(nameof(RectangleGrid)) as UIElement;
 
             Clip = GetTemplateChild(nameof(Clip)) as Path;
 
@@ -213,8 +249,6 @@ namespace Telegram.Controls
             AttachThumb("BottomLeftThumb", Edges.Bottom | Edges.Left, NESWThumb_PointerEntered);
             AttachThumb("BottomRightThumb", Edges.Bottom | Edges.Right, NWSEThumb_PointerEntered);
 
-            UpdateThumbs();
-
             if (Clip != null)
             {
                 SetMask(m_mask);
@@ -225,8 +259,6 @@ namespace Telegram.Controls
         {
             if (GetTemplateChild(name) is ImageCropperThumb thumb)
             {
-                m_thumbs.Add(thumb);
-
                 thumb.Tag = edges;
                 thumb.PointerEntered += entered;
                 thumb.PointerExited += Thumb_PointerExited;
@@ -1110,8 +1142,9 @@ namespace Telegram.Controls
 
                 // Growing about the centre, a crop against a border could not grow at all from a
                 // side handle: slide the other axis back inside the image instead, and back off
-                // only as far as no slide can make up for.
-                if (horizontal != vertical && !Fits(left, top, right, bottom))
+                // only as far as no slide can make up for. Not a frame, which may reach past the
+                // image: Constrain settles it after the drag.
+                if (horizontal != vertical && !m_frame && !Fits(left, top, right, bottom))
                 {
                     var low = 0d;
                     var high = 1d;
@@ -1314,6 +1347,11 @@ namespace Telegram.Controls
 
             var oriented = OrientedSize;
 
+            if (m_frame)
+            {
+                return FitsFrame(left, top, right, bottom, oriented, Epsilon);
+            }
+
             var radians = -m_angle * Math.PI / 180;
             var sin = Math.Sin(radians);
             var cos = Math.Cos(radians);
@@ -1328,6 +1366,35 @@ namespace Telegram.Controls
                 return imageX >= -Epsilon && imageX <= oriented.Width + Epsilon
                     && imageY >= -Epsilon && imageY <= oriented.Height + Epsilon;
             }
+        }
+
+        // Constrain's rule for a frame, measured along the frame's axes against the image's bounds
+        // there: the frame may be larger than them along either axis, but not along both, and along
+        // such an axis they stay inside it rather than covering it.
+        private bool FitsFrame(double left, double top, double right, double bottom, Size oriented, double epsilon)
+        {
+            var radians = m_angle * Math.PI / 180;
+            var sin = Math.Abs(Math.Sin(radians));
+            var cos = Math.Abs(Math.Cos(radians));
+
+            var imageWidth = oriented.Width * cos + oriented.Height * sin;
+            var imageHeight = oriented.Width * sin + oriented.Height * cos;
+
+            var width = right - left;
+            var height = bottom - top;
+
+            if (width > imageWidth + epsilon && height > imageHeight + epsilon)
+            {
+                return false;
+            }
+
+            // The image's centre from the frame's, in the frame's axes.
+            var offset = Rotate(oriented.Width / 2 - m_dragCenter.X, oriented.Height / 2 - m_dragCenter.Y, m_angle);
+            var x = offset.X - (left + right) / 2;
+            var y = offset.Y - (top + bottom) / 2;
+
+            return Math.Abs(x) <= Math.Abs(imageWidth - width) / 2 + epsilon
+                && Math.Abs(y) <= Math.Abs(imageHeight - height) / 2 + epsilon;
         }
 
         private void NWSEThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -1578,42 +1645,32 @@ namespace Telegram.Controls
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        private int m_savedQuarterTurns;
-        private bool m_savedMirrored;
-        private double m_savedAngle;
-        private Point m_savedCenter;
-        private Size m_savedCropSize;
-        private BitmapProportions m_savedProportions;
-
         /// <summary>
-        /// Remembers the crop, the turns and the mirror for <see cref="RestoreState"/>.
+        /// The crop, the turns and the mirror as they are now, for <see cref="SetState"/>.
         /// </summary>
-        public void SaveState()
+        public ImageCropperState GetState()
         {
-            m_savedQuarterTurns = m_quarterTurns;
-            m_savedMirrored = m_mirrored;
-            m_savedAngle = m_angle;
-            m_savedCenter = m_center;
-            m_savedCropSize = m_cropSize;
-            m_savedProportions = m_proportions;
+            return new ImageCropperState(m_quarterTurns, m_mirrored, m_angle, m_center, m_cropSize, m_proportions);
         }
 
         /// <summary>
-        /// Puts back what <see cref="SaveState"/> remembered, at once.
+        /// Puts back what <see cref="GetState"/> took, at once.
         /// </summary>
-        public void RestoreState()
+        public void SetState(ImageCropperState state)
         {
-            if (!m_hasSource)
+            if (!m_hasSource || state == null)
             {
                 return;
             }
 
-            m_quarterTurns = m_savedQuarterTurns;
-            m_mirrored = m_savedMirrored;
-            m_angle = m_savedAngle;
-            m_center = m_savedCenter;
-            m_cropSize = m_savedCropSize;
-            m_proportions = m_savedProportions;
+            StopAnimation();
+
+            m_quarterTurns = state.QuarterTurns;
+            m_mirrored = state.Mirrored;
+            m_angle = state.Angle;
+            m_center = state.Center;
+            m_cropSize = state.CropSize;
+            m_proportions = state.Proportions;
 
             Refit();
 
@@ -1871,35 +1928,15 @@ namespace Telegram.Controls
         public ImageCropperMask Mask => m_mask;
 
         /// <summary>
-        /// The crop is a fixed frame of the locked proportions that the image moves and zooms
-        /// under, and it may be zoomed out until the image fits inside it, leaving it empty
-        /// around the image. It has no handles. Set before the source.
+        /// The crop is a frame of the locked proportions that the image moves and zooms under, and
+        /// it may be zoomed out until the image fits inside it, leaving it empty around the image.
+        /// Its handles resize it at those proportions, which is zooming by other means. Set before
+        /// the source.
         /// </summary>
         public bool IsFrame
         {
             get => m_frame;
-            set
-            {
-                m_frame = value;
-                UpdateThumbs();
-            }
-        }
-
-        // The handles and the outline, which would read as a crop that can be resized: the grids
-        // inside the same container still show while panning and turning.
-        private void UpdateThumbs()
-        {
-            var visibility = m_frame ? Visibility.Collapsed : Visibility.Visible;
-
-            foreach (var thumb in m_thumbs)
-            {
-                thumb.Visibility = visibility;
-            }
-
-            if (RectangleGrid != null)
-            {
-                RectangleGrid.Visibility = visibility;
-            }
+            set => m_frame = value;
         }
 
         #endregion

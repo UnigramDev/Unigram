@@ -23,12 +23,20 @@ using Windows.UI.Xaml.Media;
 namespace Telegram.Controls
 {
     /// <summary>
-    /// A media editor's draw mode: the brushes or the selected object's options, the size
-    /// slider, and one undo history for strokes and objects. The tabs that pick what is drawn or
-    /// placed are a <see cref="PaintTabs"/>, which the host puts in its own bar.
+    /// The options row of a media editor's draw tabs: the brushes or the selected object's
+    /// options, its colour and its size. The tabs are a <see cref="PaintTabs"/>, and the undo
+    /// history is the surface's.
     /// </summary>
     public sealed partial class PaintToolbar : Grid
     {
+        // What the row shows: each change of it passes the old row out as the new one comes in.
+        private enum ToolsKind
+        {
+            Brushes,
+            Text,
+            None
+        }
+
         private MediaEditorSurface _surface;
         private PaintTabs _tabs;
 
@@ -37,34 +45,37 @@ namespace Telegram.Controls
 
         private bool _weightDragging;
 
-        // Strokes and placed objects undo as one history, newest last. An entry is the object its
-        // undo takes away, or null for a stroke, which the canvas keeps the list of.
-        private readonly List<PaintEntity> _undo = new();
-        private readonly List<PaintEntity> _redo = new();
+        private ToolsKind _kind;
+        private int _tabIndex = -1;
+
+        // While the crop tab is open: the row is away, and comes back on Resume.
+        private bool _suspended = true;
+
+        // The row is about to change to show _kind.
+        private bool _swapping;
+
+        private readonly ThemeShadowEx _shadow;
 
         public PaintToolbar()
         {
             InitializeComponent();
+
+            _shadow = new ThemeShadowEx(Card, 16);
         }
 
         private PencilCanvas Canvas => _surface.Canvas;
 
         private PaintEntityLayer Entities => _surface.Entities;
 
-        public void Attach(MediaEditorSurface surface, PaintTabs tabs, IClientService clientService)
+        public void Attach(MediaEditorSurface surface, PaintTabs tabs)
         {
             _surface = surface;
             _tabs = tabs;
 
-            _tabs.Attach(this, surface, clientService);
+            _tabs.SetToolbar(this);
 
-            Canvas.StrokesChanged += Canvas_StrokesChanged;
-            Canvas.StrokeAdded += Canvas_StrokeAdded;
             Canvas.ColorPicked += Canvas_ColorPicked;
-
             Entities.SelectionChanged += Entities_SelectionChanged;
-            Entities.EntityCreated += Entities_EntityCreated;
-            Entities.EntityDeleted += Entities_EntityDeleted;
 
             if (!surface.CanBlur)
             {
@@ -79,93 +90,61 @@ namespace Telegram.Controls
                 return;
             }
 
-            Canvas.StrokesChanged -= Canvas_StrokesChanged;
-            Canvas.StrokeAdded -= Canvas_StrokeAdded;
             Canvas.ColorPicked -= Canvas_ColorPicked;
-
             Entities.SelectionChanged -= Entities_SelectionChanged;
-            Entities.EntityCreated -= Entities_EntityCreated;
-            Entities.EntityDeleted -= Entities_EntityDeleted;
 
             _surface = null;
         }
 
-        public void Open()
-        {
-            Resume();
-            ResetHistory();
-        }
-
         /// <summary>
-        /// Shows the tools again after <see cref="Suspend"/>, with the undo history as it was.
+        /// Brings the row back, sliding in from <paramref name="direction"/>, and lets drawing and
+        /// placing start again.
         /// </summary>
-        public void Resume()
+        public void Resume(int direction)
         {
+            _suspended = false;
+
             Canvas.IsEnabled = true;
             Entities.IsHitTestVisible = true;
 
-            Visibility = Visibility.Visible;
-            ToolsPanel.Visibility = Visibility.Visible;
-            WeightSlider.Visibility = Visibility.Visible;
-
             Canvas.EraserThickness = PencilTools.GetThickness(PencilTool.Eraser, AppSettings.Pencil.GetWeight(PencilTool.Eraser));
             SelectTool(_tool);
+
+            if (_kind != ToolsKind.None)
+            {
+                MediaEditorTransitions.SlideIn(ToolsPanel, direction);
+            }
+
             _surface.LoadBlurSource();
         }
 
         /// <summary>
-        /// Hides the tools and leaves what was drawn and placed alone, undo history included, for
-        /// another mode of the editor to take over until <see cref="Resume"/>.
+        /// Slides the row away towards <paramref name="direction"/> and leaves what was drawn and
+        /// placed alone, for another tab to take over until <see cref="Resume"/>.
         /// </summary>
-        public void Suspend()
+        public void Suspend(int direction)
         {
+            _suspended = true;
+            _swapping = false;
+
             Entities.Deselect();
-            Close();
+
+            Canvas.IsEnabled = false;
+            Entities.IsHitTestVisible = false;
+
+            MediaEditorTransitions.SlideOut(ToolsPanel, direction);
         }
 
-        // Keeps what was drawn and placed so far, the tools staying open.
+        // Keeps what was drawn and placed so far.
         public void Save()
         {
             Canvas.SaveState();
             Entities.SaveState();
         }
 
-        // Keeps what was drawn and placed since Open.
-        public void Commit()
-        {
-            Save();
-            Close();
-        }
-
-        // Puts back what there was at Open.
-        public void Revert()
-        {
-            Canvas.RestoreState();
-            Entities.RestoreState();
-
-            Close();
-        }
-
-        private void Close()
-        {
-            Canvas.IsEnabled = false;
-            Entities.IsHitTestVisible = false;
-
-            Visibility = Visibility.Collapsed;
-        }
-
         public bool ProcessKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers modifiers)
         {
-            if (key == VirtualKey.Z && modifiers == VirtualKeyModifiers.Control && _undo.Count > 0)
-            {
-                UndoStep();
-            }
-            else if (((key == VirtualKey.Y && modifiers == VirtualKeyModifiers.Control)
-                || (key == VirtualKey.Z && modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))) && _redo.Count > 0)
-            {
-                RedoStep();
-            }
-            else if (key == VirtualKey.D && modifiers == VirtualKeyModifiers.Control)
+            if (key == VirtualKey.D && modifiers == VirtualKeyModifiers.Control)
             {
                 if (Entities.Selected != null)
                 {
@@ -245,13 +224,76 @@ namespace Telegram.Controls
         // What the colour button edits, besides the brush.
         private PaintEntity SelectedColored => Entities.Selected is { Type: PaintEntityType.Text or PaintEntityType.Shape } entity ? entity : null;
 
+        private static ToolsKind GetKind(PaintEntity selected)
+        {
+            if (selected == null || selected.Type == PaintEntityType.Shape)
+            {
+                return ToolsKind.Brushes;
+            }
+            else if (selected.Type == PaintEntityType.Text)
+            {
+                return ToolsKind.Text;
+            }
+
+            // A sticker or a widget has no tools: no colour or size, the rest is in its menu, and
+            // another one comes from the tab.
+            return ToolsKind.None;
+        }
+
         public void UpdateTools()
+        {
+            var selected = Entities.Selected;
+            _tabs.UpdateSelection(selected);
+
+            var kind = GetKind(selected);
+            var index = _tabs.SelectedIndex;
+            var direction = _tabIndex < 0 ? 0 : Math.Sign(index - _tabIndex);
+
+            _tabIndex = index;
+
+            if (_suspended)
+            {
+                _kind = kind;
+                return;
+            }
+
+            // Anything that changes before the swap takes its picture of the old row is applied
+            // with it.
+            if (kind != _kind && !_swapping)
+            {
+                _kind = kind;
+                _swapping = true;
+
+                MediaEditorTransitions.Swap(ToolsPanel, this, direction, ToolsPanel_Swap);
+                return;
+            }
+
+            _kind = kind;
+
+            if (!_swapping)
+            {
+                ApplyTools();
+            }
+        }
+
+        private void ToolsPanel_Swap()
+        {
+            _swapping = false;
+
+            if (!_suspended)
+            {
+                ApplyTools();
+            }
+        }
+
+        private void ApplyTools()
         {
             var slot = Slot;
 
-            // The tools sit in equal columns from the first one on. The highlight stays on the brush
-            // while the text tab hides it, so it is in place on the way back.
-            ToolSelection.Translation = new Vector3((PenTool.ActualSize.X - 4) * (int)_tool, 0, 0);
+            // The highlight stays on the brush while the text tab hides it, so it is in place on
+            // the way back. From where the button is, as a hidden brush takes no column.
+            var button = GetToolButton(_tool);
+            ToolSelection.Translation = new Vector3(button.ActualOffset.X - PenTool.ActualOffset.X, 0, 0);
 
             PenTool.IsChecked = slot == PencilTool.Pen;
             ArrowTool.IsChecked = slot == PencilTool.Arrow;
@@ -265,9 +307,7 @@ namespace Telegram.Controls
             var selected = Entities.Selected;
             var text = selected?.Type == PaintEntityType.Text;
             var shape = selected?.Type == PaintEntityType.Shape;
-            var sticker = selected != null && (PaintEntityRenderer.IsSticker(selected) || PaintEntityRenderer.IsWidget(selected));
-
-            _tabs.UpdateSelection(selected);
+            var sticker = _kind == ToolsKind.None;
 
             // Hidden rather than collapsed, so the bar keeps its width and the highlight its place.
             // A shape keeps the brushes, one press away from drawing again.
@@ -285,13 +325,7 @@ namespace Telegram.Controls
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            // A sticker or a widget has no tools: no colour or size, the rest is in its menu, and
-            // another one comes from the tab.
             ToolsPanel.Visibility = sticker
-                ? Visibility.Collapsed
-                : Visibility.Visible;
-
-            WeightSlider.Visibility = sticker
                 ? Visibility.Collapsed
                 : Visibility.Visible;
 
@@ -330,6 +364,16 @@ namespace Telegram.Controls
             ColorSwatchPanel.Opacity = ColorButton.IsEnabled ? 1 : 0.4;
             SetColor(PencilTools.HasColor(slot) ? AppSettings.Pencil.GetColor(slot) : Colors.Transparent);
         }
+
+        private UIElement GetToolButton(PencilTool tool) => tool switch
+        {
+            PencilTool.Arrow => ArrowTool,
+            PencilTool.Marker => MarkerTool,
+            PencilTool.Neon => NeonTool,
+            PencilTool.Blur => BlurTool,
+            PencilTool.Eraser => EraserTool,
+            _ => PenTool
+        };
 
         private void SetColor(Color color)
         {
@@ -453,7 +497,7 @@ namespace Telegram.Controls
                 flyout.Items.Add(item);
             }
 
-            flyout.ShowAt(FontButton, FlyoutPlacementMode.Top);
+            flyout.ShowAt(FontButton, FlyoutPlacementMode.Bottom);
         }
 
         private void FontItem_Click(object sender, RoutedEventArgs e)
@@ -544,7 +588,7 @@ namespace Telegram.Controls
             Entities.IsHitTestVisible = false;
 
             Canvas.LoupeScale = (float)(1 / _surface.LayerZoom);
-            Canvas.BeginPick();
+            _surface.BeginPick();
         }
 
         private void Canvas_ColorPicked(object sender, PencilColorPickedEventArgs e)
@@ -627,113 +671,5 @@ namespace Telegram.Controls
             WeightPreview.Height = diameter;
         }
 
-        private void Undo_Click(object sender, RoutedEventArgs e)
-        {
-            UndoStep();
-        }
-
-        private void Redo_Click(object sender, RoutedEventArgs e)
-        {
-            RedoStep();
-        }
-
-        private void UndoStep()
-        {
-            if (_undo.Count == 0)
-            {
-                return;
-            }
-
-            var entity = _undo[_undo.Count - 1];
-
-            _undo.RemoveAt(_undo.Count - 1);
-            _redo.Add(entity);
-
-            if (entity == null)
-            {
-                Canvas.Undo();
-            }
-            else
-            {
-                Entities.Remove(entity);
-            }
-
-            InvalidateToolbar();
-        }
-
-        private void RedoStep()
-        {
-            if (_redo.Count == 0)
-            {
-                return;
-            }
-
-            var entity = _redo[_redo.Count - 1];
-
-            _redo.RemoveAt(_redo.Count - 1);
-            _undo.Add(entity);
-
-            if (entity == null)
-            {
-                Canvas.Redo();
-            }
-            else
-            {
-                Entities.Restore(entity);
-            }
-
-            InvalidateToolbar();
-        }
-
-        // Each visit to draw mode starts from the strokes already there, which stay undoable; the
-        // objects already there do not.
-        private void ResetHistory()
-        {
-            _undo.Clear();
-            _redo.Clear();
-
-            Canvas.ClearRedo();
-
-            for (int i = 0; i < Canvas.StrokeCount; i++)
-            {
-                _undo.Add(null);
-            }
-
-            InvalidateToolbar();
-        }
-
-        private void Canvas_StrokeAdded(object sender, EventArgs e)
-        {
-            _undo.Add(null);
-            _redo.Clear();
-        }
-
-        private void Entities_EntityCreated(object sender, PaintEntityEventArgs e)
-        {
-            _undo.Add(e.Entity);
-            _redo.Clear();
-
-            Canvas.ClearRedo();
-            InvalidateToolbar();
-        }
-
-        private void Entities_EntityDeleted(object sender, PaintEntityEventArgs e)
-        {
-            _undo.Remove(e.Entity);
-            _redo.Remove(e.Entity);
-
-            InvalidateToolbar();
-        }
-
-        private void Canvas_StrokesChanged(object sender, EventArgs e)
-        {
-            InvalidateToolbar();
-        }
-
-        private void InvalidateToolbar()
-        {
-            Undo.IsEnabled = _undo.Count > 0;
-            Redo.IsEnabled = _redo.Count > 0;
-        }
     }
 }
