@@ -25,7 +25,7 @@
             <CheckBox IsChecked="{x:Bind ViewModel.Channels, Mode=TwoWay}"
                       Content="{CustomResource AutodownloadChannels}"
                       Style="{StaticResource SettingsCheckBoxStyle}"
-                      CornerRadius="{x:Bind ConvertCornerRadius(ViewModel.IsLimitSupported)}"/>
+                      CornerRadius="{x:Bind ConvertCornerRadius(ViewModel.IsLimitSupported)}" />
 
             <Grid Visibility="{x:Bind ViewModel.IsLimitSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                   Background="{ThemeResource SettingsItemBackground}"
@@ -42,7 +42,7 @@
                 <TextBlock Text="{CustomResource AutoDownloadMaxFileSize}"
                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
                            VerticalAlignment="Center"
-                           Grid.Column="1"/>
+                           Grid.Column="1" />
 
                 <Slider Value="{x:Bind ConvertLimit(ViewModel.Limit), Mode=TwoWay, BindBack=ConvertLimitBack}"
                         Minimum="0"
@@ -54,22 +54,31 @@
                         TickPlacement="Outside"
                         IsThumbToolTipEnabled="False"
                         Margin="12,6,16,6"
-                        Grid.Column="3"/>
+                        Grid.Column="3" />
 
                 <TextBlock Text="{x:Bind ConvertUpTo(ViewModel.Limit), Mode=OneWay}"
                            Style="{StaticResource InfoCaptionTextBlockStyle}"
                            VerticalAlignment="Center"
-                           Grid.Column="2"/>
+                           Grid.Column="2" />
             </Grid>
 
             <StackPanel Visibility="{x:Bind ViewModel.IsPreloadSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <CheckBox IsChecked="{x:Bind ViewModel.Preload, Mode=TwoWay}"
-                          Content="{CustomResource AutoDownloadPreloadVideo}"
-                          Margin="0,8,0,0" />
+                          Style="{StaticResource SettingsCheckBoxStyle}"
+                          BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{CustomResource AutoDownloadPreloadVideo}" />
+                        <TextBlock Text="{x:Bind ConvertPreload(ViewModel.Limit), Mode=OneWay}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Margin="0,2,0,0"
+                                   Grid.Row="1" />
+                    </Grid>
+                </CheckBox>
 
-                <TextBlock Text="{x:Bind ConvertPreload(ViewModel.Limit), Mode=OneWay}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="0,4,0,0" />
             </StackPanel>
         </StackPanel>
     </Grid>

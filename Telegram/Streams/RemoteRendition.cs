@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Native.Media;
 using Telegram.Services;
@@ -23,6 +24,7 @@ namespace Telegram.Streams
         private readonly IClientService _clientService;
         private readonly File _playlist;
         private readonly double _duration;
+        private readonly FileReadRank _rank;
 
         // Written and read on the player's demux thread only.
         private RemoteFileSource _source;
@@ -32,15 +34,106 @@ namespace Telegram.Streams
         private readonly object _loadLock = new();
         private bool _loading;
 
-        public RemoteRendition(IClientService clientService, File file, File playlist, int width, int height, double duration)
+        public RemoteRendition(IClientService clientService, File file, File playlist, int width, int height, double duration, FileReadRank rank = FileReadRank.Playback)
         {
             _clientService = clientService;
             _playlist = playlist;
             _duration = duration;
+            _rank = rank;
 
             File = file;
             Width = width;
             Height = height;
+        }
+
+        /// <summary>
+        /// The qualities a video plays in, or null for one that plays its own file only.
+        /// </summary>
+        public static List<RemoteRendition> CreateRenditions(IClientService clientService, MessageVideo video, FileReadRank rank = FileReadRank.Playback)
+        {
+            if (!video.IsHls())
+            {
+                return null;
+            }
+
+            var renditions = new List<RemoteRendition>();
+            var duration = video.Video.Duration;
+
+            foreach (var alternative in video.AlternativeVideos)
+            {
+                if (alternative.Codec == "h264" && alternative.Width > 0 && alternative.Height > 0 && alternative.HlsFile != null)
+                {
+                    renditions.Add(new RemoteRendition(clientService, alternative.Video, alternative.HlsFile, alternative.Width, alternative.Height, duration, rank));
+                }
+            }
+
+            if (renditions.Count == 0)
+            {
+                return null;
+            }
+
+            // The original only once it is on disk: then nothing plays better, and nothing more has
+            // to be downloaded. Before that it is usually far larger than the best alternative.
+            var original = video.Video;
+            if (original.VideoValue.Local.IsDownloadingCompleted)
+            {
+                renditions.Add(new RemoteRendition(clientService, original.VideoValue, null, original.Width, original.Height, duration, rank));
+            }
+
+            renditions.Sort(CompareRenditions);
+
+            // One per quality: the smaller file of two that look the same.
+            for (int i = renditions.Count - 1; i > 0; i--)
+            {
+                if (renditions[i].Quality == renditions[i - 1].Quality && !renditions[i].IsOriginal && !renditions[i - 1].IsOriginal)
+                {
+                    renditions.RemoveAt(i);
+                }
+            }
+
+            return renditions;
+        }
+
+        private static int CompareRenditions(RemoteRendition x, RemoteRendition y)
+        {
+            return x.Quality != y.Quality
+                ? x.Quality.CompareTo(y.Quality)
+                : x.Size.CompareTo(y.Size);
+        }
+
+        /// <summary>
+        /// The quality playback starts with.
+        /// </summary>
+        public static int PickRendition(List<RemoteRendition> renditions)
+        {
+            // Whatever is already on disk wins, the largest first: it plays at once and costs nothing.
+            for (int i = renditions.Count - 1; i >= 0; i--)
+            {
+                if (renditions[i].File.Local.IsDownloadingCompleted)
+                {
+                    return i;
+                }
+            }
+
+            // Then the quality picked by hand, or the one automatic quality last settled on, as the
+            // best guess at what the connection carries.
+            var quality = AppSettings.Playback.VideoQuality;
+            if (quality <= 0)
+            {
+                quality = 480;
+            }
+
+            var best = 0;
+
+            for (int i = 1; i < renditions.Count; i++)
+            {
+                if (Math.Abs(renditions[i].Quality - quality) < Math.Abs(renditions[best].Quality - quality))
+                {
+                    best = i;
+                }
+            }
+
+            return best;
         }
 
         public File File { get; }
@@ -141,7 +234,7 @@ namespace Telegram.Streams
 
         public IAsyncMediaPlayerSource CreateSource()
         {
-            return _source = new RemoteFileSource(_clientService, File, _duration);
+            return _source = new RemoteFileSource(_clientService, File, _duration, rank: _rank);
         }
 
         public double DownloadSpeed => _source?.DownloadBytesPerSecond ?? 0;

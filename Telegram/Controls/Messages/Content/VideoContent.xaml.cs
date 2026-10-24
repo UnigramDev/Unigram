@@ -41,6 +41,9 @@ namespace Telegram.Controls.Messages.Content
 
         private ThumbnailController _thumbnailController;
 
+        // Asked for once per message, as UpdateFile runs on every update of the file.
+        private VideoPreloader.Request _preload;
+
         private bool _hidden = true;
 
         public VideoContent(MessageViewModel message, PaidMediaVideo paidMedia = null, bool album = false)
@@ -105,6 +108,11 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
             _subtitleSeconds = -1;
             _indicatorPosition = -1;
+
+            if (prevId != nextId)
+            {
+                VideoPreloader.Cancel(ref _preload);
+            }
 
             var video = GetContent(message, out Photo cover, out AlternativeVideo lowQuality, out bool hasSpoiler, out bool isSecret);
             if (video == null || !_templateApplied)
@@ -275,6 +283,7 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
+                    Preload(message, video);
                     UpdateSource(null, null);
                 }
 
@@ -351,9 +360,11 @@ namespace Telegram.Controls.Messages.Content
                     }
                     else
                     {
-                        if (_message.Delegate.Settings.AutoDownload.PreloadLargeVideos && AppSettings.Diagnostics.VideoPreloadDebug)
+                        // The gallery plays a video that supports streaming before it is
+                        // downloaded, and any other only after.
+                        if (video.SupportsStreaming)
                         {
-                            VideoPreloader.Load(_message.ClientService, file);
+                            Preload(message, video);
                         }
 
                         UpdateSource(null, null);
@@ -390,6 +401,14 @@ namespace Telegram.Controls.Messages.Content
         private string GetDuration(Video video)
         {
             return video.GetDuration() + "\n";
+        }
+
+        private void Preload(MessageViewModel message, Video video)
+        {
+            if (message.Delegate.Settings.AutoDownload.PreloadLargeVideos)
+            {
+                VideoPreloader.Load(message.ClientService, video, (message.GeneratedContent ?? message.Content) as MessageVideo, ref _preload);
+            }
         }
 
         private void UpdateThumbnail(File file)
@@ -530,6 +549,9 @@ namespace Telegram.Controls.Messages.Content
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken);
+
+            // The message scrolled far enough away for its container to be reused.
+            VideoPreloader.Cancel(ref _preload);
 
             if (_templateApplied)
             {

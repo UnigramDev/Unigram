@@ -124,10 +124,6 @@
                               Content="Album Preload Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.VideoPreloadDebug, Mode=TwoWay}"
-                              Content="Video Preload Debug"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ConnectedAnimationsDebug, Mode=TwoWay}"
                               Content="Connected Animations Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

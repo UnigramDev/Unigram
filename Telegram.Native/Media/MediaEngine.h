@@ -92,6 +92,79 @@ namespace winrt::Telegram::Native::Media::implementation
         virtual double DownloadSpeed() = 0;
     };
 
+    // What the reads of an open file answer to: the session playing it, or a preload.
+    class IMediaInputOwner
+    {
+    public:
+        virtual ~IMediaInputOwner() = default;
+
+        // Before every read. False ends it as interrupted.
+        virtual bool BeginRead() = 0;
+        virtual void EndRead() = 0;
+
+        // Whether the reads were interrupted, which makes a read that came back without bytes
+        // not an error, and abandons an open.
+        virtual bool Interrupted() = 0;
+
+        // A read that got nothing for a long while: whether to ask again. Elapsed is how long the
+        // read took, as a closed source answers at once.
+        virtual bool Stalled(double elapsed) = 0;
+    };
+
+    struct MediaInput;
+
+    // Not MediaPreloadResult: inside this namespace that name would hide the projected struct.
+    struct MediaPreloadOutcome
+    {
+        // Whether it stopped where it was meant to, at the seconds asked for, the limit or the end
+        // of the file, rather than failing or being canceled.
+        bool completed{ false };
+
+        // Bytes read to open the file, and past that, and how far into the media the latter go.
+        int64_t openBytes{ 0 };
+        int64_t mediaBytes{ 0 };
+        double mediaSeconds{ 0 };
+    };
+
+    // Reads what playing a video reads first, without decoding any of it: the open, with the same
+    // options, then the first seconds of packets. Every read waits for its bytes, so once it
+    // returns what playback reads first is on disk, wherever in the file the open finds it.
+    //
+    // Not probed for its streams as playback is: the probe only reads the first packets, which
+    // the packets read after it include.
+    class MediaPreload : private IMediaInputOwner
+    {
+    public:
+        explicit MediaPreload(std::shared_ptr<IMediaRendition> rendition);
+
+        MediaPreload(const MediaPreload&) = delete;
+        MediaPreload& operator=(const MediaPreload&) = delete;
+
+        // Blocks until the media is read up to the seconds given, or the limit of bytes past the
+        // open, or until it fails or is canceled.
+        MediaPreloadOutcome Run(double seconds, int64_t limit);
+
+        // From another thread, ending a Run blocked on the network.
+        void Cancel();
+
+    private:
+        void Read(MediaInput& input, double seconds, int64_t limit, MediaPreloadOutcome& result);
+
+        bool BeginRead() override;
+        void EndRead() override;
+        bool Interrupted() override;
+        bool Stalled(double elapsed) override;
+
+        const std::shared_ptr<IMediaRendition> m_rendition;
+
+        std::mutex m_lock;
+        std::shared_ptr<IMediaByteSource> m_source;
+        std::atomic<bool> m_canceled{ false };
+
+        // Only touched by the thread running it.
+        bool m_stalled{ false };
+    };
+
     // Called on the engine's threads; an implementation posts to wherever it needs to be.
     class IMediaEngineHost
     {

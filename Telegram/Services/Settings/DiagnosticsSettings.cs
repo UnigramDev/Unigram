@@ -254,13 +254,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _albumPreloadDebug, "AlbumPreloadDebug", value);
         }
 
-        private bool? _videoPreloadDebug;
-        public bool VideoPreloadDebug
-        {
-            get => _videoPreloadDebug ??= GetValueOrDefault("VideoPreloadDebug", false);
-            set => AddOrUpdateValue(ref _videoPreloadDebug, "VideoPreloadDebug", value);
-        }
-
         private bool? _connectedAnimationsDebug;
         public bool ConnectedAnimationsDebug
         {

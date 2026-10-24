@@ -48,6 +48,7 @@ namespace Telegram.ViewModels.Settings
             _groups = mode.HasFlag(AutoDownloadMode.WifiGroups);
             _channels = mode.HasFlag(AutoDownloadMode.WifiChannels);
             _limit = limit;
+            _preload = preferences.PreloadLargeVideos;
         }
 
         private string _title;
@@ -133,12 +134,18 @@ namespace Telegram.ViewModels.Settings
         public bool Preload
         {
             get => _preload;
-            set => Set(ref _preload, value);
+            set
+            {
+                if (Set(ref _preload, value))
+                {
+                    Save();
+                }
+            }
         }
 
         public bool IsLimitSupported => _type != AutoDownloadType.Photos;
 
-        public bool IsPreloadSupported => _type == AutoDownloadType.Videos && AppSettings.Diagnostics.VideoPreloadDebug;
+        public bool IsPreloadSupported => _type == AutoDownloadType.Videos;
 
         public void Save()
         {

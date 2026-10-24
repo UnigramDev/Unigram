@@ -759,6 +759,9 @@
     <ClCompile Include="Media\MediaPlaylist.cpp">
       <Filter>Media</Filter>
     </ClCompile>
+    <ClCompile Include="Media\MediaPreloader.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
     <ClCompile Include="Media\MediaVideoRenderer.cpp">
       <Filter>Media</Filter>
     </ClCompile>
@@ -1468,6 +1471,12 @@
     <ClInclude Include="Media\MediaPlaylist.h">
       <Filter>Media</Filter>
     </ClInclude>
+    <ClInclude Include="Media\MediaEngineSources.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\MediaPreloader.h">
+      <Filter>Media</Filter>
+    </ClInclude>
     <ClInclude Include="Media\MediaVideoRenderer.h">
       <Filter>Media</Filter>
     </ClInclude>
@@ -1770,6 +1779,9 @@
     </Midl>
     <Midl Include="MessageBubbleNineGrid.idl" />
     <Midl Include="Media\AsyncMediaPlayerOptions.idl">
+      <Filter>Media</Filter>
+    </Midl>
+    <Midl Include="Media\MediaPreloader.idl">
       <Filter>Media</Filter>
     </Midl>
     <Midl Include="Controls\AnimatedImageBase.idl">

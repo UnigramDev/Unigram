@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -40,6 +39,8 @@ namespace Telegram.Controls.Gallery
 
         private long _fileToken;
         private long _thumbnailToken;
+
+        private VideoPreloader.Request _preload;
 
         private int _appliedId;
 
@@ -157,6 +158,8 @@ namespace Telegram.Controls.Gallery
             _window = window;
             _item = item;
 
+            VideoPreloader.Cancel(ref _preload);
+
             _appliedRotation = item?.RotationAngle switch
             {
                 RotationAngle.Angle90 => 90,
@@ -216,13 +219,16 @@ namespace Telegram.Controls.Gallery
             UpdateManager.Subscribe(this, window.ClientService, file, ref _fileToken, UpdateFile);
             UpdateFile(item, file);
 
-            if (item.AlternativeVideos.Count > 0)
+            // For the items either side of the one shown, whose playback takes over at once.
+            if (item.IsVideo && AppSettings.IsStreamingEnabled)
             {
-                var video = item.AlternativeVideos.FirstOrDefault(x => x.Codec == "h264");
-                if (video != null)
+                if (item.Constraint is MessageVideo messageVideo)
                 {
-                    window.ClientService.DownloadFile(video.HlsFile.Id, 30);
-                    window.ClientService.DownloadFile(video.Video.Id, 29, 0, (int)((double)video.Video.Size / item.Duration));
+                    VideoPreloader.Load(window.ClientService, messageVideo.Video, messageVideo, ref _preload);
+                }
+                else if (item.Constraint is Video video)
+                {
+                    VideoPreloader.Load(window.ClientService, video, null, ref _preload);
                 }
             }
 
@@ -521,6 +527,7 @@ namespace Telegram.Controls.Gallery
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken);
+            VideoPreloader.Cancel(ref _preload);
         }
 
         private void OnTreeUpdated(VideoPlayerBase sender, EventArgs e)

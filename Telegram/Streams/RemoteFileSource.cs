@@ -28,6 +28,7 @@ namespace Telegram.Streams
         private readonly File _file;
         private readonly int _priority;
         private readonly bool _adaptive;
+        private readonly FileReadRank _rank;
 
         private readonly RemoteFileBitrate _bitrate;
 
@@ -60,14 +61,19 @@ namespace Telegram.Streams
         /// Callers that serve one ranged request each want this off: they have nothing to
         /// measure a rate from, and the file is being read by others at the same time.
         /// </param>
-        public RemoteFileSource(IClientService clientService, File file, double duration, bool streaming = true)
+        /// <param name="rank">
+        /// A preload reads behind everything the chat shows, and closes as soon as playback
+        /// opens the file, which then downloads what the preload was waiting for.
+        /// </param>
+        public RemoteFileSource(IClientService clientService, File file, double duration, bool streaming = true, FileReadRank rank = FileReadRank.Playback)
         {
             _event = new ManualResetEventSlim(false);
 
             _clientService = clientService;
             _file = file;
-            _priority = 32;
+            _priority = rank == FileReadRank.Preload ? 1 : 32;
             _adaptive = true;
+            _rank = rank;
 
             _bitrate = new RemoteFileBitrate(file);
 
@@ -90,6 +96,7 @@ namespace Telegram.Streams
             _file = file;
             _priority = 32;
             _adaptive = false;
+            _rank = FileReadRank.Playback;
 
             Format = new StickerFormatWebm();
             UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile);
@@ -370,6 +377,8 @@ namespace Telegram.Streams
 
         public void Open()
         {
+            bool outranked;
+
             lock (_stateLock)
             {
                 _closed = false;
@@ -377,7 +386,17 @@ namespace Telegram.Streams
                 // Not taken in the constructor: a source can be created and dropped without ever
                 // being read, and only Close gives a lease back. Readers open the source before
                 // reading, and again to replay it, having closed it at the end.
-                _lease ??= _clientService.OpenFileRead(_file.Id, FileReadRank.Playback);
+                _lease ??= _clientService.OpenFileRead(_file.Id, _rank, _rank == FileReadRank.Preload ? Close : null);
+
+                // Nothing a preload asks for is sent while the file plays, so its reads would
+                // only wait out their timeout.
+                outranked = _rank == FileReadRank.Preload && _lease.IsPreempted;
+            }
+
+            if (outranked)
+            {
+                Close();
+                return;
             }
 
             // Close unsubscribed. Without this the reopened source hears no updateFile, so

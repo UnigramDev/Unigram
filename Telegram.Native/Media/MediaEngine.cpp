@@ -45,7 +45,7 @@ namespace winrt::Telegram::Native::Media::implementation
     // One open file: the demuxer, and the bytes it reads.
     struct MediaInput
     {
-        MediaSession* session{ nullptr };
+        IMediaInputOwner* owner{ nullptr };
         int32_t rendition{ 0 };
         std::shared_ptr<IMediaByteSource> source;
 
@@ -59,6 +59,9 @@ namespace winrt::Telegram::Native::Media::implementation
 
         // How far past each read the source keeps downloading.
         int64_t window{ 0 };
+
+        // Bytes read from the source so far.
+        int64_t read{ 0 };
 
         int videoIndex{ -1 };
         int audioIndex{ -1 };
@@ -435,9 +438,219 @@ namespace winrt::Telegram::Native::Media::implementation
         private:
             std::shared_ptr<IMediaByteSource> m_source;
         };
+
+        int ReadPacket(void* opaque, uint8_t* buffer, int size)
+        {
+            auto* input = static_cast<MediaInput*>(opaque);
+            auto* owner = input->owner;
+
+            while (true)
+            {
+                if (!owner->BeginRead())
+                {
+                    return AVERROR_EXIT;
+                }
+
+                int64_t offset = input->position;
+                int64_t count = size;
+                int64_t window = input->window;
+
+                if (input->map)
+                {
+                    int64_t available = 0;
+
+                    if (!input->map->Locate(input->position, offset, available))
+                    {
+                        owner->EndRead();
+                        return AVERROR_EOF;
+                    }
+
+                    count = std::min(count, available);
+
+                    // The init section is all that is wanted from the start of the file. A window
+                    // there would start downloading parts that the next read, a segment further on,
+                    // cancels.
+                    if (input->map->SegmentOf(input->position) < 0)
+                    {
+                        window = available;
+                    }
+                }
+
+                const double started = MediaNow();
+                int64_t read;
+
+                try
+                {
+                    read = input->source->Read(offset, buffer, count, window);
+                }
+                catch (...)
+                {
+                    read = IMediaByteSource::ReadFailed;
+                }
+
+                owner->EndRead();
+
+                if (read > 0)
+                {
+                    input->position += read;
+                    input->read += read;
+                    return static_cast<int>(read);
+                }
+
+                if (read == 0)
+                {
+                    return AVERROR_EOF;
+                }
+
+                if (owner->Interrupted())
+                {
+                    return AVERROR_EXIT;
+                }
+
+                if (read != IMediaByteSource::ReadStalled || !owner->Stalled(MediaNow() - started))
+                {
+                    return AVERROR(EIO);
+                }
+            }
+        }
+
+        int64_t SeekPacket(void* opaque, int64_t offset, int whence)
+        {
+            auto* input = static_cast<MediaInput*>(opaque);
+            whence &= ~AVSEEK_FORCE;
+
+            if (whence == AVSEEK_SIZE)
+            {
+                return input->size > 0 ? input->size : AVERROR(ENOSYS);
+            }
+
+            int64_t position;
+
+            switch (whence)
+            {
+            case SEEK_SET:
+                position = offset;
+                break;
+            case SEEK_CUR:
+                position = input->position + offset;
+                break;
+            case SEEK_END:
+                if (input->size <= 0)
+                {
+                    return AVERROR(ENOSYS);
+                }
+
+                position = input->size + offset;
+                break;
+            default:
+                return AVERROR(EINVAL);
+            }
+
+            if (position < 0)
+            {
+                return AVERROR(EINVAL);
+            }
+
+            // Only remembered: nothing is read, or asked for, until a read needs it.
+            input->position = position;
+            return position;
+        }
+
+        // Opens the demuxer over the input's source, as far as knowing its streams and duration.
+        // The probe decodes the first packets of a plain file, for what its headers leave out.
+        bool OpenFormat(MediaInput& input, bool probe)
+        {
+            input.format = avformat_alloc_context();
+            if (input.format == nullptr)
+            {
+                return false;
+            }
+
+            auto* buffer = static_cast<uint8_t*>(av_malloc(kIoBufferSize));
+            if (buffer == nullptr)
+            {
+                return false;
+            }
+
+            input.io = avio_alloc_context(buffer, kIoBufferSize, 0, &input, &ReadPacket, nullptr, &SeekPacket);
+            if (input.io == nullptr)
+            {
+                av_free(buffer);
+                return false;
+            }
+
+            // Read front to back only: every seek or switch opens a new input. Seekable, the mov
+            // demuxer walks to every moof in the file while opening it, to index fragments it never
+            // needs, and over the network each of those is a download somewhere else in the file.
+            if (input.map)
+            {
+                input.io->seekable = 0;
+            }
+
+            input.format->pb = input.io;
+            input.format->flags |= AVFMT_FLAG_CUSTOM_IO;
+
+            // Nothing a file names is ever fetched: the playlist demuxers would otherwise open any
+            // URL they find in one.
+            AVDictionary* options = nullptr;
+            av_dict_set(&options, "protocol_whitelist", "", 0);
+
+            // A plain file can be fragmented too. Without an index of its fragments the mov demuxer
+            // walks every moof to the end of the file before it returns, which over the network
+            // reads chunks from across all of it before the first frame. The mfra at the end is
+            // that index, a few KB, read only when asked for; its times are presentation times, as
+            // the standard has them. It leaves the duration wrong, which ProbeFragmentedEnd puts
+            // right.
+            if (input.map == nullptr)
+            {
+                av_dict_set(&options, "use_mfra_for", "pts", 0);
+            }
+
+            int result = avformat_open_input(&input.format, nullptr, nullptr, &options);
+            av_dict_free(&options);
+
+            if (result < 0)
+            {
+                // avformat_open_input frees the context it was given when it fails.
+                if (!input.owner->Interrupted())
+                {
+                    LOGGER_WARNING(L"avformat_open_input failed: {}", result);
+                }
+
+                return false;
+            }
+
+            // A quality's init section already says everything there is to know, and reading
+            // packets to find out more would delay every switch.
+            if (input.map == nullptr)
+            {
+                if (probe)
+                {
+                    result = avformat_find_stream_info(input.format, nullptr);
+                    if (result < 0 && !input.owner->Interrupted())
+                    {
+                        LOGGER_WARNING(L"avformat_find_stream_info failed: {}", result);
+                    }
+                }
+
+                if (IsFragmented(input.format))
+                {
+                    ProbeFragmentedEnd(input.format);
+
+                    // Cut short by a seek, the probe found no end, and the open is abandoned like
+                    // any other a seek interrupts.
+                    if (input.owner->Interrupted())
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 
-    class MediaSession : public std::enable_shared_from_this<MediaSession>
+    class MediaSession : public std::enable_shared_from_this<MediaSession>, private IMediaInputOwner
     {
     public:
         MediaSession(std::shared_ptr<MediaEngine> engine, std::vector<std::shared_ptr<IMediaRendition>> renditions, int32_t rendition, bool automatic,
@@ -511,8 +724,10 @@ namespace winrt::Telegram::Native::Media::implementation
         void Join();
         void Release();
 
-        static int ReadPacket(void* opaque, uint8_t* buffer, int size);
-        static int64_t SeekPacket(void* opaque, int64_t offset, int whence);
+        bool BeginRead() override;
+        void EndRead() override;
+        bool Interrupted() override;
+        bool Stalled(double elapsed) override;
 
         const std::shared_ptr<MediaEngine> m_engine;
         const std::vector<std::shared_ptr<IMediaRendition>> m_renditions;
@@ -965,7 +1180,7 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         auto input = std::make_unique<MediaInput>();
-        input->session = this;
+        input->owner = this;
         input->rendition = rendition;
         input->source = source;
 
@@ -990,86 +1205,9 @@ namespace winrt::Telegram::Native::Media::implementation
             input->window = DownloadWindow(0, 0);
         }
 
-        input->format = avformat_alloc_context();
-        if (input->format == nullptr)
+        if (!OpenFormat(*input, true))
         {
             return nullptr;
-        }
-
-        auto* buffer = static_cast<uint8_t*>(av_malloc(kIoBufferSize));
-        if (buffer == nullptr)
-        {
-            return nullptr;
-        }
-
-        input->io = avio_alloc_context(buffer, kIoBufferSize, 0, input.get(), &ReadPacket, nullptr, &SeekPacket);
-        if (input->io == nullptr)
-        {
-            av_free(buffer);
-            return nullptr;
-        }
-
-        // Read front to back only: every seek or switch opens a new input. Seekable, the mov demuxer
-        // walks to every moof in the file while opening it, to index fragments it never needs, and
-        // over the network each of those is a download somewhere else in the file.
-        if (playlist)
-        {
-            input->io->seekable = 0;
-        }
-
-        input->format->pb = input->io;
-        input->format->flags |= AVFMT_FLAG_CUSTOM_IO;
-
-        // Nothing a file names is ever fetched: the playlist demuxers would otherwise open any URL
-        // they find in one.
-        AVDictionary* options = nullptr;
-        av_dict_set(&options, "protocol_whitelist", "", 0);
-
-        // A plain file can be fragmented too. Without an index of its fragments the mov demuxer
-        // walks every moof to the end of the file before it returns, which over the network reads
-        // chunks from across all of it before the first frame. The mfra at the end is that index,
-        // a few KB, read only when asked for; its times are presentation times, as the standard
-        // has them. It leaves the duration wrong, which ProbeFragmentedEnd puts right.
-        if (playlist == nullptr)
-        {
-            av_dict_set(&options, "use_mfra_for", "pts", 0);
-        }
-
-        int result = avformat_open_input(&input->format, nullptr, nullptr, &options);
-        av_dict_free(&options);
-
-        if (result < 0)
-        {
-            // avformat_open_input frees the context it was given when it fails.
-            if (!m_abort && !HasPendingSeek())
-            {
-                LOGGER_WARNING(L"avformat_open_input failed: {}", result);
-            }
-
-            return nullptr;
-        }
-
-        // A quality's init section already says everything there is to know, and reading packets
-        // to find out more would delay every switch.
-        if (playlist == nullptr)
-        {
-            result = avformat_find_stream_info(input->format, nullptr);
-            if (result < 0 && !m_abort)
-            {
-                LOGGER_WARNING(L"avformat_find_stream_info failed: {}", result);
-            }
-
-            if (IsFragmented(input->format))
-            {
-                ProbeFragmentedEnd(input->format);
-
-                // Cut short by a seek, the probe found no end, and the open is abandoned like any
-                // other a seek interrupts.
-                if (m_abort || SeekInterrupts())
-                {
-                    return nullptr;
-                }
-            }
         }
 
         if (m_abort)
@@ -1870,140 +2008,50 @@ namespace winrt::Telegram::Native::Media::implementation
         return changed;
     }
 
-    int MediaSession::ReadPacket(void* opaque, uint8_t* buffer, int size)
+    bool MediaSession::BeginRead()
     {
-        auto* input = static_cast<MediaInput*>(opaque);
-        auto* self = input->session;
-
-        while (true)
+        if (m_abort)
         {
-            if (self->m_abort)
-            {
-                return AVERROR_EXIT;
-            }
-
-            self->ReopenIfClosed();
-
-            // Published before checking for a seek, which publishes the other way round, so that
-            // a seek either finds this read in progress and closes the source under it, or this
-            // read finds the seek and never starts.
-            self->m_reading = true;
-
-            if (self->SeekInterrupts())
-            {
-                self->m_reading = false;
-                return AVERROR_EXIT;
-            }
-
-            int64_t offset = input->position;
-            int64_t count = size;
-            int64_t window = input->window;
-
-            if (input->map)
-            {
-                int64_t available = 0;
-
-                if (!input->map->Locate(input->position, offset, available))
-                {
-                    self->m_reading = false;
-                    return AVERROR_EOF;
-                }
-
-                count = std::min(count, available);
-
-                // The init section is all that is wanted from the start of the file. A window there
-                // would start downloading parts that the next read, a segment further on, cancels.
-                if (input->map->SegmentOf(input->position) < 0)
-                {
-                    window = available;
-                }
-            }
-
-            const double started = MediaNow();
-            int64_t read;
-
-            try
-            {
-                read = input->source->Read(offset, buffer, count, window);
-            }
-            catch (...)
-            {
-                read = IMediaByteSource::ReadFailed;
-            }
-
-            self->m_reading = false;
-
-            if (read > 0)
-            {
-                input->position += read;
-                return static_cast<int>(read);
-            }
-
-            if (read == 0)
-            {
-                return AVERROR_EOF;
-            }
-
-            if (self->m_abort || self->SeekInterrupts())
-            {
-                return AVERROR_EXIT;
-            }
-
-            if (read != IMediaByteSource::ReadStalled)
-            {
-                return AVERROR(EIO);
-            }
-
-            // RemoteFileSource gives up after 30 seconds without a byte. The file can still come,
-            // and the player already shows that it is waiting, so it waits on: a seek or a close is
-            // what ends this. A closed source answers at once, and is not asked again in a spin.
-            if (MediaNow() - started < 0.01)
-            {
-                self->m_demuxWaiter.Wait(0.05);
-            }
+            return false;
         }
+
+        ReopenIfClosed();
+
+        // Published before checking for a seek, which publishes the other way round, so that a
+        // seek either finds this read in progress and closes the source under it, or this read
+        // finds the seek and never starts.
+        m_reading = true;
+
+        if (SeekInterrupts())
+        {
+            m_reading = false;
+            return false;
+        }
+
+        return true;
     }
 
-    int64_t MediaSession::SeekPacket(void* opaque, int64_t offset, int whence)
+    void MediaSession::EndRead()
     {
-        auto* input = static_cast<MediaInput*>(opaque);
-        whence &= ~AVSEEK_FORCE;
+        m_reading = false;
+    }
 
-        if (whence == AVSEEK_SIZE)
+    bool MediaSession::Interrupted()
+    {
+        return m_abort || SeekInterrupts();
+    }
+
+    // RemoteFileSource gives up after 30 seconds without a byte. The file can still come, and the
+    // player already shows that it is waiting, so it waits on: a seek or a close is what ends
+    // this. A closed source answers at once, and is not asked again in a spin.
+    bool MediaSession::Stalled(double elapsed)
+    {
+        if (elapsed < 0.01)
         {
-            return input->size > 0 ? input->size : AVERROR(ENOSYS);
+            m_demuxWaiter.Wait(0.05);
         }
 
-        int64_t position;
-
-        switch (whence)
-        {
-        case SEEK_SET:
-            position = offset;
-            break;
-        case SEEK_CUR:
-            position = input->position + offset;
-            break;
-        case SEEK_END:
-            if (input->size <= 0)
-            {
-                return AVERROR(ENOSYS);
-            }
-
-            position = input->size + offset;
-            break;
-        default:
-            return AVERROR(EINVAL);
-        }
-
-        if (position < 0)
-        {
-            return AVERROR(EINVAL);
-        }
-
-        // Only remembered: nothing is read, or asked for, until a read needs it.
-        input->position = position;
-        return position;
+        return true;
     }
 
     AVFrame* MediaSession::Normalize(AVFrame* frame)
@@ -3516,5 +3564,286 @@ namespace winrt::Telegram::Native::Media::implementation
             m_rendition = rendition;
             m_host->RenditionChanged();
         }
+    }
+
+    MediaPreload::MediaPreload(std::shared_ptr<IMediaRendition> rendition)
+        : m_rendition(std::move(rendition))
+    {
+    }
+
+    MediaPreloadOutcome MediaPreload::Run(double seconds, int64_t limit)
+    {
+        MediaPreloadOutcome result;
+
+        int64_t size = 0;
+        std::string text;
+
+        try
+        {
+            size = m_rendition->Size();
+
+            if (m_rendition->HasPlaylist())
+            {
+                text = m_rendition->LoadPlaylist();
+            }
+        }
+        catch (...)
+        {
+            return result;
+        }
+
+        // Without one it plays as a plain file, and is read as one.
+        MediaPlaylist playlist;
+        const bool segmented = !text.empty() && MediaPlaylist::Parse(text, playlist);
+
+        std::shared_ptr<IMediaByteSource> source;
+
+        try
+        {
+            source = m_rendition->CreateSource();
+        }
+        catch (...)
+        {
+            return result;
+        }
+
+        if (!source)
+        {
+            return result;
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(m_lock);
+
+            if (m_canceled)
+            {
+                return result;
+            }
+
+            try
+            {
+                source->Open();
+            }
+            catch (...)
+            {
+                return result;
+            }
+
+            m_source = source;
+        }
+
+        auto input = std::make_unique<MediaInput>();
+        input->owner = this;
+        input->source = source;
+
+        bool sized = true;
+
+        if (segmented)
+        {
+            input->map = std::make_unique<MediaSegmentMap>(playlist, 0);
+            input->size = input->map->Size();
+            input->window = DownloadWindow(size, playlist.Duration());
+        }
+        else
+        {
+            try
+            {
+                input->size = source->Size();
+                input->window = DownloadWindow(0, 0);
+            }
+            catch (...)
+            {
+                sized = false;
+            }
+        }
+
+        if (sized)
+        {
+            Read(*input, seconds, limit, result);
+        }
+
+        input.reset();
+
+        std::lock_guard<std::mutex> lock(m_lock);
+        m_source = nullptr;
+
+        try
+        {
+            source->Close();
+        }
+        catch (...)
+        {
+            // It only stops downloading ahead.
+        }
+
+        return result;
+    }
+
+    void MediaPreload::Read(MediaInput& input, double seconds, int64_t limit, MediaPreloadOutcome& result)
+    {
+        if (!OpenFormat(input, false))
+        {
+            return;
+        }
+
+        result.openBytes = input.read;
+
+        // The streams playback would pick.
+        int video = av_find_best_stream(input.format, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
+
+        if (video >= 0 && (input.format->streams[video]->disposition & AV_DISPOSITION_ATTACHED_PIC) != 0)
+        {
+            video = -1;
+        }
+
+        const int audio = av_find_best_stream(input.format, AVMEDIA_TYPE_AUDIO, -1, video, nullptr, 0);
+
+        if (video < 0 && audio < 0)
+        {
+            return;
+        }
+
+        for (unsigned index = 0; index < input.format->nb_streams; index++)
+        {
+            if (static_cast<int>(index) != video && static_cast<int>(index) != audio)
+            {
+                input.format->streams[index]->discard = AVDISCARD_ALL;
+            }
+        }
+
+        // Each stream is measured from its own first packet. Timestamps need not start at zero, and
+        // the start time that says where they do is only worked out by the probe.
+        double videoFirst = NAN;
+        double videoEnd = NAN;
+        double audioFirst = NAN;
+        double audioEnd = NAN;
+
+        // A stream the file does not have is as far as it needs to be.
+        double videoRead = video >= 0 ? 0 : std::numeric_limits<double>::infinity();
+        double audioRead = audio >= 0 ? 0 : std::numeric_limits<double>::infinity();
+
+        // Sound that ends before the picture is not waited for, as playback does not. It has ended
+        // once pictures keep coming from well past it, read after it: pictures read before any
+        // sound say nothing, as a quality's segment can store all its pictures first.
+        bool audioGone = false;
+
+        AVPacket* packet = av_packet_alloc();
+
+        while (packet != nullptr && !m_canceled)
+        {
+            const int64_t remaining = limit - (input.read - result.openBytes);
+
+            if (remaining <= 0)
+            {
+                result.completed = true;
+                break;
+            }
+
+            // The end of what is downloaded stays where the limit is, rather than moving with every
+            // read: TDLib cancels the parts in flight past the end of a window that moves.
+            input.window = remaining;
+
+            const int status = av_read_frame(input.format, packet);
+
+            if (status < 0)
+            {
+                if (status == AVERROR(EAGAIN))
+                {
+                    continue;
+                }
+
+                // A file shorter than the seconds asked for ends there.
+                result.completed = status == AVERROR_EOF;
+                break;
+            }
+
+            AVStream const* stream = input.format->streams[packet->stream_index];
+            const double start = ToSeconds(packet->pts != AV_NOPTS_VALUE ? packet->pts : packet->dts, stream->time_base);
+
+            if (!std::isnan(start))
+            {
+                const double end = packet->duration > 0
+                    ? start + ToSeconds(packet->duration, stream->time_base)
+                    : start;
+
+                if (packet->stream_index == video)
+                {
+                    videoFirst = std::isnan(videoFirst) ? start : videoFirst;
+                    videoEnd = std::isnan(videoEnd) ? end : std::max(videoEnd, end);
+                    videoRead = videoEnd - videoFirst;
+
+                    audioGone = audioGone || start - audioEnd > kAudioGone;
+                }
+                else if (packet->stream_index == audio)
+                {
+                    audioFirst = std::isnan(audioFirst) ? start : audioFirst;
+                    audioEnd = std::isnan(audioEnd) ? end : std::max(audioEnd, end);
+                    audioRead = audioEnd - audioFirst;
+                }
+            }
+
+            av_packet_unref(packet);
+
+            if (videoRead >= seconds && (audioRead >= seconds || audioGone))
+            {
+                result.completed = true;
+                break;
+            }
+        }
+
+        av_packet_free(&packet);
+
+        result.mediaBytes = input.read - result.openBytes;
+        result.mediaSeconds = std::min(videoRead, audioRead);
+    }
+
+    void MediaPreload::Cancel()
+    {
+        std::lock_guard<std::mutex> lock(m_lock);
+
+        m_canceled = true;
+
+        if (m_source)
+        {
+            try
+            {
+                m_source->Close();
+            }
+            catch (...)
+            {
+                // The source is managed code; the reads still end on m_canceled.
+            }
+        }
+
+        // It may be waiting on the playlist instead, which no source close ends.
+        try
+        {
+            m_rendition->CancelPlaylist();
+        }
+        catch (...)
+        {
+        }
+    }
+
+    bool MediaPreload::BeginRead()
+    {
+        return !m_canceled;
+    }
+
+    void MediaPreload::EndRead()
+    {
+    }
+
+    bool MediaPreload::Interrupted()
+    {
+        return m_canceled || m_stalled;
+    }
+
+    // RemoteFileSource gave up waiting, or was closed under the read when playback took the file
+    // over. A preload is not worth waiting on, and ending it there is not a failure.
+    bool MediaPreload::Stalled(double)
+    {
+        m_stalled = true;
+        return false;
     }
 }

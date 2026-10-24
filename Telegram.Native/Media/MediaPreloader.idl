@@ -1,0 +1,32 @@
+import "Media/AsyncMediaPlayer.idl";
+
+namespace Telegram.Native.Media
+{
+    struct MediaPreloadResult
+    {
+        // Whether it stopped where it was meant to, at the seconds asked for, the limit or the end
+        // of the file, rather than failing or being canceled.
+        Boolean Completed;
+
+        // Bytes read to open the file, and past that, and how far into the media the latter go.
+        Int64 OpenBytes;
+        Int64 MediaBytes;
+        Double MediaSeconds;
+    };
+
+    // Reads what the player reads first when it opens a rendition, without decoding any of it, so
+    // that it is downloaded before the video is played.
+    [default_interface]
+    runtimeclass MediaPreloader
+    {
+        MediaPreloader(IAsyncMediaPlayerRendition rendition);
+
+        // Blocks until the media is read up to the seconds given, or the limit of bytes past what
+        // opening it reads, or until it fails or is canceled. It waits on the network, so it is
+        // called on a thread of its own.
+        MediaPreloadResult Run(Double seconds, Int64 limit);
+
+        // From another thread, ending a Run waiting on the network.
+        void Cancel();
+    }
+}

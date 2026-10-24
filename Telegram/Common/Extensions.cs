@@ -14,7 +14,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Entities;
 using Telegram.Td.Api;
-using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Data.Json;
@@ -65,23 +64,6 @@ namespace Telegram.Common
         public static Version ToVersion(this PackageVersion version)
         {
             return new Version(version.Major, version.Minor, version.Build, version.Revision);
-        }
-
-        public static IEnumerable<AlternativeVideo> FindAlternatives(this GalleryMedia video, params string[] codecs)
-        {
-            var playlists = video.AlternativeVideos
-                .GroupBy(x => x.Codec)
-                .ToDictionary(x => x.Key);
-
-            foreach (var codec in codecs)
-            {
-                if (playlists.TryGetValue(codec, out var playlist))
-                {
-                    return playlist;
-                }
-            }
-
-            return Enumerable.Empty<AlternativeVideo>();
         }
 
         public static int GetNamedInt32(this JsonObject obj, string name, int defaultValue)

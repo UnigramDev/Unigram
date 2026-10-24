@@ -403,7 +403,9 @@
     <ClInclude Include="Media\MediaAudioRenderer.h" />
     <ClInclude Include="Media\MediaEngine.h" />
     <ClInclude Include="Media\MediaEngineCommon.h" />
+    <ClInclude Include="Media\MediaEngineSources.h" />
     <ClInclude Include="Media\MediaPlaylist.h" />
+    <ClInclude Include="Media\MediaPreloader.h" />
     <ClInclude Include="Media\MediaVideoRenderer.h" />
     <ClInclude Include="Media\SoundPlayer.h" />
     <ClInclude Include="Media\H264Encoder.h" />
@@ -1367,6 +1369,7 @@
     <ClCompile Include="Media\MediaAudioRenderer.cpp" />
     <ClCompile Include="Media\MediaEngine.cpp" />
     <ClCompile Include="Media\MediaPlaylist.cpp" />
+    <ClCompile Include="Media\MediaPreloader.cpp" />
     <ClCompile Include="Media\MediaVideoRenderer.cpp" />
     <ClCompile Include="Media\SoundPlayer.cpp" />
     <ClCompile Include="Media\H264Encoder.cpp" />
@@ -1652,6 +1655,7 @@
     <Midl Include="Media\AsyncMediaPlayerStateChangedEventArgs.idl" />
     <Midl Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.idl" />
     <Midl Include="Media\AsyncMediaPlayerSwapChain.idl" />
+    <Midl Include="Media\MediaPreloader.idl" />
     <Midl Include="Media\SoundPlayer.idl" />
     <Midl Include="Media\VideoTranscoder.idl" />
     <Midl Include="Media\VideoTranscoderLayer.idl" />

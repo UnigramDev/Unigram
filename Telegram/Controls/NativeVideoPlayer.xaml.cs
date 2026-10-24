@@ -145,7 +145,9 @@ namespace Telegram.Controls
 
         private void Open(GalleryMedia video, double position)
         {
-            _renditions = CreateRenditions(video);
+            _renditions = video.Constraint is MessageVideo messageVideo
+                ? RemoteRendition.CreateRenditions(video.ClientService, messageVideo)
+                : null;
             _clientService = video.ClientService;
             _duration = video.Duration;
             _levels = null;
@@ -156,7 +158,7 @@ namespace Telegram.Controls
 
             if (_renditions != null)
             {
-                var rendition = PickRendition(_renditions);
+                var rendition = RemoteRendition.PickRendition(_renditions);
                 _core.Play(new List<IAsyncMediaPlayerRendition>(_renditions), rendition, !AppSettings.Playback.VideoQualityManual, position);
             }
             else
@@ -164,88 +166,6 @@ namespace Telegram.Controls
                 _core.Play(new RemoteFileSource(video.ClientService, video.File, video.Duration));
                 _core.Position = position;
             }
-        }
-
-        private static List<RemoteRendition> CreateRenditions(GalleryMedia video)
-        {
-            if (!video.IsHls)
-            {
-                return null;
-            }
-
-            var renditions = new List<RemoteRendition>();
-
-            foreach (var alternative in video.FindAlternatives("h264"))
-            {
-                if (alternative.Width > 0 && alternative.Height > 0 && alternative.HlsFile != null)
-                {
-                    renditions.Add(new RemoteRendition(video.ClientService, alternative.Video, alternative.HlsFile, alternative.Width, alternative.Height, video.Duration));
-                }
-            }
-
-            if (renditions.Count == 0)
-            {
-                return null;
-            }
-
-            // The original only once it is on disk: then nothing plays better, and nothing more has
-            // to be downloaded. Before that it is usually far larger than the best alternative.
-            if (video.File.Local.IsDownloadingCompleted && video.Constraint is MessageVideo { Video: { } original })
-            {
-                renditions.Add(new RemoteRendition(video.ClientService, video.File, null, original.Width, original.Height, video.Duration));
-            }
-
-            renditions.Sort(CompareRenditions);
-
-            // One per quality: the smaller file of two that look the same.
-            for (int i = renditions.Count - 1; i > 0; i--)
-            {
-                if (renditions[i].Quality == renditions[i - 1].Quality && !renditions[i].IsOriginal && !renditions[i - 1].IsOriginal)
-                {
-                    renditions.RemoveAt(i);
-                }
-            }
-
-            return renditions;
-        }
-
-        private static int CompareRenditions(RemoteRendition x, RemoteRendition y)
-        {
-            return x.Quality != y.Quality
-                ? x.Quality.CompareTo(y.Quality)
-                : x.Size.CompareTo(y.Size);
-        }
-
-        private static int PickRendition(List<RemoteRendition> renditions)
-        {
-            // Whatever is already on disk wins, the largest first: it plays at once and costs nothing.
-            for (int i = renditions.Count - 1; i >= 0; i--)
-            {
-                if (renditions[i].File.Local.IsDownloadingCompleted)
-                {
-                    return i;
-                }
-            }
-
-            // Then the quality picked by hand, or the one automatic quality last settled on, as the
-            // best guess at what the connection carries.
-            var quality = AppSettings.Playback.VideoQuality;
-            if (quality <= 0)
-            {
-                quality = 480;
-            }
-
-            var best = 0;
-
-            for (int i = 1; i < renditions.Count; i++)
-            {
-                if (Math.Abs(renditions[i].Quality - quality) < Math.Abs(renditions[best].Quality - quality))
-                {
-                    best = i;
-                }
-            }
-
-            return best;
         }
 
         private void OnRenditionChanged(AsyncMediaPlayer sender, object args)
