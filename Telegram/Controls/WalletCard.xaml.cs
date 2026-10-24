@@ -325,13 +325,21 @@ namespace Telegram.Controls
         private float _revealRadius = -1;
         private float _revealMix = 1;
 
+        // The size the symbol is decoded and rasterized at, in face units: larger than any slot, so
+        // every sprite scales it down.
+        private const float PatternSourceSize = 48;
+
         private readonly List<PatternSymbol> _symbols = new();
         private UpgradedGift _patternGift;
 
+        private AnimatedImage _patternSource;
+        private CompositionVisualSurface _patternSurface;
+        private CompositionSurfaceBrush _patternBrush;
+        private ContainerVisual _patternContainer;
+
         private sealed class PatternSymbol
         {
-            public AnimatedImage Image;
-            public CompositeTransform Transform;
+            public SpriteVisual Sprite;
             public float X;
             public float Y;
             public float Size;
@@ -540,45 +548,83 @@ namespace Telegram.Controls
 
             _patternGift = gift;
 
-            foreach (var symbol in _symbols)
-            {
-                PatternLayer.Children.Remove(symbol.Image);
-            }
-
-            _symbols.Clear();
+            ClearPattern();
 
             if (gift?.Symbol?.Sticker == null || clientService == null)
             {
                 return;
             }
 
-            var source = DelayedFileSource.FromSticker(clientService, gift.Symbol.Sticker);
-            var color = _style.Pattern;
+            // One hidden image, rasterized once and shown by a sprite per slot, all sharing its brush.
+            _patternSource = new AnimatedImage
+            {
+                Source = DelayedFileSource.FromSticker(clientService, gift.Symbol.Sticker),
+                ReplacementColor = new SolidColorBrush(_style.Pattern),
+                Width = PatternSourceSize,
+                Height = PatternSourceSize,
+                FrameSize = new Size(PatternSourceSize, PatternSourceSize),
+                DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                AutoPlay = false,
+                IsViewportAware = false,
+                IsHitTestVisible = false,
+                Opacity = 0
+            };
+
+            PatternLayer.Children.Add(_patternSource);
+
+            var compositor = ElementComposition.GetElementVisual(PatternLayer).Compositor;
+
+            _patternSurface = compositor.CreateVisualSurface();
+            _patternSurface.SourceVisual = ElementComposition.GetElementVisual(_patternSource);
+            _patternSurface.SourceSize = new Vector2(PatternSourceSize);
+
+            _patternBrush = compositor.CreateSurfaceBrush(_patternSurface);
+            _patternBrush.Stretch = CompositionStretch.Fill;
+
+            _patternContainer = compositor.CreateContainerVisual();
 
             foreach (var (x, y, size, alpha) in PatternSlots(FaceWidth, FaceHeight))
             {
-                var transform = new CompositeTransform { CenterX = size / 2, CenterY = size / 2 };
-                var image = new AnimatedImage
-                {
-                    Source = source,
-                    Width = size,
-                    Height = size,
-                    FrameSize = new Size(48, 48),
-                    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
-                    AutoPlay = false,
-                    IsHitTestVisible = false,
-                    RenderTransform = transform
-                };
+                var sprite = compositor.CreateSpriteVisual();
+                sprite.Brush = _patternBrush;
+                sprite.Size = new Vector2(size);
+                sprite.CenterPoint = new Vector3(size / 2, size / 2, 0);
 
-                image.SetEffect(AnimatedImageEffect.Silhouette, color, 0);
-                Canvas.SetLeft(image, x - size / 2);
-                Canvas.SetTop(image, y - size / 2);
-                PatternLayer.Children.Add(image);
-
-                _symbols.Add(new PatternSymbol { Image = image, Transform = transform, X = x, Y = y, Size = size, Alpha = alpha });
+                _patternContainer.Children.InsertAtTop(sprite);
+                _symbols.Add(new PatternSymbol { Sprite = sprite, X = x, Y = y, Size = size, Alpha = alpha });
             }
 
+            ElementCompositionPreview.SetElementChildVisual(PatternLayer, _patternContainer);
+
             StepSymbols(-1, Vector2.Zero, 0);
+        }
+
+        private void ClearPattern()
+        {
+            if (_patternSource == null)
+            {
+                return;
+            }
+
+            ElementCompositionPreview.SetElementChildVisual(PatternLayer, null);
+
+            foreach (var symbol in _symbols)
+            {
+                symbol.Sprite.Dispose();
+            }
+
+            _symbols.Clear();
+
+            _patternContainer.Dispose();
+            _patternBrush.Dispose();
+            _patternSurface.Dispose();
+
+            PatternLayer.Children.Remove(_patternSource);
+
+            _patternSource = null;
+            _patternSurface = null;
+            _patternBrush = null;
+            _patternContainer = null;
         }
 
         /// <summary>
@@ -619,10 +665,9 @@ namespace Telegram.Controls
                     }
                 }
 
-                symbol.Transform.ScaleX = symbol.Transform.ScaleY = sizeK;
-                symbol.Transform.TranslateX = dx;
-                symbol.Transform.TranslateY = dy;
-                symbol.Image.Opacity = symbol.Alpha * opacity * pop;
+                symbol.Sprite.Scale = new Vector3(sizeK, sizeK, 1);
+                symbol.Sprite.Offset = new Vector3(symbol.X - symbol.Size / 2 + dx, symbol.Y - symbol.Size / 2 + dy, 0);
+                symbol.Sprite.Opacity = symbol.Alpha * opacity * pop;
             }
         }
 
