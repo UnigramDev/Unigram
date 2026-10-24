@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Td.Api;
@@ -109,7 +110,7 @@ namespace Telegram.Services
 
         protected void RaiseChanged(TItem item, long order, bool lastMessage)
         {
-            Changed?.Invoke(this, new OrderChangedEventArgs<TItem>(item, order, lastMessage));
+            Volatile.Read(ref Changed)?.Invoke(this, new OrderChangedEventArgs<TItem>(item, order, lastMessage));
         }
 
         /// <summary>
