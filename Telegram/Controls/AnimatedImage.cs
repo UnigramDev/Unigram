@@ -2938,6 +2938,32 @@ namespace Telegram.Controls
 
         public CompositionGraphicsDevice GraphicsDevice => _graphicsDevice;
 
+        /// <summary>
+        /// The frame clock of the window <paramref name="xamlRoot"/> is in, for anything else that
+        /// draws per frame on the UI thread. Null outside a window.
+        /// </summary>
+        public static FrameFlusher GetFlusher(XamlRoot xamlRoot)
+        {
+            var window = xamlRoot != null ? WindowContext.ForXamlRoot(xamlRoot) : null;
+            if (window != null)
+            {
+                return _loaders.GetOrAdd(xamlRoot, x => new AnimatedImageLoader(window)).Flusher;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Called by <see cref="FrameFlusher"/> on the UI thread on every tick while subscribed,
+        /// before the tick's frames are drawn.
+        /// </summary>
+        public interface IFrameTarget
+        {
+            /// <param name="time">The tick's vblank, in <see cref="Stopwatch"/> ticks.</param>
+            /// <returns>Whether it drew into a composition surface, which the tick then commits.</returns>
+            bool OnFrame(long time);
+        }
+
         private void OnRenderingDeviceReplaced(CompositionGraphicsDevice sender, RenderingDeviceReplacedEventArgs args)
         {
             // Rare enough that a copy is the simplest way not to call out under the lock.
@@ -2973,6 +2999,7 @@ namespace Telegram.Controls
             private readonly object _lock = new();
             private readonly HashSet<AnimatedImagePresenter> _pending = new();
             private readonly HashSet<AnimatedImagePresenter> _playing = new();
+            private readonly HashSet<IFrameTarget> _targets = new();
             private readonly AutoResetEvent _signal = new(false);
             private readonly Direct2DDevice _device;
             private readonly Compositor _compositor;
@@ -3000,6 +3027,7 @@ namespace Telegram.Controls
             private readonly List<AnimatedImagePresenter> _batch = new();
             private readonly List<AnimatedImagePresenter> _retry = new();
             private readonly List<AnimatedImagePresenter> _due = new();
+            private readonly List<IFrameTarget> _ticking = new();
 
             // The vblank the posted tick plans for, and whether that tick has yet to run: at most one
             // is ever queued, so a stalled UI thread finds one item waiting, not a backlog.
@@ -3059,6 +3087,30 @@ namespace Telegram.Controls
                 }
             }
 
+            /// <summary>Calls the target on every pass until it unsubscribes.</summary>
+            public void Subscribe(IFrameTarget target)
+            {
+                lock (_lock)
+                {
+                    if (_closed || !_targets.Add(target))
+                    {
+                        return;
+                    }
+
+                    Start();
+                }
+
+                _signal.Set();
+            }
+
+            public void Unsubscribe(IFrameTarget target)
+            {
+                lock (_lock)
+                {
+                    _targets.Remove(target);
+                }
+            }
+
             private void Start()
             {
                 if (_thread == null)
@@ -3086,7 +3138,7 @@ namespace Telegram.Controls
 
                     lock (_lock)
                     {
-                        idle = _pending.Count == 0 && _playing.Count == 0;
+                        idle = _pending.Count == 0 && _playing.Count == 0 && _targets.Count == 0;
                     }
 
                     // Asleep only while nothing plays: a playing presenter is polled every tick,
@@ -3207,9 +3259,29 @@ namespace Telegram.Controls
                     {
                         _due.Add(presenter);
                     }
+
+                    // A copy, because a target unsubscribes from inside its own call.
+                    foreach (var target in _targets)
+                    {
+                        _ticking.Add(target);
+                    }
                 }
 
                 var drawn = false;
+
+                foreach (var target in _ticking)
+                {
+                    try
+                    {
+                        drawn |= target.OnFrame(time);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Info($"Frame target threw exception: {ex.Message}");
+                    }
+                }
+
+                _ticking.Clear();
 
                 foreach (var presenter in _batch)
                 {

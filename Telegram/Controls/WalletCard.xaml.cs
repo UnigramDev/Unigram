@@ -9,6 +9,7 @@ using LinqToVisualTree;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -46,7 +47,7 @@ namespace Telegram.Controls
     /// rather than the screen: the tilt, the material that is lit by it, and the skeleton that
     /// stands in before the numbers are known.
     /// </remarks>
-    public sealed partial class WalletCard : UserControl
+    public sealed partial class WalletCard : UserControl, AnimatedImageLoader.IFrameTarget
     {
         private bool _skeleton;
 
@@ -96,11 +97,17 @@ namespace Telegram.Controls
                 target: CardAddressShadow, color: Colors.White, offset: new Vector3(1, 0, 0));
 
             CreatePrintShadows();
+
+            // An eject asked for before the card was in a window has been waiting for its clock.
+            _flusher = AnimatedImageLoader.GetFlusher(XamlRoot);
+            UpdateRendering();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             StopRendering();
+            _flusher = null;
+
             FinishReveal();
             FinishEject();
             RestoreSlotText();
@@ -775,8 +782,9 @@ namespace Telegram.Controls
         private float _units;
         private float _scale;
 
+        private AnimatedImageLoader.FrameFlusher _flusher;
         private bool _rendering;
-        private TimeSpan _lastFrame;
+        private long _lastFrame;
 
         // Where the pointer asks the card to be, and where it is on its way there.
         private bool _hovering;
@@ -904,7 +912,12 @@ namespace Telegram.Controls
         // Raised by the compositor, which has thrown away whatever the surface held.
         private void OnRenderingDeviceReplaced(CompositionGraphicsDevice sender, RenderingDeviceReplacedEventArgs args)
         {
-            this.BeginOnUIThread(Draw);
+            this.BeginOnUIThread(Redraw);
+        }
+
+        private void Redraw()
+        {
+            Draw();
         }
 
         // The surface is drawn at the size the card is shown, not at the face's design size, so the
@@ -1014,11 +1027,11 @@ namespace Telegram.Controls
             {
                 StopRendering();
             }
-            else if (!_rendering)
+            else if (!_rendering && _flusher != null)
             {
                 _rendering = true;
-                _lastFrame = TimeSpan.Zero;
-                CompositionTarget.Rendering += OnRendering;
+                _lastFrame = 0;
+                _flusher.Subscribe(this);
             }
         }
 
@@ -1027,14 +1040,13 @@ namespace Telegram.Controls
             if (_rendering)
             {
                 _rendering = false;
-                CompositionTarget.Rendering -= OnRendering;
+                _flusher.Unsubscribe(this);
             }
         }
 
-        private void OnRendering(object sender, object e)
+        bool AnimatedImageLoader.IFrameTarget.OnFrame(long time)
         {
-            var time = e is RenderingEventArgs args ? args.RenderingTime : TimeSpan.Zero;
-            var dt = _lastFrame == TimeSpan.Zero ? 0 : Math.Min((time - _lastFrame).TotalSeconds, 1.0 / 20);
+            var dt = _lastFrame == 0 ? 0 : Math.Min((double)(time - _lastFrame) / Stopwatch.Frequency, 1.0 / 20);
             _lastFrame = time;
 
             if (PowerSavingPolicy.AreSmoothTransitionsEnabled)
@@ -1074,7 +1086,15 @@ namespace Telegram.Controls
             }
 
             Apply();
-            Draw();
+
+            // Nothing a flight moves is on the face, which was drawn before it started: the tilt
+            // that turns it is XAML's, and the stars can miss a twinkle.
+            if (_ejectElapsed >= 0 && _revealElapsed < 0)
+            {
+                return false;
+            }
+
+            return Draw();
         }
 
         private void Apply()
@@ -1110,9 +1130,9 @@ namespace Telegram.Controls
             _dropShadow.Opacity = MaxShadowOpacity * (float)(progress * progress * (3 - 2 * progress));
         }
 
-        private void Draw()
+        private bool Draw()
         {
-            _surface?.Draw(new WalletCardFrame
+            return _surface != null && _surface.Draw(new WalletCardFrame
             {
                 Time = (float)_time,
                 Pitch = (float)_pitch,
@@ -1300,7 +1320,7 @@ namespace Telegram.Controls
                 // The first frame it is seen is its first, however long the ones that made the
                 // popup took: the clock starts on the next frame.
                 dt = 0;
-                _lastFrame = TimeSpan.Zero;
+                _lastFrame = 0;
             }
 
             LayoutRoot.Opacity = 1;
