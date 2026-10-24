@@ -185,5 +185,6 @@
                     Height="36" />
         </Grid>
 
+        <controls:StickyHeaderChrome Header="{x:Bind Header}" />
     </Grid>
 </local:HostedPage>
