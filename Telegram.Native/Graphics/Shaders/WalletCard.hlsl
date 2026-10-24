@@ -35,7 +35,7 @@ cbuffer Constants : register(b0)
     float2 surfaceTilt;
 
     float qrAlpha;
-    float qrBlur;
+    float qrPadding;
 
     // The QR chip, in units within the card.
     float4 qrRect;
@@ -306,33 +306,13 @@ float4 Face(float2 uv, float2 surface)
     {
         float2 position = uv * float2(safeWidth, safeHeight);
         float2 chipScale = qrRect.zw / float2(50.0, 38.0);
-        float2 margin = chipScale * 2.0 + qrBlur * 1.5;
+        float2 margin = chipScale * 2.0;
         if (all(position >= qrRect.xy - margin) && all(position <= qrRect.xy + qrRect.zw + margin))
         {
             float2 cp = (position - qrRect.xy) / chipScale + float2(268.5, 82.0);
             float pixel = 1.0 / (scale * chipScale.x);
             float3 ringTone = Tone(ToneRing, share);
-            float4 chip = 0.0;
-            if (qrBlur > 0.01)
-            {
-                static const float weights[3] = { 0.25, 0.5, 0.25 };
-                [unroll]
-                for (int y = -1; y <= 1; y++)
-                {
-                    [unroll]
-                    for (int x = -1; x <= 1; x++)
-                    {
-                        float2 offset = float2(x, y) * (qrBlur * 1.41421356) / chipScale;
-                        chip += QrChip(cp + offset, surface, pixel, ringTone) * weights[x + 1] * weights[y + 1];
-                    }
-                }
-            }
-            else
-            {
-                chip = QrChip(cp, surface, pixel, ringTone);
-            }
-
-            chip *= qrAlpha;
+            float4 chip = QrChip(cp, surface, pixel, ringTone) * qrAlpha;
             outputColor = outputColor * (1.0 - chip.a) + chip.rgb;
         }
     }

@@ -35,7 +35,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
 
         float SurfaceTilt[2];
         float QrAlpha;
-        float QrBlur;
+        float QrPadding;
 
         float QrRect[4];
 
