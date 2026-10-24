@@ -2362,7 +2362,6 @@ namespace Telegram.Views
             switch (index)
             {
                 case INDEX_CHATS:
-                    Root?.SetSelectedIndex(RootDestination.Chats);
                     break;
                 case INDEX_SETTINGS:
                     _shouldGoBackWithDetail = false;
