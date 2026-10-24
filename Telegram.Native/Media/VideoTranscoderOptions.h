@@ -47,6 +47,12 @@ namespace winrt::Telegram::Native::Media::implementation
         int32_t VideoBitrate() const { return m_videoBitrate; }
         void VideoBitrate(int32_t value) { m_videoBitrate = value; }
 
+        int32_t AudioBitrate() const { return m_audioBitrate; }
+        void AudioBitrate(int32_t value) { m_audioBitrate = value; }
+
+        bool MonoAudio() const { return m_monoAudio; }
+        void MonoAudio(bool value) { m_monoAudio = value; }
+
         int32_t MaxFrameRate() const { return m_maxFrameRate; }
         void MaxFrameRate(int32_t value) { m_maxFrameRate = value; }
 
@@ -83,6 +89,8 @@ namespace winrt::Telegram::Native::Media::implementation
         winrt::Windows::UI::Color m_backgroundTop{ 255, 0, 0, 0 };
         winrt::Windows::UI::Color m_backgroundBottom{ 255, 0, 0, 0 };
         int32_t m_videoBitrate{ 0 };
+        int32_t m_audioBitrate{ 0 };
+        bool m_monoAudio{ false };
         int32_t m_maxFrameRate{ 0 };
         bool m_hardwareEncoding{ true };
         bool m_roundBlur{ false };

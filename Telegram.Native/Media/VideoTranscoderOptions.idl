@@ -31,6 +31,12 @@ namespace Telegram.Native.Media
         // In bits per second.
         Int32 VideoBitrate;
 
+        // In bits per second; 0 is 128 kbps.
+        Int32 AudioBitrate;
+
+        // Folds the sound into a single channel.
+        Boolean MonoAudio;
+
         // Frames past this rate are dropped; 0 keeps them all.
         Int32 MaxFrameRate;
 

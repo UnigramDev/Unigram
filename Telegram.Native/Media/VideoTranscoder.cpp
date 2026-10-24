@@ -36,7 +36,7 @@ namespace winrt::Telegram::Native::Media::implementation
     namespace
     {
         constexpr int IoBufferSize = 64 * 1024;
-        constexpr int AudioBitrate = 128000;
+        constexpr int DefaultAudioBitrate = 128000;
         constexpr int DefaultFrameRate = 30;
         constexpr int64_t Second = 10000000;
 
@@ -1066,12 +1066,13 @@ namespace winrt::Telegram::Native::Media::implementation
                     Fail(L"Allocating the audio encoder", AVERROR(ENOMEM));
                 }
 
-                // More than two channels are folded into their first two.
-                const int audioChannels = session.audioDecoder->ch_layout.nb_channels >= 2 ? 2 : 1;
+                // More than two channels are folded into their first two, and those into one when
+                // asked to.
+                const int audioChannels = session.audioDecoder->ch_layout.nb_channels >= 2 && !options.MonoAudio() ? 2 : 1;
 
                 session.audioEncoder->sample_fmt = AV_SAMPLE_FMT_FLTP;
                 session.audioEncoder->sample_rate = sampleRate;
-                session.audioEncoder->bit_rate = AudioBitrate;
+                session.audioEncoder->bit_rate = options.AudioBitrate() > 0 ? options.AudioBitrate() : DefaultAudioBitrate;
                 session.audioEncoder->time_base = AVRational{ 1, sampleRate };
                 av_channel_layout_default(&session.audioEncoder->ch_layout, audioChannels);
 
@@ -1445,6 +1446,15 @@ namespace winrt::Telegram::Native::Media::implementation
                 {
                     left[index] = ReadSample(session.frame, 0, index);
                     right[index] = channels > 1 ? ReadSample(session.frame, 1, index) : left[index];
+                }
+
+                // A single channel takes only the left plane, so that one carries both.
+                if (options.MonoAudio() && channels > 1)
+                {
+                    for (int index = 0; index < count; index++)
+                    {
+                        left[index] = (left[index] + right[index]) * 0.5f;
+                    }
                 }
 
                 av_frame_unref(session.frame);
