@@ -4246,6 +4246,8 @@ namespace Telegram.Views
             SetPivotSelectedIndex(Navigation.SelectedIndex);
         }
 
+        private int _advanced;
+
         private void Navigation_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (Navigation.SelectedIndex == INDEX_CHATS && e.ClickedItem is MainNavigationItemChats)
@@ -4259,6 +4261,16 @@ namespace Telegram.Views
                     || ViewModel.Folders.Count > 0 && !ViewModel.Chats.Items.ChatList.AreTheSame(ViewModel.Folders[0].ChatList))
                 {
                     UpdateFolder(ViewModel.Folders.Count > 0 ? ViewModel.Folders[0] : ChatFolderViewModel.Main);
+                }
+            }
+            else if (Navigation.SelectedIndex == INDEX_SETTINGS && e.ClickedItem is MainNavigationItemSettings)
+            {
+                _advanced++;
+
+                if (_advanced >= 10)
+                {
+                    _advanced = 0;
+                    MasterDetail.NavigationService.Navigate(typeof(DiagnosticsPage));
                 }
             }
         }
