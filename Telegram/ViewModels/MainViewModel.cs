@@ -76,7 +76,9 @@ namespace Telegram.ViewModels
 
         public void Dispose()
         {
-            Aggregator.Unsubscribe(Chats.Items);
+            Chats.Items.Dispose();
+            Topics.SetChat(null);
+
             Aggregator.Unsubscribe(Stories.Items);
             Aggregator.Unsubscribe(this);
 

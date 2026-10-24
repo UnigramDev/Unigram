@@ -34,5 +34,10 @@ namespace Telegram.ViewModels.Profile
 
             return Task.CompletedTask;
         }
+
+        protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
+        {
+            SetChat(null);
+        }
     }
 }

@@ -611,7 +611,7 @@ namespace Telegram.ViewModels
             return handler => handler();
         }
 
-        public interface ITopicListCollection : IList, ICollectionWithTotalCount
+        public interface ITopicListCollection : IList, ICollectionWithTotalCount, IDisposable
         {
             Chat Chat { get; }
 
@@ -669,6 +669,8 @@ namespace Telegram.ViewModels
 
             public override void Dispose()
             {
+                _token?.Cancel();
+
                 base.Dispose();
 
                 Detach();
@@ -1005,6 +1007,8 @@ namespace Telegram.ViewModels
 
             public override void Dispose()
             {
+                _token?.Cancel();
+
                 base.Dispose();
 
                 Detach();

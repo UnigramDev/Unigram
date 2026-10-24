@@ -1782,6 +1782,7 @@ namespace Telegram.Views.Popups
             }
 
             ShowHideForum(true);
+            DisposeForum();
 
             if (ViewModel.ClientService.IsForum(chat))
             {
@@ -1790,6 +1791,14 @@ namespace Telegram.Views.Popups
             else
             {
                 ForumList.ItemsSource = new TopicListViewModel.DirectMessagesChatTopicsCollection(ViewModel.ClientService, ViewModel.Aggregator, null, chat);
+            }
+        }
+
+        private void DisposeForum()
+        {
+            if (ForumList?.ItemsSource is TopicListViewModel.ITopicListCollection collection)
+            {
+                collection.Dispose();
             }
         }
 
@@ -2102,6 +2111,8 @@ namespace Telegram.Views.Popups
             ViewModel.PropertyChanged -= OnPropertyChanged;
             CharacterReceived -= OnCharacterReceived;
             PreviewKeyDown -= OnPreviewKeyDown;
+
+            DisposeForum();
         }
 
         // Enter never reaches CharacterReceived: XAML consumes it as a key before any character

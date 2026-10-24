@@ -1317,6 +1317,8 @@ namespace Telegram.Views
 
             ViewModel.NavigationService.Window.CharacterReceived -= OnCharacterReceived;
 
+            _forumViewModel?.SetChat(null);
+
             _updateThemeTask?.TrySetResult(true);
 
             LeakTest(false);

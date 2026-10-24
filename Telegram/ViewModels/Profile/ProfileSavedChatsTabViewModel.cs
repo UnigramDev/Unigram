@@ -7,14 +7,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Profile
 {
@@ -34,6 +37,17 @@ namespace Telegram.ViewModels.Profile
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateSavedMessagesTopicCount>(this, Handle);
+        }
+
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            Items.Attach();
+            return Task.CompletedTask;
+        }
+
+        protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
+        {
+            Items.Detach();
         }
 
         private void Handle(UpdateSavedMessagesTopicCount update)
@@ -115,6 +129,9 @@ namespace Telegram.ViewModels.Profile
             // its lock, not one read back from the topic afterwards.
             private readonly SavedMessagesTopicService _service;
 
+            private CancellationTokenSource _token = new();
+            private bool _detached;
+
             public SavedMessagesTopicsCollection(ProfileSavedChatsTabViewModel viewModel)
                 : base(viewModel.BeginOnUIThread)
             {
@@ -132,11 +149,29 @@ namespace Telegram.ViewModels.Profile
                 _service.Changed += OnChanged;
             }
 
+            public void Detach()
+            {
+                _token.Cancel();
+                _service.Changed -= OnChanged;
+                _detached = true;
+            }
+
+            public void Attach()
+            {
+                if (_detached)
+                {
+                    _detached = false;
+                    _token = new CancellationTokenSource();
+                    _viewModel._pinnedTopics.Clear();
+
+                    Restart();
+                }
+            }
+
             public override void Dispose()
             {
                 base.Dispose();
-
-                _service.Changed -= OnChanged;
+                Detach();
             }
 
             private void OnChanged(OrderedSourceService<SavedMessagesTopic> sender, OrderChangedEventArgs<SavedMessagesTopic> args)
@@ -148,10 +183,11 @@ namespace Telegram.ViewModels.Profile
             {
                 Logger.Info();
 
+                var token = _token;
                 var totalCount = 0u;
 
                 var response = await _service.GetSavedMessagesTopicsAsync(Count, 20);
-                if (response is Topics topics)
+                if (response is Topics topics && !token.IsCancellationRequested)
                 {
                     foreach (var topic in _service.GetTopics(topics.TopicIds))
                     {

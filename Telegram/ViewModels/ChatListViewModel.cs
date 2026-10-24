@@ -668,6 +668,8 @@ namespace Telegram.ViewModels
 
             public override void Dispose()
             {
+                _token?.Cancel();
+
                 base.Dispose();
                 Detach();
             }
