@@ -122,6 +122,9 @@ namespace winrt::Telegram::Native::implementation
         // And takes at least this much more height than the text, in DIPs: a few lines.
         constexpr double c_editingSpareHeight = 64;
 
+        // A width nothing wraps at, as DirectTextBlock measures an unconstrained text.
+        constexpr double c_unbounded = 100000;
+
         // An edited text taller than this many pixels is drawn into a virtual surface instead,
         // in tiles, and only those in the viewport and a margin around it: a surface that
         // holds the whole paragraph is drawn whole on every key, and past the largest a surface
@@ -1032,6 +1035,7 @@ namespace winrt::Telegram::Native::implementation
         HRESULT result;
 
         m_trimmed = false;
+        m_contentWidthsKnown = false;
 
         // The edits since the last build, if every one of them was said, and from here on the
         // ones since this one.
@@ -1484,6 +1488,63 @@ namespace winrt::Telegram::Native::implementation
         }
 
         Reflow(width);
+    }
+
+    Windows::Foundation::Numerics::float2 DirectTextLayout::ContentWidths()
+    {
+        if (m_closed)
+        {
+            return {};
+        }
+
+        if (m_contentWidthsKnown && !m_invalid)
+        {
+            return m_contentWidths;
+        }
+
+        // Built at the width it has, or unbounded before it has one: at zero every word would be
+        // a line, which costs a layout nothing needs.
+        HRESULT result;
+        ReturnDefaultIfFailed(result, Reflow(m_width > 0 ? m_width : c_unbounded));
+
+        float narrowest = 0;
+        float widest = 0;
+
+        if (m_editable != nullptr)
+        {
+            m_editable->ContentWidths(narrowest, widest);
+        }
+        else
+        {
+            for (Paragraph& paragraph : m_paragraphs)
+            {
+                if (paragraph.Layout == nullptr || paragraph.Hidden)
+                {
+                    continue;
+                }
+
+                FLOAT minimum;
+                if (SUCCEEDED(paragraph.Layout->DetermineMinWidth(&minimum)))
+                {
+                    narrowest = std::max(narrowest, minimum);
+                }
+
+                // DirectWrite has no natural width to ask for: the lines again with nothing to
+                // wrap them, then back, which breaks lines from the shaping it keeps.
+                DWRITE_TEXT_METRICS metrics;
+                if (SUCCEEDED(paragraph.Layout->SetMaxWidth((float)c_unbounded)) && SUCCEEDED(paragraph.Layout->GetMetrics(&metrics)))
+                {
+                    widest = std::max(widest, metrics.width);
+                }
+
+                paragraph.Layout->SetMaxWidth((float)std::max(m_width, 0.0));
+            }
+        }
+
+        m_contentWidths = { narrowest, widest };
+        m_contentWidthsKnown = true;
+
+        return m_contentWidths;
     }
 
     // Whether every paragraph is drawn from the leading edge of the box, left to right - the

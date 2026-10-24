@@ -154,6 +154,10 @@ namespace winrt::Telegram::Native::implementation
         float Height() const;
         int32_t LineCount() const;
 
+        // The narrowest the paragraph can be broken into lines without breaking a word, and its
+        // widest line when nothing wraps it, white space it ends with left out as Width leaves it.
+        void ContentWidths(float& narrowest, float& widest) const;
+
         Windows::Foundation::Rect Caret(int32_t offset) const;
         void Ranges(int32_t offset, int32_t length, std::vector<Windows::Foundation::Rect>& rects) const;
         bool HitTest(float x, float y, EditableHit& hit) const;

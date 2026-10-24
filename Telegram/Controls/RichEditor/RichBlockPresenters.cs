@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -561,8 +562,24 @@ namespace Telegram.Controls.RichEditor
 
     public sealed partial class RichTablePresenter : RichBlockPresenter
     {
+        // An empty cell still has to be hit, so no column is narrower than this.
+        private const double MinCellWidth = 96;
+
         private Grid Cells;
+        private ScrollViewer Scroller;
         private RichLeafView Caption;
+
+        private readonly TableColumns _resolver = new TableColumns(0, MinCellWidth);
+
+        // The cell presenters as Layout placed them, so a measure walks a list rather than the
+        // grid's children.
+        private readonly List<RichTableCellPresenter> _cellViews = new List<RichTableCellPresenter>();
+
+        // What the columns were last measured from: the cells' texts, each by its leaf and
+        // version, and the scale and border. A measure with all of it unchanged - a scroll, a
+        // keystroke outside the table - resolves without asking any text for its widths.
+        private int _measuredKey;
+        private bool _measured;
 
         // The shape the grid was built for; a table whose shape has not changed keeps its
         // definitions and only rebinds its cells.
@@ -580,8 +597,75 @@ namespace Telegram.Controls.RichEditor
         protected override void OnTemplate()
         {
             Cells = GetTemplateChild(nameof(Cells)) as Grid;
+            Scroller = GetTemplateChild(nameof(Scroller)) as ScrollViewer;
             Caption = GetTemplateChild(nameof(Caption)) as RichLeafView;
             _rows = _columns = -1;
+            _measured = false;
+        }
+
+        // The grid is under a ScrollViewer, which measures it with an unbounded width: left to
+        // it, every column is as wide as its longest line and nothing wraps. The columns are
+        // resolved here instead, in the width the table has, as the sent table resolves them.
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (Cells != null && Scroller != null && _columns > 0)
+            {
+                if (!_measured || _measuredKey != GetMeasureKey())
+                {
+                    MeasureCells();
+                }
+
+                _resolver.Resolve(availableSize.Width);
+                _resolver.Apply(Cells, Scroller);
+            }
+
+            return base.MeasureOverride(availableSize);
+        }
+
+        private int GetMeasureKey()
+        {
+            var key = new HashCode();
+            key.Add(_columns);
+            key.Add(XamlRoot?.RasterizationScale ?? 1);
+            key.Add(((RichTableBlock)Block).IsBordered);
+
+            foreach (var presenter in _cellViews)
+            {
+                key.Add(presenter.Cell?.Text);
+                key.Add(presenter.Cell?.Text.Version ?? 0);
+                key.Add(presenter.Column);
+                key.Add(presenter.ColumnSpan);
+            }
+
+            return key.ToHashCode();
+        }
+
+        private void MeasureCells()
+        {
+            var padding = _cellViews.Count > 0 ? _cellViews[0].TextMargin : default;
+            var thickness = ((RichTableBlock)Block).IsBordered ? 1 : 0;
+
+            _resolver.Begin(_columns, XamlRoot?.RasterizationScale ?? 1, padding, thickness);
+
+            // A cell whose text has no view yet is measured again next time, when it will.
+            var complete = true;
+
+            foreach (var presenter in _cellViews)
+            {
+                if (presenter.GetContentWidths(out double min, out double max))
+                {
+                    _resolver.Add(presenter.Column, presenter.ColumnSpan, min, max);
+                }
+                else
+                {
+                    complete = false;
+                }
+            }
+
+            _resolver.End();
+
+            _measured = complete;
+            _measuredKey = GetMeasureKey();
         }
 
         protected override void OnUpdate()
@@ -649,6 +733,8 @@ namespace Telegram.Controls.RichEditor
             var children = Cells.Children;
             var index = 0;
 
+            _cellViews.Clear();
+
             for (int r = 0; r < table.Rows.Count; r++)
             {
                 var column = 0;
@@ -688,6 +774,7 @@ namespace Telegram.Controls.RichEditor
                     presenter.ApplyTemplate();
                     presenter.Update();
 
+                    _cellViews.Add(presenter);
                     index++;
                     column += colspan;
                 }
@@ -736,6 +823,53 @@ namespace Telegram.Controls.RichEditor
         {
             _owner = owner;
             _cell = cell;
+        }
+
+        internal RichTableCell Cell => _cell;
+
+        internal int Column => _column;
+
+        internal int ColumnSpan => _lastColumn - _column + 1;
+
+        /// <summary>The room between the cell's edges and its text.</summary>
+        internal Thickness TextMargin => Leaf?.Margin ?? default;
+
+        // The widths last read from the text, by the leaf and its version: typing into one cell
+        // asks that cell again and none of the others.
+        private RichTextLeaf _widthsLeaf;
+        private int _widthsVersion;
+        private double _minWidth;
+        private double _maxWidth;
+
+        /// <summary>
+        /// The narrowest the cell's text can be laid out without breaking a word, and its widest
+        /// line; false while the text has no view to ask.
+        /// </summary>
+        internal bool GetContentWidths(out double min, out double max)
+        {
+            var leaf = _cell?.Text;
+
+            if (leaf != null && ReferenceEquals(leaf, _widthsLeaf) && leaf.Version == _widthsVersion)
+            {
+                min = _minWidth;
+                max = _maxWidth;
+                return true;
+            }
+
+            if (leaf == null || Leaf?.TextBlock is not DirectTextBlock text)
+            {
+                min = max = 0;
+                return false;
+            }
+
+            var widths = text.ContentWidths();
+
+            _widthsLeaf = leaf;
+            _widthsVersion = leaf.Version;
+            _minWidth = min = widths.X;
+            _maxWidth = max = widths.Y;
+
+            return true;
         }
 
         /// <summary>Where the cell is in its table, which decides its edges and corners.</summary>

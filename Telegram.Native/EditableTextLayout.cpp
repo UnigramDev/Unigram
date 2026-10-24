@@ -1663,6 +1663,55 @@ namespace winrt::Telegram::Native::implementation
         return width;
     }
 
+    // Read off the advances already shaped, walking them as NextLine does with no limit: a table
+    // sizes its columns from these for every cell, so they must not cost a layout of their own.
+    void EditableTextLayout::ContentWidths(float& narrowest, float& widest) const
+    {
+        narrowest = 0;
+        widest = 0;
+
+        const auto length = (int32_t)m_text.size();
+
+        // Along the line as if nothing wrapped it: where its last cluster that is not white space
+        // ends, and where the stretch since the last break opportunity began. A stretch that is
+        // only white space ends before it began, and counts for nothing.
+        float x = 0;
+        float content = 0;
+        float from = 0;
+
+        for (int32_t p = 0; p < length;)
+        {
+            if (IsHardBreak(p))
+            {
+                narrowest = std::max(narrowest, content - from);
+                widest = std::max(widest, content);
+
+                x = content = from = 0;
+
+                p += m_text[p] == L'\r' && p + 1 < length && m_text[p + 1] == L'\n' ? 2 : 1;
+                continue;
+            }
+
+            x += ClusterWidth(p, x);
+
+            if (m_breakpoints[p].isWhitespace == 0)
+            {
+                content = x;
+            }
+
+            p += std::max(m_clusterLength[p], 1);
+
+            if (p < length && CanBreakBefore(p))
+            {
+                narrowest = std::max(narrowest, content - from);
+                from = x;
+            }
+        }
+
+        narrowest = std::max(narrowest, content - from);
+        widest = std::max(widest, content);
+    }
+
     float EditableTextLayout::Height() const
     {
         return m_lines.empty() ? 0 : m_lines.back().Y + m_lines.back().Height;

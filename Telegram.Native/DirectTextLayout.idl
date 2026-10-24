@@ -106,6 +106,10 @@ namespace Telegram.Native
 
         Windows.Foundation.Size Measure(Double availableWidth);
 
+        // The narrowest the text can be laid out without breaking a word, and its widest line
+        // when nothing wraps it: what a table sizes a column from. Neither depends on the width.
+        Windows.Foundation.Numerics.Vector2 ContentWidths();
+
         // The width the caller shows the text in, when that is wider than Measure left the box:
         // a text not drawn from the leading edge throughout - right to left, centred, or both
         // ways - is laid out again in it, so that each paragraph sits against its own edge of

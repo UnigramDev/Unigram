@@ -462,6 +462,12 @@ namespace Telegram.Controls
 
         internal string CompareWithAnalyzer() => Layout().CompareWithAnalyzer();
 
+        /// <summary>
+        /// The narrowest the text can be laid out without breaking a word, and its widest line
+        /// when nothing wraps it: what a table sizes its columns from.
+        /// </summary>
+        public Vector2 ContentWidths() => Layout().ContentWidths();
+
         private bool _isReadOnly = true;
 
         /// <summary>

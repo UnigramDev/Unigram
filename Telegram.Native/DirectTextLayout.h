@@ -196,6 +196,7 @@ namespace winrt::Telegram::Native::implementation
 
         Windows::Foundation::Size Measure(double availableWidth);
         void Arrange(double width);
+        Windows::Foundation::Numerics::float2 ContentWidths();
 
         com_array<Windows::Foundation::Rect> Ranges(int32_t offset, int32_t length);
         Windows::Foundation::Rect Caret(int32_t offset);
@@ -337,6 +338,11 @@ namespace winrt::Telegram::Native::implementation
 
         // Whether the last build had to leave anything out for MaxLines.
         bool m_trimmed{ false };
+
+        // What ContentWidths answered since the last build: a table asks for every cell each
+        // time it is measured, and typing into one cell must not lay the others out again.
+        Windows::Foundation::Numerics::float2 m_contentWidths{};
+        bool m_contentWidthsKnown{ false };
 
         // The layout is rebuilt from the state above whenever any of it moves. Only the width
         // is cheaper than that: DirectWrite reflows in place for it.

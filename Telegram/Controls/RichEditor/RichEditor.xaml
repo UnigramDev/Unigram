@@ -698,8 +698,9 @@
                 <ControlTemplate TargetType="local:RichTablePresenter">
                     <StackPanel>
                         <local:RichLeafView x:Name="Caption" />
-                        <ScrollViewer HorizontalScrollMode="Auto"
-                                      HorizontalScrollBarVisibility="Auto"
+                        <ScrollViewer x:Name="Scroller"
+                                      HorizontalScrollMode="Disabled"
+                                      HorizontalScrollBarVisibility="Disabled"
                                       VerticalScrollMode="Disabled"
                                       VerticalScrollBarVisibility="Disabled"
                                       IsTabStop="False">
@@ -717,9 +718,6 @@
                 Value="False" />
         <Setter Property="AutomationProperties.AccessibilityView"
                 Value="Raw" />
-        <!--  Wider than the sent table's narrowest column: an empty cell still has to be hit.  -->
-        <Setter Property="MinWidth"
-                Value="96" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:RichTableCellPresenter">

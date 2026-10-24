@@ -578,12 +578,6 @@ namespace Telegram.Common
             // Wide enough that nothing wraps, so the widest line is the natural width.
             private const double Unconstrained = 100000;
 
-            // How narrow a column has to be squeezed before it is allowed to wrap at all. Under
-            // it a column keeps its natural width, so a thin column beside a wide one is left
-            // alone and only the wide one gives ground. tdesktop calls it minColumnWidth and
-            // puts it at 96 too.
-            private const double MinColumnWidth = 96;
-
             // A whole layout pixel a column gets over what the text measured. The cell is laid
             // out by RichTextBlock and measured here by DirectWrite, and the packaged font the
             // two are pointed at carries no Latin glyphs, so each resolves the fallback that
@@ -595,17 +589,13 @@ namespace Telegram.Common
             private readonly Grid _grid;
             private readonly List<Cell> _cells;
             private readonly int _columns;
-            private readonly double _paddingLeft;
-            private readonly double _paddingRight;
+            private readonly Thickness _padding;
             private readonly double _thickness;
-            private readonly double[] _widths;
-            private readonly double[] _deficit;
+            private readonly TableColumns _resolver = new TableColumns(Slop, 0);
 
-            private double[] _min;
-            private double[] _max;
+            private bool _measured;
             private double _fontSize;
             private double _scale = 1;
-            private bool _scrollable;
 
             public TableRoot(ScrollViewer scroll, Grid grid, List<Cell> cells, int columns, Thickness padding, double thickness)
             {
@@ -613,11 +603,8 @@ namespace Telegram.Common
                 _grid = grid;
                 _cells = cells;
                 _columns = columns;
-                _paddingLeft = padding.Left;
-                _paddingRight = padding.Right;
+                _padding = padding;
                 _thickness = thickness;
-                _widths = new double[columns];
-                _deficit = new double[columns];
 
                 Children.Add(scroll);
             }
@@ -626,31 +613,12 @@ namespace Telegram.Common
             {
                 EnsureMetrics(AppSettings.Appearance.MessageFontSize * BootStrapper.Current.TextScaleFactor, XamlRoot?.RasterizationScale ?? 1);
 
-                var total = Resolve(availableSize.Width);
+                // The grid's margin is inside the ScrollViewer, so that a scrolled table's borders
+                // are not cut at the viewport's edge: the columns share what is left of the room.
+                var margin = _resolver.Snap(_grid.Margin.Left) + _resolver.Snap(_grid.Margin.Right);
+                var total = _resolver.Resolve(Math.Max(0, availableSize.Width - margin)) + margin;
 
-                for (int i = 0; i < _columns; i++)
-                {
-                    var definition = _grid.ColumnDefinitions[i];
-
-                    // Assigning invalidates the layout of the grid, so only where it moved.
-                    if (!definition.Width.IsAbsolute || definition.Width.Value != _widths[i])
-                    {
-                        definition.Width = new GridLength(_widths[i]);
-                    }
-                }
-
-                // A table that fits cannot be scrolled, so it must not be scrollable: left on,
-                // the ScrollViewer swallows the mouse wheel over any table, and a stray fraction
-                // of a pixel is enough for it to believe it has somewhere to go.
-                var mode = _scrollable ? ScrollMode.Auto : ScrollMode.Disabled;
-
-                if (_scroll.HorizontalScrollMode != mode)
-                {
-                    _scroll.HorizontalScrollMode = mode;
-                    _scroll.HorizontalScrollBarVisibility = _scrollable
-                        ? ScrollBarVisibility.Auto
-                        : ScrollBarVisibility.Disabled;
-                }
+                _resolver.Apply(_grid, _scroll);
 
                 var width = Math.Min(total, availableSize.Width);
                 _scroll.Measure(new Size(width, availableSize.Height));
@@ -666,220 +634,29 @@ namespace Telegram.Common
                 return finalSize;
             }
 
-            // The three outcomes: natural widths, squeezed to fit, or scrolling.
-            private double Resolve(double available)
-            {
-                var totalMax = 0d;
-
-                for (int i = 0; i < _columns; i++)
-                {
-                    totalMax += _max[i];
-                }
-
-                // It fits unwrapped: the table is as wide as its content and no wider.
-                if (double.IsInfinity(available) || totalMax <= available)
-                {
-                    Array.Copy(_max, _widths, _columns);
-                    _scrollable = false;
-                    return totalMax;
-                }
-
-                // No column is squeezed below its text laid out at two thirds of the room, or
-                // half less padding when there are two, so the floor is a readable width rather
-                // than the longest word. Floored at the longest word, a table of prose fits any
-                // bubble by wrapping each cell a word a line, and never scrolls.
-                var text = _columns == 2
-                    ? available / 2 - 4 * _paddingLeft
-                    : available / 1.5;
-
-                var totalFloor = 0d;
-
-                for (int i = 0; i < _columns; i++)
-                {
-                    _widths[i] = Math.Max(_min[i], Math.Min(_max[i], Snap(text + Overhead(i))));
-                    _deficit[i] = _max[i] - _widths[i];
-                    totalFloor += _widths[i];
-                }
-
-                if (totalFloor >= available)
-                {
-                    _scrollable = true;
-                    return totalFloor;
-                }
-
-                // In between, every column gets its floor and the room left over is handed
-                // round in equal shares until each column has all it asked for or there is
-                // nothing left - so a narrow column beside a wide one is satisfied outright
-                // rather than left wrapping with a share proportional to a need it does not
-                // have. It is what tdesktop does, and what the tables here looked wrong without.
-                var extra = available - totalFloor;
-                var epsilon = 0.5 / _scale;
-
-                while (extra > epsilon)
-                {
-                    var active = 0;
-
-                    for (int i = 0; i < _columns; i++)
-                    {
-                        if (_deficit[i] > 0)
-                        {
-                            active++;
-                        }
-                    }
-
-                    if (active == 0)
-                    {
-                        break;
-                    }
-
-                    var step = extra / active;
-
-                    for (int i = 0; i < _columns && extra > 0; i++)
-                    {
-                        if (_deficit[i] <= 0)
-                        {
-                            continue;
-                        }
-
-                        var delta = Math.Min(_deficit[i], Math.Min(step, extra));
-
-                        _widths[i] += delta;
-                        _deficit[i] -= delta;
-                        extra -= delta;
-                    }
-                }
-
-                // Snapped down onto the pixel grid so the columns still add up to something the
-                // viewport can hold, with the rounding left over going to the widest column,
-                // the one most likely to still be wrapping.
-                var used = 0d;
-                var widest = 0;
-
-                for (int i = 0; i < _columns; i++)
-                {
-                    _widths[i] = Math.Floor(_widths[i] * _scale) / _scale;
-                    used += _widths[i];
-
-                    if (_max[i] > _max[widest])
-                    {
-                        widest = i;
-                    }
-                }
-
-                var total = Math.Floor(available * _scale) / _scale;
-
-                if (total > used)
-                {
-                    _widths[widest] += total - used;
-                }
-
-                _scrollable = false;
-                return total;
-            }
-
-            // The narrowest and widest each column can be, measured once from the text itself.
+            // The narrowest and widest each cell can be, measured once from the text itself.
             // Neither depends on how much room the table has, so the answer survives a resize;
             // the font size is the one input that can change under it.
             private void EnsureMetrics(double fontSize, double scale)
             {
-                if (_min != null && _fontSize == fontSize && _scale == scale)
+                if (_measured && _fontSize == fontSize && _scale == scale)
                 {
                     return;
                 }
 
+                _measured = true;
                 _fontSize = fontSize;
                 _scale = scale;
-                _min = new double[_columns];
-                _max = new double[_columns];
 
-                var mins = new double[_cells.Count];
-                var maxs = new double[_cells.Count];
+                _resolver.Begin(_columns, scale, _padding, _thickness);
 
-                for (int i = 0; i < _cells.Count; i++)
+                foreach (var cell in _cells)
                 {
-                    var cell = _cells[i];
-                    var overhead = Overhead(cell.Column);
-
                     Measure(cell.Text, fontSize, out var min, out var max);
-
-                    mins[i] = min + overhead;
-                    maxs[i] = max + overhead;
-
-                    if (cell.Colspan == 1)
-                    {
-                        _min[cell.Column] = Math.Max(_min[cell.Column], mins[i]);
-                        _max[cell.Column] = Math.Max(_max[cell.Column], maxs[i]);
-                    }
+                    _resolver.Add(cell.Column, cell.Colspan, min, max);
                 }
 
-                // A spanned cell only has to fit across the columns it covers, so it grows them
-                // just enough, and only once every single column cell has had its say.
-                for (int i = 0; i < _cells.Count; i++)
-                {
-                    var cell = _cells[i];
-
-                    if (cell.Colspan > 1)
-                    {
-                        Grow(_min, cell.Column, cell.Colspan, mins[i]);
-                        Grow(_max, cell.Column, cell.Colspan, maxs[i]);
-                    }
-                }
-
-                // A column is only asked to wrap once it is wider than a column has any need to
-                // be: under that its natural width is its floor, and past it the floor is the
-                // longest word, which is as narrow as text can go.
-                for (int i = 0; i < _columns; i++)
-                {
-                    _min[i] = Math.Max(_min[i], Math.Min(_max[i], MinColumnWidth));
-                }
-
-                // Rounded up to a whole device pixel, which is where layout rounding puts every
-                // column edge anyway. Up, because the two engines do not lay text out to the
-                // same fraction of a pixel and a column a hair narrower than its text wraps a
-                // word no one asked to wrap; onto the grid, because a width that is not on it
-                // is rounded there later, and rounding outwards is what leaves the ScrollViewer
-                // scrollable by half a pixel with the scrollbar too small to see.
-                for (int i = 0; i < _columns; i++)
-                {
-                    _min[i] = Math.Ceiling(_min[i] * scale) / scale;
-                    _max[i] = Math.Ceiling(_max[i] * scale) / scale;
-                }
-            }
-
-            private double Overhead(int column)
-            {
-                // Every cell pays its padding and the border on its trailing edge; the first
-                // column pays for the leading edge of the table as well. Rounded up one edge at
-                // a time, as that is how they are laid out: a 1 DIP border is a pixel and a half
-                // at 150% and takes two, and a cell short of that half pixel wraps for it.
-                return Snap(_paddingLeft) + Snap(_paddingRight) + (column == 0 ? 2 : 1) * Snap(_thickness) + Slop;
-            }
-
-            private double Snap(double value)
-            {
-                return Math.Ceiling(value * _scale) / _scale;
-            }
-
-            private static void Grow(double[] widths, int column, int colspan, double required)
-            {
-                var current = 0d;
-
-                for (int i = column; i < column + colspan; i++)
-                {
-                    current += widths[i];
-                }
-
-                if (current >= required)
-                {
-                    return;
-                }
-
-                var growth = (required - current) / colspan;
-
-                for (int i = column; i < column + colspan; i++)
-                {
-                    widths[i] += growth;
-                }
+                _resolver.End();
             }
 
             // Both numbers off one DirectWrite layout per paragraph: the narrowest the text can
