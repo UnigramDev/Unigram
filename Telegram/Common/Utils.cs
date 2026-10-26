@@ -9,6 +9,9 @@ using System;
 using System.Runtime.CompilerServices;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+#if NET9_0_OR_GREATER
+using System.Threading;
+#endif
 
 namespace Telegram.Common
 {

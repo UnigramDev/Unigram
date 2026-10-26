@@ -14,6 +14,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 #if NET9_0_OR_GREATER
+using System.Runtime.InteropServices;
 using WinRT;
 #endif
 

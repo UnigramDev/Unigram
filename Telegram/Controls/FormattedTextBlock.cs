@@ -34,6 +34,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+#if NET9_0_OR_GREATER
+using System.Diagnostics;
+#endif
 
 namespace Telegram.Controls
 {
