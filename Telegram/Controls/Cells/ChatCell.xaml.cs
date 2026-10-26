@@ -68,9 +68,6 @@ namespace Telegram.Controls.Cells
 
         private int _thumbnailId;
 
-        private string _dateLabel;
-        private string _stateLabel;
-
         private IClientService _clientService;
 
         private bool _compact;
@@ -82,6 +79,8 @@ namespace Telegram.Controls.Cells
         private CompositionRoundedRectangleGeometry _heart3;
 
         private MessageTicksState _ticksState;
+        private long _ticksHash;
+        private bool _outgoing;
 
         public ChatCell()
         {
@@ -284,10 +283,7 @@ namespace Telegram.Controls.Cells
 
             if (message != null)
             {
-                _dateLabel = Formatter.DateExtended(message.Date);
-                _stateLabel = string.Empty;
-
-                TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
+                TimeLabel.Text = Formatter.DateExtended(message.Date);
 
                 UpdateBriefLabel(null, UpdateBriefLabel(message.Content, message.IsOutgoing, false, out MinithumbnailId thumbnail));
                 UpdateMinithumbnail(thumbnail);
@@ -339,10 +335,9 @@ namespace Telegram.Controls.Cells
                 FromLabel.Text = UpdateFromLabel(clientService, chat, message);
             }
 
-            _dateLabel = Formatter.DateExtended(message.Date);
-            _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, showAsSender ? null : message, message.SendingState);
+            UpdateMessageState(chat.LastReadOutboxMessageId, chat, null, showAsSender ? null : message, message.SendingState);
 
-            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
+            TimeLabel.Text = Formatter.DateExtended(message.Date);
 
             UpdateBriefLabel(chat, UpdateBriefLabel(message.Content, message.IsOutgoing, false, out MinithumbnailId thumbnail));
             UpdateMinithumbnail(thumbnail);
@@ -370,15 +365,13 @@ namespace Telegram.Controls.Cells
                 PinnedIcon.Visibility = Visibility.Collapsed;
 
                 //DraftLabel.Text = string.Empty;
-                _dateLabel = string.Empty;
-                _stateLabel = string.Empty;
                 TimeLabel.Text = string.Empty;
 
                 MutedIcon.Visibility = Visibility.Collapsed;
 
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
 
-                UpdateTicks(null);
+                UpdateTicks(false, MessageTicksState.None);
 
                 var unreadCount = clientService.GetUnreadCount(chatList);
                 UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -737,9 +730,8 @@ namespace Telegram.Controls.Cells
             }
 
             _draft = draft;
-            _dateLabel = UpdateTimeLabel(chat, position);
-            _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
-            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
+            UpdateMessageState(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+            TimeLabel.Text = UpdateTimeLabel(chat, position);
 
             UpdateBriefLabel(chat, UpdateBriefLabel(chat, position, out MinithumbnailId thumbnail));
             UpdateMinithumbnail(thumbnail);
@@ -801,8 +793,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
-            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
+            UpdateMessageState(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
         }
 
         public void UpdateChatIsMarkedAsUnread(Chat chat)
@@ -2029,70 +2020,78 @@ namespace Telegram.Controls.Cells
             return false;
         }
 
-        private string UpdateStateIcon(long maxId, Chat chat, DraftMessage draft, Message message, MessageSendingState state)
+        public void UpdateMessageState(long maxId, Chat chat, DraftMessage draft, Message message, MessageSendingState state)
         {
-            if (draft != null || message == null)
+            if (draft != null || message == null || !_templateApplied)
             {
-                UpdateTicks(null);
+                UpdateMessageOutgoing(false);
+                UpdateTicks(false, MessageTicksState.None);
 
                 _ticksState = MessageTicksState.None;
-                return string.Empty;
+                _ticksHash = 0;
+                return;
             }
 
-            if (message.IsOutgoing /*&& IsOut(ViewModel)*/)
+            var outgoing = (message.IsOutgoing && !message.IsChannelPost) || (message.IsSaved(_clientService.Options.MyId) && message.ForwardInfo?.Source is { IsOutgoing: true });
+            if (outgoing)
             {
-                if (chat.Type is ChatTypePrivate privata && privata.UserId == _clientService.Options.MyId)
-                {
-                    if (message.SendingState is MessageSendingStateFailed)
-                    {
-                        // TODO: 
-                        return "failed"; // Failed
-                    }
-                    else if (message.SendingState is MessageSendingStatePending)
-                    {
-                        return "\uEA06"; // Pending
-                    }
-
-                    UpdateTicks(null);
-
-                    _ticksState = MessageTicksState.None;
-                    return string.Empty;
-                }
+                //var maxId = message.LastReadOutboxMessageId;
+                var messageHash = message.ChatId ^ message.Id;
 
                 if (message.SendingState is MessageSendingStateFailed)
                 {
-                    UpdateTicks(null);
+                    UpdateMessageOutgoing(true);
+                    UpdateTicks(true, MessageTicksState.Failed);
 
                     _ticksState = MessageTicksState.Failed;
+                    _ticksHash = messageHash;
 
-                    // TODO: 
-                    return "failed"; // Failed
+                    return; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
-                    UpdateTicks(null);
+                    UpdateMessageOutgoing(true);
+                    UpdateTicks(true, MessageTicksState.Pending);
 
                     _ticksState = MessageTicksState.Pending;
-                    return "\uEA06"; // Pending
+                    _ticksHash = messageHash;
+
+                    return; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
-                    UpdateTicks(true, _ticksState == MessageTicksState.Sent);
+                    UpdateMessageOutgoing(true);
+                    UpdateTicks(true, MessageTicksState.Read, _ticksState == MessageTicksState.Sent && _ticksHash == messageHash);
 
                     _ticksState = MessageTicksState.Read;
-                    return "\uEA07"; // Read
+                    _ticksHash = messageHash;
+
+                    return; // Read
                 }
 
-                UpdateTicks(false, _ticksState == MessageTicksState.Pending);
+                UpdateMessageOutgoing(true);
+                UpdateTicks(true, MessageTicksState.Sent, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
 
                 _ticksState = MessageTicksState.Sent;
-                return "\uEA07"; // Unread
+                _ticksHash = messageHash;
+
+                return; // Unread
             }
 
-            UpdateTicks(null);
+            UpdateMessageOutgoing(false);
+            UpdateTicks(false, MessageTicksState.None);
 
             _ticksState = MessageTicksState.None;
-            return string.Empty;
+            _ticksHash = 0;
+        }
+
+        private void UpdateMessageOutgoing(bool outgoing)
+        {
+            if (_templateApplied && _outgoing != outgoing)
+            {
+                _outgoing = outgoing;
+                TimeLabel.Padding = new Thickness(outgoing ? 22 : 0, 0, 0, 0);
+            }
         }
 
         private string UpdateTimeLabel(Chat chat, ChatPosition position)
@@ -2291,10 +2290,8 @@ namespace Telegram.Controls.Cells
 
             FromLabel.Text = from;
             BriefLabel.Inlines.Add(new Run { Text = message });
-            _dateLabel = Formatter.Time(date);
-            _stateLabel = sent ? "\uE601" : string.Empty;
 
-            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
+            TimeLabel.Text = Formatter.Time(date);
 
             _container?.IsVisible = false;
 
@@ -2471,15 +2468,18 @@ namespace Telegram.Controls.Cells
 
         #region Tick Animation
 
-        private CompositionGeometry _line11;
-        private CompositionGeometry _line12;
-        private ShapeVisual _visual1;
+        private float _trimStart;
 
-        private CompositionGeometry _line21;
-        private CompositionGeometry _line22;
-        private ShapeVisual _visual2;
+        private CompositionGeometry _line1;
+        private CompositionShape _shape1;
 
-        private SpriteVisual _container;
+        private CompositionGeometry _line2;
+        private CompositionShape _shape2;
+
+        private CompositionShape _pending;
+        private CompositionShape _failed;
+
+        private ShapeVisual _container;
 
         #region Stroke
 
@@ -2506,6 +2506,86 @@ namespace Telegram.Controls.Cells
 
         #endregion
 
+        private void InitializePending()
+        {
+            if (_container == null)
+            {
+                InitializeTicks();
+            }
+
+            var stroke = 1.33f;
+
+            static CompositionPath GetPending()
+            {
+                var stroke = 1.33f;
+                var radius = 5 - stroke / 2;
+
+                CanvasGeometry result;
+                using (var builder = new CanvasPathBuilder(null))
+                {
+                    builder.AddGeometry(CanvasGeometry.CreateEllipse(null, 13, 5, radius, radius));
+                    builder.BeginFigure(new Vector2(12.5f, 3f));
+                    builder.AddLine(new Vector2(12.5f, 5.5f));
+                    builder.AddLine(new Vector2(15f, 5.5f));
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    result = CanvasGeometry.CreatePath(builder);
+                }
+                return new CompositionPath(result);
+            }
+
+            var shape11 = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(GetPending()));
+            shape11.StrokeThickness = stroke;
+            shape11.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
+            shape11.IsStrokeNonScaling = true;
+            shape11.StrokeStartCap = CompositionStrokeCap.Round;
+            shape11.StrokeEndCap = CompositionStrokeCap.Round;
+            shape11.Offset = new Vector2(2, 1);
+
+            _pending = shape11;
+            _container.Shapes.Add(shape11);
+        }
+
+        private void InitializeFailed()
+        {
+            if (_container == null)
+            {
+                InitializeTicks();
+            }
+
+            var stroke = 1.33f;
+
+            static CompositionPath GetFailed()
+            {
+                var stroke = 1.33f;
+                var center = stroke / 2;
+
+                CanvasGeometry result;
+                using (var builder = new CanvasPathBuilder(null))
+                {
+                    builder.AddGeometry(CanvasGeometry.CreateRoundedRectangle(null, 4 + center, center, 11 - stroke, 11 - stroke, 2, 2));
+                    builder.BeginFigure(new Vector2(9.5f, 3f));
+                    builder.AddLine(new Vector2(9.5f, 5.5f + center));
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    builder.BeginFigure(new Vector2(9.5f, 7f + stroke));
+                    builder.AddLine(new Vector2(9.5f, 7f + stroke + 0.001f));
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    result = CanvasGeometry.CreatePath(builder);
+                }
+                return new CompositionPath(result);
+            }
+
+            var shape11 = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(GetFailed()));
+            shape11.StrokeThickness = stroke;
+            shape11.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(Colors.Red);
+            shape11.IsStrokeNonScaling = true;
+            shape11.StrokeStartCap = CompositionStrokeCap.Round;
+            shape11.StrokeEndCap = CompositionStrokeCap.Round;
+            shape11.Offset = new Vector2(2, 0);
+
+            _failed = shape11;
+            _container.Shapes.Add(shape11);
+        }
+
         private void InitializeTicks()
         {
             var width = 18f;
@@ -2515,91 +2595,111 @@ namespace Telegram.Controls.Cells
 
             var sqrt = MathF.Sqrt(2);
 
-            var side = stroke / sqrt / 2f;
-            var diagonal = height * sqrt;
-            var length = diagonal / 2f / sqrt;
-
+            var cap = stroke / 2f;
             var join = stroke / 2 * sqrt;
 
-            var compositor = BootStrapper.Current.Compositor;
+            CompositionPath GetLine()
+            {
+                var right = width - distance;
+                var vertex = new Vector2(right - height + join, height - join);
+                var start = new Vector2(cap, vertex.Y - (vertex.X - cap));
+                var end = new Vector2(right - cap, cap);
 
-            var line11 = compositor.CreateLineGeometry();
-            var line12 = compositor.CreateLineGeometry();
+                var trimStart = Vector2.Distance(start, vertex);
+                var trimEnd = Vector2.Distance(vertex, end);
 
-            line11.Start = new Vector2(width - height + side + join - length - distance, height - side - length);
-            line11.End = new Vector2(width - height + side + join - distance, height - side);
+                _trimStart = trimStart / (trimStart + trimEnd);
 
-            line12.Start = new Vector2(width - height + side - distance, height - side);
-            line12.End = new Vector2(width - side - distance, side);
+                CanvasGeometry result;
+                using (var builder = new CanvasPathBuilder(null))
+                {
+                    builder.BeginFigure(start);
+                    builder.AddLine(vertex);
+                    builder.AddLine(end);
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    result = CanvasGeometry.CreatePath(builder);
+                }
+                return new CompositionPath(result);
+            }
 
-            var shape11 = compositor.CreateSpriteShape(line11);
-            shape11.StrokeThickness = stroke;
-            shape11.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
-            shape11.IsStrokeNonScaling = true;
-            shape11.StrokeStartCap = CompositionStrokeCap.Round;
+            var geometry = GetLine();
+            var line1 = BootStrapper.Current.Compositor.CreatePathGeometry(geometry);
+            var line2 = BootStrapper.Current.Compositor.CreatePathGeometry(geometry);
 
-            var shape12 = compositor.CreateSpriteShape(line12);
-            shape12.StrokeThickness = stroke;
-            shape12.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
-            shape12.IsStrokeNonScaling = true;
-            shape12.StrokeEndCap = CompositionStrokeCap.Round;
+            var shape1 = BootStrapper.Current.Compositor.CreateSpriteShape(line1);
+            shape1.StrokeThickness = stroke;
+            shape1.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
+            shape1.IsStrokeNonScaling = true;
+            shape1.StrokeStartCap = CompositionStrokeCap.Round;
+            shape1.StrokeEndCap = CompositionStrokeCap.Round;
+            shape1.StrokeLineJoin = CompositionStrokeLineJoin.Round;
+            shape1.CenterPoint = new Vector2(width, height / 2f);
+            shape1.Offset = new Vector2(2, 1);
 
-            var visual1 = compositor.CreateShapeVisual();
-            visual1.Shapes.Add(shape12);
-            visual1.Shapes.Add(shape11);
-            visual1.Size = new Vector2(width, height);
-            visual1.CenterPoint = new Vector3(width, height / 2f, 0);
+            var shape2 = BootStrapper.Current.Compositor.CreateSpriteShape(line2);
+            shape2.StrokeThickness = stroke;
+            shape2.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
+            shape2.IsStrokeNonScaling = true;
+            shape2.StrokeStartCap = CompositionStrokeCap.Round;
+            shape2.StrokeEndCap = CompositionStrokeCap.Round;
+            shape2.StrokeLineJoin = CompositionStrokeLineJoin.Round;
+            shape2.CenterPoint = new Vector2(width, height / 2f);
+            shape2.Offset = new Vector2(distance + 2, 1);
 
-
-            var line21 = compositor.CreateLineGeometry();
-            var line22 = compositor.CreateLineGeometry();
-
-            line21.Start = new Vector2(width - height + side + join - length, height - side - length);
-            line21.End = new Vector2(width - height + side + join, height - side);
-
-            line22.Start = new Vector2(width - height + side, height - side);
-            line22.End = new Vector2(width - side, side);
-
-            var shape21 = compositor.CreateSpriteShape(line21);
-            shape21.StrokeThickness = stroke;
-            shape21.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
-            shape21.StrokeStartCap = CompositionStrokeCap.Round;
-
-            var shape22 = compositor.CreateSpriteShape(line22);
-            shape22.StrokeThickness = stroke;
-            shape22.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
-            shape22.StrokeEndCap = CompositionStrokeCap.Round;
-
-            var visual2 = compositor.CreateShapeVisual();
-            visual2.Shapes.Add(shape22);
-            visual2.Shapes.Add(shape21);
-            visual2.Size = new Vector2(width, height);
-
-
-            var container = compositor.CreateSpriteVisual();
-            container.Children.InsertAtTop(visual2);
-            container.Children.InsertAtTop(visual1);
-            container.Size = new Vector2(width, height);
+            var container = BootStrapper.Current.Compositor.CreateShapeVisual();
+            container.Shapes.Add(shape2);
+            container.Shapes.Add(shape1);
+            container.Size = new Vector2(width + 2, height + 1);
             container.AnchorPoint = new Vector2(0, 0);
-            container.Offset = new Vector3(0, 3, 0);
+            container.Offset = new Vector3(-2, 3, 0);
             container.RelativeOffsetAdjustment = new Vector3(0, 0, 0);
 
             ElementCompositionPreview.SetElementChildVisual(TimeLabel, container);
 
-            _line11 = line11;
-            _line12 = line12;
-            _line21 = line21;
-            _line22 = line22;
-            _visual1 = visual1;
-            _visual2 = visual2;
+            _line1 = line1;
+            _shape1 = shape1;
+            _line2 = line2;
+            _shape2 = shape2;
             _container = container;
         }
 
-        private void UpdateTicks(bool? read, bool animate = false)
+        private void UpdateTicks(bool outgoing, MessageTicksState state, bool animate = false)
         {
-            if (read == null)
+            void RemoveAdditionalVisuals(bool visible)
             {
-                _container?.IsVisible = false;
+                if (_pending != null && state != MessageTicksState.Pending)
+                {
+                    _container.Shapes.Remove(_pending);
+                    _pending = null;
+                }
+                else if (_failed != null && state != MessageTicksState.Failed)
+                {
+                    _container.Shapes.Remove(_failed);
+                    _failed = null;
+                }
+
+                _line1.TrimStart = visible ? 0 : 1;
+                _line2.TrimStart = visible ? 0 : 1;
+            }
+
+            if (state is not MessageTicksState.Sent and not MessageTicksState.Read)
+            {
+                if (outgoing)
+                {
+                    if (_pending == null && state == MessageTicksState.Pending)
+                    {
+                        InitializePending();
+                    }
+                    else if (_failed == null && state == MessageTicksState.Failed)
+                    {
+                        InitializeFailed();
+                    }
+                }
+
+                if (_container != null)
+                {
+                    RemoveAdditionalVisuals(false);
+                }
             }
             else
             {
@@ -2608,82 +2708,65 @@ namespace Telegram.Controls.Cells
                     InitializeTicks();
                 }
 
+                RemoveAdditionalVisuals(true);
+
                 if (animate)
                 {
-                    AnimateTicks(read == true);
+                    AnimateTicks(state == MessageTicksState.Read);
                 }
                 else
                 {
-                    _line11.TrimEnd = read == true ? 1 : 0;
-                    _line12.TrimEnd = read == true ? 1 : 0;
-
-                    _line21.TrimStart = read == true ? 1 : 0;
-
-                    _container.IsVisible = true;
+                    _line1.TrimEnd = state == MessageTicksState.Read ? 1 : 0;
+                    _line2.TrimStart = state == MessageTicksState.Read ? _trimStart : 0;
                 }
             }
         }
 
         private void AnimateTicks(bool read)
         {
-            _container.IsVisible = true;
-
-            var height = 10f;
-            var stroke = 2f;
-
-            var sqrt = (float)Math.Sqrt(2);
-
-            var diagonal = height * sqrt;
-            var length = diagonal / 2f / sqrt;
-
             var duration = 250;
-            var percent = stroke / length;
 
-            var compositor = BootStrapper.Current.Compositor;
+            var linear = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+            var start = duration - _trimStart * duration;
+            var ended = 400f;
 
-            var linear = compositor.CreateLinearEasingFunction();
-
-            var anim11 = compositor.CreateScalarKeyFrameAnimation();
-            anim11.InsertKeyFrame(0, 0);
-            anim11.InsertKeyFrame(1, 1, linear);
-            anim11.Duration = TimeSpan.FromMilliseconds(duration - percent * duration);
-
-            var anim12 = compositor.CreateScalarKeyFrameAnimation();
-            anim12.InsertKeyFrame(0, 0);
-            anim12.InsertKeyFrame(1, 1);
-            anim12.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            anim12.DelayTime = anim11.Duration;
-            anim12.Duration = TimeSpan.FromMilliseconds(400);
-
-            var anim22 = compositor.CreateVector3KeyFrameAnimation();
-            anim22.InsertKeyFrame(0, new Vector3(1));
-            anim22.InsertKeyFrame(0.2f, new Vector3(1.1f));
-            anim22.InsertKeyFrame(1, new Vector3(1));
-            anim22.Duration = anim11.Duration + anim12.Duration;
+            var scale = BootStrapper.Current.Compositor.CreateVector2KeyFrameAnimation();
+            scale.InsertKeyFrame(0, new Vector2(1));
+            scale.InsertKeyFrame(0.2f, new Vector2(1.1f));
+            scale.InsertKeyFrame(1, new Vector2(1));
+            scale.Duration = TimeSpan.FromMilliseconds(start + ended);
 
             if (read)
             {
-                _line11.StartAnimation("TrimEnd", anim11);
-                _line12.StartAnimation("TrimEnd", anim12);
-                _visual1.StartAnimation("Scale", anim22);
+                var trimEnd = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                trimEnd.InsertKeyFrame(0, 0);
+                trimEnd.InsertKeyFrame(start / (start + ended), _trimStart, linear);
+                trimEnd.InsertKeyFrame(1, 1);
+                trimEnd.Duration = TimeSpan.FromMilliseconds(start + ended);
 
-                var anim21 = compositor.CreateScalarKeyFrameAnimation();
-                anim21.InsertKeyFrame(0, 0);
-                anim21.InsertKeyFrame(1, 1, linear);
-                anim11.Duration = TimeSpan.FromMilliseconds(duration);
+                var trimStart = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                trimStart.InsertKeyFrame(0, 0);
+                trimStart.InsertKeyFrame(1, _trimStart, linear);
+                trimStart.Duration = TimeSpan.FromMilliseconds(start);
 
-                _line21.StartAnimation("TrimStart", anim21);
+                _line1.StartAnimation("TrimEnd", trimEnd);
+                _line2.StartAnimation("TrimStart", trimStart);
+                _shape1.StartAnimation("Scale", scale);
             }
             else
             {
-                _line11.TrimEnd = 0;
-                _line12.TrimEnd = 0;
+                var trimEnd = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                trimEnd.InsertKeyFrame(0, 0);
+                trimEnd.InsertKeyFrame(1, 1);
+                trimEnd.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                trimEnd.DelayTime = TimeSpan.FromMilliseconds(start);
+                trimEnd.Duration = TimeSpan.FromMilliseconds(ended);
 
-                _line21.TrimStart = 0;
+                _line1.TrimEnd = 0;
+                _line2.TrimStart = 0;
 
-                _line21.StartAnimation("TrimEnd", anim11);
-                _line22.StartAnimation("TrimEnd", anim12);
-                _visual2.StartAnimation("Scale", anim22);
+                _line2.StartAnimation("TrimEnd", trimEnd);
+                _shape2.StartAnimation("Scale", scale);
             }
         }
 

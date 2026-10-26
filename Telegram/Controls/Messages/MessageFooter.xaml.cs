@@ -462,6 +462,8 @@ namespace Telegram.Controls.Messages
         {
             if (message == null || !_templateApplied)
             {
+                _ticksState = MessageTicksState.None;
+                _ticksHash = 0;
                 return;
             }
 
@@ -585,18 +587,18 @@ namespace Telegram.Controls.Messages
 
         #region Animation
 
-        private CompositionGeometry _line11;
-        private CompositionGeometry _line12;
-        private ShapeVisual _visual1;
+        private float _trimStart;
 
-        private CompositionGeometry _line21;
-        private CompositionGeometry _line22;
-        private ShapeVisual _visual2;
+        private CompositionGeometry _line1;
+        private CompositionShape _shape1;
 
-        private ShapeVisual _pending;
-        private ShapeVisual _failed;
+        private CompositionGeometry _line2;
+        private CompositionShape _shape2;
 
-        private SpriteVisual _container;
+        private CompositionShape _pending;
+        private CompositionShape _failed;
+
+        private ShapeVisual _container;
 
         #region Stroke
 
@@ -630,8 +632,6 @@ namespace Telegram.Controls.Messages
                 InitializeTicks();
             }
 
-            var width = 18f;
-            var height = 10f;
             var stroke = 1.33f;
 
             static CompositionPath GetPending()
@@ -657,15 +657,11 @@ namespace Telegram.Controls.Messages
             shape11.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape11.IsStrokeNonScaling = true;
             shape11.StrokeStartCap = CompositionStrokeCap.Round;
+            shape11.StrokeEndCap = CompositionStrokeCap.Round;
+            shape11.Offset = new Vector2(2, 1);
 
-            var visual1 = BootStrapper.Current.Compositor.CreateShapeVisual();
-            visual1.Shapes.Add(shape11);
-            visual1.Size = new Vector2(width, height);
-            visual1.CenterPoint = new Vector3(width, height / 2f, 0);
-            visual1.Offset = new Vector3(0, 1, 0);
-
-            _pending = visual1;
-            _container.Children.InsertAtBottom(visual1);
+            _pending = shape11;
+            _container.Shapes.Add(shape11);
         }
 
         private void InitializeFailed()
@@ -675,8 +671,6 @@ namespace Telegram.Controls.Messages
                 InitializeTicks();
             }
 
-            var width = 18f;
-            var height = 10f;
             var stroke = 1.33f;
 
             static CompositionPath GetFailed()
@@ -691,8 +685,8 @@ namespace Telegram.Controls.Messages
                     builder.BeginFigure(new Vector2(9.5f, 3f));
                     builder.AddLine(new Vector2(9.5f, 5.5f + center));
                     builder.EndFigure(CanvasFigureLoop.Open);
-                    builder.BeginFigure(new Vector2(9.5f, 7f + center));
-                    builder.AddLine(new Vector2(9.5f, 8f + center));
+                    builder.BeginFigure(new Vector2(9.5f, 7f + stroke));
+                    builder.AddLine(new Vector2(9.5f, 7f + stroke + 0.001f));
                     builder.EndFigure(CanvasFigureLoop.Open);
                     result = CanvasGeometry.CreatePath(builder);
                 }
@@ -704,14 +698,11 @@ namespace Telegram.Controls.Messages
             shape11.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(Colors.Red);
             shape11.IsStrokeNonScaling = true;
             shape11.StrokeStartCap = CompositionStrokeCap.Round;
+            shape11.StrokeEndCap = CompositionStrokeCap.Round;
+            shape11.Offset = new Vector2(2, 0);
 
-            var visual1 = BootStrapper.Current.Compositor.CreateShapeVisual();
-            visual1.Shapes.Add(shape11);
-            visual1.Size = new Vector2(width, height + 1);
-            visual1.CenterPoint = new Vector3(width, height / 2f, 0);
-
-            _failed = visual1;
-            _container.Children.InsertAtBottom(visual1);
+            _failed = shape11;
+            _container.Shapes.Add(shape11);
         }
 
         private void InitializeTicks()
@@ -723,82 +714,71 @@ namespace Telegram.Controls.Messages
 
             var sqrt = MathF.Sqrt(2);
 
-            var side = stroke / sqrt / 2f;
-            var diagonal = height * sqrt;
-            var length = diagonal / 2f / sqrt;
-
+            var cap = stroke / 2f;
             var join = stroke / 2 * sqrt;
 
-            var line11 = BootStrapper.Current.Compositor.CreateLineGeometry();
-            var line12 = BootStrapper.Current.Compositor.CreateLineGeometry();
+            CompositionPath GetLine()
+            {
+                var right = width - distance;
+                var vertex = new Vector2(right - height + join, height - join);
+                var start = new Vector2(cap, vertex.Y - (vertex.X - cap));
+                var end = new Vector2(right - cap, cap);
 
-            line11.Start = new Vector2(width - height + side + join - length - distance, height - side - length);
-            line11.End = new Vector2(width - height + side + join - distance, height - side);
+                var trimStart = Vector2.Distance(start, vertex);
+                var trimEnd = Vector2.Distance(vertex, end);
 
-            line12.Start = new Vector2(width - height + side - distance, height - side);
-            line12.End = new Vector2(width - side - distance, side);
+                _trimStart = trimStart / (trimStart + trimEnd);
 
-            var shape11 = BootStrapper.Current.Compositor.CreateSpriteShape(line11);
-            shape11.StrokeThickness = stroke;
-            shape11.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
-            shape11.IsStrokeNonScaling = true;
-            shape11.StrokeStartCap = CompositionStrokeCap.Round;
+                CanvasGeometry result;
+                using (var builder = new CanvasPathBuilder(null))
+                {
+                    builder.BeginFigure(start);
+                    builder.AddLine(vertex);
+                    builder.AddLine(end);
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    result = CanvasGeometry.CreatePath(builder);
+                }
+                return new CompositionPath(result);
+            }
 
-            var shape12 = BootStrapper.Current.Compositor.CreateSpriteShape(line12);
-            shape12.StrokeThickness = stroke;
-            shape12.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
-            shape12.IsStrokeNonScaling = true;
-            shape12.StrokeEndCap = CompositionStrokeCap.Round;
+            var geometry = GetLine();
+            var line1 = BootStrapper.Current.Compositor.CreatePathGeometry(geometry);
+            var line2 = BootStrapper.Current.Compositor.CreatePathGeometry(geometry);
 
-            var visual1 = BootStrapper.Current.Compositor.CreateShapeVisual();
-            visual1.Shapes.Add(shape12);
-            visual1.Shapes.Add(shape11);
-            visual1.Size = new Vector2(width, height);
-            visual1.CenterPoint = new Vector3(width, height / 2f, 0);
-            visual1.Offset = new Vector3(0, 1, 0);
+            var shape1 = BootStrapper.Current.Compositor.CreateSpriteShape(line1);
+            shape1.StrokeThickness = stroke;
+            shape1.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
+            shape1.IsStrokeNonScaling = true;
+            shape1.StrokeStartCap = CompositionStrokeCap.Round;
+            shape1.StrokeEndCap = CompositionStrokeCap.Round;
+            shape1.StrokeLineJoin = CompositionStrokeLineJoin.Round;
+            shape1.CenterPoint = new Vector2(width, height / 2f);
+            shape1.Offset = new Vector2(2, 1);
 
+            var shape2 = BootStrapper.Current.Compositor.CreateSpriteShape(line2);
+            shape2.StrokeThickness = stroke;
+            shape2.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
+            shape2.IsStrokeNonScaling = true;
+            shape2.StrokeStartCap = CompositionStrokeCap.Round;
+            shape2.StrokeEndCap = CompositionStrokeCap.Round;
+            shape2.StrokeLineJoin = CompositionStrokeLineJoin.Round;
+            shape2.CenterPoint = new Vector2(width, height / 2f);
+            shape2.Offset = new Vector2(distance + 2, 1);
 
-            var line21 = BootStrapper.Current.Compositor.CreateLineGeometry();
-            var line22 = BootStrapper.Current.Compositor.CreateLineGeometry();
-
-            line21.Start = new Vector2(width - height + side + join - length, height - side - length);
-            line21.End = new Vector2(width - height + side + join, height - side);
-
-            line22.Start = new Vector2(width - height + side, height - side);
-            line22.End = new Vector2(width - side, side);
-
-            var shape21 = BootStrapper.Current.Compositor.CreateSpriteShape(line21);
-            shape21.StrokeThickness = stroke;
-            shape21.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
-            shape21.StrokeStartCap = CompositionStrokeCap.Round;
-
-            var shape22 = BootStrapper.Current.Compositor.CreateSpriteShape(line22);
-            shape22.StrokeThickness = stroke;
-            shape22.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
-            shape22.StrokeEndCap = CompositionStrokeCap.Round;
-
-            var visual2 = BootStrapper.Current.Compositor.CreateShapeVisual();
-            visual2.Shapes.Add(shape22);
-            visual2.Shapes.Add(shape21);
-            visual2.Size = new Vector2(width, height);
-            visual2.Offset = new Vector3(0, 1, 0);
-
-            var container = BootStrapper.Current.Compositor.CreateSpriteVisual();
-            container.Children.InsertAtTop(visual2);
-            container.Children.InsertAtTop(visual1);
-            container.Size = new Vector2(width, height + 1);
+            var container = BootStrapper.Current.Compositor.CreateShapeVisual();
+            container.Shapes.Add(shape2);
+            container.Shapes.Add(shape1);
+            container.Size = new Vector2(width + 2, height + 1);
             container.AnchorPoint = new Vector2(1, 0);
             container.Offset = new Vector3(0, 3, 0);
             container.RelativeOffsetAdjustment = new Vector3(1, 0, 0);
 
             ElementCompositionPreview.SetElementChildVisual(Label, container);
 
-            _line11 = line11;
-            _line12 = line12;
-            _line21 = line21;
-            _line22 = line22;
-            _visual1 = visual1;
-            _visual2 = visual2;
+            _line1 = line1;
+            _shape1 = shape1;
+            _line2 = line2;
+            _shape2 = shape2;
             _container = container;
         }
 
@@ -808,17 +788,17 @@ namespace Telegram.Controls.Messages
             {
                 if (_pending != null && state != MessageTicksState.Pending)
                 {
-                    _container.Children.Remove(_pending);
+                    _container.Shapes.Remove(_pending);
                     _pending = null;
                 }
                 else if (_failed != null && state != MessageTicksState.Failed)
                 {
-                    _container.Children.Remove(_failed);
+                    _container.Shapes.Remove(_failed);
                     _failed = null;
                 }
 
-                _visual1.IsVisible = visible;
-                _visual2.IsVisible = visible;
+                _line1.TrimStart = visible ? 0 : 1;
+                _line2.TrimStart = visible ? 0 : 1;
             }
 
             if (state is not MessageTicksState.Sent and not MessageTicksState.Read)
@@ -855,70 +835,57 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    _line11.TrimEnd = state == MessageTicksState.Read ? 1 : 0;
-                    _line12.TrimEnd = state == MessageTicksState.Read ? 1 : 0;
-
-                    _line21.TrimStart = state == MessageTicksState.Read ? 1 : 0;
+                    _line1.TrimEnd = state == MessageTicksState.Read ? 1 : 0;
+                    _line2.TrimStart = state == MessageTicksState.Read ? _trimStart : 0;
                 }
             }
         }
 
         private void AnimateTicks(bool read)
         {
-            var height = 10f;
-            var stroke = 2f;
-
-            var sqrt = (float)Math.Sqrt(2);
-
-            var diagonal = height * sqrt;
-            var length = diagonal / 2f / sqrt;
-
             var duration = 250;
-            var percent = stroke / length;
 
             var linear = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+            var start = duration - _trimStart * duration;
+            var ended = 400f;
 
-            var anim11 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            anim11.InsertKeyFrame(0, 0);
-            anim11.InsertKeyFrame(1, 1, linear);
-            anim11.Duration = TimeSpan.FromMilliseconds(duration - percent * duration);
-
-            var anim12 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            anim12.InsertKeyFrame(0, 0);
-            anim12.InsertKeyFrame(1, 1);
-            anim12.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            anim12.DelayTime = anim11.Duration;
-            anim12.Duration = TimeSpan.FromMilliseconds(400);
-
-            var anim22 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-            anim22.InsertKeyFrame(0, new Vector3(1));
-            anim22.InsertKeyFrame(0.2f, new Vector3(1.1f));
-            anim22.InsertKeyFrame(1, new Vector3(1));
-            anim22.Duration = anim11.Duration + anim12.Duration;
+            var scale = BootStrapper.Current.Compositor.CreateVector2KeyFrameAnimation();
+            scale.InsertKeyFrame(0, new Vector2(1));
+            scale.InsertKeyFrame(0.2f, new Vector2(1.1f));
+            scale.InsertKeyFrame(1, new Vector2(1));
+            scale.Duration = TimeSpan.FromMilliseconds(start + ended);
 
             if (read)
             {
-                _line11.StartAnimation("TrimEnd", anim11);
-                _line12.StartAnimation("TrimEnd", anim12);
-                _visual1.StartAnimation("Scale", anim22);
+                var trimEnd = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                trimEnd.InsertKeyFrame(0, 0);
+                trimEnd.InsertKeyFrame(start / (start + ended), _trimStart, linear);
+                trimEnd.InsertKeyFrame(1, 1);
+                trimEnd.Duration = TimeSpan.FromMilliseconds(start + ended);
 
-                var anim21 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-                anim21.InsertKeyFrame(0, 0);
-                anim21.InsertKeyFrame(1, 1, linear);
-                anim11.Duration = TimeSpan.FromMilliseconds(duration);
+                var trimStart = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                trimStart.InsertKeyFrame(0, 0);
+                trimStart.InsertKeyFrame(1, _trimStart, linear);
+                trimStart.Duration = TimeSpan.FromMilliseconds(start);
 
-                _line21.StartAnimation("TrimStart", anim21);
+                _line1.StartAnimation("TrimEnd", trimEnd);
+                _line2.StartAnimation("TrimStart", trimStart);
+                _shape1.StartAnimation("Scale", scale);
             }
             else
             {
-                _line11.TrimEnd = 0;
-                _line12.TrimEnd = 0;
+                var trimEnd = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                trimEnd.InsertKeyFrame(0, 0);
+                trimEnd.InsertKeyFrame(1, 1);
+                trimEnd.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                trimEnd.DelayTime = TimeSpan.FromMilliseconds(start);
+                trimEnd.Duration = TimeSpan.FromMilliseconds(ended);
 
-                _line21.TrimStart = 0;
+                _line1.TrimEnd = 0;
+                _line2.TrimStart = 0;
 
-                _line21.StartAnimation("TrimEnd", anim11);
-                _line22.StartAnimation("TrimEnd", anim12);
-                _visual2.StartAnimation("Scale", anim22);
+                _line2.StartAnimation("TrimEnd", trimEnd);
+                _shape2.StartAnimation("Scale", scale);
             }
         }
 
