@@ -50,12 +50,6 @@
                                                              Duration="0:0:0.25" />
                                         </Storyboard>
                                     </VisualTransition>
-                                    <VisualTransition From="Indeterminate"
-                                                      To="Determinate">
-                                        <Storyboard>
-                                            <FadeInThemeAnimation TargetName="EllipseGrid" />
-                                        </Storyboard>
-                                    </VisualTransition>
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="Determinate" />
                                 <VisualState x:Name="Updating" />
