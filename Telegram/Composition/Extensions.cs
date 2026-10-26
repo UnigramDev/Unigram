@@ -9,6 +9,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
