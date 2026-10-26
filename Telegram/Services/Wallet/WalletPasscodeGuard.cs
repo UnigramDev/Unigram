@@ -23,7 +23,7 @@ namespace Telegram.Services.Wallet
     /// The user is asked for the passcode once per account that needs it, which on one account -
     /// the normal case - is once.
     /// </remarks>
-    public sealed class WalletPasscodeGuard : IDisposable
+    public sealed partial class WalletPasscodeGuard : IDisposable
     {
         private readonly List<Held> _held = new List<Held>();
 

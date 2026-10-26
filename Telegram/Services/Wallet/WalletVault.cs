@@ -302,7 +302,7 @@ namespace Telegram.Services.Wallet
         /// declining an optional extra is not declining the whole - and a later
         /// <see cref="EnsureAsync"/> asks again.
         /// </remarks>
-        public sealed class WalletVaultLease : IDisposable
+        public sealed partial class WalletVaultLease : IDisposable
         {
             private readonly Func<Task<WalletVault>> _resolve;
             private readonly INavigationService _navigation;

@@ -214,7 +214,7 @@ namespace Telegram.Views.Settings
         }
     }
 
-    public class AccentCell : Grid, IMultipleElement
+    public partial class AccentCell : Grid, IMultipleElement
     {
         /// <summary>
         /// Whether a second click opens the editor, which is what the three dots of the selected

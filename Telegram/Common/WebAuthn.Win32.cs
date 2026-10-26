@@ -171,7 +171,7 @@ namespace Telegram.Common
         /// allocated together and freed together the moment it returns. With runtime marshalling
         /// off the alternative is not a string parameter, it is a MarshalDirectiveException.
         /// </summary>
-        private sealed class Utf16Strings : IDisposable
+        private sealed partial class Utf16Strings : IDisposable
         {
             private readonly List<IntPtr> _allocated = new();
 

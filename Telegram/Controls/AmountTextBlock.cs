@@ -878,7 +878,7 @@ namespace Telegram.Controls
         /// Walks a text layout and hands back one outline per character, at the origin, along with
         /// where in the layout each glyph of it sits.
         /// </summary>
-        private sealed class GlyphOutlineRenderer : ICanvasTextRenderer
+        private sealed partial class GlyphOutlineRenderer : ICanvasTextRenderer
         {
             private readonly ICanvasResourceCreator _device;
             private readonly Compositor _compositor;

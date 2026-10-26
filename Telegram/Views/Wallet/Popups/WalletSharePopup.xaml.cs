@@ -537,7 +537,7 @@ namespace Telegram.Views.Wallet.Popups
     /// The panel's own bounds are the path. Glyphs are drawn outside those bounds, so size it
     /// to the card plus the outset you want (a negative Margin over the card is the easy way).
     /// </summary>
-    public sealed class RingTextPresenter : Panel
+    public sealed partial class RingTextPresenter : Panel
     {
         private struct Cell
         {

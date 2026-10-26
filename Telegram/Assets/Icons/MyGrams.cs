@@ -59,7 +59,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 120
     // Duration:    2000.0 mS
-    public sealed class MyGrams
+    public sealed partial class MyGrams
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -169,7 +169,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class MyGrams_AnimatedVisual_UAPv15
+        sealed partial class MyGrams_AnimatedVisual_UAPv15
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
@@ -1876,7 +1876,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class MyGrams_AnimatedVisual_UAPv11
+        sealed partial class MyGrams_AnimatedVisual_UAPv11
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
@@ -3580,7 +3580,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class MyGrams_AnimatedVisual_UAPv8
+        sealed partial class MyGrams_AnimatedVisual_UAPv8
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
@@ -5066,7 +5066,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class MyGrams_AnimatedVisual_UAPv7
+        sealed partial class MyGrams_AnimatedVisual_UAPv7
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {

@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Wallet
 {
-    public class WalletViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle, IDelegable<IWalletDelegate>
+    public partial class WalletViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle, IDelegable<IWalletDelegate>
     {
         private readonly IWalletService _wallet;
 

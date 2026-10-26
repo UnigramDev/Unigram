@@ -376,7 +376,7 @@ namespace Telegram.ViewModels.Settings
         #endregion
     }
 
-    public class ThemeData : BindableBase
+    public partial class ThemeData : BindableBase
     {
         private readonly SettingsThemesViewModel _viewModel;
 

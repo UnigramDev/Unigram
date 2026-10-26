@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Media
 {
-    public class CheckBoxResources : ResourceDictionary
+    public partial class CheckBoxResources : ResourceDictionary
     {
         public CheckBoxResources()
         {
@@ -38,7 +38,7 @@ namespace Telegram.Controls.Media
         }
     }
 
-    public class RadioButtonResources : ResourceDictionary
+    public partial class RadioButtonResources : ResourceDictionary
     {
         public RadioButtonResources()
         {

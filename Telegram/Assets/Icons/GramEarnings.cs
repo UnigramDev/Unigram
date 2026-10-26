@@ -57,7 +57,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 120
     // Duration:    2000.0 mS
-    public sealed class GramEarnings
+    public sealed partial class GramEarnings
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -147,7 +147,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class GramEarnings_AnimatedVisual_UAPv15
+        sealed partial class GramEarnings_AnimatedVisual_UAPv15
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
@@ -542,7 +542,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class GramEarnings_AnimatedVisual_UAPv7
+        sealed partial class GramEarnings_AnimatedVisual_UAPv7
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {

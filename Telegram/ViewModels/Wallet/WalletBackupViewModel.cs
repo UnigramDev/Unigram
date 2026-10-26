@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Wallet
 {
-    public class WalletBackupViewModel : ViewModelBase
+    public partial class WalletBackupViewModel : ViewModelBase
     {
         private readonly IWalletService _wallet;
 
