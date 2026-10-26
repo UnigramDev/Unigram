@@ -16,6 +16,9 @@ using Markdig.Syntax.Inlines;
 using System.Collections.Generic;
 using System.Text;
 using Telegram.Td.Api;
+// XAML's Documents namespace has a Block and an Inline too, and a flavour may import it globally.
+using Block = Markdig.Syntax.Block;
+using Inline = Markdig.Syntax.Inlines.Inline;
 
 namespace Telegram.Common
 {
