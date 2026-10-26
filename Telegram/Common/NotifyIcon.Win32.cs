@@ -31,6 +31,7 @@ namespace Telegram.Common
     public unsafe partial class NotifyIcon
     {
         private const int WM_DESTROY = 0x0002;
+        private const int WM_NCDESTROY = 0x0082;
         private const int WM_USER = 0x0400;
         private const int WM_LBUTTONUP = 0x0202;
         private const int WM_RBUTTONUP = 0x0205;
@@ -50,6 +51,11 @@ namespace Telegram.Common
         private uint _taskbarRestart;
         private IntPtr _menu;
         private readonly WndProc _wndProcDelegate;
+
+        // The window calls into _wndProcDelegate for as long as it exists, whoever still holds
+        // this object - a Dispose posted from another thread arrives after the caller let go.
+        private GCHandle _keepAlive;
+        private IntPtr _className;
 
 
         private readonly Func<NotifyIconIcon, IntPtr> _resolve;
@@ -82,8 +88,9 @@ namespace Telegram.Common
 
         private void CreateMessageWindow()
         {
-            // Allocated for the life of the process: the class outlives every window made from it.
-            var className = Marshal.StringToHGlobalUni("TelegramNotifyIconWindow");
+            // Registered per icon and unregistered with its window: the class carries this
+            // instance's WndProc, so the next icon cannot reuse it.
+            var className = _className = Marshal.StringToHGlobalUni("TelegramNotifyIconWindow");
 
             WNDCLASS wc = new WNDCLASS
             {
@@ -107,6 +114,8 @@ namespace Telegram.Common
             {
                 throw new Exception($"CreateWindowEx failed with error: {Marshal.GetLastWin32Error()}");
             }
+
+            _keepAlive = GCHandle.Alloc(this);
 
             _taskbarRestart = NativeMethods.RegisterWindowMessage("TaskbarCreated");
         }
@@ -149,9 +158,8 @@ namespace Telegram.Common
             switch (msg)
             {
                 case WM_DISPOSE:
-                    RemoveTrayIcon();
-                    Closed?.Invoke(this, EventArgs.Empty);
-                    break;
+                    Destroy();
+                    return IntPtr.Zero;
 
                 case WM_USER:
                     if ((int)lParam == WM_RBUTTONUP)
@@ -179,7 +187,16 @@ namespace Telegram.Common
                     break;
 
                 case WM_DESTROY:
-                    Dispose();
+                    RemoveTrayIcon();
+                    NativeMethods.DestroyIcon(_iconHandle);
+                    NativeMethods.DestroyMenu(_menu);
+                    AppDomain.CurrentDomain.ProcessExit -= OnProcessExit;
+                    Closed?.Invoke(this, EventArgs.Empty);
+                    break;
+
+                case WM_NCDESTROY:
+                    _hwnd = IntPtr.Zero;
+                    _keepAlive.Free();
                     break;
             }
 
@@ -248,15 +265,37 @@ namespace Telegram.Common
 
         public void Dispose()
         {
-            var sameThread = NativeMethods.GetWindowThreadProcessId(_hwnd, out _) == NativeMethods.GetCurrentThreadId();
+            var hwnd = _hwnd;
+            if (hwnd == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var sameThread = NativeMethods.GetWindowThreadProcessId(hwnd, out _) == NativeMethods.GetCurrentThreadId();
             if (sameThread)
             {
-                RemoveTrayIcon();
-                Closed?.Invoke(this, EventArgs.Empty);
+                Destroy();
             }
             else
             {
-                NativeMethods.PostMessage(_hwnd, WM_DISPOSE, IntPtr.Zero, IntPtr.Zero);
+                NativeMethods.PostMessage(hwnd, WM_DISPOSE, IntPtr.Zero, IntPtr.Zero);
+            }
+        }
+
+        // WM_DESTROY takes the icon away and WM_NCDESTROY lets go of this object, both inside
+        // DestroyWindow; the class can only go once its last window has.
+        private void Destroy()
+        {
+            if (_hwnd != IntPtr.Zero)
+            {
+                NativeMethods.DestroyWindow(_hwnd);
+            }
+
+            if (_className != IntPtr.Zero)
+            {
+                NativeMethods.UnregisterClass(_className, IntPtr.Zero);
+                Marshal.FreeHGlobal(_className);
+                _className = IntPtr.Zero;
             }
         }
 
@@ -316,7 +355,7 @@ namespace Telegram.Common
                     hWnd = _hwnd,
                     uID = 1
                 };
-                NativeMethods.Shell_NotifyIcon(0x00000001, ref data); // NIM_DELETE
+                NativeMethods.Shell_NotifyIcon(0x00000002, ref data); // NIM_DELETE
             }
         }
 
@@ -387,6 +426,18 @@ namespace Telegram.Common
             [LibraryImport("user32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static partial bool DestroyIcon(IntPtr hIcon);
+
+            [LibraryImport("user32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool DestroyWindow(IntPtr hWnd);
+
+            [LibraryImport("user32.dll", EntryPoint = "UnregisterClassW", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool UnregisterClass(IntPtr lpClassName, IntPtr hInstance);
+
+            [LibraryImport("user32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static partial bool DestroyMenu(IntPtr hMenu);
 
             [LibraryImport("user32.dll", SetLastError = true)]
             public static partial IntPtr CreatePopupMenu();
