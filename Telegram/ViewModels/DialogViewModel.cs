@@ -4644,14 +4644,14 @@ namespace Telegram.ViewModels
 
         public async void ActivateInlineBot()
         {
-            if (InlineBotResults?.Button == null || _currentInlineBot == null)
+            if (InlineBotResults?.Button is not InlineQueryResultsButton button || _currentInlineBot is not User currentInlineBot)
             {
                 return;
             }
 
-            if (InlineBotResults.Button.Type is InlineQueryResultsButtonTypeStartBot startBot)
+            if (button.Type is InlineQueryResultsButtonTypeStartBot startBot)
             {
-                var response = await ClientService.SendAsync(new CreatePrivateChat(_currentInlineBot.Id, false));
+                var response = await ClientService.SendAsync(new CreatePrivateChat(currentInlineBot.Id, false));
                 if (response is Chat chat)
                 {
                     SetText(null, false);
@@ -4660,12 +4660,12 @@ namespace Telegram.ViewModels
                     NavigationService.NavigateToChat(chat);
                 }
             }
-            else if (InlineBotResults.Button.Type is InlineQueryResultsButtonTypeWebApp webApp && _currentInlineBot is User botUser)
+            else if (button.Type is InlineQueryResultsButtonTypeWebApp webApp)
             {
-                var response = await ClientService.SendAsync(new GetWebAppUrl(botUser.Id, webApp.Url, new WebAppOpenParameters(Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                var response = await ClientService.SendAsync(new GetWebAppUrl(currentInlineBot.Id, webApp.Url, new WebAppOpenParameters(Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                 if (response is WebAppUrl webAppUrl)
                 {
-                    NavigationService.NavigateToWebApp(botUser, webAppUrl, source: new OpenUrlSourceChat(ChatId, null));
+                    NavigationService.NavigateToWebApp(currentInlineBot, webAppUrl, source: new OpenUrlSourceChat(ChatId, null));
                 }
             }
         }
