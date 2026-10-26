@@ -10,7 +10,6 @@ using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -31,7 +30,7 @@ namespace Telegram.Controls.Messages.Content
         private HyperlinkButton Button;
         private ImageView Texture;
         private ProfilePicture PinPhoto;
-        private Path PinDot;
+        private XamlPath PinDot;
         private Grid LivePanel;
         private Run Title;
         private Run Subtitle;
@@ -45,7 +44,7 @@ namespace Telegram.Controls.Messages.Content
             Button = GetTemplateChild(nameof(Button)) as HyperlinkButton;
             Texture = GetTemplateChild(nameof(Texture)) as ImageView;
             PinPhoto = GetTemplateChild(nameof(PinPhoto)) as ProfilePicture;
-            PinDot = GetTemplateChild(nameof(PinDot)) as Path;
+            PinDot = GetTemplateChild(nameof(PinDot)) as XamlPath;
             LivePanel = GetTemplateChild(nameof(LivePanel)) as Grid;
             Title = GetTemplateChild(nameof(Title)) as Run;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as Run;

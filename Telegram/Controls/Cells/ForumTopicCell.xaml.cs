@@ -94,7 +94,7 @@ namespace Telegram.Controls.Cells
         private Span BriefLabel;
         private ImageBrush Minithumbnail;
         private Grid IconRoot;
-        private Path IconPath;
+        private XamlPath IconPath;
         private TextBlock IconText;
 
         private bool _templateApplied;
@@ -120,7 +120,7 @@ namespace Telegram.Controls.Cells
             BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Span;
             Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as ImageBrush;
             IconRoot = GetTemplateChild(nameof(IconRoot)) as Grid;
-            IconPath = GetTemplateChild(nameof(IconPath)) as Path;
+            IconPath = GetTemplateChild(nameof(IconPath)) as XamlPath;
             IconText = GetTemplateChild(nameof(IconText)) as TextBlock;
 
             _templateApplied = true;

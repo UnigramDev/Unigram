@@ -21,7 +21,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
@@ -127,7 +126,7 @@ namespace Telegram.Controls
         private FrameworkElement ImageThumb;
         private Image ImageViewer;
         private FrameworkElement PanSurface;
-        private Path Clip;
+        private XamlPath Clip;
         private Grid ThumbsContainer;
         private UIElement MajorGrid;
         private UIElement MinorGrid;
@@ -227,7 +226,7 @@ namespace Telegram.Controls
             MajorGrid = GetTemplateChild(nameof(MajorGrid)) as UIElement;
             MinorGrid = GetTemplateChild(nameof(MinorGrid)) as UIElement;
 
-            Clip = GetTemplateChild(nameof(Clip)) as Path;
+            Clip = GetTemplateChild(nameof(Clip)) as XamlPath;
 
             ImageThumb.RenderTransform = m_imageTransform = new MatrixTransform();
             LayoutRoot.Clip = m_layoutClip = new RectangleGeometry();

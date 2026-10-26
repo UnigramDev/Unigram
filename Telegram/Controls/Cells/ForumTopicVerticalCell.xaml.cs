@@ -66,10 +66,10 @@ namespace Telegram.Controls.Cells
         private Rectangle DropVisual;
         private TextBlock UnreadMentionsLabel;
         private Grid IconRoot;
-        private Path IconPath;
+        private XamlPath IconPath;
         private TextBlock IconText;
-        private Path General;
-        private Path AllTopics;
+        private XamlPath General;
+        private XamlPath AllTopics;
 
         private bool _templateApplied;
 
@@ -85,10 +85,10 @@ namespace Telegram.Controls.Cells
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
             IconRoot = GetTemplateChild(nameof(IconRoot)) as Grid;
-            IconPath = GetTemplateChild(nameof(IconPath)) as Path;
+            IconPath = GetTemplateChild(nameof(IconPath)) as XamlPath;
             IconText = GetTemplateChild(nameof(IconText)) as TextBlock;
-            General = GetTemplateChild(nameof(General)) as Path;
-            AllTopics = GetTemplateChild(nameof(AllTopics)) as Path;
+            General = GetTemplateChild(nameof(General)) as XamlPath;
+            AllTopics = GetTemplateChild(nameof(AllTopics)) as XamlPath;
 
             _templateApplied = true;
 

@@ -14,7 +14,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages
 {
@@ -145,7 +144,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public partial class DashedLine : Path
+    public partial class DashedLine : XamlPath
     {
         private readonly LineGeometry _geometry;
 

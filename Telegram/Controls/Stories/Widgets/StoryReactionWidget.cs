@@ -12,7 +12,6 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Stories.Widgets
 {
@@ -38,7 +37,7 @@ namespace Telegram.Controls.Stories.Widgets
 
         private readonly Canvas _canvas = new();
         private readonly Border _shadow = new();
-        private readonly Path _bubble = new();
+        private readonly XamlPath _bubble = new();
         private readonly Border _slot = new();
 
         private readonly EllipseGeometry _circle = new();

@@ -32,7 +32,7 @@ namespace Telegram.Controls
 
         private Canvas LayoutRoot;
         private Rectangle HitArea;
-        private Path Track;
+        private XamlPath Track;
         private Ellipse Thumb;
 
         private double _minimum = 0.05;
@@ -93,7 +93,7 @@ namespace Telegram.Controls
 
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Canvas;
             HitArea = GetTemplateChild(nameof(HitArea)) as Rectangle;
-            Track = GetTemplateChild(nameof(Track)) as Path;
+            Track = GetTemplateChild(nameof(Track)) as XamlPath;
             Thumb = GetTemplateChild(nameof(Thumb)) as Ellipse;
 
             LayoutRoot.SizeChanged += OnSizeChanged;

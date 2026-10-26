@@ -49,7 +49,7 @@ namespace Telegram.Controls.RichEditor
         private Rectangle SpoilerSwatch;
         private Rectangle MarkedSwatch;
 
-        private readonly List<Path> _decorationShapes = new();
+        private readonly List<XamlPath> _decorationShapes = new();
         private readonly List<(int Start, int End)> _markRanges = new();
         private Border NodeOutline;
         private Rectangle Caret;
@@ -1946,14 +1946,14 @@ namespace Telegram.Controls.RichEditor
                     lines[i] = transform.TransformBounds(lines[i]);
                 }
 
-                Path shape;
+                XamlPath shape;
                 if (used < _decorationShapes.Count)
                 {
                     shape = _decorationShapes[used];
                 }
                 else
                 {
-                    shape = new Path();
+                    shape = new XamlPath();
 
                     _decorationShapes.Add(shape);
                     Decorations.Children.Add(shape);

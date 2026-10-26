@@ -16,7 +16,6 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages
 {
@@ -253,7 +252,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public partial class SavedMessagesTagPath : Path
+    public partial class SavedMessagesTagPath : XamlPath
     {
         private readonly PathFigure _figure;
         private readonly EllipseGeometry _ellipse;

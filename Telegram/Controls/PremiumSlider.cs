@@ -19,7 +19,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
@@ -30,7 +29,7 @@ namespace Telegram.Controls
         private Border ValueThumb;
         private Canvas ThumbRoot;
         private Grid Thumb;
-        private Path Arrow;
+        private XamlPath Arrow;
 
         private Grid SliderContainer;
         private Thumb HorizontalThumb;
@@ -81,7 +80,7 @@ namespace Telegram.Controls
             ValueThumb = GetTemplateChild(nameof(ValueThumb)) as Border;
             ThumbRoot = GetTemplateChild(nameof(ThumbRoot)) as Canvas;
             Thumb = GetTemplateChild(nameof(Thumb)) as Grid;
-            Arrow = GetTemplateChild(nameof(Arrow)) as Path;
+            Arrow = GetTemplateChild(nameof(Arrow)) as XamlPath;
 
             ElementCompositionPreview.SetIsTranslationEnabled(Arrow, true);
 

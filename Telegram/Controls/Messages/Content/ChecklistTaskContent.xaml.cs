@@ -40,7 +40,7 @@ namespace Telegram.Controls.Messages.Content
         private Border PhotoRoot;
         private ProfilePicture Photo;
         private Ellipse CheckmarkNotDone;
-        private Path CheckmarkDone;
+        private XamlPath CheckmarkDone;
         private Border CheckmarkIcon;
         private FormattedTextBlock TextText;
         private TextBlock UserText;
@@ -50,7 +50,7 @@ namespace Telegram.Controls.Messages.Content
         {
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
             CheckmarkNotDone = GetTemplateChild(nameof(CheckmarkNotDone)) as Ellipse;
-            CheckmarkDone = GetTemplateChild(nameof(CheckmarkDone)) as Path;
+            CheckmarkDone = GetTemplateChild(nameof(CheckmarkDone)) as XamlPath;
             CheckmarkIcon = GetTemplateChild(nameof(CheckmarkIcon)) as Border;
             TextText = GetTemplateChild(nameof(TextText)) as FormattedTextBlock;
             UserText = GetTemplateChild(nameof(UserText)) as TextBlock;

@@ -10,7 +10,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -31,7 +30,7 @@ namespace Telegram.Controls.Messages.Content
         private HyperlinkButton Button;
         private ImageView Texture;
         private BitmapIcon VenueGlyph;
-        private Path VenueDot;
+        private XamlPath VenueDot;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -39,7 +38,7 @@ namespace Telegram.Controls.Messages.Content
             Button = GetTemplateChild(nameof(Button)) as HyperlinkButton;
             Texture = GetTemplateChild(nameof(Texture)) as ImageView;
             VenueGlyph = GetTemplateChild(nameof(VenueGlyph)) as BitmapIcon;
-            VenueDot = GetTemplateChild(nameof(VenueDot)) as Path;
+            VenueDot = GetTemplateChild(nameof(VenueDot)) as XamlPath;
 
             Button.Click += Button_Click;
 

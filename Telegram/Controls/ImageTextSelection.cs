@@ -21,7 +21,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
@@ -49,7 +48,7 @@ namespace Telegram.Controls
 
         private PathGeometry _geometry;
 
-        private Path Highlight;
+        private XamlPath Highlight;
         private Border Overlay;
 
         public ImageTextSelection()
@@ -70,7 +69,7 @@ namespace Telegram.Controls
         protected override void OnApplyTemplate()
         {
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
-            Highlight = GetTemplateChild(nameof(Highlight)) as Path;
+            Highlight = GetTemplateChild(nameof(Highlight)) as XamlPath;
             Highlight.Data = _geometry = new PathGeometry
             {
                 FillRule = FillRule.Nonzero

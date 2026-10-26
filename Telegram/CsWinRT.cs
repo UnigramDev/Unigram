@@ -22,6 +22,8 @@ global using TimeZone = Telegram.Td.Api.TimeZone;
 global using User = Telegram.Td.Api.User;
 global using VirtualKey = Windows.System.VirtualKey;
 global using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
+// Not Path: that name is System.IO.Path wherever the Shapes namespace is not imported.
+global using XamlPath = Windows.UI.Xaml.Shapes.Path;
 #if NET9_0_OR_GREATER
 using WinRT;
 
