@@ -13,6 +13,7 @@
 #include <atomic>
 #include <roerrorapi.h>
 #include <detours.h>
+#include <dxgi1_4.h>
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
@@ -931,6 +932,78 @@ namespace winrt::Telegram::Native::implementation
         }
 
         return 0;
+    }
+
+    void NativeUtils::GetMemoryUsage(uint64_t& privateCommit, uint64_t& sharedCommit, uint64_t& dedicatedVideo, uint64_t& sharedVideo, uint32_t& handles)
+    {
+        privateCommit = 0;
+        sharedCommit = 0;
+        dedicatedVideo = 0;
+        sharedVideo = 0;
+        handles = 0;
+
+        DWORD count;
+
+        if (GetProcessHandleCount(GetCurrentProcess(), &count))
+        {
+            handles = count;
+        }
+
+        // The query behind MemoryManager.AppMemoryUsage, which is TotalCommitUsage.
+        APP_MEMORY_INFORMATION info;
+
+        if (GetProcessInformation(GetCurrentProcess(), ProcessAppMemoryInfo, &info, sizeof(info)))
+        {
+            privateCommit = info.PrivateCommitUsage;
+            sharedCommit = info.TotalCommitUsage - info.PrivateCommitUsage;
+        }
+
+        // Every window's thread polls this, and a factory goes stale when an adapter is added,
+        // removed or reset.
+        static winrt::slim_mutex lock;
+        static winrt::com_ptr<IDXGIFactory4> factory;
+
+        winrt::slim_lock_guard const guard(lock);
+
+        if (factory == nullptr || !factory->IsCurrent())
+        {
+            factory = nullptr;
+
+            if (FAILED(CreateDXGIFactory2(0, IID_PPV_ARGS(factory.put()))))
+            {
+                return;
+            }
+        }
+
+        winrt::com_ptr<IDXGIAdapter1> adapter;
+
+        for (UINT i = 0; SUCCEEDED(factory->EnumAdapters1(i, adapter.put())); ++i)
+        {
+            auto adapter3 = adapter.try_as<IDXGIAdapter3>();
+            adapter = nullptr;
+
+            DXGI_QUERY_VIDEO_MEMORY_INFO local;
+            DXGI_QUERY_VIDEO_MEMORY_INFO nonLocal;
+
+            if (adapter3 == nullptr
+                || FAILED(adapter3->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &local))
+                || FAILED(adapter3->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_NON_LOCAL, &nonLocal)))
+            {
+                continue;
+            }
+
+            // An integrated GPU and WARP report system memory as their local group and no
+            // non-local one at all: that local usage is RAM, not VRAM.
+            if (nonLocal.Budget != 0)
+            {
+                dedicatedVideo += local.CurrentUsage;
+                sharedVideo += nonLocal.CurrentUsage;
+            }
+            else
+            {
+                sharedVideo += local.CurrentUsage;
+            }
+        }
     }
 
     winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring const& value)

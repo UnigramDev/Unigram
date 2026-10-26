@@ -37,6 +37,8 @@ namespace winrt::Telegram::Native::implementation
 
         static uint32_t GetLastInputTime();
 
+        static void GetMemoryUsage(uint64_t& privateCommit, uint64_t& sharedCommit, uint64_t& dedicatedVideo, uint64_t& sharedVideo, uint32_t& handles);
+
         static IXamlDirectObject AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize);
         static IXamlDirectObject AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, int32_t offset, int32_t length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize);
 

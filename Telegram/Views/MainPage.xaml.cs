@@ -65,6 +65,10 @@ namespace Telegram.Views
 
         private readonly DispatcherTimer _memoryUsageTimer;
         private double _memoryUsage;
+        private double _sharedCommitUsage;
+        private double _videoMemoryUsage;
+        private double _sharedMemoryUsage;
+        private uint _handles;
 
         // Leak watch. A step this big in the SETTLED heap is worth interrupting for; smaller ones
         // are indistinguishable from a big chat being opened.
@@ -223,19 +227,31 @@ namespace Telegram.Views
 
         private void MemoryUsageTimer_Tick(object sender, object e)
         {
-            var memoryUsage = Math.Round(Windows.System.MemoryManager.AppMemoryUsage / 1024.0 / 1024.0);
+            // AppMemoryUsage, the two commits summed, cannot tell a composition surface leak from a
+            // heap one: surfaces are shared with DWM, so they land in the shared commit, each with a
+            // handle.
+            NativeUtils.GetMemoryUsage(out ulong privateCommit, out ulong sharedCommit, out ulong dedicatedVideo, out ulong sharedVideo, out uint handles);
+
+            var memoryUsage = Math.Round(privateCommit / 1024.0 / 1024.0);
+            var sharedCommitUsage = Math.Round(sharedCommit / 1024.0 / 1024.0);
+            var videoMemoryUsage = Math.Round(dedicatedVideo / 1024.0 / 1024.0);
+            var sharedMemoryUsage = Math.Round(sharedVideo / 1024.0 / 1024.0);
             //var occurred = PollGC();
             var paused = PollPause();
 
             //double unmanaged = currentProcess.NativeHeap / 1024.0 / 1024.0;
             double managed = GC.GetTotalMemory(false) / 1024.0 / 1024.0; // currentProcess.ManagedHeap / 1024.0 / 1024.0;
 
-            if (memoryUsage != _memoryUsage)
+            if (memoryUsage != _memoryUsage || sharedCommitUsage != _sharedCommitUsage || videoMemoryUsage != _videoMemoryUsage || sharedMemoryUsage != _sharedMemoryUsage || handles != _handles)
             {
-                MemoryLabel.Text = $"- {memoryUsage:F0} MB, {managed:F0} MB" + paused /*+ occurred*/ + WindowContent.DebugInline();
+                MemoryLabel.Text = $"- {memoryUsage + sharedCommitUsage:F0} MB ({memoryUsage:F0} private, {sharedCommitUsage:F0} shared), resident {videoMemoryUsage:F0} VRAM + {sharedMemoryUsage:F0} RAM, {handles} handles, {managed:F0} MB" + paused /*+ occurred*/ + WindowContent.DebugInline();
             }
 
             _memoryUsage = memoryUsage;
+            _sharedCommitUsage = sharedCommitUsage;
+            _handles = handles;
+            _videoMemoryUsage = videoMemoryUsage;
+            _sharedMemoryUsage = sharedMemoryUsage;
 
             DetectMemoryStep();
         }
