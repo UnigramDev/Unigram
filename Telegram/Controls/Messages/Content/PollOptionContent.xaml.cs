@@ -25,6 +25,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
@@ -321,7 +322,7 @@ namespace Telegram.Controls.Messages.Content
                     Width = 32,
                     Height = 32,
                     FrameSize = new Windows.Foundation.Size(32, 32),
-                    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                    DecodeFrameType = DecodePixelType.Logical,
                     Source = DelayedFileSource.FromSticker(message.ClientService, sticker.Sticker)
                 };
             }

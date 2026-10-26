@@ -172,7 +172,7 @@ namespace Telegram.Controls
             anim.To = _animateTo;
             anim.Duration = TimeSpan.FromMilliseconds(333);
             anim.EnableDependentAnimation = true;
-            anim.EasingFunction = new Windows.UI.Xaml.Media.Animation.CubicEase
+            anim.EasingFunction = new CubicEase
             {
                 EasingMode = EasingMode.EaseInOut
             };

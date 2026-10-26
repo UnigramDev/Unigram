@@ -137,7 +137,7 @@ namespace Telegram.Views.Chats.Popups
 
         #endregion
 
-        private async void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void Purchase_Click(object sender, RoutedEventArgs e)
         {
             var selected = ScrollingHost.SelectedItems
                 .OfType<ChatBoostSlot>()

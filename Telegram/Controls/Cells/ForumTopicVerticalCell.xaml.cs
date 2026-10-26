@@ -23,6 +23,7 @@ using Telegram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
@@ -530,11 +531,11 @@ namespace Telegram.Controls.Cells
 
             if (_forumTopic != null)
             {
-                _ = viewModel.NavigatedToAsync(new ChatMessageTopic(chat.Id, new MessageTopicForum(_forumTopic.Info.ForumTopicId)), Windows.UI.Xaml.Navigation.NavigationMode.New, new NavigationState());
+                _ = viewModel.NavigatedToAsync(new ChatMessageTopic(chat.Id, new MessageTopicForum(_forumTopic.Info.ForumTopicId)), NavigationMode.New, new NavigationState());
             }
             else if (_directMessagesChatTopic != null)
             {
-                _ = viewModel.NavigatedToAsync(new ChatMessageTopic(chat.Id, new MessageTopicDirectMessages(_directMessagesChatTopic.Id)), Windows.UI.Xaml.Navigation.NavigationMode.New, new NavigationState());
+                _ = viewModel.NavigatedToAsync(new ChatMessageTopic(chat.Id, new MessageTopicDirectMessages(_directMessagesChatTopic.Id)), NavigationMode.New, new NavigationState());
             }
 
             // Unloaded doesn't fire for a view hosted in a flyout, so the flyout's own Closed

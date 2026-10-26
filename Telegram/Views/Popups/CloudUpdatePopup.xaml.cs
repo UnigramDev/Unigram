@@ -7,6 +7,7 @@
 
 using Telegram.Controls;
 using Windows.Management.Deployment;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
@@ -20,7 +21,7 @@ namespace Telegram.Views.Popups
             Closing += OnClosing;
         }
 
-        private void OnClosing(Windows.UI.Xaml.Controls.ContentDialog sender, Windows.UI.Xaml.Controls.ContentDialogClosingEventArgs args)
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             args.Cancel = _block;
         }

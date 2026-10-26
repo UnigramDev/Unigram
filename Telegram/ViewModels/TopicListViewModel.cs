@@ -945,7 +945,7 @@ namespace Telegram.ViewModels
                     if (_isEmpty != value)
                     {
                         _isEmpty = value;
-                        _viewModel?.Dispatcher?.Dispatch(NotifyChanged, Windows.System.DispatcherQueuePriority.Low);
+                        _viewModel?.Dispatcher?.Dispatch(NotifyChanged, DispatcherQueuePriority.Low);
                     }
                 }
             }
@@ -1258,7 +1258,7 @@ namespace Telegram.ViewModels
                     if (_isEmpty != value)
                     {
                         _isEmpty = value;
-                        _viewModel?.Dispatcher?.Dispatch(NotifyChanged, Windows.System.DispatcherQueuePriority.Low);
+                        _viewModel?.Dispatcher?.Dispatch(NotifyChanged, DispatcherQueuePriority.Low);
                     }
                 }
             }

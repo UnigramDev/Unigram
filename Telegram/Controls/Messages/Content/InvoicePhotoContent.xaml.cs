@@ -9,6 +9,7 @@ using System;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -78,7 +79,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (invoice.Currency == "XTR")
             {
-                Footer.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Footer.Visibility = Visibility.Collapsed;
             }
             else
             {

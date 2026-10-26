@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.ViewModels;
 using Windows.Media.Capture;
+using Windows.System;
 
 namespace Telegram.Common.Recording
 {
@@ -42,7 +43,7 @@ namespace Telegram.Common.Recording
         private readonly ChatRecordEngine _engine = new();
         private readonly DispatcherQueue _dispatcherQueue;
 
-        private Windows.System.DispatcherQueueTimer _limitTimer;
+        private DispatcherQueueTimer _limitTimer;
 
         // The engine reports from its own queue, so these are written off the UI thread and read
         // on it, exactly as they were when they lived in the button.
@@ -333,7 +334,7 @@ namespace Telegram.Common.Recording
             _limitTimer.Start();
         }
 
-        private void OnLimitTick(Windows.System.DispatcherQueueTimer sender, object args)
+        private void OnLimitTick(DispatcherQueueTimer sender, object args)
         {
             // Elapsed rather than a deadline, so that pausing pauses the limit too.
             if (Elapsed < MaximumVideoDuration)

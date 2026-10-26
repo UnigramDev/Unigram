@@ -13,6 +13,7 @@ using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -217,14 +218,14 @@ namespace Telegram.Views.Profile.Popups
                 anim1.InsertKeyFrame(_preview ? 0 : 1, 0, easeOut);
                 anim1.InsertKeyFrame(_preview ? 1 : 0, 1, easeOut);
                 anim1.Duration = TimeSpan.FromMilliseconds(333);
-                anim1.DelayBehavior = Windows.UI.Composition.AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                anim1.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
                 anim1.DelayTime = _preview ? TimeSpan.FromMilliseconds(267) : TimeSpan.Zero;
 
                 var anim2 = visual1.Compositor.CreateScalarKeyFrameAnimation();
                 anim2.InsertKeyFrame(_preview ? 1 : 0, 0, easeOut);
                 anim2.InsertKeyFrame(_preview ? 0 : 1, 1, easeOut);
                 anim2.Duration = TimeSpan.FromMilliseconds(333);
-                anim2.DelayBehavior = Windows.UI.Composition.AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                anim2.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
                 anim2.DelayTime = _preview ? TimeSpan.Zero : TimeSpan.FromMilliseconds(267);
 
                 visual1.StartAnimation("Opacity", anim1);

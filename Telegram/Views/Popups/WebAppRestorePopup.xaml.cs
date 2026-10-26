@@ -11,6 +11,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Services;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
@@ -83,7 +84,7 @@ namespace Telegram.Views.Popups
 
         #endregion
 
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Purchase_Click(object sender, RoutedEventArgs e)
         {
             Hide(ContentDialogResult.Primary);
         }

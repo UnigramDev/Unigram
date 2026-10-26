@@ -7,6 +7,7 @@
 
 using Telegram.Controls;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Calls.Popups
 {
@@ -30,7 +31,7 @@ namespace Telegram.Views.Calls.Popups
 
         public bool UsePortraitOrientation => RecordVideoCheck.IsChecked == true && UseLandscapeOrientation.IsChecked == false;
 
-        private void Label_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void Label_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key != Windows.System.VirtualKey.Enter)
             {

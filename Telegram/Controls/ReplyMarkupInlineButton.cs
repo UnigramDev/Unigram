@@ -251,7 +251,7 @@ namespace Telegram.Controls
                     control = panel.Children[index + 1] as Control;
                 }
 
-                control?.Focus(Windows.UI.Xaml.FocusState.Keyboard);
+                control?.Focus(FocusState.Keyboard);
             }
             if (e.Key is >= VirtualKey.Left and <= VirtualKey.Down && false)
             {

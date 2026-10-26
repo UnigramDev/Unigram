@@ -2489,7 +2489,7 @@ namespace Telegram.Controls
             // and a range off the end of what it shows can only be recognised against them: a
             // wrapped line ends at the word the control broke at, not at the width, and MaxLines
             // hides every line past its last one.
-            var wrap = TextWrapping != Windows.UI.Xaml.TextWrapping.NoWrap;
+            var wrap = TextWrapping != TextWrapping.NoWrap;
 
             if (_spanForInlines == null)
             {

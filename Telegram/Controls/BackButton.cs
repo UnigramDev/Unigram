@@ -7,6 +7,7 @@
 
 using Telegram.Common;
 using Telegram.Navigation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
@@ -21,7 +22,7 @@ namespace Telegram.Controls
 
         public bool IsClickHandled { get; set; }
 
-        private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnClick(object sender, RoutedEventArgs e)
         {
             if (IsClickHandled)
             {

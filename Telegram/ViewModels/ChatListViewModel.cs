@@ -19,6 +19,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
@@ -772,7 +773,7 @@ namespace Telegram.ViewModels
                     if (_isEmpty != value)
                     {
                         _isEmpty = value;
-                        _viewModel.Dispatcher?.Dispatch(NotifyChanged, Windows.System.DispatcherQueuePriority.Low);
+                        _viewModel.Dispatcher?.Dispatch(NotifyChanged, DispatcherQueuePriority.Low);
                     }
                 }
             }

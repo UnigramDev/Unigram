@@ -20,6 +20,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Chats
@@ -141,7 +142,7 @@ namespace Telegram.Controls.Chats
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(11, 3, 11, 5),
                 VerticalAlignment = VerticalAlignment.Center,
-                HyperlinkStyle = Windows.UI.Xaml.Documents.UnderlineStyle.None
+                HyperlinkStyle = UnderlineStyle.None
             };
 
             grid.Children.Add(block);

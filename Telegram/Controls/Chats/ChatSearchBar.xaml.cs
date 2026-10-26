@@ -15,6 +15,7 @@ using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -118,7 +119,7 @@ namespace Telegram.Controls.Chats
 
             ElementCompositionPreview.SetIsTranslationEnabled(_viewClipperOuter, true);
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;
@@ -191,7 +192,7 @@ namespace Telegram.Controls.Chats
             ElementCompositionPreview.SetIsTranslationEnabled(SecondaryRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(_viewDate, true);
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;

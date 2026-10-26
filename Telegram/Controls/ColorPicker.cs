@@ -12,6 +12,7 @@ using Windows.UI;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -85,7 +86,7 @@ namespace Telegram.Controls
             UpdateSpectrumPointer(new Point(_color.H / 360 * e.NewSize.Width, (1 - _color.S) * e.NewSize.Height), false);
         }
 
-        private void OnValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        private void OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             _value = e.NewValue / 100;
             _current = new HSV(_color.H, _color.S, _value).ToRGB(_alpha);

@@ -39,6 +39,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views
@@ -390,7 +391,7 @@ namespace Telegram.Views
                     Width = 20,
                     Height = 20,
                     FrameSize = new Windows.Foundation.Size(20, 20),
-                    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                    DecodeFrameType = DecodePixelType.Logical,
                     IsViewportAware = true,
                     LoopCount = 3,
                     Margin = new Thickness(4, 0, 0, 0),

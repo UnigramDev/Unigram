@@ -9,6 +9,7 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
@@ -115,20 +116,20 @@ namespace Telegram.Controls.Cells
             if (location != null)
             {
                 Image.SetSource(clientService, location, 48, 48, 0);
-                Image.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                Photo.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Image.Visibility = Visibility.Visible;
+                Photo.Visibility = Visibility.Collapsed;
             }
             else if (file != null)
             {
                 Photo.Source = new ProfilePictureSourcePhoto(clientService, result.GetHashCode(), file, minithumbnail);
-                Photo.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                Image.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Photo.Visibility = Visibility.Visible;
+                Image.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Photo.Source = ProfilePictureSourceText.GetNameForChat(Title.Text, Title.Text.GetHashCode());
-                Photo.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                Image.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Photo.Visibility = Visibility.Visible;
+                Image.Visibility = Visibility.Collapsed;
             }
         }
     }

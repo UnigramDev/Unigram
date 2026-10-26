@@ -39,6 +39,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
@@ -1859,7 +1860,7 @@ namespace Telegram.Controls
             player.IsCachingEnabled = true;
             player.IsHitTestVisible = false;
             player.FrameSize = new Size(320, 320);
-            player.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+            player.DecodeFrameType = DecodePixelType.Logical;
             player.AutoPlay = true;
             player.Source = new DelayedFileSource(ViewModel.ClientService, effect.StickerValue);
             player.RenderTransformOrigin = new Point(0.5, 0.5);
@@ -1916,7 +1917,7 @@ namespace Telegram.Controls
                 pippo.IsCachingEnabled = true;
                 pippo.IsHitTestVisible = false;
                 pippo.FrameSize = new Size(size, size);
-                pippo.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+                pippo.DecodeFrameType = DecodePixelType.Logical;
                 pippo.AutoPlay = true;
                 pippo.Source = new DelayedFileSource(ViewModel.ClientService, digit.StickerValue);
 
@@ -1964,7 +1965,7 @@ namespace Telegram.Controls
             popup.XamlRoot = XamlRoot;
             popup.IsOpen = true;
 
-            var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+            var dispatcher = DispatcherQueue.GetForCurrentThread();
 
             player.LoopCompleted += (s, args) =>
             {

@@ -313,7 +313,7 @@ namespace Telegram.Controls.Stories
             //AutomationProperties.SetName(this, Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, interaction.Type));
 
             Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
-            Count.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            Count.Visibility = Visibility.Visible;
 
             if (_defaultValue != null)
             {
@@ -404,7 +404,7 @@ namespace Telegram.Controls.Stories
             //base.OnToggle();
         }
 
-        private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnClick(object sender, RoutedEventArgs e)
         {
             var story = _story;
             if (story == null || Presenter == null)
@@ -455,7 +455,7 @@ namespace Telegram.Controls.Stories
                         var presenter = Presenter;
                         var popup = Overlay;
 
-                        var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+                        var dispatcher = DispatcherQueue.GetForCurrentThread();
 
                         var aroundView = new AnimatedImage();
                         aroundView.Width = FrameSize * 3;
@@ -504,7 +504,7 @@ namespace Telegram.Controls.Stories
                 var presenter = Presenter;
                 var popup = Overlay;
 
-                var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+                var dispatcher = DispatcherQueue.GetForCurrentThread();
 
                 var centerView = new AnimatedImage();
                 centerView.Width = FrameSize;

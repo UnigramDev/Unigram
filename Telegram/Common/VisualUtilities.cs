@@ -143,7 +143,7 @@ namespace Telegram.Common
 
             var compositor = visual.Compositor;
 
-            var batch = compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Opacity = newValue ? 1 : 0;

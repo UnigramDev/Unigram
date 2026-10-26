@@ -321,7 +321,7 @@ namespace Telegram.Controls.Stories
             ElementCompositionPreview.SetIsTranslationEnabled(SendRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Emoji, true);
 
-            var batch = visualShow.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visualShow.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 if (_sendGeneration != generation)

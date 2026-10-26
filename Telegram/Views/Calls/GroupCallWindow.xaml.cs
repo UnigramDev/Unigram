@@ -1915,7 +1915,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void Participant_ContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+        private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
 
@@ -2202,7 +2202,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void Viewport_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(PointerListener);
             if (point.Position.X > PointerListener.ActualWidth - ColumnWidth && Viewport.Mode == ParticipantsGridMode.Docked)
@@ -2219,7 +2219,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void Viewport_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             ShowHideInfo(false);
         }

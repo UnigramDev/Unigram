@@ -286,18 +286,18 @@ namespace Telegram.Views.Tabbed
             };
         }
 
-        private Windows.UI.Xaml.Controls.IconElement GetFaviconSource2(string faviconUri)
+        private IconElement GetFaviconSource2(string faviconUri)
         {
             if (Uri.TryCreate(faviconUri, UriKind.Absolute, out Uri favicon))
             {
-                return new Windows.UI.Xaml.Controls.BitmapIcon
+                return new BitmapIcon
                 {
                     UriSource = favicon,
                     ShowAsMonochrome = false
                 };
             }
 
-            return new Windows.UI.Xaml.Controls.FontIcon
+            return new FontIcon
             {
                 Glyph = "\uE774",
                 FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily

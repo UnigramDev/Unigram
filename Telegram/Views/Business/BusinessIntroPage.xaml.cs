@@ -13,6 +13,7 @@ using Telegram.ViewModels.Business;
 using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
@@ -77,7 +78,7 @@ namespace Telegram.Views.Business
                     Width = 32,
                     Height = 32,
                     FrameSize = new Windows.Foundation.Size(32, 32),
-                    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                    DecodeFrameType = DecodePixelType.Logical,
                     Source = new DelayedFileSource(ViewModel.ClientService, sticker)
                 };
             }

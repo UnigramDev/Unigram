@@ -32,6 +32,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Gifts.Popups
 {
@@ -472,7 +473,7 @@ namespace Telegram.Views.Gifts.Popups
                         Width = 64,
                         Height = 64,
                         FrameSize = new Windows.Foundation.Size(64, 64),
-                        DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                        DecodeFrameType = DecodePixelType.Logical,
                         Source = DelayedFileSource.FromSticker(_clientService, upgraded.Gift.Model.Sticker)
                     }
                 };
@@ -797,7 +798,7 @@ namespace Telegram.Views.Gifts.Popups
                     Height = 48,
                     FrameSize = new Windows.Foundation.Size(48, 48),
                     LoopCount = 1,
-                    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                    DecodeFrameType = DecodePixelType.Logical,
                     IsCachingEnabled = false,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
@@ -848,7 +849,7 @@ namespace Telegram.Views.Gifts.Popups
                         Width = 64,
                         Height = 64,
                         FrameSize = new Windows.Foundation.Size(64, 64),
-                        DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                        DecodeFrameType = DecodePixelType.Logical,
                         Source = DelayedFileSource.FromSticker(_clientService, success.Gift.Model.Sticker)
                     }
                 };

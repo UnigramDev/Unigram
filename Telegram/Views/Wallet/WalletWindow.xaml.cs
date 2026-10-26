@@ -616,7 +616,7 @@ namespace Telegram.Views.Wallet
             translation.InsertKeyFrame(0, 0);
             translation.InsertKeyFrame(1, HeaderTabs.ActualSize.Y + margin);
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Properties.InsertVector3("Translation", Vector3.Zero);

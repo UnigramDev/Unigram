@@ -2954,7 +2954,7 @@ namespace Telegram.Views
         {
             if (SendEffectInteractions.Children.Count < 4)
             {
-                var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+                var dispatcher = DispatcherQueue.GetForCurrentThread();
 
                 var height = 180 * ViewModel.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 var player = new AnimatedImage();

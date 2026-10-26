@@ -20,6 +20,7 @@ using Telegram.ViewModels.Folders;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -335,7 +336,7 @@ namespace Telegram.Views.Folders
             ViewModel.Title = TitleField.GetFormattedText();
         }
 
-        private void ToggleAnimations_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private void ToggleAnimations_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
             ViewModel.AnimateCustomEmoji = !ViewModel.AnimateCustomEmoji;
         }

@@ -7,6 +7,7 @@
 
 using System;
 using Telegram.Controls.Media;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -110,7 +111,7 @@ namespace Telegram.Controls
             opacity.InsertKeyFrame(1, newValue ? 1 : 0);
             opacity.Duration = Constants.FastAnimation;
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 if (_tracker == tracker)

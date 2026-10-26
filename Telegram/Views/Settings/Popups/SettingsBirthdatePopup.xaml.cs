@@ -121,7 +121,7 @@ namespace Telegram.Views.Settings.Popups
             DefaultButton = ContentDialogButton.Primary;
         }
 
-        private void DayHost_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void DayHost_Loaded(object sender, RoutedEventArgs e)
         {
             var scrollingHost = DayHost.GetScrollViewer();
             if (scrollingHost != null)
@@ -132,7 +132,7 @@ namespace Telegram.Views.Settings.Popups
             DayHost_SelectionChanged(sender, null);
         }
 
-        private void MonthHost_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void MonthHost_Loaded(object sender, RoutedEventArgs e)
         {
             var scrollingHost = MonthHost.GetScrollViewer();
             if (scrollingHost != null)

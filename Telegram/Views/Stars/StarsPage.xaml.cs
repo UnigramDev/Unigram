@@ -117,12 +117,12 @@ namespace Telegram.Views.Stars
             }
         }
 
-        private void Buy_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Buy_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigationService.ShowPopupAsync(new BuyPopup());
         }
 
-        private async void Gift_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void Gift_Click(object sender, RoutedEventArgs e)
         {
             var user = await ChooseChatsPopup.PickUserAsync(ViewModel.ClientService, ViewModel.NavigationService, Strings.GiftStarsTitle, false);
             if (user != null)

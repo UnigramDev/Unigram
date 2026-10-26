@@ -85,12 +85,12 @@ namespace Telegram.Views.Settings.Popups
             Icon.Play();
         }
 
-        private void AcceptCallsPanel_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void AcceptCallsPanel_Click(object sender, RoutedEventArgs e)
         {
             AcceptCalls.IsChecked = AcceptCalls.IsChecked != true;
         }
 
-        private void AcceptSecretChatsPanel_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void AcceptSecretChatsPanel_Click(object sender, RoutedEventArgs e)
         {
             AcceptSecretChats.IsChecked = AcceptSecretChats.IsChecked != true;
         }

@@ -8,6 +8,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -18,7 +19,7 @@ namespace Telegram.Controls
     {
         public static bool IsConnected(this FrameworkElement element)
         {
-            return Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(element) != null;
+            return VisualTreeHelper.GetParent(element) != null;
         }
 
         public static DependencyObject GetParent(this FrameworkElement element)
@@ -26,7 +27,7 @@ namespace Telegram.Controls
             try
             {
                 // element.Parent seems to throw E_FAIL at times
-                return element.Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(element);
+                return element.Parent ?? VisualTreeHelper.GetParent(element);
             }
             catch
             {

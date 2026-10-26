@@ -13,6 +13,7 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -73,8 +74,8 @@ namespace Telegram.Controls.Gifts
             var backgroundShape = compositor.CreateSpriteShape(background);
             backgroundShape.StrokeBrush = compositor.CreateColorBrush(Color.FromArgb(0x55, 255, 255, 255));
             backgroundShape.StrokeThickness = 2;
-            backgroundShape.StrokeStartCap = Windows.UI.Composition.CompositionStrokeCap.Round;
-            backgroundShape.StrokeEndCap = Windows.UI.Composition.CompositionStrokeCap.Round;
+            backgroundShape.StrokeStartCap = CompositionStrokeCap.Round;
+            backgroundShape.StrokeEndCap = CompositionStrokeCap.Round;
             backgroundShape.RotationAngleInDegrees = 45 + 90;
             backgroundShape.CenterPoint = new Vector2(16);
 
@@ -87,8 +88,8 @@ namespace Telegram.Controls.Gifts
             var foregroundShape = compositor.CreateSpriteShape(foreground);
             foregroundShape.StrokeBrush = compositor.CreateColorBrush(Color.FromArgb(255, 255, 255, 255));
             foregroundShape.StrokeThickness = 2;
-            foregroundShape.StrokeStartCap = Windows.UI.Composition.CompositionStrokeCap.Round;
-            foregroundShape.StrokeEndCap = Windows.UI.Composition.CompositionStrokeCap.Round;
+            foregroundShape.StrokeStartCap = CompositionStrokeCap.Round;
+            foregroundShape.StrokeEndCap = CompositionStrokeCap.Round;
             foregroundShape.RotationAngleInDegrees = 45 + 90;
             foregroundShape.CenterPoint = new Vector2(16);
 

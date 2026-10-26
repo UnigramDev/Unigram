@@ -2126,7 +2126,7 @@ namespace Telegram.Controls.Stories
                     Height = 2,
                     RadiusX = 1,
                     RadiusY = 1,
-                    Fill = new SolidColorBrush(Windows.UI.Colors.White)
+                    Fill = new SolidColorBrush(Colors.White)
                     {
                         Opacity = i < index ? 1 : 0.3
                     }
@@ -2145,7 +2145,7 @@ namespace Telegram.Controls.Stories
 
                     var shape2 = compositor.CreateSpriteShape();
                     shape2.Geometry = ellipse;
-                    shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                    shape2.FillBrush = compositor.CreateColorBrush(Colors.White);
 
                     var visual = compositor.CreateShapeVisual();
                     visual.Shapes.Add(shape2);

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Telegram.Services.Wallet;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -49,7 +50,7 @@ namespace Telegram.Controls
             {
                 // The typed part is laid out invisibly so the completion starts exactly where the
                 // real text ends.
-                _typed = new Run { Foreground = new SolidColorBrush(Windows.UI.Colors.Transparent) };
+                _typed = new Run { Foreground = new SolidColorBrush(Colors.Transparent) };
                 _completion = new Run();
 
                 presenter.Inlines.Add(_typed);

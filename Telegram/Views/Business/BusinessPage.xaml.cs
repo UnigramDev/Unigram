@@ -217,12 +217,12 @@ namespace Telegram.Views.Business
                 : Strings.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
         }
 
-        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
         {
             VisualUtilities.DropShadow(PurchaseShadow);
         }
 
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Purchase_Click(object sender, RoutedEventArgs e)
         {
             //Hide();
             //ViewModel.Purchase();

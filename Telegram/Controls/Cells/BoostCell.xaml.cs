@@ -10,6 +10,7 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
@@ -76,11 +77,11 @@ namespace Telegram.Controls.Cells
                 if (boost.Count > 1)
                 {
                     BoostCount.Text = Icons.Boosters12 + boost.Count;
-                    BoostCount.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    BoostCount.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    BoostCount.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    BoostCount.Visibility = Visibility.Collapsed;
                 }
             }
 

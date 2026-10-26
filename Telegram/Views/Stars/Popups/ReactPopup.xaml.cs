@@ -216,7 +216,7 @@ namespace Telegram.Views.Stars.Popups
             }
         }
 
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Purchase_Click(object sender, RoutedEventArgs e)
         {
             Hide(ContentDialogResult.Primary);
         }

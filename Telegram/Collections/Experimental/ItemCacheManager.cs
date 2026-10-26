@@ -73,7 +73,7 @@ namespace Telegram.Collections
             _fetchDataCallback = callback;
             _maxBatchFetchSize = batchsize;
             //set up a timer that is used to delay fetching data so that we can catch up if the list is scrolling fast
-            _timer = new Windows.UI.Xaml.DispatcherTimer();
+            _timer = new DispatcherTimer();
             _timer.Tick += (sender, args) =>
             {
                 FetchData();

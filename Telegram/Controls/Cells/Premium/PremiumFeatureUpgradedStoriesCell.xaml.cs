@@ -10,6 +10,7 @@ using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.Devices.Input;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -190,7 +191,7 @@ namespace Telegram.Controls.Cells.Premium
 
         private void OnPointerWheelChangedEvent(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse && sender is ScrollViewer scrollingHost && !_viewChanged)
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse && sender is ScrollViewer scrollingHost && !_viewChanged)
             {
                 var currentPoint = e.GetCurrentPoint(this);
                 if (currentPoint.Properties.MouseWheelDelta > 0 && scrollingHost.VerticalOffset == 0)

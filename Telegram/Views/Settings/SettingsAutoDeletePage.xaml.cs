@@ -7,6 +7,7 @@
 
 using Telegram.ViewModels.Settings;
 using Telegram.Views.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings
@@ -21,7 +22,7 @@ namespace Telegram.Views.Settings
             Title = Strings.AutoDeleteMessages;
         }
 
-        private void OnChecked(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnChecked(object sender, RoutedEventArgs e)
         {
             if (sender is RadioButton button && button.DataContext is SettingsOptionItem<int> option)
             {

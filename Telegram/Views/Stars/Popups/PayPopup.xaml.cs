@@ -12,6 +12,7 @@ using Telegram.Controls.Media;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stars;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -63,7 +64,7 @@ namespace Telegram.Views.Stars.Popups
                     text = string.Format(Strings.StarsConfirmPurchaseMedia2, photosText, videosText, chat.Title, Locale.Declension(Strings.R.StarsCount, stars.StarCount).ToLower());
                 }
 
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                MediaPreview.Visibility = Visibility.Visible;
                 Particles.Source = new ParticlesImageSource();
 
                 UpdateMedia(ViewModel.Media[0], Thumbnail1, ref _media1Controller);
@@ -72,20 +73,20 @@ namespace Telegram.Views.Stars.Popups
                 {
                     UpdateMedia(ViewModel.Media[1], Thumbnail2, ref _media2Controller);
 
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    Media2.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
-                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                    Media2.Visibility = Visibility.Collapsed;
+                    Media1.HorizontalAlignment = HorizontalAlignment.Center;
+                    Media1.HorizontalAlignment = HorizontalAlignment.Center;
                 }
             }
             else
             {
                 text = Locale.Declension(Strings.R.StarsConfirmPurchaseText, stars.StarCount, ViewModel.PaymentForm.ProductInfo.Title, user.FullName());
 
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Visibility.Collapsed;
 
                 var small = ViewModel.PaymentForm.ProductInfo.Photo?.GetSmall();
                 if (small != null)
@@ -105,7 +106,7 @@ namespace Telegram.Views.Stars.Popups
 
         private bool _submitted;
 
-        private async void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void Purchase_Click(object sender, RoutedEventArgs e)
         {
             if (_submitted)
             {
@@ -114,7 +115,7 @@ namespace Telegram.Views.Stars.Popups
 
             _submitted = true;
 
-            PurchaseRing.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            PurchaseRing.Visibility = Visibility.Visible;
 
             var visual1 = ElementComposition.GetElementVisual(PurchaseText);
             var visual2 = ElementComposition.GetElementVisual(PurchaseRing);

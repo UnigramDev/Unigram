@@ -7,6 +7,7 @@
 
 using System.Diagnostics;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Common
 {
@@ -39,7 +40,7 @@ namespace Telegram.Common
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
             var element = sender as FrameworkElement;
 
-            var parent = element.Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(element);
+            var parent = element.Parent ?? VisualTreeHelper.GetParent(element);
             if (parent != null && !_loaded)
             {
                 _loaded = true;

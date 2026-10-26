@@ -17,6 +17,7 @@ using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
@@ -483,7 +484,7 @@ postEvent: function(eventType, eventData) {
             }
         }
 
-        private void OnPointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             var pointer = e.GetCurrentPoint(this);
             if (pointer.Properties.IsXButton1Pressed || pointer.Properties.IsXButton2Pressed)

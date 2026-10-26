@@ -12,6 +12,7 @@ using Telegram.Composition;
 using Telegram.Navigation;
 using Windows.Devices.Input;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -70,7 +71,7 @@ namespace Telegram.Controls
             if (_trackerOwner == null)
             {
                 _hitTest = BootStrapper.Current.Compositor.CreateSpriteVisual();
-                _hitTest.Brush = BootStrapper.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                _hitTest.Brush = BootStrapper.Current.Compositor.CreateColorBrush(Colors.Transparent);
 
                 if (ApiInfo.IsWindows11)
                 {

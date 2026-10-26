@@ -20,6 +20,7 @@ using Windows.Graphics;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -687,7 +688,7 @@ namespace Telegram.Common
                     }
                     else
                     {
-                        session.Clear(Windows.UI.Colors.Black);
+                        session.Clear(Colors.Black);
                     }
 
                     session.Transform = matrix;

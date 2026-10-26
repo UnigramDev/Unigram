@@ -16,6 +16,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
@@ -31,7 +32,7 @@ namespace Telegram.ViewModels
             {
                 Source = Items,
                 IsSourceGrouped = true,
-                ItemsPath = new Windows.UI.Xaml.PropertyPath("Stickers")
+                ItemsPath = new PropertyPath("Stickers")
             };
         }
 

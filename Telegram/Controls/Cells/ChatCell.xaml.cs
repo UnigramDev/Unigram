@@ -39,6 +39,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
@@ -2158,7 +2159,7 @@ namespace Telegram.Controls.Cells
             viewModel.NavigationService = service;
             viewModel.Dispatcher = service.Dispatcher;
             chatView.Activate(viewModel);
-            _ = viewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, new NavigationState());
+            _ = viewModel.NavigatedToAsync(chat.Id, NavigationMode.New, new NavigationState());
 
             // Unloaded doesn't fire for a view hosted in a flyout, so the flyout's own Closed
             // is what tears the preview down; Unloaded stays subscribed in case it does arrive

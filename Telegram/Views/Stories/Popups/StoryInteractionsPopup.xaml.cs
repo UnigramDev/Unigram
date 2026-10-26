@@ -17,6 +17,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
@@ -237,7 +238,7 @@ namespace Telegram.Views.Stories.Popups
                 Text = Strings.StoryViewsSortDescription
             });
 
-            flyout.ShowAt(sender as FrameworkElement, Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.BottomEdgeAlignedRight);
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private bool _skeletonCollapsed = true;

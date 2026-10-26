@@ -33,6 +33,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Popups
@@ -1473,7 +1474,7 @@ namespace Telegram.Views.Popups
                 header.ItemTemplate = BootStrapper.Current.Resources["FolderPickerTemplate"] as DataTemplate;
                 header.ContainerContentChanging += Header_ContainerContentChanging;
                 header.Padding = new Thickness(12, 0, 12, 0);
-                header.ItemContainerTransitions = new Windows.UI.Xaml.Media.Animation.TransitionCollection();
+                header.ItemContainerTransitions = new TransitionCollection();
 
                 foreach (var folder in target.OfType<FolderFlag>())
                 {

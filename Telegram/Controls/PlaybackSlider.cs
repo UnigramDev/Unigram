@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -245,7 +246,7 @@ namespace Telegram.Controls
             var toolTip = ElementComposition.GetElementVisual(ThumbToolTip);
             toolTip.StartAnimation("Offset", toolTipAnimation);
 
-            ThumbToolTip.Shadow = new Windows.UI.Xaml.Media.ThemeShadow();
+            ThumbToolTip.Shadow = new ThemeShadow();
             ThumbToolTip.Translation = new System.Numerics.Vector3(0, 0, 32);
         }
 

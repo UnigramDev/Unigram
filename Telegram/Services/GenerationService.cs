@@ -30,6 +30,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Services
@@ -658,7 +659,7 @@ namespace Telegram.Services
 
                 using (var session = target.CreateDrawingSession())
                 {
-                    session.Clear(Windows.UI.Colors.Transparent);
+                    session.Clear(Colors.Transparent);
                     session.DrawImage(bitmap, new Rect(0, 0, textSide, textSide), bitmap.Bounds, 1, CanvasImageInterpolation.HighQualityCubic);
                 }
 
@@ -764,7 +765,7 @@ namespace Telegram.Services
             // ever takes away strokes.
             using (var session = target.CreateDrawingSession())
             {
-                session.Clear(Windows.UI.Colors.Transparent);
+                session.Clear(Colors.Transparent);
                 session.Transform = transform;
 
                 if (strokes != null)

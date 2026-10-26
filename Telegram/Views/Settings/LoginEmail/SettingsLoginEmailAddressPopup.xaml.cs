@@ -10,6 +10,7 @@ using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Settings.LoginEmail
 {
@@ -66,7 +67,7 @@ namespace Telegram.Views.Settings.LoginEmail
             deferral.Complete();
         }
 
-        private void PrimaryInput_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void PrimaryInput_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {

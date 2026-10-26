@@ -20,6 +20,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
@@ -171,7 +172,7 @@ namespace Telegram.Controls
                     Source = new ParticlesImageSource(Colors.White, ParticlesType.Status),
                     IsViewportAware = false,
                     Stretch = Stretch.UniformToFill,
-                    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                    DecodeFrameType = DecodePixelType.Logical,
                     FrameSize = new Size(36, 36),
                     Width = 36,
                     Height = 36,

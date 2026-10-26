@@ -178,7 +178,7 @@ namespace Telegram.Controls.Stories
             var composer = ElementComposition.GetElementVisual(Composer);
             ElementCompositionPreview.SetIsTranslationEnabled(Composer, true);
 
-            var batch = layer.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = layer.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 Hide();

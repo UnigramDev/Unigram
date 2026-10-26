@@ -10,6 +10,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
@@ -45,7 +46,7 @@ namespace Telegram.Views.Popups
             CaptionInfo.Text = string.Format(Strings.BotShareMessageInfo, botUser.FirstName);
         }
 
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Purchase_Click(object sender, RoutedEventArgs e)
         {
             Hide(ContentDialogResult.Primary);
         }

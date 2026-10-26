@@ -13,6 +13,8 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Wallet;
 using Windows.Foundation;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -145,7 +147,7 @@ namespace Telegram.Controls.Cells
             return WalletTransferFlight.OverGlyph(GlyphBounds(out var fontSize), fontSize, stone);
         }
 
-        public Windows.UI.Composition.CompositionPropertySet Impact => PendingRow?.Properties;
+        public CompositionPropertySet Impact => PendingRow?.Properties;
 
         public void ScheduleImpact(TimeSpan delay)
         {
@@ -182,7 +184,7 @@ namespace Telegram.Controls.Cells
             if (hidden && _glyphForeground == null)
             {
                 _glyphForeground = AmountGlyph.Foreground;
-                AmountGlyph.Foreground = _glyphHidden ??= new SolidColorBrush(Windows.UI.Colors.Transparent);
+                AmountGlyph.Foreground = _glyphHidden ??= new SolidColorBrush(Colors.Transparent);
             }
             else if (!hidden && _glyphForeground != null)
             {

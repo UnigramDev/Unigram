@@ -530,11 +530,11 @@ namespace Telegram.Views.Premium.Popups
             if (badge)
             {
                 badgeControl.Background = iconPanel.Background;
-                badgeControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                badgeControl.Visibility = Visibility.Visible;
             }
             else
             {
-                badgeControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                badgeControl.Visibility = Visibility.Collapsed;
             }
 
             args.Handled = true;

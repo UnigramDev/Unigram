@@ -670,7 +670,7 @@ namespace Telegram.Views.Wallet.Popups
                         // Rotated elements should not be snapped to the layout grid; rounding
                         // makes the ring wobble.
                         UseLayoutRounding = false,
-                        TextLineBounds = Windows.UI.Xaml.TextLineBounds.Tight
+                        TextLineBounds = TextLineBounds.Tight
                     };
 
                     var transform = new MatrixTransform();

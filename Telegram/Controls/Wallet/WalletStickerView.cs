@@ -25,6 +25,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Wallet
@@ -787,7 +788,7 @@ namespace Telegram.Controls.Wallet
                 Width = BaseSize,
                 Height = BaseSize,
                 FrameSize = new Windows.Foundation.Size(128, 128),
-                DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                DecodeFrameType = DecodePixelType.Logical,
                 AutoPlay = false,
                 IsHitTestVisible = false
             };

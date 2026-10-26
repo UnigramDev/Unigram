@@ -246,7 +246,7 @@ namespace Telegram.Controls.Chats
 
             var compositor = mentions.Compositor;
 
-            var batch = compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 pollVotes.Properties.InsertVector3("Translation", Vector3.Zero);

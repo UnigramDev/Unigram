@@ -25,6 +25,7 @@ using Telegram.Views.Stars;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views
 {
@@ -347,7 +348,7 @@ namespace Telegram.Views
             root.Switch(LifetimeService.Current.Create());
         }
 
-        private void AddAccount_ContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+        private void AddAccount_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var root = this.GetParent<RootWindow>();
             if (root != null)

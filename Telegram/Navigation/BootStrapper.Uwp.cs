@@ -8,6 +8,7 @@
 using Telegram.Common;
 using Telegram.Services;
 using Windows.ApplicationModel.Activation;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Resources;
@@ -30,7 +31,7 @@ namespace Telegram.Navigation
                 // The web proxy carrier view is never shown: none of the per-window setup applies, but
                 // its awaits still need to resume on its thread.
 #if NET9_0_OR_GREATER
-                System.Threading.SynchronizationContext.SetSynchronizationContext(new Windows.System.DispatcherQueueSynchronizationContext(Windows.System.DispatcherQueue.GetForCurrentThread()));
+                System.Threading.SynchronizationContext.SetSynchronizationContext(new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread()));
 #endif
                 return;
             }
