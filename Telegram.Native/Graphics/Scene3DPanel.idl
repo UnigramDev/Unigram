@@ -22,7 +22,7 @@ namespace Telegram.Native.Graphics
     };
 
     [default_interface]
-    unsealed runtimeclass Scene3DPanel : Windows.UI.Xaml.Controls.SwapChainPanel
+    unsealed runtimeclass Scene3DPanel : UIXaml.Controls.SwapChainPanel
     {
         Scene3DPanel();
 
@@ -103,9 +103,9 @@ namespace Telegram.Native.Graphics
         // of its own. A custom DP holding a boxed string or double keeps an unowned pointer.
         String FallbackText;
         Double FallbackFontSize;
-        Windows.UI.Xaml.Media.FontFamily FallbackFontFamily;
+        UIXaml.Media.FontFamily FallbackFontFamily;
 
-        Windows.UI.Xaml.Media.Brush FallbackForeground;
-        static Windows.UI.Xaml.DependencyProperty FallbackForegroundProperty{ get; };
+        UIXaml.Media.Brush FallbackForeground;
+        static UIXaml.DependencyProperty FallbackForegroundProperty{ get; };
     }
 }

@@ -3,7 +3,7 @@ namespace Telegram.Native.Controls
     [default_interface]
     runtimeclass AutomaticDragHelper 
     {
-        AutomaticDragHelper(Windows.UI.Xaml.UIElement pUIElement, Boolean shouldAddInputHandlers);
+        AutomaticDragHelper(UIXaml.UIElement pUIElement, Boolean shouldAddInputHandlers);
 
         void StartDetectingDrag();
         void StopDetectingDrag();

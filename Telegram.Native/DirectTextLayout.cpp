@@ -11,10 +11,9 @@
 #include <format>
 #include <mutex>
 
-#include <winrt/Windows.Graphics.DirectX.h>
 #include <winrt/Windows.System.UserProfile.h>
 
-using namespace winrt::Windows::Graphics::DirectX;
+using namespace winrt::GraphicsDirectX;
 
 namespace winrt::Telegram::Native::implementation
 {

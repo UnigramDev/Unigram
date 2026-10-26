@@ -1,7 +1,7 @@
 namespace Telegram.Native.Controls
 {
     [default_interface]
-    unsealed runtimeclass AnimatedImageBase : Windows.UI.Xaml.Controls.Control
+    unsealed runtimeclass AnimatedImageBase : UIXaml.Controls.Control
     {
         AnimatedImageBase();
 

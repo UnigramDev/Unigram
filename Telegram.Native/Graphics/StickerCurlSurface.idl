@@ -7,11 +7,11 @@ namespace Telegram.Native.Graphics
     {
         // side is the sticker's, in pixels. The surface is larger by Margin times that on every
         // edge, which is the room the lifted part grows into as it comes closer to the eye.
-        StickerCurlSurface(Windows.UI.Composition.CompositionGraphicsDevice device, Int32 side);
+        StickerCurlSurface(UIComposition.CompositionGraphicsDevice device, Int32 side);
 
         static Single Margin{ get; };
 
-        Windows.UI.Composition.CompositionDrawingSurface Surface{ get; };
+        UIComposition.CompositionDrawingSurface Surface{ get; };
 
         // BGRA, premultiplied, fitted into the sticker's side. The die-cut edge is the coverage
         // blurred by dieCut pixels and then cut sharp, as AnimatedImageEffect.DieCut makes it.

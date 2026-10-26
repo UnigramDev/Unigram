@@ -8,7 +8,7 @@
 #include "api/video/video_frame.h"
 
 using namespace winrt::Windows::Foundation::Collections;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace winrt::Telegram::Native::Calls::implementation
 {

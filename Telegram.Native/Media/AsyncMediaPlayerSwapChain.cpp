@@ -4,8 +4,6 @@
 #include "Media/AsyncMediaPlayerSwapChain.g.cpp"
 #endif
 
-#include <winrt/Windows.UI.Xaml.Media.h>
-#include <windows.ui.xaml.media.dxinterop.h>
 
 #include <format>
 #include <stdexcept>
@@ -631,6 +629,21 @@ namespace winrt::Telegram::Native::Media::implementation
         }
     }
 
+#ifdef WINUI3
+    // UIElement.Dispatcher still compiles here and is null at runtime: there is no CoreDispatcher.
+    void AsyncMediaPlayerSwapChain::BeginOnUIThread(UIElement element, winrt::Microsoft::UI::Dispatching::DispatcherQueueHandler handler)
+    {
+        auto queue = element.DispatcherQueue();
+        if (queue.HasThreadAccess())
+        {
+            handler();
+        }
+        else
+        {
+            queue.TryEnqueue(handler);
+        }
+    }
+#else
     void AsyncMediaPlayerSwapChain::BeginOnUIThread(UIElement element, DispatchedHandler handler)
     {
         auto dispatcher = element.Dispatcher();
@@ -643,4 +656,5 @@ namespace winrt::Telegram::Native::Media::implementation
             dispatcher.RunAsync(CoreDispatcherPriority::Normal, handler);
         }
     }
+#endif
 }

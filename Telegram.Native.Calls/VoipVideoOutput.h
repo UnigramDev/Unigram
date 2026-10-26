@@ -19,13 +19,10 @@
 #include "rtc_base/string_utils.h"
 
 #include <winrt/Windows.Storage.h>
-#include <winrt/Windows.System.h>
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
-#include <winrt/Windows.UI.Composition.h>
 #include <winrt/Windows.UI.Core.h>
-#include <winrt/Windows.UI.Xaml.h>
 #include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.Graphics.h>
 #include <winrt/Windows.Graphics.DirectX.h>
@@ -34,7 +31,6 @@
 #include <winrt/Windows.Graphics.Imaging.h>
 #include <windows.graphics.interop.h>
 #include <windows.graphics.effects.interop.h>
-#include <windows.ui.composition.interop.h>
 
 #include <d3d11.h>
 #include <d3d11_4.h>
@@ -49,16 +45,15 @@
 #include "../Telegram.Native/Helpers/COMHelper.h"
 
 using namespace winrt::Windows::Foundation::Numerics;
-using namespace winrt::Windows::Graphics::DirectX;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::GraphicsDirectX;
+using namespace winrt::UIComposition;
 
 namespace abi
 {
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Graphics;
-    using namespace ABI::Windows::Graphics::DirectX;
     using namespace ABI::Windows::Graphics::Effects;
-    using namespace ABI::Windows::UI::Composition;
+    using namespace winrt::UICompositionInterop;
 }
 
 DEFINE_GUID(CLSID_YUV420Effect,
@@ -286,7 +281,7 @@ private:
     Compositor m_compositor{ nullptr };
 
     // The compositor's thread, where commits are asked for: see request_commit.
-    winrt::Windows::System::DispatcherQueue m_dispatcherQueue{ nullptr };
+    winrt::UIDispatching::DispatcherQueue m_dispatcherQueue{ nullptr };
 
     // Shared with the commit's completion, which can outlive the queue once a wait times out.
     std::shared_ptr<winrt::handle> m_committed = std::make_shared<winrt::handle>(CreateEventW(nullptr, FALSE, FALSE, nullptr));
@@ -438,7 +433,7 @@ public:
         instance->m_compositor = device.Compositor();
 
         // Created by the first VoipVideoOutput, on the thread that owns the device's compositor.
-        instance->m_dispatcherQueue = winrt::Windows::System::DispatcherQueue::GetForCurrentThread();
+        instance->m_dispatcherQueue = winrt::UIDispatching::DispatcherQueue::GetForCurrentThread();
         instance->start_thread();
         return instance;
     }

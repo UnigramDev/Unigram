@@ -10,18 +10,20 @@
 #include <vector>
 
 #include <winrt/Windows.UI.Text.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Windows.UI.Xaml.Media.h>
+#ifndef WINUI3
 #include <winrt/Windows.UI.Xaml.Core.Direct.h>
+#endif
 
 typedef void (*td_log_message_callback_ptr)(int verbosity_level, const char* message);
 using PFN_td_set_log_message_callback = WINUSERAPI void(WINAPI*)(int max_verbosity_level, td_log_message_callback_ptr callback);
 
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::UI::Text;
-using namespace winrt::Windows::UI::Xaml;
-using namespace winrt::Windows::UI::Xaml::Media;
+using namespace winrt::UIXaml;
+using namespace winrt::UIXaml::Media;
+#ifndef WINUI3
 using namespace winrt::Windows::UI::Xaml::Core::Direct;
+#endif
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -39,8 +41,10 @@ namespace winrt::Telegram::Native::implementation
 
         static void GetMemoryUsage(uint64_t& privateCommit, uint64_t& sharedCommit, uint64_t& dedicatedVideo, uint64_t& sharedVideo, uint32_t& handles);
 
+#ifndef WINUI3
         static IXamlDirectObject AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize);
         static IXamlDirectObject AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, int32_t offset, int32_t length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize);
+#endif
 
         //[DefaultOverload]
         // By reference: a string handed over from the managed side is a reference to its

@@ -17,15 +17,14 @@
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.UI.h>
-#include <winrt/Windows.UI.Composition.h>
 #include <winrt/Windows.Graphics.h>
 
 using namespace winrt::Windows::Foundation::Collections;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace abi
 {
-    using namespace ABI::Windows::UI::Composition;
+    using namespace winrt::UICompositionInterop;
 }
 
 namespace winrt::Telegram::Native::implementation

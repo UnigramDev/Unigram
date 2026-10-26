@@ -9,7 +9,7 @@
 #include <winrt/Windows.Graphics.Effects.h>
 
 using namespace D2D1;
-using namespace winrt::Windows::Graphics::DirectX;
+using namespace winrt::GraphicsDirectX;
 
 namespace winrt::Telegram::Native::implementation
 {

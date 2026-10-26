@@ -6,9 +6,6 @@
 #include "Scene3DRenderer.h"
 
 #include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Xaml.Controls.h>
-#include <winrt/Windows.UI.Xaml.Input.h>
-#include <winrt/Windows.UI.Xaml.Media.h>
 
 #include <chrono>
 #include <functional>
@@ -76,43 +73,43 @@ namespace winrt::Telegram::Native::Graphics::implementation
         double FallbackFontSize() const noexcept { return m_fallbackFontSize; }
         void FallbackFontSize(double value);
 
-        winrt::Windows::UI::Xaml::Media::FontFamily FallbackFontFamily() const noexcept { return m_fallbackFontFamily; }
-        void FallbackFontFamily(winrt::Windows::UI::Xaml::Media::FontFamily const& value);
+        winrt::UIXaml::Media::FontFamily FallbackFontFamily() const noexcept { return m_fallbackFontFamily; }
+        void FallbackFontFamily(winrt::UIXaml::Media::FontFamily const& value);
 
-        winrt::Windows::UI::Xaml::Media::Brush FallbackForeground();
-        void FallbackForeground(winrt::Windows::UI::Xaml::Media::Brush const& value);
-        static winrt::Windows::UI::Xaml::DependencyProperty FallbackForegroundProperty();
+        winrt::UIXaml::Media::Brush FallbackForeground();
+        void FallbackForeground(winrt::UIXaml::Media::Brush const& value);
+        static winrt::UIXaml::DependencyProperty FallbackForegroundProperty();
 
         void OnLoaded() override;
         void OnUnloaded() override;
 
     private:
         void OnSizeChanged(winrt::Windows::Foundation::IInspectable const& sender,
-            winrt::Windows::UI::Xaml::SizeChangedEventArgs const& args);
+            winrt::UIXaml::SizeChangedEventArgs const& args);
 
-        void OnCompositionScaleChanged(winrt::Windows::UI::Xaml::Controls::SwapChainPanel const& sender,
+        void OnCompositionScaleChanged(winrt::UIXaml::Controls::SwapChainPanel const& sender,
             winrt::Windows::Foundation::IInspectable const& args);
 
-        void OnActualThemeChanged(winrt::Windows::UI::Xaml::FrameworkElement const& sender,
+        void OnActualThemeChanged(winrt::UIXaml::FrameworkElement const& sender,
             winrt::Windows::Foundation::IInspectable const& args);
 
         void OnPointerPressed(winrt::Windows::Foundation::IInspectable const& sender,
-            winrt::Windows::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+            winrt::UIXaml::Input::PointerRoutedEventArgs const& args);
 
         void OnPointerMoved(winrt::Windows::Foundation::IInspectable const& sender,
-            winrt::Windows::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+            winrt::UIXaml::Input::PointerRoutedEventArgs const& args);
 
         void OnPointerReleased(winrt::Windows::Foundation::IInspectable const& sender,
-            winrt::Windows::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+            winrt::UIXaml::Input::PointerRoutedEventArgs const& args);
 
         void OnPointerCaptureLost(winrt::Windows::Foundation::IInspectable const& sender,
-            winrt::Windows::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+            winrt::UIXaml::Input::PointerRoutedEventArgs const& args);
 
-        void OnEffectiveViewportChanged(winrt::Windows::UI::Xaml::FrameworkElement const& sender,
-            winrt::Windows::UI::Xaml::EffectiveViewportChangedEventArgs const& args);
+        void OnEffectiveViewportChanged(winrt::UIXaml::FrameworkElement const& sender,
+            winrt::UIXaml::EffectiveViewportChangedEventArgs const& args);
 
-        static void OnFallbackForegroundChanged(winrt::Windows::UI::Xaml::DependencyObject const& sender,
-            winrt::Windows::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+        static void OnFallbackForegroundChanged(winrt::UIXaml::DependencyObject const& sender,
+            winrt::UIXaml::DependencyPropertyChangedEventArgs const& args);
 
         std::function<void()> NotifyHandler();
         void OnRendererNotified();
@@ -140,8 +137,8 @@ namespace winrt::Telegram::Native::Graphics::implementation
 
         hstring m_fallbackText;
         double m_fallbackFontSize = 0;
-        winrt::Windows::UI::Xaml::Media::FontFamily m_fallbackFontFamily{ nullptr };
-        winrt::Windows::UI::Xaml::Controls::TextBlock m_fallback{ nullptr };
+        winrt::UIXaml::Media::FontFamily m_fallbackFontFamily{ nullptr };
+        winrt::UIXaml::Controls::TextBlock m_fallback{ nullptr };
 
         Graphics::Scene3DModel m_model{ Graphics::Scene3DModel::Diamond };
         Graphics::Scene3DPalette m_palette{ Graphics::Scene3DPalette::Default };

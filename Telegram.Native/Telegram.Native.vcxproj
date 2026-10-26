@@ -1,6 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Which app this component is built for. The UWP app hands it Windows.UI types and the WinUI 3
+       app Microsoft.UI ones, which share their names and nothing else, so each gets a build of its
+       own: a desktop component against the Windows App SDK for Telegram.WinUI.slnx, the app
+       container one for every other solution. First, because the imports below depend on it. -->
+  <PropertyGroup>
+    <TelegramWinUI Condition="'$(TelegramWinUI)' == '' And '$(SolutionName)' == 'Telegram.WinUI'">true</TelegramWinUI>
+  </PropertyGroup>
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.props" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.props" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.props" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM64">
       <Configuration>Debug</Configuration>
@@ -25,15 +36,30 @@
     <RootNamespace>Telegram.Native</RootNamespace>
     <DefaultLanguage>en</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <AppContainerApplication>true</AppContainerApplication>
-    <ApplicationType>Windows Store</ApplicationType>
+    <AppContainerApplication Condition="'$(TelegramWinUI)' != 'true'">true</AppContainerApplication>
+    <ApplicationType Condition="'$(TelegramWinUI)' != 'true'">Windows Store</ApplicationType>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
-    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <ApplicationTypeRevision Condition="'$(TelegramWinUI)' != 'true'">10.0</ApplicationTypeRevision>
     <ProjectName>Telegram.Native</ProjectName>
     <CppWinRTNamespaceMergeDepth>2</CppWinRTNamespaceMergeDepth>
     <CppWinRTUsePrefixes>false</CppWinRTUsePrefixes>
     <CppWinRTOptimized>true</CppWinRTOptimized>
+  </PropertyGroup>
+  <!-- The vcpkg dependencies are the same for both: a desktop binary links the UWP triplet's
+       libraries without trouble. -->
+  <PropertyGroup Condition="'$(TelegramWinUI)' == 'true'">
+    <!-- Apart from the UWP build's: the two differ in nearly every input. -->
+    <IntDir>$(Platform)\$(Configuration)\WinUI\</IntDir>
+    <WindowsAppSDKVerifyTransitiveDependencies>false</WindowsAppSDKVerifyTransitiveDependencies>
+    <WindowsAppSDKMLVerifyTransitiveDependencies>false</WindowsAppSDKMLVerifyTransitiveDependencies>
+    <!-- The WebView2 package hands its winmd to cppwinrt only when it believes the project
+         wants WinRT, which it works out from TargetPlatformIdentifier being UAP or from the
+         Windows App SDK arriving as a PackageReference. Neither is true of a desktop C++
+         project that takes the SDK through packages.config, so it is said outright - without
+         it cppwinrt stops at 'Type Microsoft.Web.WebView2.Core.CoreWebView2 could not be
+         found', which is a Microsoft.UI.Xaml signature rather than anything of ours. -->
+    <WebView2UseWinRT>true</WebView2UseWinRT>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
@@ -45,23 +71,35 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
+    <!-- The UWP project system defined UNICODE for us; a desktop configuration does not, and
+         libtextclassifier's mmap.cc then hands an ANSI LPTSTR to a wide-char function. -->
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
+    <!-- The UWP project system defined UNICODE for us; a desktop configuration does not, and
+         libtextclassifier's mmap.cc then hands an ANSI LPTSTR to a wide-char function. -->
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v145</PlatformToolset>
+    <!-- The UWP project system defined UNICODE for us; a desktop configuration does not, and
+         libtextclassifier's mmap.cc then hands an ANSI LPTSTR to a wide-char function. -->
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v145</PlatformToolset>
+    <!-- The UWP project system defined UNICODE for us; a desktop configuration does not, and
+         libtextclassifier's mmap.cc then hands an ANSI LPTSTR to a wide-char function. -->
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -105,7 +143,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory);$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -126,7 +164,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory);$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -147,7 +185,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory);$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -168,7 +206,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory);$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -180,6 +218,20 @@
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
     </Link>
+  </ItemDefinitionGroup>
+  <!-- What the IDL names as UIComposition and UIXaml, the counterpart of UIFlavor.h. -->
+  <ItemDefinitionGroup Condition="'$(TelegramWinUI)' != 'true'">
+    <Midl>
+      <PreprocessorDefinitions>UIComposition=Windows.UI.Composition;UIXaml=Windows.UI.Xaml;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(TelegramWinUI)' == 'true'">
+    <ClCompile>
+      <PreprocessorDefinitions>WINUI3;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>WINUI3;UIComposition=Microsoft.UI.Composition;UIXaml=Microsoft.UI.Xaml;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\Detours\src\detours.h" />
@@ -335,6 +387,7 @@
       <DependentUpon>Controls\ControlEx.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UIFlavor.h" />
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="FatalError.h">
       <DependentUpon>FatalError.idl</DependentUpon>
@@ -365,7 +418,7 @@
       <DependentUpon>FreeformGradientSurface.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="GarbageCollectionMonitor.h">
+    <ClInclude Include="GarbageCollectionMonitor.h" Condition="'$(AppContainerApplication)' == 'true'">
       <DependentUpon>GarbageCollectionMonitor.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
@@ -382,7 +435,7 @@
       <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="InternalsRT\CoreWindowHelpers.h" />
+    <ClInclude Include="InternalsRT\CoreWindowHelpers.h" Condition="'$(AppContainerApplication)' == 'true'" />
     <ClInclude Include="LanguageIdentification.h">
       <DependentUpon>LanguageIdentification.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -461,7 +514,7 @@
       <DependentUpon>RichMathSurface.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="ScreenshotManager.h">
+    <ClInclude Include="ScreenshotManager.h" Condition="'$(AppContainerApplication)' == 'true'">
       <DependentUpon>ScreenshotManager.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
@@ -553,7 +606,7 @@
     <ClInclude Include="..\Libraries\libutf\utfdef.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Libraries\Detours\src\creatwth.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\creatwth.cpp" Condition="'$(AppContainerApplication)' == 'true'">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\Detours\src\detours.cpp">
@@ -577,7 +630,7 @@
     <ClCompile Include="..\Libraries\Detours\src\disolx86.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\Detours\src\image.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\image.cpp" Condition="'$(AppContainerApplication)' == 'true'">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\Detours\src\modules.cpp">
@@ -1327,7 +1380,7 @@
       <DependentUpon>FreeformGradientSurface.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="GarbageCollectionMonitor.cpp">
+    <ClCompile Include="GarbageCollectionMonitor.cpp" Condition="'$(AppContainerApplication)' == 'true'">
       <DependentUpon>GarbageCollectionMonitor.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
@@ -1335,7 +1388,7 @@
     <ClCompile Include="Highlight\SyntaxLanguage.cpp" />
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
-    <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp" />
+    <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp" Condition="'$(AppContainerApplication)' == 'true'" />
     <ClCompile Include="LokiRng.cpp">
       <DependentUpon>LokiRng.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1428,7 +1481,9 @@
       <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Generated Files\module.g.cpp" />
+    <!-- $(GeneratedFilesDir), not the literal path: the app container props put it in the project
+         folder, but a desktop build gets CppWinRT's default, $(IntDir)Generated Files\. -->
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="Helpers\LibraryHelper.cpp" />
     <ClCompile Include="HttpProxyWatcher.cpp">
       <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
@@ -1467,7 +1522,7 @@
     <ClCompile Include="Qr\QrSegment.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ScreenshotManager.cpp">
+    <ClCompile Include="ScreenshotManager.cpp" Condition="'$(AppContainerApplication)' == 'true'">
       <DependentUpon>ScreenshotManager.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
@@ -1631,7 +1686,7 @@
     <Midl Include="FreeformGradientSurface.idl">
       <SubType>Designer</SubType>
     </Midl>
-    <Midl Include="GarbageCollectionMonitor.idl">
+    <Midl Include="GarbageCollectionMonitor.idl" Condition="'$(AppContainerApplication)' == 'true'">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="Highlight\SyntaxLanguage.idl" />
@@ -1684,7 +1739,7 @@
     <Midl Include="RichMathSurface.idl">
       <SubType>Designer</SubType>
     </Midl>
-    <Midl Include="ScreenshotManager.idl">
+    <Midl Include="ScreenshotManager.idl" Condition="'$(AppContainerApplication)' == 'true'">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="SpellChecker.idl">
@@ -1719,6 +1774,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
+    <Import Project="..\packages\Microsoft.Web.WebView2.1.0.4129.50\build\native\Microsoft.Web.WebView2.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.Web.WebView2.1.0.4129.50\build\native\Microsoft.Web.WebView2.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1726,5 +1786,14 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.props'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.props'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.props'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.Web.WebView2.1.0.4129.50\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.4129.50\build\native\Microsoft.Web.WebView2.targets'))" />
   </Target>
 </Project>

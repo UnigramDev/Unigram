@@ -5,7 +5,7 @@
 #endif
 
 using namespace winrt::Windows::Storage::Streams;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -82,7 +82,7 @@ namespace winrt::Telegram::Native::implementation
 
     FrameSurface::FrameSurface(CompositionDrawingSurface surface, winrt::com_ptr<ID2D1Factory1> const& factory, int32_t pixelWidth, int32_t pixelHeight, int32_t rotation)
         : m_surface(surface)
-        , m_interop(surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>())
+        , m_interop(surface.as<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop>())
         , m_multithread(factory.try_as<ID2D1Multithread>())
         , m_pixelWidth(pixelWidth)
         , m_pixelHeight(pixelHeight)

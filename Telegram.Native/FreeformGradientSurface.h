@@ -2,17 +2,10 @@
 
 #include "FreeformGradientSurface.g.h"
 
-#include <winrt/Windows.UI.Composition.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <windows.ui.xaml.media.dxinterop.h>
-
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.Numerics.h>
 #include <winrt/Windows.UI.h>
-#include <winrt/Windows.UI.Composition.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Windows.System.h>
 #include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.Graphics.h>
 #include <winrt/Windows.Graphics.DirectX.h>
@@ -24,16 +17,15 @@
 
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Foundation::Numerics;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 using namespace winrt::Windows::UI;
-using namespace winrt::Windows::UI::Xaml;
-using namespace winrt::Windows::System;
+using namespace winrt::UIXaml;
+using namespace winrt::UIDispatching;
 
 namespace abi
 {
     using namespace ABI::Windows::Foundation;
-    using namespace ABI::Windows::Graphics::DirectX;
-    using namespace ABI::Windows::UI::Composition;
+    using namespace winrt::UICompositionInterop;
 }
 
 typedef std::array<float2, 4> QuadPoints;

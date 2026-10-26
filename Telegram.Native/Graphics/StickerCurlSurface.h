@@ -4,7 +4,6 @@
 
 #include <winrt/Windows.Foundation.Numerics.h>
 #include <winrt/Windows.Storage.Streams.h>
-#include <winrt/Windows.UI.Composition.h>
 #include <windows.ui.composition.interop.h>
 
 #include <vector>
@@ -13,11 +12,11 @@ namespace winrt::Telegram::Native::Graphics::implementation
 {
     struct StickerCurlSurface : StickerCurlSurfaceT<StickerCurlSurface>
     {
-        StickerCurlSurface(winrt::Windows::UI::Composition::CompositionGraphicsDevice const& device, int32_t side);
+        StickerCurlSurface(winrt::UIComposition::CompositionGraphicsDevice const& device, int32_t side);
 
         static float Margin();
 
-        winrt::Windows::UI::Composition::CompositionDrawingSurface Surface();
+        winrt::UIComposition::CompositionDrawingSurface Surface();
 
         void SetImage(winrt::Windows::Storage::Streams::IBuffer const& pixels, int32_t pixelWidth, int32_t pixelHeight, float dieCut);
 
@@ -31,8 +30,8 @@ namespace winrt::Telegram::Native::Graphics::implementation
         bool EnsureResources(ID2D1DeviceContext* context);
         void ReleaseResources();
 
-        winrt::Windows::UI::Composition::CompositionDrawingSurface m_surface{ nullptr };
-        winrt::com_ptr<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop> m_interop;
+        winrt::UIComposition::CompositionDrawingSurface m_surface{ nullptr };
+        winrt::com_ptr<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop> m_interop;
 
         int32_t m_side;
         int32_t m_extent;

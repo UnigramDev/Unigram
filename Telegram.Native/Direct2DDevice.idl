@@ -12,16 +12,16 @@ namespace Telegram.Native
     [default_interface]
     runtimeclass Direct2DDevice : Windows.Foundation.IClosable
     {
-        Direct2DDevice(Windows.UI.Composition.Compositor compositor);
+        Direct2DDevice(UIComposition.Compositor compositor);
         void HandleDeviceLost();
 
-        Windows.UI.Composition.CompositionGraphicsDevice Device{ get; };
+        UIComposition.CompositionGraphicsDevice Device{ get; };
 
         // A graphics device of its own on the same rendering device, for a thread that draws apart
         // from the view's: each graphics device takes one drawing session at a time. Given the new
         // rendering device after a loss until ReleaseGraphicsDevice, or until this device closes.
-        Windows.UI.Composition.CompositionGraphicsDevice CreateGraphicsDevice();
-        void ReleaseGraphicsDevice(Windows.UI.Composition.CompositionGraphicsDevice device);
+        UIComposition.CompositionGraphicsDevice CreateGraphicsDevice();
+        void ReleaseGraphicsDevice(UIComposition.CompositionGraphicsDevice device);
 
         static void WriteBytes(byte[] hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
         static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Int32 pixelWidth, out Int32 pixelHeight);
@@ -31,14 +31,14 @@ namespace Telegram.Native
 
         FreeformGradientSurface CreateFreeformGradient(Windows.Foundation.Collections.IVectorView<Int32> colors);
 
-        Windows.UI.Composition.CompositionEffectBrush GetTail(Windows.UI.Xaml.XamlRoot xamlRoot, Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
-        Windows.UI.Composition.CompositionNineGridBrush GetTailMask(Windows.UI.Xaml.XamlRoot xamlRoot, Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
-        //Windows.UI.Composition.CompositionPath GetOutline(Windows.Foundation.Collections.IVector<Telegram.Td.Api.ClosedVectorPath> contours);
-        Windows.UI.Composition.CompositionPath GetEllipticalClip(Single width, Single height, Single radius, Single x, Single y);
-        Windows.UI.Composition.CompositionPath GetReplyMarkupClip(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > buttons, Single bottomRightRadius, Single bottomLeftRadius);
-        Windows.UI.Composition.CompositionPath GetVoiceNoteClip(byte[] waveform, Double waveformWidth);
-        Windows.UI.Composition.CompositionPath GetRoundedPolygon(Windows.Foundation.Rect[] rects, Int32[] shapes);
-        Windows.UI.Composition.CompositionPath GetTextOutline(String text, String fontFamily, Int32 fontWeight, Double fontSize, Double maxWidth, out Windows.Foundation.Numerics.Vector2 size);
+        UIComposition.CompositionEffectBrush GetTail(UIXaml.XamlRoot xamlRoot, Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
+        UIComposition.CompositionNineGridBrush GetTailMask(UIXaml.XamlRoot xamlRoot, Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
+        //UIComposition.CompositionPath GetOutline(Windows.Foundation.Collections.IVector<Telegram.Td.Api.ClosedVectorPath> contours);
+        UIComposition.CompositionPath GetEllipticalClip(Single width, Single height, Single radius, Single x, Single y);
+        UIComposition.CompositionPath GetReplyMarkupClip(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > buttons, Single bottomRightRadius, Single bottomLeftRadius);
+        UIComposition.CompositionPath GetVoiceNoteClip(byte[] waveform, Double waveformWidth);
+        UIComposition.CompositionPath GetRoundedPolygon(Windows.Foundation.Rect[] rects, Int32[] shapes);
+        UIComposition.CompositionPath GetTextOutline(String text, String fontFamily, Int32 fontWeight, Double fontSize, Double maxWidth, out Windows.Foundation.Numerics.Vector2 size);
 
         void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height, Int32 rotation);
 
@@ -50,7 +50,7 @@ namespace Telegram.Native
         Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(byte[] bytes, Single blurAmount);
 
         // Rotation is clockwise, in degrees: 0, 90, 180 or 270.
-        FrameSurface CreateFrameSurface(Windows.UI.Composition.CompositionGraphicsDevice device, Int32 pixelWidth, Int32 pixelHeight, Int32 rotation);
+        FrameSurface CreateFrameSurface(UIComposition.CompositionGraphicsDevice device, Int32 pixelWidth, Int32 pixelHeight, Int32 rotation);
 
         // Until the compositor's next frame, or a 60th of a second before Windows 11.
         void WaitForCompositorClock();

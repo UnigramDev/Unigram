@@ -140,7 +140,7 @@ namespace Telegram.Native
         // rendering device is replaced - so a brush set on it once never has to be set again.
         // Null only when there is nothing to draw or no surface to be had: a surface whose draw
         // failed comes back too, and is drawn when the device is replaced.
-        Windows.UI.Composition.CompositionDrawingSurface Render(Windows.UI.Color color, Double rasterizationScale);
+        UIComposition.CompositionDrawingSurface Render(Windows.UI.Color color, Double rasterizationScale);
 
         // Whether that surface is a virtual one, which a long edited text on the analyzer is
         // drawn into: only the tiles in the viewport and a margin around it are drawn, so the

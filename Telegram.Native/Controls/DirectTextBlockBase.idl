@@ -1,7 +1,7 @@
 namespace Telegram.Native.Controls
 {
     [default_interface]
-    unsealed runtimeclass DirectTextBlockBase : Windows.UI.Xaml.Controls.Panel
+    unsealed runtimeclass DirectTextBlockBase : UIXaml.Controls.Panel
     {
         DirectTextBlockBase();
 

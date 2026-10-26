@@ -4,13 +4,10 @@
 #include "FrameworkElementEx.h"
 
 #include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Windows.UI.Xaml.Controls.h>
-#include <winrt/Windows.UI.Xaml.Media.h>
 
-using namespace winrt::Windows::UI::Xaml;
-using namespace winrt::Windows::UI::Xaml::Controls;
-using namespace winrt::Windows::UI::Xaml::Media;
+using namespace winrt::UIXaml;
+using namespace winrt::UIXaml::Controls;
+using namespace winrt::UIXaml::Media;
 
 namespace winrt::Telegram::Native::Controls::implementation
 {
@@ -31,7 +28,7 @@ namespace winrt::Telegram::Native::Controls::implementation
 
         bool m_visible{ false };
 
-        void HandleSizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::SizeChangedEventArgs const& e);
+        void HandleSizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::UIXaml::SizeChangedEventArgs const& e);
         void HandleEffectiveViewportChanged(FrameworkElement const& sender, EffectiveViewportChangedEventArgs const& e);
     };
 }

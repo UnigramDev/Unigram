@@ -5,8 +5,6 @@
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.UI.Core.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Windows.UI.Xaml.Controls.h>
 
 #include <d3d11_4.h>
 #include <dxgi1_6.h>
@@ -21,8 +19,8 @@
 
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::UI::Core;
-using namespace winrt::Windows::UI::Xaml;
-using namespace winrt::Windows::UI::Xaml::Controls;
+using namespace winrt::UIXaml;
+using namespace winrt::UIXaml::Controls;
 
 namespace winrt::Telegram::Native::Media::implementation
 {
@@ -121,7 +119,11 @@ namespace winrt::Telegram::Native::Media::implementation
         void OnSizeChanged(winrt::Windows::Foundation::IInspectable const& sender, SizeChangedEventArgs const& args);
         //void OnSuspending(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&);
 
+#ifdef WINUI3
+        void BeginOnUIThread(UIElement element, winrt::Microsoft::UI::Dispatching::DispatcherQueueHandler handler);
+#else
         void BeginOnUIThread(UIElement element, DispatchedHandler handler);
+#endif
 
     private:
         std::mutex m_panelLock;

@@ -13,19 +13,16 @@
 #include <unordered_map>
 #include <vector>
 
-#include <SurfaceImage.h>
-#include <TextFormat.h>
-#include <DirectTextLayout.h>
+#include "SurfaceImage.h"
+#include "TextFormat.h"
+#include "DirectTextLayout.h"
 #include "ChatBackgroundPattern.h"
 #include "FreeformGradientSurface.h"
 #include "MessageBubbleNineGrid.h";
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
-#include <winrt/Windows.UI.Composition.h>
-#include <winrt/Windows.UI.Xaml.h>
 #include <winrt/Windows.Storage.Streams.h>
-#include <winrt/Windows.System.h>
 #include <winrt/Windows.Graphics.h>
 #include <winrt/Windows.Graphics.DirectX.h>
 #include <winrt/Windows.Graphics.DirectX.Direct3D11.h>
@@ -36,13 +33,13 @@
 
 using namespace concurrency;
 using namespace winrt::Windows::Graphics;
-using namespace winrt::Windows::Graphics::DirectX;
+using namespace winrt::GraphicsDirectX;
 using namespace winrt::Windows::Graphics::DirectX::Direct3D11;
 using namespace winrt::Windows::Graphics::Effects;
 using namespace winrt::Windows::Graphics::Imaging;
 using namespace winrt::Windows::UI;
-using namespace winrt::Windows::UI::Composition;
-using namespace winrt::Windows::UI::Xaml;
+using namespace winrt::UIComposition;
+using namespace winrt::UIXaml;
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Storage::Streams;
@@ -51,9 +48,8 @@ namespace abi
 {
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Graphics;
-    using namespace ABI::Windows::Graphics::DirectX;
     using namespace ABI::Windows::Graphics::Effects;
-    using namespace ABI::Windows::UI::Composition;
+    using namespace winrt::UICompositionInterop;
 }
 
 #define IFACEMETHODIMP2        __override COM_DECLSPEC_NOTHROW HRESULT STDMETHODCALLTYPE
@@ -443,11 +439,11 @@ namespace winrt::Telegram::Native::implementation
         // 500 ms, then 1 s, then 2 s after the loss. Only on the view's thread.
         static constexpr int s_recoveryAttempts = 3;
         int m_recoveryAttempt = 0;
-        winrt::Windows::System::DispatcherQueueTimer m_recoveryTimer{ nullptr };
+        winrt::UIDispatching::DispatcherQueueTimer m_recoveryTimer{ nullptr };
         winrt::event_token m_recoveryTick;
 
         void StartRecovery();
-        void OnRecoveryTick(winrt::Windows::System::DispatcherQueueTimer const&, winrt::Windows::Foundation::IInspectable const&);
+        void OnRecoveryTick(winrt::UIDispatching::DispatcherQueueTimer const&, winrt::Windows::Foundation::IInspectable const&);
 
         CompositionDrawingSurface CreateDrawingSurface(SizeInt32 size);
 
@@ -468,7 +464,7 @@ namespace winrt::Telegram::Native::implementation
 
     public:
         Compositor m_compositor;
-        winrt::Windows::System::DispatcherQueue m_dispatcherQueue{ nullptr };
+        winrt::UIDispatching::DispatcherQueue m_dispatcherQueue{ nullptr };
         CompositionEffectFactory m_alphaMaskFactory;
         CompositionGraphicsDevice m_compositionDevice;
         // Strong, under m_criticalSection: CompositionGraphicsDevice has no IWeakReferenceSource, and

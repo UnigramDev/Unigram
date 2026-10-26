@@ -7,10 +7,13 @@
 #include <functional>
 
 #include <winrt/Windows.Devices.Input.h>
-#include <winrt/Windows.UI.Xaml.Documents.h>
 
+#ifdef WINUI3
+using winrt::Microsoft::UI::Input::PointerDeviceType;
+#else
 using namespace winrt::Windows::Devices::Input;
-using namespace winrt::Windows::UI::Xaml::Documents;
+#endif
+using namespace winrt::UIXaml::Documents;
 
 namespace winrt::Telegram::Native::Controls::implementation
 {

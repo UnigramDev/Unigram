@@ -9,23 +9,19 @@
 
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.System.h>
-#include <winrt/Windows.UI.Composition.h>
-#include <winrt/Windows.UI.Xaml.Automation.h>
 #include <winrt/Windows.UI.Xaml.Interop.h>
-#include <winrt/Windows.UI.Input.h>
-#include <winrt/Windows.UI.Xaml.Hosting.h>
 
 #include <algorithm>
 #include <chrono>
 
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::System;
-using namespace winrt::Windows::UI::Xaml;
-using namespace winrt::Windows::UI::Xaml::Automation;
-using namespace winrt::Windows::UI::Xaml::Controls;
-using namespace winrt::Windows::UI::Composition;
-using namespace winrt::Windows::UI::Xaml::Hosting;
-using namespace winrt::Windows::UI::Xaml::Input;
+using namespace winrt::UIXaml;
+using namespace winrt::UIXaml::Automation;
+using namespace winrt::UIXaml::Controls;
+using namespace winrt::UIComposition;
+using namespace winrt::UIXaml::Hosting;
+using namespace winrt::UIXaml::Input;
 
 namespace winrt::Telegram::Native::Graphics::implementation
 {
@@ -397,7 +393,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
     {
         // Called on the render thread with the device lock held, where neither XAML nor the
         // renderer may be touched, so all it does is queue the work here.
-        return [queue = DispatcherQueue::GetForCurrentThread(), weak = get_weak()]
+        return [queue = winrt::UIDispatching::DispatcherQueue::GetForCurrentThread(), weak = get_weak()]
         {
             try
             {
@@ -481,18 +477,18 @@ namespace winrt::Telegram::Native::Graphics::implementation
         UpdateFallback();
     }
 
-    void Scene3DPanel::FallbackFontFamily(winrt::Windows::UI::Xaml::Media::FontFamily const& value)
+    void Scene3DPanel::FallbackFontFamily(winrt::UIXaml::Media::FontFamily const& value)
     {
         m_fallbackFontFamily = value;
         UpdateFallback();
     }
 
-    winrt::Windows::UI::Xaml::Media::Brush Scene3DPanel::FallbackForeground()
+    winrt::UIXaml::Media::Brush Scene3DPanel::FallbackForeground()
     {
-        return GetValue(FallbackForegroundProperty()).try_as<winrt::Windows::UI::Xaml::Media::Brush>();
+        return GetValue(FallbackForegroundProperty()).try_as<winrt::UIXaml::Media::Brush>();
     }
 
-    void Scene3DPanel::FallbackForeground(winrt::Windows::UI::Xaml::Media::Brush const& value)
+    void Scene3DPanel::FallbackForeground(winrt::UIXaml::Media::Brush const& value)
     {
         SetValue(FallbackForegroundProperty(), value);
     }
@@ -503,7 +499,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
         // load - before there is a XAML core to register with.
         static DependencyProperty const property = DependencyProperty::Register(
             L"FallbackForeground",
-            winrt::xaml_typename<winrt::Windows::UI::Xaml::Media::Brush>(),
+            winrt::xaml_typename<winrt::UIXaml::Media::Brush>(),
             winrt::xaml_typename<Graphics::Scene3DPanel>(),
             PropertyMetadata{ nullptr, PropertyChangedCallback{ &Scene3DPanel::OnFallbackForegroundChanged } });
 
@@ -547,7 +543,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
 
             // A glyph from an icon font reads as nothing, or as a private-use code point, to a
             // screen reader.
-            AutomationProperties::SetAccessibilityView(text, winrt::Windows::UI::Xaml::Automation::Peers::AccessibilityView::Raw);
+            AutomationProperties::SetAccessibilityView(text, winrt::UIXaml::Automation::Peers::AccessibilityView::Raw);
 
             Children().Append(text);
             m_fallback = text;

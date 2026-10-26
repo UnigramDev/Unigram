@@ -7,12 +7,10 @@
 
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.Numerics.h>
-#include <winrt/Windows.System.h>
-#include <winrt/Windows.UI.Composition.h>
 
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Foundation::Numerics;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -90,7 +88,7 @@ namespace winrt::Telegram::Native::implementation
         IVector<ChatBackgroundSymbol> m_symbols;
 
         CompositionGraphicsDevice m_compositionDevice{ nullptr };
-        winrt::Windows::System::DispatcherQueue m_dispatcherQueue{ nullptr };
+        winrt::UIDispatching::DispatcherQueue m_dispatcherQueue{ nullptr };
         std::shared_ptr<const SvgPattern> m_svg;
         float m_dpi = 0;
         float m_intensity = 0;

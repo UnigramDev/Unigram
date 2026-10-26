@@ -3,12 +3,11 @@
 #include "Composition/WindowVisual.g.cpp"
 
 #include "winrt/Windows.UI.Core.h"
-#include "winrt/Windows.UI.Xaml.h"
 
 using namespace winrt::Windows::UI;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 using namespace winrt::Windows::UI::Core;
-using namespace winrt::Windows::UI::Xaml;
+using namespace winrt::UIXaml;
 
 #define GW_OWNER            4
 #define WS_EX_TOOLWINDOW    0x00000080L
@@ -248,7 +247,7 @@ namespace winrt::Telegram::Native::Composition::implementation
     {
         if (m_thumbnail)
         {
-            const static auto lDwmUnregisterThumbnail = (DwmUnregisterThumbnail)GetProcAddress(GetDwmApi(), "DwmUnregisterThumbnail");
+            const static auto lDwmUnregisterThumbnail = (PFN_DwmUnregisterThumbnail)GetProcAddress(GetDwmApi(), "DwmUnregisterThumbnail");
 
             lDwmUnregisterThumbnail(m_thumbnail);
             m_thumbnail = NULL;
@@ -267,7 +266,7 @@ namespace winrt::Telegram::Native::Composition::implementation
 
     void WindowVisual::Size(float3 value)
     {
-        const static auto lDwmUpdateThumbnailProperties = (DwmUpdateThumbnailProperties)GetProcAddress(GetDwmApi(), "DwmUpdateThumbnailProperties");
+        const static auto lDwmUpdateThumbnailProperties = (PFN_DwmUpdateThumbnailProperties)GetProcAddress(GetDwmApi(), "DwmUpdateThumbnailProperties");
 
         float2 available(value.x, value.y);
         float3 size = value;

@@ -11,11 +11,8 @@
 #pragma pop_macro("WINAPI_FAMILY")
 #undef IUnknown
 
-#include <winrt/windows.ui.composition.h>
-#include <winrt/windows.ui.xaml.h>
-
-using namespace winrt::Windows::UI::Composition;
-using namespace winrt::Windows::UI::Xaml;
+using namespace winrt::UIComposition;
+using namespace winrt::UIXaml;
 
 using PFN_CreateVisual = HRESULT(WINAPI*)(IDCompositionDevice2* pThis, IDCompositionVisual2** ppVisual);
 

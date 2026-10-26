@@ -6,7 +6,6 @@
 
 #include "Helpers\COMHelper.h"
 
-#include <winrt/Windows.System.h>
 #include <winrt/Windows.Graphics.Effects.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.Numerics.h>
@@ -15,7 +14,7 @@ using namespace D2D1;
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::UI;
-using namespace winrt::Windows::Graphics::DirectX;
+using namespace winrt::GraphicsDirectX;
 
 namespace winrt::Telegram::Native::implementation
 {

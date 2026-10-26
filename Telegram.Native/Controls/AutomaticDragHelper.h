@@ -4,17 +4,13 @@
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.Input.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Windows.UI.Xaml.Controls.h>
-#include <winrt/Windows.UI.Xaml.Media.h>
-#include <winrt/Windows.UI.Xaml.Input.h>
 
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::UI::Input;
-using namespace winrt::Windows::UI::Xaml;
-using namespace winrt::Windows::UI::Xaml::Controls;
-using namespace winrt::Windows::UI::Xaml::Media;
-using namespace winrt::Windows::UI::Xaml::Input;
+using namespace winrt::UIXaml;
+using namespace winrt::UIXaml::Controls;
+using namespace winrt::UIXaml::Media;
+using namespace winrt::UIXaml::Input;
 
 namespace winrt::Telegram::Native::Controls::implementation
 {

@@ -2,14 +2,8 @@
 
 #include "MessageBubbleNineGrid.g.h"
 
-#include <winrt/Windows.UI.Composition.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <windows.ui.xaml.media.dxinterop.h>
-
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
-#include <winrt/Windows.UI.Composition.h>
-#include <winrt/Windows.UI.Xaml.h>
 #include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.Graphics.h>
 #include <winrt/Windows.Graphics.DirectX.h>
@@ -19,14 +13,13 @@
 #include <windows.graphics.interop.h>
 #include <windows.graphics.effects.interop.h>
 
-using namespace winrt::Windows::UI::Composition;
-using namespace winrt::Windows::UI::Xaml;
+using namespace winrt::UIComposition;
+using namespace winrt::UIXaml;
 
 namespace abi
 {
     using namespace ABI::Windows::Foundation;
-    using namespace ABI::Windows::Graphics::DirectX;
-    using namespace ABI::Windows::UI::Composition;
+    using namespace winrt::UICompositionInterop;
 }
 
 namespace winrt::Telegram::Native::implementation

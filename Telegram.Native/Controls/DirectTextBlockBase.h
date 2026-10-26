@@ -4,11 +4,9 @@
 #include "FrameworkElementEx.h"
 
 #include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Windows.UI.Xaml.Controls.h>
 
-using namespace winrt::Windows::UI::Xaml;
-using namespace winrt::Windows::UI::Xaml::Controls;
+using namespace winrt::UIXaml;
+using namespace winrt::UIXaml::Controls;
 
 namespace winrt::Telegram::Native::Controls::implementation
 {

@@ -5,7 +5,7 @@ namespace Telegram.Native
     {
         Windows.Foundation.Collections.IVectorView<Int32> Colors;
 
-        Windows.UI.Composition.CompositionSurfaceBrush Brush{ get; };
+        UIComposition.CompositionSurfaceBrush Brush{ get; };
         void Next();
     }
 }

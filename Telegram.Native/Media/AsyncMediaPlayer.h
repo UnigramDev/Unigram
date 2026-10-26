@@ -8,10 +8,9 @@
 
 #include <winrt/Windows.Media.Devices.h>
 #include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.System.h>
 
 using namespace winrt::Windows::Media::Devices;
-using namespace winrt::Windows::System;
+using namespace winrt::UIDispatching;
 
 namespace winrt::Telegram::Native::Media::implementation
 {
