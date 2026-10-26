@@ -9,14 +9,41 @@ using namespace winrt::Windows::UI::Composition;
 
 namespace winrt::Telegram::Native::implementation
 {
+    // Released when its thread ends, but not when the process does: ExitProcess has ended every
+    // other thread by then, the driver's own among them, and a release that waits on one of them
+    // never returns - the process stays alive with only this thread, still holding its instance.
+    struct UploadCache
+    {
+        winrt::com_ptr<ID3D11Texture2D> Texture;
+        winrt::com_ptr<ID3D11Device> Device;
+        UINT Width = 0;
+        UINT Height = 0;
+
+        ~UploadCache()
+        {
+            // Looked up here rather than cached in a static: a static's first-use lock is one
+            // more thing a thread killed by ExitProcess could still be holding.
+            using PFN_RtlDllShutdownInProgress = BOOLEAN(NTAPI*)();
+            auto shutdownInProgress = reinterpret_cast<PFN_RtlDllShutdownInProgress>(GetProcAddress(GetModuleHandle(L"ntdll.dll"), "RtlDllShutdownInProgress"));
+
+            if (shutdownInProgress == nullptr || shutdownInProgress())
+            {
+                Texture.detach();
+                Device.detach();
+            }
+        }
+    };
+
     // Per thread, because surfaces are drawn on their view's thread only, under Direct2D's lock over
     // the device. It grows to the largest frame drawn, and a replaced device gets a new one.
     static ID3D11Texture2D* UploadTexture(winrt::com_ptr<ID3D11Device> const& device, UINT width, UINT height)
     {
-        thread_local winrt::com_ptr<ID3D11Texture2D> s_texture;
-        thread_local winrt::com_ptr<ID3D11Device> s_device;
-        thread_local UINT s_width = 0;
-        thread_local UINT s_height = 0;
+        thread_local UploadCache s_cache;
+
+        auto& s_texture = s_cache.Texture;
+        auto& s_device = s_cache.Device;
+        auto& s_width = s_cache.Width;
+        auto& s_height = s_cache.Height;
 
         if (s_device != device)
         {
