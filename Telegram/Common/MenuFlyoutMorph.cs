@@ -371,7 +371,7 @@ namespace Telegram.Common
             public readonly ExpressionAnimation BodyOpacity;
             public readonly ExpressionAnimation ContentOpacity;
             public readonly ExpressionAnimation ContentScale;
-            public readonly ExpressionAnimation PresenterScale;
+            public readonly ExpressionAnimation BounceScale;
             public readonly ExpressionAnimation TargetOpacity;
             public readonly ExpressionAnimation ShadowOffset;
             public readonly ExpressionAnimation ShadowSize;
@@ -415,7 +415,7 @@ namespace Telegram.Common
 
                 // The springs overshoot past 1, and a clip cannot grow past the element it clips, so
                 // the overshoot is spent as a small scale about the target instead.
-                PresenterScale = compositor.CreateExpressionAnimation("Vector3(" + bounce + ", " + bounce + ", 1)");
+                BounceScale = compositor.CreateExpressionAnimation("Vector3(" + bounce + ", " + bounce + ", 1)");
 
                 // The target stays where it is under the menu, and only fades while the body fades in.
                 TargetOpacity = compositor.CreateExpressionAnimation("1 - Clamp(p.X * 3, 0, 1)");
@@ -524,7 +524,6 @@ namespace Telegram.Common
             private MenuFlyoutPresenter _presenter;
             private FrameworkElement _body;
             private Visual _targetVisual;
-            private Visual _presenterVisual;
             private Visual _bodyVisual;
             private Visual _contentVisual;
 
@@ -533,8 +532,8 @@ namespace Telegram.Common
             private Style _presenterStyle;
             private bool _presenterHitTestVisible;
             private float _targetOpacity;
-            private Vector3 _presenterScale;
-            private Vector3 _presenterCenterPoint;
+            private Vector3 _bodyScale;
+            private Vector3 _bodyCenterPoint;
             private CompositionClip _bodyClip;
             private float _bodyOpacity;
             private float _contentOpacity;
@@ -829,7 +828,6 @@ namespace Telegram.Common
                 var fromRadius = (float)Math.Min(Math.Min(from.Width, from.Height) / 2, _cornerRadius);
                 var toRadius = (float)_presenter.CornerRadius.TopLeft;
 
-                _presenterVisual = ElementCompositionPreview.GetElementVisual(_presenter);
                 _targetVisual = ElementCompositionPreview.GetElementVisual(_target);
                 _compositor = _bodyVisual.Compositor;
                 _templates = MenuFlyoutMorph._templates.GetValue(_compositor, _createTemplates);
@@ -871,10 +869,13 @@ namespace Telegram.Common
 
                 var bodyOrigin = body.TransformToVisual(_presenter).TransformPoint(new Point(0, 0));
 
-                _presenterScale = _presenterVisual.Scale;
-                _presenterCenterPoint = _presenterVisual.CenterPoint;
-                _presenterVisual.CenterPoint = new Vector3((float)(center.X + bodyOrigin.X), (float)(center.Y + bodyOrigin.Y), 0);
-                Start(_presenterVisual, "Scale", _templates.PresenterScale);
+                // On the body and the shadows, never the presenter: the presenter is the popup's child,
+                // and a windowed popup sizes its window from the child's transform, the animated scale
+                // of its visual included, so the window would be moved and resized mid-animation.
+                _bodyScale = _bodyVisual.Scale;
+                _bodyCenterPoint = _bodyVisual.CenterPoint;
+                _bodyVisual.CenterPoint = new Vector3((float)center.X, (float)center.Y, 0);
+                Start(_bodyVisual, "Scale", _templates.BounceScale);
 
                 // Over the target, the target fades out under the body fading in; beside it, it stays.
                 _targetOpacity = _targetVisual.Opacity;
@@ -910,6 +911,8 @@ namespace Telegram.Common
 
                 _shadows = _compositor.CreateContainerVisual();
                 _shadows.Offset = new Vector3((float)bodyOrigin.X, (float)bodyOrigin.Y, 0);
+                _shadows.CenterPoint = _bodyVisual.CenterPoint;
+                Start(_shadows, "Scale", _templates.BounceScale);
 
                 if (fromRadius != toRadius)
                 {
@@ -1076,7 +1079,10 @@ namespace Telegram.Common
                 if (_bodyVisual != null)
                 {
                     _bodyVisual.StopAnimation("Opacity");
+                    _bodyVisual.StopAnimation("Scale");
                     _bodyVisual.Opacity = _bodyOpacity;
+                    _bodyVisual.Scale = _bodyScale;
+                    _bodyVisual.CenterPoint = _bodyCenterPoint;
                     _bodyVisual.Clip = _bodyClip;
                 }
 
@@ -1087,13 +1093,6 @@ namespace Telegram.Common
                     _contentVisual.Opacity = _contentOpacity;
                     _contentVisual.Scale = _contentScale;
                     _contentVisual.CenterPoint = _contentCenterPoint;
-                }
-
-                if (_presenterVisual != null)
-                {
-                    _presenterVisual.StopAnimation("Scale");
-                    _presenterVisual.Scale = _presenterScale;
-                    _presenterVisual.CenterPoint = _presenterCenterPoint;
                 }
 
                 if (_padded)
