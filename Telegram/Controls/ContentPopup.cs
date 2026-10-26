@@ -255,6 +255,15 @@ namespace Telegram.Controls
         {
             base.OnApplyTemplate();
 
+            // This runs twice on WinUI 3 with XamlChangeId.OptimizeApplyStyles, and the first time
+            // there is no template at all: the change defers applying a control's built-in style
+            // until it goes live, and ContentDialog asks for its parts before that - it is shown
+            // from a popup, so nothing is live yet. Sixteen milliseconds later the style lands, the
+            // template is built for real, and this runs again with everything in place.
+            //
+            // So every part below has to be read as "may be absent", which is what the null checks
+            // are for. They were already there bar one, and that one took the app down.
+
             VisualStateManager.GoToState(this, IsPrimaryButtonSplit ? "PrimaryAsSplitButton" : "NoSplitButton", false);
 
             // TODO: Name
@@ -279,8 +288,15 @@ namespace Telegram.Controls
             if (IsDismissButtonVisible)
             {
                 DismissButton = GetTemplateChild(nameof(DismissButton)) as Button;
-                DismissButton.RequestedTheme = DismissButtonRequestedTheme;
-                DismissButton.Click += DismissButton_Click;
+
+                // Null-checked like every other part above it. A template that is not this
+                // control's own - which is what a default style being applied instead looks like -
+                // should leave the dialog wrong rather than take the app down.
+                if (DismissButton != null)
+                {
+                    DismissButton.RequestedTheme = DismissButtonRequestedTheme;
+                    DismissButton.Click += DismissButton_Click;
+                }
             }
 
             CommandSpace = GetTemplateChild(nameof(CommandSpace)) as Grid;
