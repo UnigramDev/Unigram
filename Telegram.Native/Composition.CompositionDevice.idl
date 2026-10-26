@@ -5,6 +5,6 @@ namespace Telegram.Native.Composition
     [default_interface]
     static runtimeclass CompositionDevice 
     {
-        static DirectRectangleClip CreateRectangleClip(Windows.UI.Composition.Visual visual);
+        static DirectRectangleClip CreateRectangleClip(UIComposition.Visual visual);
     }
 }

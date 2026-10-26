@@ -37,11 +37,11 @@ namespace Telegram.Native.Graphics
     [default_interface]
     runtimeclass WalletCardSurface : Windows.Foundation.IClosable
     {
-        WalletCardSurface(Windows.UI.Composition.CompositionGraphicsDevice device);
+        WalletCardSurface(UIComposition.CompositionGraphicsDevice device);
 
         static Single Margin{ get; };
 
-        Windows.UI.Composition.CompositionDrawingSurface Surface{ get; };
+        UIComposition.CompositionDrawingSurface Surface{ get; };
 
         // The height of one half, in the units of the card's size: where the plate starts.
         Single HalfHeight{ get; };

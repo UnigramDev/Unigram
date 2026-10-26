@@ -10,8 +10,8 @@
 #include <mutex>
 #include <vector>
 
-using namespace winrt::Windows::Graphics::DirectX;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::GraphicsDirectX;
+using namespace winrt::UIComposition;
 
 namespace winrt::Telegram::Native::Graphics::implementation
 {
@@ -70,7 +70,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
     WalletCardSurface::WalletCardSurface(CompositionGraphicsDevice const& device)
     {
         m_surface = device.CreateDrawingSurface2({ 1, 1 }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
-        m_interop = m_surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
+        m_interop = m_surface.as<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop>();
     }
 
     float WalletCardSurface::Margin()

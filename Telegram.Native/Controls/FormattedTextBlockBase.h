@@ -4,16 +4,12 @@
 #include "FrameworkElementEx.h"
 
 #include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Windows.UI.Xaml.Controls.h>
-#include <winrt/Windows.UI.Xaml.Media.h>
-#include <winrt/Windows.UI.Xaml.Input.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 
-using namespace winrt::Windows::UI::Xaml;
-using namespace winrt::Windows::UI::Xaml::Controls;
-using namespace winrt::Windows::UI::Xaml::Media;
-using namespace winrt::Windows::UI::Xaml::Input;
+using namespace winrt::UIXaml;
+using namespace winrt::UIXaml::Controls;
+using namespace winrt::UIXaml::Media;
+using namespace winrt::UIXaml::Input;
 using namespace winrt::Windows::UI::ViewManagement;
 
 namespace winrt::Telegram::Native::Controls::implementation

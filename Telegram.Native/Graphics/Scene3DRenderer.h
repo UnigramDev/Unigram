@@ -3,8 +3,6 @@
 #include "Scene3D.h"
 #include "Scene3DDevice.h"
 
-#include <winrt/Windows.UI.Xaml.Controls.h>
-
 #include <d3d11_1.h>
 #include <dxgi1_3.h>
 
@@ -46,14 +44,14 @@ namespace Graphics3D
         // notify is called on the render thread, under the device lock, when the renderer has
         // failed for good or its device has been replaced - HasFailed and WasReplaced say which.
         // Either way the panel has to drop this renderer, and must not do so from inside the call.
-        bool Attach(winrt::Windows::UI::Xaml::Controls::SwapChainPanel const& panel,
+        bool Attach(winrt::UIXaml::Controls::SwapChainPanel const& panel,
             std::function<void()> notify);
         void Detach();
 
         // UI thread. Moves the swap chain to another panel and sends notifications to its owner
         // from now on; the scene, the pose and the clock carry on untouched. False if the new
         // panel refused the swap chain, which leaves the renderer to be detached from it.
-        bool Rebind(winrt::Windows::UI::Xaml::Controls::SwapChainPanel const& panel,
+        bool Rebind(winrt::UIXaml::Controls::SwapChainPanel const& panel,
             std::function<void()> notify);
 
         // Any thread.
@@ -129,7 +127,7 @@ namespace Graphics3D
         // Read once from the scene, which decides it for its whole life.
         bool m_choreographed = false;
 
-        winrt::Windows::UI::Xaml::Controls::SwapChainPanel m_panel{ nullptr };
+        winrt::UIXaml::Controls::SwapChainPanel m_panel{ nullptr };
 
         std::shared_ptr<Scene3DDevice> m_device;
         std::function<void()> m_notify;

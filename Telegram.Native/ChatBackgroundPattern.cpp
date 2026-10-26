@@ -6,10 +6,8 @@
 
 #include "Helpers\COMHelper.h"
 
-#include <winrt/Windows.UI.Xaml.Media.h>
-
-using namespace winrt::Windows::System;
-using namespace winrt::Windows::UI::Xaml::Media;
+using namespace winrt::UIDispatching;
+using namespace winrt::UIXaml::Media;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -70,7 +68,7 @@ namespace winrt::Telegram::Native::implementation
             return E_FAIL;
         }
 
-        auto surfaceInterop = m_surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
+        auto surfaceInterop = m_surface.as<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop>();
 
         HRESULT result;
         winrt::com_ptr<ID2D1DeviceContext> context;

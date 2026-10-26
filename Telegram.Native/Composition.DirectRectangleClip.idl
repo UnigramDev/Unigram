@@ -16,7 +16,7 @@ namespace Telegram.Native.Composition
         void Set(Single uniform);
         void Set(Single topLeft, Single topRight, Single bottomRight, Single bottomLeft);
 
-        void AnimateTop(Windows.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
-        void AnimateBottom(Windows.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
+        void AnimateTop(UIComposition.Compositor compositor, Single from, Single to, Double duration);
+        void AnimateBottom(UIComposition.Compositor compositor, Single from, Single to, Double duration);
     }
 }

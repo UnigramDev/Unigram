@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "Scene3DRenderer.h"
 
-#include <windows.ui.xaml.media.dxinterop.h>
 #include <winrt/Telegram.Native.h>
 
 #include <algorithm>
@@ -9,7 +8,7 @@
 #include <cmath>
 #include <format>
 
-using namespace winrt::Windows::UI::Xaml::Controls;
+using namespace winrt::UIXaml::Controls;
 
 namespace Graphics3D
 {

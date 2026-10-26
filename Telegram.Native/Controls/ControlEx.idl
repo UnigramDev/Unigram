@@ -1,7 +1,7 @@
 namespace Telegram.Native.Controls
 {
     [default_interface]
-    unsealed runtimeclass ControlEx : Windows.UI.Xaml.Controls.Control
+    unsealed runtimeclass ControlEx : UIXaml.Controls.Control
     {
         ControlEx();
 
@@ -13,7 +13,7 @@ namespace Telegram.Native.Controls
     }
 
     [default_interface]
-    unsealed runtimeclass GridEx : Windows.UI.Xaml.Controls.Grid
+    unsealed runtimeclass GridEx : UIXaml.Controls.Grid
     {
         GridEx();
 
@@ -25,7 +25,7 @@ namespace Telegram.Native.Controls
     }
 
     [default_interface]
-    unsealed runtimeclass HyperlinkButtonEx : Windows.UI.Xaml.Controls.HyperlinkButton
+    unsealed runtimeclass HyperlinkButtonEx : UIXaml.Controls.HyperlinkButton
     {
         HyperlinkButtonEx();
 
@@ -37,7 +37,7 @@ namespace Telegram.Native.Controls
     }
 
     [default_interface]
-    unsealed runtimeclass ToggleButtonEx : Windows.UI.Xaml.Controls.Primitives.ToggleButton
+    unsealed runtimeclass ToggleButtonEx : UIXaml.Controls.Primitives.ToggleButton
     {
         ToggleButtonEx();
 

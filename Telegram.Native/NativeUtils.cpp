@@ -6,7 +6,9 @@
 
 #include "Helpers/COMHelper.h"
 #include "Helpers/LibraryHelper.h"
+#ifndef WINUI3
 #include "InternalsRT/CoreWindowHelpers.h"
+#endif
 
 #include "FatalError.h"
 
@@ -184,6 +186,7 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
+#ifndef WINUI3
     IXamlDirectObject NativeUtils::AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize)
     {
         auto run = direct.CreateInstance(XamlTypeIndex::Run);
@@ -276,6 +279,7 @@ namespace winrt::Telegram::Native::implementation
         direct.AddToCollection(inlines, run);
         return run;
     }
+#endif
 
     // combase declares neither entry point in a public header, so these are the signatures its
     // exports carry. Both are __cdecl/__stdcall as declared, which only matters on x86.
@@ -1307,14 +1311,23 @@ namespace winrt::Telegram::Native::implementation
         return result != E_NOTIMPL;
     }
 
+    // The scale override is a Detours patch of CoreWindow's DPI, and there is no CoreWindow in a
+    // desktop process to patch. The two entry points stay so that no call site has to change; on
+    // this host the app simply runs at the window's own scale.
     void NativeUtils::OverrideScaleForCurrentView(int32_t value)
     {
+#ifndef WINUI3
         InternalsRT::Core::Windowing::CoreWindowHelpers::OverrideDpiForCurrentThread(value * 96.0f / 100.0f);
+#endif
     }
 
     int32_t NativeUtils::GetScaleForCurrentView()
     {
+#ifdef WINUI3
+        return 100;
+#else
         return InternalsRT::Core::Windowing::CoreWindowHelpers::GetDpiForCurrentThread() / 96.0f * 100.0f;
+#endif
     }
 
     // The CoreWindow procedure passes a message on to DefWindowProc only if XAML's subclass, which
@@ -1371,8 +1384,10 @@ namespace winrt::Telegram::Native::implementation
         };
     }
 
+    // No CoreWindow in a desktop process, so nothing calls this here.
     void NativeUtils::PrepareCoreWindowClose(winrt::Windows::UI::Core::CoreWindow const& window)
     {
+#ifndef WINUI3
         if (ClosingWindowProc::Next != nullptr || ClosingWindowProc::SetProc == nullptr || ClosingWindowProc::CallProc == nullptr)
         {
             return;
@@ -1382,6 +1397,7 @@ namespace winrt::Telegram::Native::implementation
         const auto previous = ClosingWindowProc::SetProc(hwnd, WindowProcIndex, reinterpret_cast<LONG_PTR>(&ClosingWindowProc::Proc));
 
         ClosingWindowProc::Next = reinterpret_cast<PFN_WndProc>(previous);
+#endif
     }
 
     void NativeUtils::Crash()

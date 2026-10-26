@@ -8,9 +8,9 @@
 
 #include <cmath>
 
-using namespace winrt::Windows::Graphics::DirectX;
+using namespace winrt::GraphicsDirectX;
 using namespace winrt::Windows::Storage::Streams;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace winrt::Telegram::Native::Graphics::implementation
 {
@@ -61,7 +61,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
         , m_extent(static_cast<int32_t>(std::ceil(std::max(side, 1) * (1 + 2 * Margin()))))
     {
         m_surface = device.CreateDrawingSurface2({ m_extent, m_extent }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
-        m_interop = m_surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
+        m_interop = m_surface.as<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop>();
     }
 
     float StickerCurlSurface::Margin()

@@ -13,11 +13,11 @@ namespace Telegram.Native.Media
         Boolean Create();
         Boolean Create(Boolean subscribe);
 
-        void Attach(Windows.UI.Xaml.Controls.SwapChainPanel panel);
-        void Attach(Windows.UI.Xaml.Controls.SwapChainPanel panel, Boolean subscribe);
+        void Attach(UIXaml.Controls.SwapChainPanel panel);
+        void Attach(UIXaml.Controls.SwapChainPanel panel, Boolean subscribe);
 
         void Detach();
-        void Detach(Windows.UI.Xaml.Controls.SwapChainPanel panel);
+        void Detach(UIXaml.Controls.SwapChainPanel panel);
 
         void UpdateSize();
         void UpdateScale();

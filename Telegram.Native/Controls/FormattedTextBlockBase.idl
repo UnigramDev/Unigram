@@ -1,7 +1,7 @@
 namespace Telegram.Native.Controls
 {
     [default_interface]
-    unsealed runtimeclass FormattedTextBlockBase : Windows.UI.Xaml.Controls.Control
+    unsealed runtimeclass FormattedTextBlockBase : UIXaml.Controls.Control
     {
         FormattedTextBlockBase();
 

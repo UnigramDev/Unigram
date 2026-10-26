@@ -4,7 +4,7 @@
 
 using namespace winrt::Windows::Storage::Streams;
 using namespace winrt::Windows::UI;
-using namespace winrt::Windows::UI::Xaml::Media::Imaging;
+using namespace winrt::UIXaml::Media::Imaging;
 
 namespace winrt::Telegram::Native::implementation
 {

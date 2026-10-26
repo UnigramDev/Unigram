@@ -5,8 +5,6 @@
 #include <mutex>
 
 #include <winrt/Windows.Storage.Streams.h>
-#include <winrt/Windows.UI.Composition.h>
-#include <windows.ui.composition.interop.h>
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -17,9 +15,9 @@ namespace winrt::Telegram::Native::implementation
     {
         // pixelWidth and pixelHeight are the frame's, before rotation; the surface is the rotated
         // size.
-        FrameSurface(winrt::Windows::UI::Composition::CompositionDrawingSurface surface, winrt::com_ptr<ID2D1Factory1> const& factory, int32_t pixelWidth, int32_t pixelHeight, int32_t rotation);
+        FrameSurface(winrt::UIComposition::CompositionDrawingSurface surface, winrt::com_ptr<ID2D1Factory1> const& factory, int32_t pixelWidth, int32_t pixelHeight, int32_t rotation);
 
-        winrt::Windows::UI::Composition::CompositionDrawingSurface Surface();
+        winrt::UIComposition::CompositionDrawingSurface Surface();
 
         // The frame is uploaded into a texture shared by the thread's surfaces and copied from there
         // into the surface's texture on the GPU: no Direct2D context is set up for the session. A
@@ -32,8 +30,8 @@ namespace winrt::Telegram::Native::implementation
         bool DrawRotated(winrt::Windows::Storage::Streams::IBuffer const& buffer);
 
         std::mutex m_lock;
-        winrt::Windows::UI::Composition::CompositionDrawingSurface m_surface{ nullptr };
-        winrt::com_ptr<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop> m_interop;
+        winrt::UIComposition::CompositionDrawingSurface m_surface{ nullptr };
+        winrt::com_ptr<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop> m_interop;
 
         // Reused across frames and recreated when the session's device is not the one it was made
         // on, which is how a device loss shows up here: the surface survives it, the bitmap not.

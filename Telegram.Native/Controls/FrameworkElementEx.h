@@ -1,8 +1,5 @@
 #pragma once
 
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Windows.UI.Xaml.Media.h>
-
 template <typename TDerived, typename TBase>
 struct FrameworkElementEx : TBase
 {
@@ -29,7 +26,7 @@ private:
     bool m_loaded{ false };
     bool m_unloaded{ false };
 
-    void HandleChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::RoutedEventArgs const&)
+    void HandleChanged(winrt::Windows::Foundation::IInspectable const&, winrt::UIXaml::RoutedEventArgs const&)
     {
         // TODO: unfortunately FrameworkElement.Parent returns null
         // whenever the control is a DataTemplate root or similar,
@@ -50,7 +47,7 @@ private:
         }
     }
 
-    winrt::Windows::UI::Xaml::DependencyObject GetParent()
+    winrt::UIXaml::DependencyObject GetParent()
     {
         try
         {
@@ -60,7 +57,7 @@ private:
                 return parent;
             }
 
-            return winrt::Windows::UI::Xaml::Media::VisualTreeHelper::GetParent(*this);
+            return winrt::UIXaml::Media::VisualTreeHelper::GetParent(*this);
         }
         catch (...)
         {

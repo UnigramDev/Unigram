@@ -7,11 +7,14 @@
 
 #include <detours.h>
 
+// For EventRegistrationToken in the hand-declared IUIElementStaticsPrivate below, which the WinUI 3
+// headers do not bring in.
+#include <EventToken.h>
+
 #include <winrt/Windows.Foundation.Metadata.h>
-#include <winrt/Windows.UI.Xaml.Hosting.h>
 
 using namespace winrt::Windows::Foundation::Metadata;
-using namespace winrt::Windows::UI::Xaml::Hosting;
+using namespace winrt::UIXaml::Hosting;
 
 struct __declspec(uuid("7cc8cb07-5a0d-46bb-8c54-9beafe63b476"))
 	IUIElementStaticsPrivate : ::IUnknown
@@ -168,7 +171,7 @@ namespace winrt::Telegram::Native::Composition::implementation
 
 	winrt::Telegram::Native::Composition::DirectRectangleClip2 CompositionDevice::CreateRectangleClip2(UIElement const& element)
 	{
-		return CreateRectangleClip2(winrt::Windows::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(element));
+		return CreateRectangleClip2(winrt::UIXaml::Hosting::ElementCompositionPreview::GetElementVisual(element));
 	}
 
 	winrt::Telegram::Native::Composition::DirectRectangleClip2 CompositionDevice::CreateRectangleClip2(Visual const& visual)

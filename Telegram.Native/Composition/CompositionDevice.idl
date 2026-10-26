@@ -6,10 +6,10 @@ namespace Telegram.Native.Composition
     static runtimeclass CompositionDevice 
     {
         [default_overload]
-        static DirectRectangleClip2 CreateRectangleClip2(Windows.UI.Xaml.UIElement element);
-        static DirectRectangleClip2 CreateRectangleClip2(Windows.UI.Composition.Visual visual);
-        static void SetClip(Windows.UI.Composition.Visual visual, DirectRectangleClip2 clip);
+        static DirectRectangleClip2 CreateRectangleClip2(UIXaml.UIElement element);
+        static DirectRectangleClip2 CreateRectangleClip2(UIComposition.Visual visual);
+        static void SetClip(UIComposition.Visual visual, DirectRectangleClip2 clip);
 
-        static Windows.UI.Composition.LayerVisual GetElementLayerVisual(Windows.UI.Xaml.UIElement element);
+        static UIComposition.LayerVisual GetElementLayerVisual(UIXaml.UIElement element);
     }
 }

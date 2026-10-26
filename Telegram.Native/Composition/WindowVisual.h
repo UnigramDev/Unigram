@@ -4,12 +4,11 @@
 
 #include "DwmThumbnail.h"
 
-#include <winrt/Windows.UI.Composition.h>
 #include <winrt/Windows.UI.h>
 
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::UI;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace winrt::Telegram::Native::Composition::implementation
 {

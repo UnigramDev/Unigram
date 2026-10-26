@@ -25,16 +25,14 @@
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Graphics.Effects.h>
-#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
 #include <winrt/Windows.Security.Cryptography.h>
-#include <windows.ui.xaml.media.dxinterop.h>
 
 #include <BufferSurface.h>
 
 using namespace D2D1;
 using namespace winrt::Windows::ApplicationModel;
-using namespace winrt::Windows::Graphics::DirectX;
-using namespace winrt::Windows::UI::Xaml::Media::Imaging;
+using namespace winrt::GraphicsDirectX;
+using namespace winrt::UIXaml::Media::Imaging;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -439,8 +437,14 @@ namespace winrt::Telegram::Native::implementation
         }
 
         auto compositorInterop = m_compositor.as<abi::ICompositorInterop>();
+#ifdef WINUI3
+        // The Windows App SDK declares the interop with the projected type, not an ABI one.
+        winrt::UIComposition::ICompositionGraphicsDevice deviceInterop{ nullptr };
+        winrt::check_hresult(compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), &deviceInterop));
+#else
         winrt::com_ptr<abi::ICompositionGraphicsDevice> deviceInterop;
         winrt::check_hresult(compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), deviceInterop.put()));
+#endif
 
         auto device = deviceInterop.as<CompositionGraphicsDevice>();
         m_graphicsDevices.push_back(device);
@@ -1170,7 +1174,7 @@ namespace winrt::Telegram::Native::implementation
         // so Windows 11 only: Windows 10 fails the constructor with E_NOINTERFACE.
         if (m_compositor)
         {
-            m_dispatcherQueue = winrt::Windows::System::DispatcherQueue::GetForCurrentThread();
+            m_dispatcherQueue = winrt::UIDispatching::DispatcherQueue::GetForCurrentThread();
         }
 
         if (m_dispatcherQueue)
@@ -1300,8 +1304,13 @@ namespace winrt::Telegram::Native::implementation
             else
             {
                 auto compositorInterop = m_compositor.as<abi::ICompositorInterop>();
+#ifdef WINUI3
+                winrt::UIComposition::ICompositionGraphicsDevice deviceInterop{ nullptr };
+                ReturnIfFailed(result, compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), &deviceInterop));
+#else
                 winrt::com_ptr<abi::ICompositionGraphicsDevice> deviceInterop;
                 ReturnIfFailed(result, compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), deviceInterop.put()));
+#endif
 
                 m_compositionDevice = deviceInterop.as<CompositionGraphicsDevice>();
             }
@@ -1346,7 +1355,7 @@ namespace winrt::Telegram::Native::implementation
         m_recoveryTimer.Start();
     }
 
-    void Direct2DDevice::OnRecoveryTick(winrt::Windows::System::DispatcherQueueTimer const&, winrt::Windows::Foundation::IInspectable const&)
+    void Direct2DDevice::OnRecoveryTick(winrt::UIDispatching::DispatcherQueueTimer const&, winrt::Windows::Foundation::IInspectable const&)
     {
         // A failure is a driver that is still resetting: tried again later, and then left to the
         // next access.

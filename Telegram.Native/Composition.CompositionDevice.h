@@ -3,9 +3,8 @@
 #include "Composition.CompositionDevice.g.h"
 
 #include "dcompex.h"
-#include <winrt/windows.ui.composition.h>
 
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace winrt::Telegram::Native::Composition::implementation
 {

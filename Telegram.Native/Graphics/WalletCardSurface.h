@@ -3,18 +3,17 @@
 #include "Graphics/WalletCardSurface.g.h"
 
 #include <winrt/Windows.Foundation.Numerics.h>
-#include <winrt/Windows.UI.Composition.h>
 #include <windows.ui.composition.interop.h>
 
 namespace winrt::Telegram::Native::Graphics::implementation
 {
     struct WalletCardSurface : WalletCardSurfaceT<WalletCardSurface>
     {
-        WalletCardSurface(winrt::Windows::UI::Composition::CompositionGraphicsDevice const& device);
+        WalletCardSurface(winrt::UIComposition::CompositionGraphicsDevice const& device);
 
         static float Margin();
 
-        winrt::Windows::UI::Composition::CompositionDrawingSurface Surface();
+        winrt::UIComposition::CompositionDrawingSurface Surface();
 
         float HalfHeight();
 
@@ -29,8 +28,8 @@ namespace winrt::Telegram::Native::Graphics::implementation
     private:
         bool EnsureEffect(ID2D1DeviceContext* context);
 
-        winrt::Windows::UI::Composition::CompositionDrawingSurface m_surface{ nullptr };
-        winrt::com_ptr<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop> m_interop;
+        winrt::UIComposition::CompositionDrawingSurface m_surface{ nullptr };
+        winrt::com_ptr<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop> m_interop;
 
         // Made on m_device and remade when a session hands out another one, which is how a device
         // loss shows up here: the surface survives it, the effect does not.

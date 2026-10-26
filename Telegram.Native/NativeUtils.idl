@@ -64,8 +64,10 @@ namespace Telegram.Native
         // the commit rather than add to it: dedicatedVideo in VRAM, sharedVideo in system memory.
         static void GetMemoryUsage(out UInt64 privateCommit, out UInt64 sharedCommit, out UInt64 dedicatedVideo, out UInt64 sharedVideo, out UInt32 handles);
 
+#ifndef WINUI3
         static Windows.UI.Xaml.Core.Direct.IXamlDirectObject AddRunToCollection(Windows.UI.Xaml.Core.Direct.XamlDirect direct, Windows.UI.Xaml.Core.Direct.IXamlDirectObject inlines, String text, Windows.UI.Xaml.FlowDirection direction, TextStyle style, Windows.UI.Xaml.Media.FontFamily fontFamily, Double fontSize);
         static Windows.UI.Xaml.Core.Direct.IXamlDirectObject AddRunToCollection(Windows.UI.Xaml.Core.Direct.XamlDirect direct, Windows.UI.Xaml.Core.Direct.IXamlDirectObject inlines, String text, Int32 offset, Int32 length, Windows.UI.Xaml.FlowDirection direction, TextStyle style, Windows.UI.Xaml.Media.FontFamily fontFamily, Double fontSize);
+#endif
 
         //[DefaultOverload]
         static TextDirectionality GetDirectionality(String value);

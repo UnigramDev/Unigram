@@ -21,6 +21,7 @@ enum THUMBNAIL_TYPE
     TT_BITMAP = 0x4
 };
 
+#ifndef WINUI3
 typedef struct _DWM_THUMBNAIL_PROPERTIES
 {
     DWORD dwFlags;              // Specifies which members of this struct have been specified
@@ -30,9 +31,12 @@ typedef struct _DWM_THUMBNAIL_PROPERTIES
     BOOL fVisible;              // Whether the thumbnail should be visible.  The default is FALSE
     BOOL fSourceClientAreaOnly; // Whether only the client area of the source window should be included in the thumbnail.  The default is FALSE
 } DWM_THUMBNAIL_PROPERTIES, * PDWM_THUMBNAIL_PROPERTIES;
+#endif
 
+#ifndef WINUI3
 typedef HANDLE      HTHUMBNAIL;
 typedef HTHUMBNAIL* PHTHUMBNAIL;
+#endif
 
 typedef HRESULT(WINAPI* DwmpCreateSharedThumbnailVisual)(
     IN HWND hwndDestination,
@@ -48,11 +52,11 @@ typedef HRESULT(WINAPI* DwmpQueryWindowThumbnailSourceSize)(
     IN BOOL fSourceClientAreaOnly,
     OUT SIZE* pSize);
 
-typedef HRESULT(WINAPI* DwmQueryThumbnailSourceSize)(
+typedef HRESULT(WINAPI* PFN_DwmQueryThumbnailSourceSize)(
     IN HTHUMBNAIL hThumbnail,
     OUT SIZE* pSize);
 
-typedef HRESULT(WINAPI* DwmUpdateThumbnailProperties)(
+typedef HRESULT(WINAPI* PFN_DwmUpdateThumbnailProperties)(
     IN HTHUMBNAIL hThumbnailId,
     IN const DWM_THUMBNAIL_PROPERTIES* ptnProperties);
 
@@ -60,7 +64,7 @@ typedef HRESULT(WINAPI* DwmpQueryThumbnailType)(
     IN HTHUMBNAIL hThumbnailId,
     OUT THUMBNAIL_TYPE* thumbType);
 
-typedef HRESULT(WINAPI* DwmUnregisterThumbnail)(
+typedef HRESULT(WINAPI* PFN_DwmUnregisterThumbnail)(
     IN HTHUMBNAIL hThumbnailId);
 
 #define DWM_TNP_FREEZE            0x100000
@@ -77,8 +81,11 @@ typedef HRESULT(WINAPI* DwmUnregisterThumbnail)(
 #define DWM_TNP_SOURCECLIENTAREAONLY             0x00000010 // A value for the "fSourceClientAreaOnly" member has been specified.
 #pragma endregion
 
+#ifndef WINUI3
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
+#endif
 
+#ifndef WINUI3
 typedef struct tagWNDCLASSW
 {
     UINT        style;
@@ -92,6 +99,7 @@ typedef struct tagWNDCLASSW
     LPCWSTR     lpszMenuName;
     LPCWSTR     lpszClassName;
 } WNDCLASSW, * PWNDCLASSW, NEAR* NPWNDCLASSW, FAR* LPWNDCLASSW, WNDCLASS;
+#endif
 
 MIDL_INTERFACE("45D64A29-A63E-4CB6-B498-5781D298CB4F")
 ICoreWindowInterop : public IUnknown

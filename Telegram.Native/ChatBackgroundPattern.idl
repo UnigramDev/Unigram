@@ -10,9 +10,9 @@ namespace Telegram.Native
     [default_interface]
     runtimeclass ChatBackgroundPattern : Windows.Foundation.IClosable
     {
-        ChatBackgroundPattern(Windows.UI.Composition.ICompositionSurface surface);
+        ChatBackgroundPattern(UIComposition.ICompositionSurface surface);
 
-        Windows.UI.Composition.ICompositionSurface Surface{ get; };
+        UIComposition.ICompositionSurface Surface{ get; };
         Windows.Foundation.Numerics.Vector2 RenderSize{ get; };
         Windows.Foundation.Numerics.Vector2 RenderPhysicalSize{ get; };
         Windows.Foundation.Numerics.Vector2 NaturalSize{ get; };
