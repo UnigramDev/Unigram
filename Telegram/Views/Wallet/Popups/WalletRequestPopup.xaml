@@ -130,7 +130,7 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <Border Background="{ThemeResource PageHeaderHighlightBrush}"
+                                    <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
                                             Width="36"
                                             Height="36"
                                             CornerRadius="18"
@@ -232,7 +232,7 @@
                                                    VerticalAlignment="Center" />
                                     </Border>
 
-                                    <Border Background="{ThemeResource PageHeaderHighlightBrush}"
+                                    <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
                                             Visibility="{x:Bind IsWithdraw}"
                                             Width="36"
                                             Height="36"

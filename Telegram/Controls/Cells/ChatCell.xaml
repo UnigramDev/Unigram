@@ -261,7 +261,7 @@
                             </controls:FormattedTextBlock>
                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                        Visibility="Collapsed"
-                                                       Fill="{ThemeResource PageHeaderHighlightBrush}"
+                                                       Fill="{ThemeResource AccentFillColorDefaultBrush}"
                                                        VerticalAlignment="Top"
                                                        HorizontalAlignment="Left"
                                                        Width="20"

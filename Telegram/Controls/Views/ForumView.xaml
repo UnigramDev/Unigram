@@ -460,7 +460,7 @@
                                     Orientation="Horizontal"
                                     Visibility="Collapsed">
                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                       Fill="{ThemeResource PageHeaderHighlightBrush}"
+                                                       Fill="{ThemeResource AccentFillColorDefaultBrush}"
                                                        VerticalAlignment="Bottom"
                                                        Width="20"
                                                        Height="20"
@@ -468,7 +468,7 @@
                             <TextBlock x:Name="ChatActionLabel"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
-                                       Foreground="{ThemeResource PageHeaderHighlightBrush}"
+                                       Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                        Style="{StaticResource CaptionTextBlockStyle}"
                                        VerticalAlignment="Top" />
