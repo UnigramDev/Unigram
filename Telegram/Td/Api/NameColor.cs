@@ -44,7 +44,10 @@ namespace Telegram.Td.Api
 
         public NameColor(int builtInAccentColorId)
         {
-            DarkThemeColors = Array.Empty<Color>();
+            DarkThemeColors = new MutableVector<Color>
+            {
+                ProfilePictureSourceText.GetColor(builtInAccentColorId)
+            };
             LightThemeColors = new MutableVector<Color>
             {
                 ProfilePictureSourceText.GetColor(builtInAccentColorId)

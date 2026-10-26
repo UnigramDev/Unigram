@@ -24,6 +24,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Settings;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -493,6 +494,16 @@ namespace Telegram.Td.Api
             }
 
             return count;
+        }
+
+        public static Vector<Color> ForTheme(this UpgradedGiftColors giftColors, ElementTheme theme, out Color accentColor)
+        {
+            accentColor = theme == ElementTheme.Dark
+                ? giftColors.DarkThemeAccentColor.ToColor()
+                : giftColors.LightThemeAccentColor.ToColor();
+            return theme == ElementTheme.Dark
+                ? giftColors.DarkThemeColors.Select(x => x.ToColor()).ToVector()
+                : giftColors.LightThemeColors.Select(x => x.ToColor()).ToVector();
         }
 
         public static ReplyMarkup ToReplyMarkup(this SuggestedPostInfo suggestedPostInfo, bool outgoing)
@@ -5182,8 +5193,8 @@ namespace Telegram.Td.Api
         }
 
         /// <summary>
-        /// The colours as the server sent them, last first - which is how Android lays out a fill
-        /// it does not mesh, and which agrees with td_api naming colors[0] the bottom one.
+        /// The colours as the server sent them, last first - which is how a fill that is not
+        /// meshed is laid out, and which agrees with td_api naming colors[0] the bottom one.
         /// </summary>
         public static int Reverse(Vector<int> colors, Span<int> sorted)
         {

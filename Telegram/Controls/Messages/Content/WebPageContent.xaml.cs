@@ -241,30 +241,24 @@ namespace Telegram.Controls.Messages.Content
 
             if (giftColors != null)
             {
+                var colors = giftColors.ForTheme(ActualTheme, out var accentColor);
                 Background =
-                    HeaderBrush = new SolidColorBrush(giftColors.LightThemeAccentColor.ToColor());
+                    HeaderBrush = new SolidColorBrush(accentColor);
 
-                BorderBrush = new SolidColorBrush(giftColors.LightThemeColors[0].ToColor());
+                BorderBrush = new SolidColorBrush(colors[0]);
 
-                AccentDash.Stripe1 = giftColors.LightThemeColors.Count > 1
-                    ? giftColors.LightThemeColors[1].ToColor()
-                    : default;
-                AccentDash.Stripe2 = giftColors.LightThemeColors.Count > 2
-                    ? giftColors.LightThemeColors[2].ToColor()
-                    : default;
+                AccentDash.Stripe1 = colors.Count > 1 ? colors[1] : default;
+                AccentDash.Stripe2 = colors.Count > 2 ? colors[2] : default;
             }
             else if (accent != null)
             {
+                var colors = accent.ForTheme(ActualTheme);
                 Background =
                     HeaderBrush =
-                    BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
+                    BorderBrush = new SolidColorBrush(colors[0]);
 
-                AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
-                    ? accent.LightThemeColors[1]
-                    : default;
-                AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
-                    ? accent.LightThemeColors[2]
-                    : default;
+                AccentDash.Stripe1 = colors.Count > 1 ? colors[1] : default;
+                AccentDash.Stripe2 = colors.Count > 2 ? colors[2] : default;
             }
             else
             {
@@ -552,37 +546,31 @@ namespace Telegram.Controls.Messages.Content
 
             if (upgradedGift != null)
             {
+                var colors = upgradedGift.ForTheme(ActualTheme, out var accentColor);
                 Background =
-                    HeaderBrush = new SolidColorBrush(upgradedGift.LightThemeAccentColor.ToColor());
+                    HeaderBrush = new SolidColorBrush(accentColor);
 
-                BorderBrush = new SolidColorBrush(upgradedGift.LightThemeColors[0].ToColor());
+                BorderBrush = new SolidColorBrush(colors[0]);
 
                 if (AccentDash != null)
                 {
-                    AccentDash.Stripe1 = upgradedGift.LightThemeColors.Count > 1
-                        ? upgradedGift.LightThemeColors[1].ToColor()
-                        : default;
-                    AccentDash.Stripe2 = upgradedGift.LightThemeColors.Count > 2
-                        ? upgradedGift.LightThemeColors[2].ToColor()
-                        : default;
+                    AccentDash.Stripe1 = colors.Count > 1 ? colors[1] : default;
+                    AccentDash.Stripe2 = colors.Count > 2 ? colors[2] : default;
                 }
             }
             else
             {
                 var accent = clientService.GetAccentColor(color);
+                var colors = accent.ForTheme(ActualTheme);
 
                 Background =
                     HeaderBrush =
-                    BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
+                    BorderBrush = new SolidColorBrush(colors[0]);
 
                 if (AccentDash != null)
                 {
-                    AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
-                        ? accent.LightThemeColors[1]
-                        : default;
-                    AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
-                        ? accent.LightThemeColors[2]
-                        : default;
+                    AccentDash.Stripe1 = colors.Count > 1 ? colors[1] : default;
+                    AccentDash.Stripe2 = colors.Count > 2 ? colors[2] : default;
                 }
             }
         }

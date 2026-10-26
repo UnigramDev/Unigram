@@ -11,6 +11,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Td
@@ -223,18 +224,19 @@ namespace Telegram.Td
 
 
 
-        public static SolidColorBrush GetAccentBrush(this IClientService clientService, int id)
+        public static SolidColorBrush GetAccentBrush(this IClientService clientService, int id, ElementTheme theme = ElementTheme.Light)
         {
             var accent = clientService.GetAccentColor(id);
             if (accent != null)
             {
-                return new SolidColorBrush(accent.LightThemeColors[0]);
+                var colors = accent.ForTheme(theme);
+                return new SolidColorBrush(colors[0]);
             }
 
             return ProfilePictureSourceText.GetBrush(id);
         }
 
-        public static SolidColorBrush GetAccentBrush(this IClientService clientService, Chat chat)
+        public static SolidColorBrush GetAccentBrush(this IClientService clientService, Chat chat, ElementTheme theme = ElementTheme.Light)
         {
             if (chat.UpgradedGiftColors != null)
             {
@@ -244,13 +246,14 @@ namespace Telegram.Td
             var accent = clientService.GetAccentColor(chat.AccentColorId);
             if (accent != null)
             {
-                return new SolidColorBrush(accent.LightThemeColors[0]);
+                var colors = accent.ForTheme(theme);
+                return new SolidColorBrush(colors[0]);
             }
 
             return ProfilePictureSourceText.GetBrush(chat.AccentColorId);
         }
 
-        public static SolidColorBrush GetAccentBrush(this IClientService clientService, User user)
+        public static SolidColorBrush GetAccentBrush(this IClientService clientService, User user, ElementTheme theme = ElementTheme.Light)
         {
             if (user.UpgradedGiftColors != null)
             {
@@ -260,7 +263,8 @@ namespace Telegram.Td
             var accent = clientService.GetAccentColor(user.AccentColorId);
             if (accent != null)
             {
-                return new SolidColorBrush(accent.LightThemeColors[0]);
+                var colors = accent.ForTheme(theme);
+                return new SolidColorBrush(colors[0]);
             }
 
             return ProfilePictureSourceText.GetBrush(user.AccentColorId);
