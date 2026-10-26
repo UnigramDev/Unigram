@@ -13,9 +13,9 @@
 [submodule "Libraries/libprisma"]
 	path = Libraries/libprisma
 	url = https://github.com/TelegramMessenger/libprisma.git
-[submodule "Libraries/CoreWindowCustomDPI"]
-	path = Libraries/CoreWindowCustomDPI
-	url = https://github.com/ahmed605/CoreWindowCustomDPI.git
+[submodule "Libraries/Detours"]
+	path = Libraries/Detours
+	url = https://github.com/UnigramDev/Detours.git
 [submodule "Libraries/tdlib"]
 	path = Libraries/tdlib
 	url = https://github.com/tdlib/td.git

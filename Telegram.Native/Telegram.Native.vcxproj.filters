@@ -678,34 +678,34 @@
     <ClCompile Include="Graphics\WalletCardTextures.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\creatwth.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\creatwth.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\detours.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disasm.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disasm.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolarm.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolarm.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolarm64.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolarm64.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolia64.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolia64.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolx64.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolx64.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolx86.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolx86.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\image.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\image.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\modules.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\modules.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
     <ClCompile Include="Composition\WindowVisual.cpp">
@@ -1417,16 +1417,13 @@
     <ClInclude Include="Graphics\WalletCardTextures.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.h">
+    <ClInclude Include="..\Libraries\Detours\src\detours.h">
       <Filter>Detours</Filter>
     </ClInclude>
-    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detver.h">
+    <ClInclude Include="..\Libraries\Detours\src\detver.h">
       <Filter>Detours</Filter>
     </ClInclude>
-    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\MemoryApi.h">
-      <Filter>Detours</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\MissingImports.h">
+    <ClInclude Include="..\Libraries\Detours\src\missingimports.h">
       <Filter>Detours</Filter>
     </ClInclude>
     <ClInclude Include="Composition\WindowVisual.h">

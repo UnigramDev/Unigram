@@ -105,7 +105,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -126,7 +126,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -147,7 +147,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -168,7 +168,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204;4251;4068</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);..\Libraries\gzip-hpp\include;..\Libraries\tlottie\include;..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\Detours\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -182,10 +182,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.h" />
-    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detver.h" />
-    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\MemoryApi.h" />
-    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\MissingImports.h" />
+    <ClInclude Include="..\Libraries\Detours\src\detours.h" />
+    <ClInclude Include="..\Libraries\Detours\src\detver.h" />
+    <ClInclude Include="..\Libraries\Detours\src\missingimports.h" />
     <ClInclude Include="..\Libraries\libprisma\libprisma\Highlight.h" />
     <ClInclude Include="..\Libraries\libprisma\libprisma\LanguageTree.h" />
     <ClInclude Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.h" />
@@ -554,34 +553,34 @@
     <ClInclude Include="..\Libraries\libutf\utfdef.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\creatwth.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\creatwth.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\detours.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disasm.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disasm.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolarm.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolarm.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolarm64.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolarm64.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolia64.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolia64.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolx64.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolx64.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolx86.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\disolx86.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\image.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\image.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\modules.cpp">
+    <ClCompile Include="..\Libraries\Detours\src\modules.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\libprisma\libprisma\Highlight.cpp">
