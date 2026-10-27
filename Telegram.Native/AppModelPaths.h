@@ -66,7 +66,7 @@ namespace winrt::Telegram::Native
                 std::wstring path(local);
                 CoTaskMemFree(local);
 
-                path.append(L"\\Unigram\\").append(name);
+                path.append(L"\\TelegramFZ-LLC.Windows\\").append(name);
 
                 // The managed half creates these on the way up and gets there first, but this
                 // must not depend on the order the two halves happen to start in.

@@ -27,6 +27,7 @@ namespace Telegram
     public static class AppIdentity
     {
 #if UNPACKAGED
+        // First: every initializer below reads it, and they run in the order they are written.
         private static readonly bool _packaged = ApiInfo.HasPackageIdentity;
 
         /// <summary>
@@ -34,13 +35,11 @@ namespace Telegram
         /// packaged flavours are signed with - so the two agree rather than merely resembling
         /// each other.
         /// </summary>
-        private static PackageVersion? _version;
-        public static PackageVersion Version => _version ??= _packaged
+        public static PackageVersion Version { get; } = _packaged
             ? Package.Current.Id.Version
             : FromAssembly(Assembly.GetExecutingAssembly().GetName().Version);
 
-        private static ProcessorArchitecture? _architecture;
-        public static ProcessorArchitecture Architecture => _architecture ??= _packaged
+        public static ProcessorArchitecture Architecture { get; } = _packaged
             ? Package.Current.Id.Architecture
             : RuntimeInformation.ProcessArchitecture switch
             {
@@ -55,13 +54,11 @@ namespace Telegram
         /// name": a family name addresses the shell's idea of this app, and unpackaged the shell
         /// has none.
         /// </summary>
-        private static string _familyName;
-        public static string FamilyName => _familyName ??= _packaged
+        public static string FamilyName { get; } = _packaged
             ? Package.Current.Id.FamilyName
             : string.Empty;
 
-        private static PackageSignatureKind? _signatureKind;
-        public static PackageSignatureKind SignatureKind => _signatureKind ??= _packaged
+        public static PackageSignatureKind SignatureKind { get; } = _packaged
             ? Package.Current.SignatureKind
             : PackageSignatureKind.None;
 
