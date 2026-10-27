@@ -105,12 +105,16 @@
     the copies it was linked against from Libraries/tdjson, which Telegram.csproj already copies by
     name. Letting both in would put two different builds of libcrypto-3-x64.dll under the same
     name in the package. Neither native component links openssl.
+
+    pkgconf is a build tool. It lands in the bin folder only when the host triplet is the target
+    one, which x64-windows is: the host tools of every other triplet install into a root of their
+    own.
   -->
   <Target Name="TelegramAddVcpkgRuntimeDlls" BeforeTargets="ResolveReferences"
           Condition="'$(TelegramUsesVcpkg)' == 'true'">
     <ItemGroup>
       <TelegramVcpkgRuntimeDll Include="$(TelegramVcpkgBinDir)*.dll"
-                              Exclude="$(TelegramVcpkgBinDir)zlib1.dll;$(TelegramVcpkgBinDir)libcrypto-3*.dll;$(TelegramVcpkgBinDir)libssl-3*.dll;$(TelegramVcpkgBinDir)legacy.dll" />
+                              Exclude="$(TelegramVcpkgBinDir)zlib1.dll;$(TelegramVcpkgBinDir)libcrypto-3*.dll;$(TelegramVcpkgBinDir)libssl-3*.dll;$(TelegramVcpkgBinDir)legacy.dll;$(TelegramVcpkgBinDir)pkgconf-*.dll" />
       <ReferenceCopyLocalPaths Include="@(TelegramVcpkgRuntimeDll)" />
     </ItemGroup>
     <!-- Only the app projects warn. A native project reaches ResolveReferences before its own

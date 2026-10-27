@@ -5204,15 +5204,15 @@
     <CompilerVisibleProperty Include="TdParsers" />
     <AdditionalFiles Include="$(ProjectDir)\..\Libraries\tdjson\td_api.tl" />
     <AdditionalFiles Include="$(ProjectDir)\Strings\en\Resources.xml" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\tdjson.dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(TelegramVcpkgTriplet)\tdjson.dll" />
     <!-- tdjson comes in as a copy-local path rather than a Reference, so RAR never runs its
          related-file discovery and the .pdb has to be named explicitly. Without it the appxsym
          carries no tdjson symbols and every crash inside TDLib is unresolvable. -->
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\tdjson.pdb" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(TelegramVcpkgTriplet)\tdjson.pdb" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\wallet-engine\$(Platform)\wallet_engine.dll" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\zlib1.dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(TelegramVcpkgTriplet)\libcrypto-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(TelegramVcpkgTriplet)\libssl-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(TelegramVcpkgTriplet)\zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsDesktop, Version=10.0.26100.0">

@@ -413,12 +413,12 @@
   <ItemGroup>
     <!-- Same reason as tdjson.pdb below: Telegram.csproj names these itself as copy-local
          paths, and there is no Reference here to find them from. -->
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.pdb" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\tdjson.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\tdjson.pdb" />
     <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\wallet-engine\$(Platform)\wallet_engine.dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\zlib1.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\libcrypto-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\libssl-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\zlib1.dll" />
   </ItemGroup>
 
   <!--

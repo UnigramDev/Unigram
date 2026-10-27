@@ -87,7 +87,8 @@ are the ones the app ships.
 ### TDLib
 In order to communicate with Telegram servers, Unigram uses TDLib. It comes as a submodule and is
 built by `Libraries\tdjson\build.ps1`, which exports `tdjson.dll`, its dependencies and
-`td_api.tl` into `Libraries\tdjson\<arch>` — the paths the app copies from.
+`td_api.tl` into `Libraries\tdjson\<triplet>` — `x64-uwp`, `arm64-uwp`, and with `-target windows`
+the desktop `x64-windows` and `arm64-windows` — the paths the app copies from.
 
 Two extra tools are needed for the code generation step:
 

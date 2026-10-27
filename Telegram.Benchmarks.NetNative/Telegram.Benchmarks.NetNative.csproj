@@ -128,7 +128,7 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Assets\**" />
-    <Content Include="..\Libraries\tdjson\x64\*.dll">
+    <Content Include="..\Libraries\tdjson\x64-uwp\*.dll">
       <Link>%(Filename)%(Extension)</Link>
     </Content>
   </ItemGroup>

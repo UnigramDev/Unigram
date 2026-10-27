@@ -296,17 +296,16 @@
     <AppxManifest Condition="'$(Unpackaged)' != 'true'" Include="$(WinUIAppxManifest)" />
   </ItemGroup>
 
-  <!-- The two CRTs the payload links against, added to the generated manifest for the reason
-       Package.Win32.Final.xslt documents: without them Telegram.Native fails to load inside
-       the package, and CsWinRT reports that as REGDB_E_CLASSNOTREG, which reads like a
-       registration problem and is not one. -->
+  <!-- The desktop CRT the payload links against, added to the generated manifest for the reason
+       Package.Win32.Final.xslt documents: without it Telegram.Native fails to load inside the
+       package, and CsWinRT reports that as REGDB_E_CLASSNOTREG, which reads like a registration
+       problem and is not one. Only the desktop one: this flavour links the -windows triplets, so
+       nothing in it imports the _app CRT. -->
   <Target Name="PatchWinUIFinalManifest" AfterTargets="_GenerateAppxManifest" Condition="Exists('$(FinalAppxManifestName)')">
     <PropertyGroup>
-      <_VCLibsName Condition="'$(Configuration)' == 'Debug'">Microsoft.VCLibs.140.00.Debug</_VCLibsName>
-      <_VCLibsName Condition="'$(_VCLibsName)' == ''">Microsoft.VCLibs.140.00</_VCLibsName>
       <_DesktopVCLibsName Condition="'$(Configuration)' != 'Debug'">Microsoft.VCLibs.140.00.UWPDesktop</_DesktopVCLibsName>
     </PropertyGroup>
-    <XslTransformation XmlInputPaths="$(FinalAppxManifestName)" XslInputPath="Package.Win32.Final.xslt" OutputPaths="$(FinalAppxManifestName).tmp" Parameters="&lt;Parameter Name='VCLibsName' Value='$(_VCLibsName)' /&gt;&lt;Parameter Name='DesktopVCLibsName' Value='$(_DesktopVCLibsName)' /&gt;" />
+    <XslTransformation XmlInputPaths="$(FinalAppxManifestName)" XslInputPath="Package.Win32.Final.xslt" OutputPaths="$(FinalAppxManifestName).tmp" Parameters="&lt;Parameter Name='VCLibsName' Value='' /&gt;&lt;Parameter Name='DesktopVCLibsName' Value='$(_DesktopVCLibsName)' /&gt;" />
     <Copy SourceFiles="$(FinalAppxManifestName).tmp" DestinationFiles="$(FinalAppxManifestName)" />
     <Delete Files="$(FinalAppxManifestName).tmp" />
   </Target>
@@ -451,11 +450,11 @@
        Reference, so RAR never runs its related-file discovery and without this the symbols are
        missing from every TDLib crash. -->
   <ItemGroup>
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.pdb" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
-    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\zlib1.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\tdjson.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\tdjson.pdb" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\libcrypto-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\libssl-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(TelegramVcpkgTriplet)\zlib1.dll" />
   </ItemGroup>
 
   <!--

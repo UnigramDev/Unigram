@@ -93,7 +93,7 @@
 
   <!-- The UWP host loads tdjson from its own package, the way the app does. -->
   <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
-    <Content Include="..\Libraries\tdjson\x64\*.dll" Link="%(Filename)%(Extension)">
+    <Content Include="..\Libraries\tdjson\x64-uwp\*.dll" Link="%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <AppxManifest Include="Uwp\Package.appxmanifest">

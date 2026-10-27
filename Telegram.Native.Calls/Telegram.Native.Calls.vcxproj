@@ -130,6 +130,11 @@
     <Midl>
       <PreprocessorDefinitions>WINUI3;UIComposition=Microsoft.UI.Composition;UIXaml=Microsoft.UI.Xaml;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
+    <!-- The windows-triplet webrtc compiles the Win32 task queue (multimedia timers) and the
+         proxy authentication in http_common.cc, both of which the uwp one leaves out. -->
+    <Link>
+      <AdditionalDependencies>winmm.lib;secur32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\ChannelManager.h" />

@@ -13,7 +13,8 @@
 
   <xsl:output method="xml" indent="yes" />
 
-  <!-- Microsoft.VCLibs.140.00 in Release, .Debug in Debug. -->
+  <!-- Microsoft.VCLibs.140.00 in Release, .Debug in Debug; empty for a payload with no
+       uwp-triplet libraries, the WinUI flavour's. -->
   <xsl:param name="VCLibsName" select="'Microsoft.VCLibs.140.00'" />
 
   <!-- Microsoft.VCLibs.140.00.UWPDesktop in Release; empty in Debug, where Visual Studio's own
@@ -40,8 +41,10 @@
     <xsl:copy>
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates select="f:TargetDeviceFamily" />
-      <PackageDependency Name="{$VCLibsName}" MinVersion="14.0.33519.0"
-                         Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+      <xsl:if test="$VCLibsName != ''">
+        <PackageDependency Name="{$VCLibsName}" MinVersion="14.0.33519.0"
+                           Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+      </xsl:if>
       <xsl:if test="$DesktopVCLibsName != ''">
         <PackageDependency Name="{$DesktopVCLibsName}" MinVersion="14.0.33728.0"
                            Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />

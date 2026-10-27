@@ -25,8 +25,14 @@
     <VcpkgRoot Condition="'$(VcpkgRoot)' == '' And Exists('$(TelegramRoot)..\vcpkg\.vcpkg-root')">$([System.IO.Path]::GetFullPath('$(TelegramRoot)..\vcpkg'))</VcpkgRoot>
     <VcpkgRoot Condition="'$(VcpkgRoot)' == '' And Exists('$(MSBuildExtensionsPath)\..\VC\vcpkg\vcpkg.exe')">$([System.IO.Path]::GetFullPath('$(MSBuildExtensionsPath)\..\VC\vcpkg'))</VcpkgRoot>
 
-    <TelegramVcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-uwp</TelegramVcpkgTriplet>
-    <TelegramVcpkgTriplet Condition="'$(Platform)' == 'ARM64'">arm64-uwp</TelegramVcpkgTriplet>
+    <!-- uwp or windows. The triplet also names the Libraries/tdjson folder an app takes TDLib from,
+         so the two cannot be built for different ones. The WinUI app and its builds of the natives
+         are desktop binaries, which is what the -windows triplets are; the vcxprojs set
+         TelegramWinUI before they import this file. -->
+    <TelegramVcpkgOS Condition="'$(TelegramVcpkgOS)' == '' And ('$(TelegramWinUI)' == 'true' Or '$(MSBuildProjectName)' == 'Telegram.WinUI')">windows</TelegramVcpkgOS>
+    <TelegramVcpkgOS Condition="'$(TelegramVcpkgOS)' == ''">uwp</TelegramVcpkgOS>
+    <TelegramVcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-$(TelegramVcpkgOS)</TelegramVcpkgTriplet>
+    <TelegramVcpkgTriplet Condition="'$(Platform)' == 'ARM64'">arm64-$(TelegramVcpkgOS)</TelegramVcpkgTriplet>
 
     <!-- One install root per triplet - the layout the integration uses left to itself, where the
          triplet appears twice because vcpkg creates <triplet> inside the root it is handed. It
@@ -44,6 +50,10 @@
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
     <VcpkgEnableClassic>false</VcpkgEnableClassic>
     <VcpkgManifestRoot>$(TelegramRoot)</VcpkgManifestRoot>
+    <!-- Pinned, not derived: vcpkg picks the triplet from AppContainerApplication, and the install
+         root above is per triplet, so the two must agree or an install would purge the root it was
+         pointed at. -->
+    <VcpkgTriplet>$(TelegramVcpkgTriplet)</VcpkgTriplet>
 
     <!-- The runtime DLLs are declared explicitly in Directory.Build.targets instead. vcpkg's own
          applocal step is skipped whenever the linker does not run — an up-to-date incremental
