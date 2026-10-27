@@ -9,6 +9,7 @@
   <Project Path="Telegram.WinUI.Rewriter/Telegram.WinUI.Rewriter.csproj" />
   <Project Path="Telegram.Native.Calls/Telegram.Native.Calls.vcxproj" Id="fdd3c45d-4cff-4a90-8fef-16ca70ab00be" />
   <Project Path="Telegram.Native/Telegram.Native.vcxproj" Id="1b521e77-46bd-4d60-89f6-d68e9bb9abff" />
+  <Project Path="Telegram.Updater/Telegram.Updater.vcxproj" Id="18d76147-8f4e-4a9d-9b9e-6004dff8ad8a" />
   <Project Path="Telegram/Telegram.WinUI.csproj">
     <BuildDependency Project="Telegram.Native.Calls/Telegram.Native.Calls.vcxproj" />
     <BuildDependency Project="Telegram.Native/Telegram.Native.vcxproj" />

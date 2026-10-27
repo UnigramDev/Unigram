@@ -55,10 +55,14 @@ namespace Telegram.Services
         private readonly IEventAggregator _aggregator;
 
         private static readonly SemaphoreSlim _updateLock = new(1, 1);
-        // Also off without an identity: what this downloads is an msixbundle and what installs it
-        // is PackageManager, and neither means anything to a host that was not installed that way.
-        // An unpackaged build has to be updated by whatever put it on disk.
-        private static readonly bool _disabled = Constants.DEBUG || ApiInfo.IsStoreRelease || !ApiInfo.HasPackageIdentity;
+#if UNPACKAGED
+        // Without an identity there is no PackageManager to install with, so the update is a zip
+        // that UnpackagedUpdates stages for Telegram.Updater - which only works in the folder
+        // layout the installer creates.
+        private static readonly bool _disabled = Constants.DEBUG || ApiInfo.IsStoreRelease || !(ApiInfo.HasPackageIdentity || (UnpackagedUpdates.IsInstalled && Constants.UnpackagedUpdatesChatId != 0));
+#else
+        private static readonly bool _disabled = Constants.DEBUG || ApiInfo.IsStoreRelease;
+#endif
 
         private long _fileToken;
 
@@ -98,6 +102,20 @@ namespace Telegram.Services
                 Logger.Info("Can't acquire semaphore");
                 return false;
             }
+
+#if UNPACKAGED
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                try
+                {
+                    return await LaunchUnpackagedAsync();
+                }
+                finally
+                {
+                    _updateLock.Release();
+                }
+            }
+#endif
 
             try
             {
@@ -177,6 +195,28 @@ namespace Telegram.Services
             return false;
         }
 
+#if UNPACKAGED
+        private static async Task<bool> LaunchUnpackagedAsync()
+        {
+            var navigation = WindowContext.Main?.GetNavigationService();
+            if (navigation != null && UnpackagedUpdates.TryStartUpdater())
+            {
+                Logger.Info("Updater started");
+
+                // The way Exit on the notification area icon ends the app, which the updater waits for.
+                await navigation.Dispatcher.DispatchAsync(async () =>
+                {
+                    await SystemTray.HideAsync();
+                    await BootStrapper.ConsolidateAsync();
+                });
+
+                return true;
+            }
+
+            return false;
+        }
+#endif
+
         private static async Task<bool> InstallUpdateAsync(INavigationService navigation, StorageFile file)
         {
             if (AppSettings.Diagnostics.DisablePackageManager)
@@ -227,7 +267,11 @@ namespace Telegram.Services
 
         public async Task UpdateAsync(bool force)
         {
-            if (_disabled || !_updateLock.Wait(0))
+            if (_disabled)
+            {
+                return;
+            }
+            else if (!_updateLock.Wait(0))
             {
                 Logger.Info("Can't acquire lock");
                 return;
@@ -238,6 +282,7 @@ namespace Telegram.Services
 
             if (skip && !force)
             {
+                Logger.Info($"Checked {diff / 1000}s ago, skipping");
                 _updateLock.Release();
                 return;
             }
@@ -263,6 +308,7 @@ namespace Telegram.Services
 
                     if (epoch.TotalDays >= 3 || !_networkService.IsMetered)
                     {
+                        Logger.Info($"Downloading {cloud.Version}");
                         _clientService.DownloadFile(cloud.Document.Id, 16);
 
                         _fileCloud = cloud;
@@ -286,6 +332,7 @@ namespace Telegram.Services
             {
                 var folder = await AppPaths.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
                 var result = await TryCopyPartLocally(folder, file.Local.Path, cloud.Version);
+                Logger.Info(result != null ? $"Downloaded {cloud.Version}" : $"Downloaded {cloud.Version}, but it could not be prepared");
 
                 var current = AppIdentity.Version.ToVersion();
                 if (current < cloud.Version)
@@ -307,7 +354,7 @@ namespace Telegram.Services
 
             if (_chatId == null)
             {
-                var chat = await _clientService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
+                var chat = await _clientService.SendAsync(GetUpdatesChat()) as Chat;
                 if (chat != null)
                 {
                     _chatId = chat.Id;
@@ -316,10 +363,11 @@ namespace Telegram.Services
 
             if (_chatId == null)
             {
+                Logger.Info("Updates chat not found");
                 return null;
             }
 
-            var updateChannel = AppSettings.InstallBetaUpdates ? "#beta" : "#update";
+            var beta = AppSettings.InstallBetaUpdates;
             var chatId = _chatId.Value;
 
             await _clientService.SendAsync(new OpenChat(chatId));
@@ -327,11 +375,15 @@ namespace Telegram.Services
             var messages = await _clientService.SendAsync(new SearchChatMessages(chatId, null, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument())) as FoundChatMessages;
             if (messages == null)
             {
+                Logger.Info("Updates chat search failed");
                 _clientService.Send(new CloseChat(chatId));
                 return null;
             }
 
             _clientService.Send(new CloseChat(chatId));
+
+            var current = AppIdentity.Version.ToVersion();
+            CloudUpdate next = null;
 
             foreach (var message in messages.Messages)
             {
@@ -356,52 +408,114 @@ namespace Telegram.Services
                     }
                 }
 
-                if (!hashtags.Contains(updateChannel) || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
+                if (!hashtags.Contains("#update") && !(beta && hashtags.Contains("#beta")))
                 {
                     continue;
                 }
 
-                var split = document.Document.FileName.Split('_');
-                if (split.Length >= 3 && Version.TryParse(split[1], out Version version))
+                if (!TryParseFileName(document.Document.FileName, out Version version))
                 {
-                    var set = new CloudUpdate
+                    continue;
+                }
+
+                // The highest version rather than the latest post: the two channels are posted
+                // independently, so a stable release can come after a beta that is still ahead of it.
+                if (version > current && (next == null || version > next.Version))
+                {
+                    next = new CloudUpdate
                     {
                         MessageId = message.Id,
                         Changelog = changelog,
                         Version = version,
                         Document = document.Document.DocumentValue
                     };
-
-                    var current = AppIdentity.Version.ToVersion();
-                    var folder = await AppPaths.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
-
-                    if (set.Version > current)
-                    {
-                        if (set.Document.Local.IsDownloadingCompleted)
-                        {
-                            set.File = await TryCopyPartLocally(folder, set.Document.Local.Path, set.Version);
-                        }
-                        else
-                        {
-                            set.File = await folder.TryGetItemAsync($"{set.Version}.msixbundle") as StorageFile;
-                        }
-
-                        return set;
-                    }
-                    else if (set.Document.Local.IsDownloadingCompleted)
-                    {
-                        // Delete the file from chat cache as it isn't needed anymore
-                        _clientService.Send(new DeleteFile(set.Document.Id));
-                    }
+                }
+                else if (document.Document.DocumentValue.Local.IsDownloadingCompleted)
+                {
+                    // Delete the file from chat cache as it isn't needed anymore
+                    _clientService.Send(new DeleteFile(document.Document.DocumentValue.Id));
                 }
             }
 
-            return null;
+            if (next == null)
+            {
+                Logger.Info($"No update among {messages.Messages.Count} posts, running {current}");
+                return null;
+            }
+
+            Logger.Info($"Found {next.Version}, running {current}");
+
+            var folder = await AppPaths.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+
+            if (next.Document.Local.IsDownloadingCompleted)
+            {
+                next.File = await TryCopyPartLocally(folder, next.Document.Local.Path, next.Version);
+            }
+            else
+            {
+                next.File = await PrepareAsync(await folder.TryGetItemAsync($"{next.Version}{Extension}") as StorageFile, next.Version);
+            }
+
+            return next;
+        }
+
+        private static Function GetUpdatesChat()
+        {
+#if UNPACKAGED
+            // A private channel can only be found, never resolved: TDLib knows it, and holds the
+            // access hash every request to it needs, only when this account is a member. So
+            // membership is what decides who gets these updates.
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return new GetChat(Constants.UnpackagedUpdatesChatId);
+            }
+#endif
+
+            return new SearchPublicChat(Constants.AppChannel);
+        }
+
+        private static bool TryParseFileName(string fileName, out Version version)
+        {
+#if UNPACKAGED
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return UnpackagedUpdates.TryParseFileName(fileName, out version);
+            }
+#endif
+
+            version = null;
+
+            if (!fileName.Contains("x64") || !fileName.EndsWith(".msixbundle"))
+            {
+                return false;
+            }
+
+            var split = fileName.Split('_');
+            return split.Length >= 3 && Version.TryParse(split[1], out version);
+        }
+
+#if UNPACKAGED
+        private static string Extension => ApiInfo.HasPackageIdentity ? ".msixbundle" : UnpackagedUpdates.Extension;
+#else
+        private const string Extension = ".msixbundle";
+#endif
+
+        // Unpackaged, a download is not ready to restart into until it has been extracted.
+        private static Task<StorageFile> PrepareAsync(StorageFile file, Version version)
+        {
+#if UNPACKAGED
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return UnpackagedUpdates.StageAsync(file, version);
+            }
+#endif
+
+            return Task.FromResult(file);
         }
 
         private static async Task<StorageFile> TryCopyPartLocally(StorageFolder folder, string path, Version version)
         {
-            var fileName = $"{version}.msixbundle";
+            var fileName = $"{version}{Extension}";
 
             var cache = await folder.TryGetItemAsync(fileName) as StorageFile;
             if (cache == null)
@@ -409,12 +523,12 @@ namespace Telegram.Services
                 try
                 {
                     var result = await StorageFile.GetFileFromPathAsync(path);
-                    return await result.CopyAsync(folder, fileName, NameCollisionOption.FailIfExists);
+                    cache = await result.CopyAsync(folder, fileName, NameCollisionOption.FailIfExists);
                 }
                 catch { }
             }
 
-            return cache;
+            return await PrepareAsync(cache, version);
         }
     }
 

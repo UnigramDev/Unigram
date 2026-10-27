@@ -16,6 +16,7 @@ using Microsoft.UI.Xaml.Settings;
 using Microsoft.Windows.AppLifecycle;
 using Telegram.Host;
 using Telegram.Navigation;
+using Telegram.Services;
 using Windows.Storage;
 
 namespace Telegram
@@ -53,6 +54,13 @@ namespace Telegram
             if (!keyInstance.IsCurrent)
             {
                 RedirectActivationTo(AppInstance.GetCurrent().GetActivatedEventArgs(), keyInstance);
+                return;
+            }
+
+            // Before any window: the updater waits for this process to be gone, then starts the
+            // new version itself.
+            if (UnpackagedUpdates.TryStartUpdater())
+            {
                 return;
             }
 

@@ -180,11 +180,11 @@
     Unpackaged (-p:Unpackaged=true): the same sources, run straight out of the output folder with
     no identity. The binaries are not the same ones, and cannot be - see below.
 
-    WindowsPackageType=None is what makes the Windows App SDK emit its bootstrap
-    auto-initializer, and without it an unpackaged process cannot find the runtime at all: there
-    is no package dependency to resolve it with.
+    Self-contained, because there is no package dependency to resolve the Windows App SDK runtime
+    with, and a user's machine has no reason to have it installed: the runtime is copied beside
+    the app, and the SDK activates its classes reg-free instead of bootstrapping a framework package.
 
-    AppxPackage has to follow it. The two together are rejected outright -
+    AppxPackage has to follow WindowsPackageType=None. The two together are rejected outright -
     "Improper project configuration: WindowsPackageType is set to None, but AppxPackage is set to
     true" - so a build cannot both bootstrap and package, and this is a configuration rather than
     a switch on one output. EnableMsixTooling stays on regardless: it is what brings in the PRI
@@ -193,6 +193,7 @@
   -->
   <PropertyGroup Condition="'$(Unpackaged)' == 'true'">
     <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <AppxPackage>false</AppxPackage>
     <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
   </PropertyGroup>
@@ -201,6 +202,9 @@
     <!-- See the file: it exists for maxversiontested, without which WindowsXamlManager fails
          E_UNEXPECTED in a process with no package manifest to read the OS version from. -->
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- Unpackaged there is no manifest logo, so the shortcuts, Installed apps and the taskbar all
+         take the exe's own. The installer's copy, so the payload does not carry a second one. -->
+    <ApplicationIcon>..\Telegram.Installer\Telegram.ico</ApplicationIcon>
   </PropertyGroup>
 
   <!--
@@ -438,8 +442,10 @@
     <ProjectReference Include="..\Telegram.Native.Calls\Telegram.Native.Calls.vcxproj" />
     <ProjectReference Include="..\Telegram.Native\Telegram.Native.vcxproj" />
     <!-- Ordering only, hence ReferenceOutputAssembly=false: the rewriter is run by path from an
-         Exec. Platform is removed because it is AnyCPU and the app builds x64 and ARM64. -->
-    <ProjectReference Include="..\Telegram.WinUI.Rewriter\Telegram.WinUI.Rewriter.csproj" ReferenceOutputAssembly="false" GlobalPropertiesToRemove="Platform;RuntimeIdentifier;PublishAot;SelfContained" />
+         Exec. Private=false as well, or its apphost, deps.json and runtimeconfig.json are still
+         copied into the output and the publish folder. Platform is removed because it is AnyCPU
+         and the app builds x64 and ARM64. -->
+    <ProjectReference Include="..\Telegram.WinUI.Rewriter\Telegram.WinUI.Rewriter.csproj" ReferenceOutputAssembly="false" Private="false" GlobalPropertiesToRemove="Platform;RuntimeIdentifier;PublishAot;SelfContained" />
   </ItemGroup>
 
   <PropertyGroup>

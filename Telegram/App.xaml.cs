@@ -291,6 +291,11 @@ namespace Telegram
             Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
 #endif
 
+#if UNPACKAGED
+            // Here rather than in LaunchAsync above: an unpackaged start is always an activation.
+            UnpackagedUpdates.RemoveLeftovers();
+#endif
+
             if (updateService != null)
             {
                 await updateService.UpdateAsync(false);

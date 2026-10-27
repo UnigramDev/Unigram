@@ -18,6 +18,12 @@ namespace Telegram
 
         public static readonly string AppChannel;
 
+        /// <summary>
+        /// The private channel the unpackaged build finds its updates in, as a chat id
+        /// (-100 followed by the channel's own). Zero turns them off.
+        /// </summary>
+        public static readonly long UnpackagedUpdatesChatId;
+
         public static readonly string AppReportsId;
 
         public static readonly string AppCenterId;
