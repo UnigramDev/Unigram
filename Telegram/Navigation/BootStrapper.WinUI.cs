@@ -214,7 +214,7 @@ namespace Telegram.Navigation
         /// with its own size, and sharing a slot would have it overwrite where the main window
         /// sits every time something is shared.
         /// </summary>
-        private static WindowContext CreateWindow(string persistedId)
+        private WindowContext CreateWindow(string persistedId)
         {
             Logger.Info("Creating the window context");
 
@@ -230,7 +230,19 @@ namespace Telegram.Navigation
                 (int)(DefaultWidth * scale),
                 (int)(DefaultHeight * scale)));
 
-            return new WindowContext(window);
+            var context = new WindowContext(window);
+
+            // What the UWP half gets from CoreWindow.Activated: the update check and the online
+            // status hang off it. Never removed, because the context is the one that goes away and
+            // this object outlives every window.
+            context.Activated += OnContextActivated;
+
+            return context;
+        }
+
+        private void OnContextActivated(object sender, WindowActivatedEventArgs e)
+        {
+            OnWindowActivated((WindowContext)sender, e.IsActive);
         }
     }
 }
