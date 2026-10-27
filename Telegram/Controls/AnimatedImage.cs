@@ -1717,9 +1717,9 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// Shuts the gate, and closes the task once nobody is inside a frame. Called by
-        /// <see cref="Dispose"/> and by the last borrow to end, whichever happens second, so
-        /// exactly one of them does the work.
+        /// Shuts the gate, and closes the task and lets go of the buffers once nobody is inside a
+        /// frame. Called by <see cref="Dispose"/> and by the last borrow to end, whichever happens
+        /// second, so exactly one of them does the work.
         /// </summary>
         private void DisposeTask()
         {
@@ -1747,6 +1747,11 @@ namespace Telegram.Controls
         private void CloseTask()
         {
             Interlocked.Exchange(ref _task, null)?.Dispose();
+
+            // Here and not in Dispose: a render still inside the gate is writing into one of the
+            // buffers, and given back any earlier it would be rented by another presenter, or
+            // freed by the pool, underneath that render.
+            ReleaseVisual();
         }
 
         private bool NextFrame(IBuffer frame, long time)
@@ -1854,27 +1859,28 @@ namespace Telegram.Controls
             Interlocked.Exchange(ref _foregroundNext, null);
             Interlocked.Exchange(ref _backgroundNext, null);
 
-            ReleaseVisual();
-
             _loader.Activated -= OnActivated;
             _loader.PopupActivated -= OnActivated;
             _loader.Remove(_presentation);
         }
 
         /// <summary>
-        /// The half of teardown that belongs to the UI thread. Dispose runs on either thread - the
-        /// scheduler one whenever UnloadImpl deferred while ticking, which is most of the time - and
-        /// the pool lives on the UI thread, so the buffers are posted back to it.
+        /// The half of teardown that belongs to the UI thread. CloseTask runs on whichever thread
+        /// closes the gate last - the UI thread, the scheduler one whenever UnloadImpl deferred
+        /// while ticking, or a decode that was still inside a frame - and both the pool and the
+        /// surface live on the UI thread, so they are posted back to it. For the surface it is a
+        /// requirement: Microsoft.UI.Composition objects are not agile, and closing one from
+        /// another thread throws RPC_E_WRONG_THREAD.
         /// </summary>
         private void ReleaseVisual()
         {
             var first = Interlocked.Exchange(ref _buffer1, null);
             var second = Interlocked.Exchange(ref _buffer2, null);
+            var surface = Interlocked.Exchange(ref _surface, null);
 
-            Interlocked.Exchange(ref _surface, null)?.Release();
             _surfaceShown = false;
 
-            if (first == null && second == null)
+            if (first == null && second == null && surface == null)
             {
                 return;
             }
@@ -1883,18 +1889,20 @@ namespace Telegram.Controls
 
             if (_dispatcherQueue.HasThreadAccess)
             {
-                ReleaseBuffers(pool, first, second);
+                ReleaseVisual(pool, first, second, surface);
             }
             else
             {
-                // A failed enqueue means the dispatcher is going away, and the pool lives on it -
-                // there is nothing left to return them to.
-                _dispatcherQueue.TryEnqueue(() => ReleaseBuffers(pool, first, second));
+                // A failed enqueue means the dispatcher is going away, and the pool and the
+                // compositor live on it - there is nothing left to return them to.
+                _dispatcherQueue.TryEnqueue(() => ReleaseVisual(pool, first, second, surface));
             }
         }
 
-        private static void ReleaseBuffers(AnimatedImageLoader.BufferRecyclePool pool, IBuffer first, IBuffer second)
+        private static void ReleaseVisual(AnimatedImageLoader.BufferRecyclePool pool, IBuffer first, IBuffer second, AnimatedImageSurface surface)
         {
+            surface?.Release();
+
             pool.Return(first);
             pool.Return(second);
         }
@@ -3546,6 +3554,14 @@ namespace Telegram.Controls
             }
         }
 
+        public static void Trim(XamlRoot xamlRoot)
+        {
+            if (xamlRoot != null && _loaders.TryGetValue(xamlRoot, out var loader))
+            {
+                loader._graphicsDevice.Trim();
+            }
+        }
+
         private void ReleaseImpl(XamlRoot xamlRoot)
         {
             Flusher.Close();
@@ -3631,8 +3647,13 @@ namespace Telegram.Controls
 
             public void Return(IBuffer buffer)
             {
-                if (buffer == null || _closed)
+                if (buffer == null)
                 {
+                    return;
+                }
+                else if (_closed)
+                {
+                    Close(buffer);
                     return;
                 }
 
@@ -3646,11 +3667,31 @@ namespace Telegram.Controls
                 }
             }
 
-            /// <summary>Drops everything at once, for a window that is going away.</summary>
+            /// <summary>
+            /// Frees everything at once, for a window that is going away. Presenters still alive
+            /// return theirs later, and those are freed as they arrive.
+            /// </summary>
             public void Clear()
             {
+                _closed = true;
+
+                foreach (var entry in _buffers)
+                {
+                    Close(entry.Buffer);
+                }
+
                 _buffers.Clear();
                 _timer?.Stop();
+            }
+
+            // Every buffer this drops is closed rather than let go: the memory behind it is
+            // native, so the collector neither sees it nor hurries to finalize the small wrapper.
+            private static void Close(IBuffer buffer)
+            {
+                if (buffer is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
             }
 
             private DispatcherTimer CreateTimer()
@@ -3672,6 +3713,7 @@ namespace Telegram.Controls
                 {
                     if (now > _buffers[i].Expires)
                     {
+                        Close(_buffers[i].Buffer);
                         _buffers.RemoveAt(i);
                     }
                 }

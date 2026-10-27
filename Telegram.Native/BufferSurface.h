@@ -17,7 +17,9 @@ namespace winrt::Telegram::Native::implementation
     };
 #endif
 
-    struct BufferSurface : implements<BufferSurface, IBuffer, IBufferByteAccess>
+    // IClosable because the memory is native: the collector cannot see it, so without Close a
+    // dropped buffer is freed only when its wrapper happens to be finalized.
+    struct BufferSurface : implements<BufferSurface, IBuffer, IBufferByteAccess, winrt::Windows::Foundation::IClosable>
     {
     public:
         uint8_t* m_buffer;
@@ -79,6 +81,15 @@ namespace winrt::Telegram::Native::implementation
         {
             *value = m_buffer;
             return S_OK;
+        }
+
+        // A length of zero is what lets a reader that checks it, as FrameSurface::Draw does,
+        // refuse a closed buffer rather than write through a null pointer.
+        void Close()
+        {
+            free(m_buffer);
+            m_buffer = nullptr;
+            m_length = 0;
         }
     };
 }
