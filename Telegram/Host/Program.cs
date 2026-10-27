@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Telegram.Common;
+using Telegram.Services.Settings;
 using Windows.ApplicationModel;
 using Windows.System;
 using Windows.Storage;
@@ -106,7 +107,10 @@ namespace Telegram.Host
             // that faults. So the process is killed outright rather than unwound.
             //
             // Nothing is lost by it: the window's own Close has already detached the content and
-            // suspended its navigation services, and TDLib flushes its binlog as it goes.
+            // suspended its navigation services, and TDLib flushes its binlog as it goes. The
+            // settings do not, unpackaged: their debounced write would die with the process.
+            SettingsStore.Local.Flush();
+
             Win32.TerminateProcess(Win32.GetCurrentProcess(), 0);
 
             return 0;
