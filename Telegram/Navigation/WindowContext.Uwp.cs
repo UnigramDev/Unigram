@@ -466,9 +466,15 @@ namespace Telegram.Navigation
         /// <summary>
         /// Brings this window to the foreground.
         /// </summary>
-        public IAsyncAction SwitchToAsync()
+        /// <param name="previous">
+        /// The window being left. Without it the switch replaces the calling thread's view, so a
+        /// caller running on this window's own thread would switch it to itself.
+        /// </param>
+        public IAsyncAction SwitchToAsync(WindowContext previous = null)
         {
-            return ApplicationViewSwitcher.SwitchAsync(Id);
+            return previous != null
+                ? ApplicationViewSwitcher.SwitchAsync(Id, previous.Id)
+                : ApplicationViewSwitcher.SwitchAsync(Id);
         }
 
         public bool IsFullScreenMode => ApplicationView.GetForCurrentView().IsFullScreenMode;

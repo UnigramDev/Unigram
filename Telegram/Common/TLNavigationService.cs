@@ -63,13 +63,14 @@ namespace Telegram.Common
 
         public async void NavigateToTextEditor(long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
         {
+            var previous = Window;
             var found = false;
 
             await WindowContext.ForEachAsync(window =>
             {
                 if (window.Content is RichTextWindow textEditor && textEditor.AreTheSame(chatId, messageId))
                 {
-                    _ = window.SwitchToAsync();
+                    _ = window.SwitchToAsync(previous);
                     found = true;
                 }
             });
@@ -93,13 +94,14 @@ namespace Telegram.Common
         {
             if (sourceLink != null)
             {
+                var previous = Window;
                 var found = false;
 
                 await WindowContext.ForEachAsync(window =>
                 {
                     if (window.Content is WebAppWindow webApp && webApp.AreTheSame(sourceLink))
                     {
-                        _ = window.SwitchToAsync();
+                        _ = window.SwitchToAsync(previous);
                         found = true;
                     }
                 });
@@ -141,13 +143,14 @@ namespace Telegram.Common
         public async void NavigateToWallet()
         {
             var sessionId = ClientService.SessionId;
+            var previous = Window;
             var found = false;
 
             await WindowContext.ForEachAsync(window =>
             {
                 if (window.Content is WalletWindow wallet && wallet.SessionId == sessionId)
                 {
-                    _ = window.SwitchToAsync();
+                    _ = window.SwitchToAsync(previous);
                     found = true;
                 }
             });
@@ -235,6 +238,7 @@ namespace Telegram.Common
 
         private async void NavigateToTab(Func<WindowContext, TabViewItem> newTab, ViewServiceOptions parameters)
         {
+            var previous = Window;
             var found = false;
 
             await WindowContext.ForEachAsync(window =>
@@ -243,7 +247,7 @@ namespace Telegram.Common
                 {
                     page.AddNewTab(newTab(window));
 
-                    _ = window.SwitchToAsync();
+                    _ = window.SwitchToAsync(previous);
                     found = true;
                 }
             });

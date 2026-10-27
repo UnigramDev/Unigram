@@ -783,13 +783,14 @@ namespace Telegram.Services.Calls
         {
             var persistedId = "Call";
 
+            var previous = navigationService.Window;
             var found = false;
 
             await WindowContext.ForEachAsync(window =>
             {
                 if (window.PersistedId == persistedId)
                 {
-                    _ = window.SwitchToAsync();
+                    _ = window.SwitchToAsync(previous);
                     found = true;
                 }
             });

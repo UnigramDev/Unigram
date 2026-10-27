@@ -390,7 +390,7 @@ namespace Telegram.Navigation
         /// Brings this window to the foreground. Nothing to switch to: a window here is not a UWP
         /// view, so activating it is the whole operation - the async signature is the shared one's.
         /// </summary>
-        public IAsyncAction SwitchToAsync()
+        public IAsyncAction SwitchToAsync(WindowContext previous = null)
         {
             Activate();
             return Task.CompletedTask.AsAsyncAction();

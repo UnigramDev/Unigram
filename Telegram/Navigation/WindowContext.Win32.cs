@@ -353,7 +353,7 @@ namespace Telegram.Navigation
         /// <summary>
         /// Brings this window to the foreground.
         /// </summary>
-        public IAsyncAction SwitchToAsync()
+        public IAsyncAction SwitchToAsync(WindowContext previous = null)
         {
             throw new NotImplementedException();
         }
