@@ -7,6 +7,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -21,14 +22,15 @@ namespace Telegram
     /// they are, and everything downstream keeps taking the same paths and the same
     /// <see cref="StorageFolder"/>s.
     ///
-    /// Unpackaged the container layout is rebuilt verbatim under <c>%LOCALAPPDATA%\Unigram</c>,
-    /// LocalState, LocalCache and TempState included, so a profile can be copied either way by hand.
+    /// Unpackaged the container layout is rebuilt verbatim under
+    /// <c>%LOCALAPPDATA%\TelegramFZ-LLC.Windows</c>, LocalState, LocalCache and TempState included,
+    /// so a profile can be copied either way by hand. Telegram.Native's AppModelPaths.h answers the
+    /// same paths and has to agree.
     /// </summary>
     public static class AppPaths
     {
 #if UNPACKAGED
-        // Read once. The answer cannot change while the process lives, and every path below is on
-        // the startup path where a P/Invoke per call would be noise.
+        // First: every initializer below reads it, and they run in the order they are written.
         private static readonly bool _packaged = ApiInfo.HasPackageIdentity;
 
         /// <summary>
@@ -36,35 +38,51 @@ namespace Telegram
         /// <c>InstalledLocation.Path</c> does not, and the difference reaches string
         /// concatenations, so it is trimmed here rather than at every call site.
         /// </summary>
-        private static string _installedPath;
-        public static string InstalledPath => _installedPath ??= _packaged
+        public static string InstalledPath { get; } = _packaged
             ? Package.Current.InstalledLocation.Path
             : AppContext.BaseDirectory.TrimEnd('\\');
 
-        private static string _localPath;
-        public static string LocalPath => _localPath ??= _packaged
+        public static string LocalPath { get; } = _packaged
             ? ApplicationData.Current.LocalFolder.Path
             : EnsureFolder("LocalState");
 
-        private static string _temporaryPath;
-        public static string TemporaryPath => _temporaryPath ??= _packaged
+        public static string TemporaryPath { get; } = _packaged
             ? ApplicationData.Current.TemporaryFolder.Path
             : EnsureFolder("TempState");
 
-        private static string _localCachePath;
-        public static string LocalCachePath => _localCachePath ??= _packaged
+        public static string LocalCachePath { get; } = _packaged
             ? ApplicationData.Current.LocalCacheFolder.Path
             : EnsureFolder("LocalCache");
 
         private static StorageFolder _localFolder;
-        public static StorageFolder LocalFolder => _localFolder ??= _packaged
-            ? ApplicationData.Current.LocalFolder
-            : GetFolder(LocalPath);
-
         private static StorageFolder _temporaryFolder;
-        public static StorageFolder TemporaryFolder => _temporaryFolder ??= _packaged
+
+        public static StorageFolder LocalFolder => _packaged
+            ? ApplicationData.Current.LocalFolder
+            : _localFolder ?? throw new InvalidOperationException("AppPaths.InitializeAsync has not completed");
+
+        public static StorageFolder TemporaryFolder => _packaged
             ? ApplicationData.Current.TemporaryFolder
-            : GetFolder(TemporaryPath);
+            : _temporaryFolder ?? throw new InvalidOperationException("AppPaths.InitializeAsync has not completed");
+
+        /// <summary>
+        /// Unpackaged, a <see cref="StorageFolder"/> can only be had from a path, and that is an
+        /// RPC. The host awaits this before it activates the app, so that the two properties above
+        /// stay plain reads rather than blocking on one.
+        /// </summary>
+        public static async Task InitializeAsync()
+        {
+            if (_packaged)
+            {
+                return;
+            }
+
+            var local = StorageFolder.GetFolderFromPathAsync(LocalPath).AsTask();
+            var temporary = StorageFolder.GetFolderFromPathAsync(TemporaryPath).AsTask();
+
+            _localFolder = await local;
+            _temporaryFolder = await temporary;
+        }
 
         /// <summary>
         /// A URI naming a file under <see cref="LocalFolder"/>. <c>ms-appdata:</c> is resolved by
@@ -82,20 +100,11 @@ namespace Telegram
         {
             var path = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Unigram",
+                "TelegramFZ-LLC.Windows",
                 name);
 
             Directory.CreateDirectory(path);
             return path;
-        }
-
-        // Blocking, and it has to be: every consumer of these two roots is synchronous, and the
-        // first of them runs from App's constructor, where there is nothing to await from. The
-        // directory was just created locally, and the completion arrives on a pool thread rather
-        // than on this one, so neither the cost nor the wait is a risk.
-        private static StorageFolder GetFolder(string path)
-        {
-            return StorageFolder.GetFolderFromPathAsync(path).AsTask().GetAwaiter().GetResult();
         }
 #else
         public static string InstalledPath => Package.Current.InstalledLocation.Path;

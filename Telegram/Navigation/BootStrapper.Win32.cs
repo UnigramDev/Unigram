@@ -44,16 +44,29 @@ namespace Telegram.Navigation
             }
             else
             {
-                // Unpackaged, so a plain start is all this can have been: everything else - a
-                // tg: link, a shared file, a toast - reaches the app through an extension the
-                // shell only dispatches to a package. LaunchActivatedEventArgs is sealed and
-                // cannot be built, so the activate path takes it instead; the only thing the
-                // launch path adds that matters here is the watchdog, called by hand.
-                Logger.Info("No identity; starting as a plain launch");
-
-                WatchDog.Launch(ApplicationExecutionState.NotRunning);
-                CallInternalActivated(new PlainActivatedEventArgs());
+                StartUnpackaged();
             }
+        }
+
+        /// <summary>
+        /// Unpackaged, so a plain start is all this can have been: everything else - a tg: link,
+        /// a shared file, a toast - reaches the app through an extension the shell only
+        /// dispatches to a package. LaunchActivatedEventArgs is sealed and cannot be built, so the
+        /// activate path takes it instead; the only thing the launch path adds that matters here
+        /// is the watchdog, called by hand.
+        ///
+        /// async void so that a failure surfaces as an unhandled exception rather than in a task
+        /// nobody observes. The continuation is back on this thread: Main installed the
+        /// synchronization context before it got here.
+        /// </summary>
+        private async void StartUnpackaged()
+        {
+            Logger.Info("No identity; starting as a plain launch");
+
+            await AppPaths.InitializeAsync();
+
+            WatchDog.Launch(ApplicationExecutionState.NotRunning);
+            CallInternalActivated(new PlainActivatedEventArgs());
         }
 
         /// <summary>
