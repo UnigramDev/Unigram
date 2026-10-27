@@ -160,7 +160,7 @@ namespace Telegram.Services
         public bool CanRemember(StorageFile file)
         {
             // A file in our own local folder is TDLib's copy, which it is free to evict.
-            if (Extensions.IsRelativePath(ApplicationDataEx.LocalPath, file.Path, out _))
+            if (Extensions.IsRelativePath(AppPaths.LocalPath, file.Path, out _))
             {
                 return false;
             }
@@ -237,7 +237,7 @@ namespace Telegram.Services
                 {
                     Remove(FolderToken);
                 }
-                else if (Extensions.IsRelativePath(ApplicationDataEx.LocalPath, folder.Path, out _))
+                else if (Extensions.IsRelativePath(AppPaths.LocalPath, folder.Path, out _))
                 {
                     Remove(FolderToken);
                 }

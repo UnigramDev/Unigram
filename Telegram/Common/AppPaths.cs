@@ -8,25 +8,38 @@
 using System;
 using System.IO;
 using Telegram.Common;
+using Windows.ApplicationModel;
+using Windows.Storage;
 
-namespace Windows.Storage
+namespace Telegram
 {
     /// <summary>
-    /// <see cref="ApplicationData.Current"/> throws without package identity, and the two roots it
-    /// hands out are the app's whole idea of where it lives - the TDLib databases, the langpack,
-    /// the themes, the crash reports and every cached file are under one of them. So this is the
-    /// single place that answers where they are, and everything downstream keeps taking the same
-    /// paths and the same <see cref="StorageFolder"/>s.
+    /// Where the app lives: its payload, and the roots <see cref="ApplicationData.Current"/> hands
+    /// out. Both throw without package identity, and the data roots are the app's whole idea of
+    /// where its state is - the TDLib databases, the langpack, the themes, the crash reports and
+    /// every cached file are under one of them. So this is the single place that answers where
+    /// they are, and everything downstream keeps taking the same paths and the same
+    /// <see cref="StorageFolder"/>s.
     ///
     /// Unpackaged the container layout is rebuilt verbatim under <c>%LOCALAPPDATA%\Unigram</c>,
     /// LocalState, LocalCache and TempState included, so a profile can be copied either way by hand.
     /// </summary>
-    public static class ApplicationDataEx
+    public static class AppPaths
     {
 #if UNPACKAGED
         // Read once. The answer cannot change while the process lives, and every path below is on
         // the startup path where a P/Invoke per call would be noise.
         private static readonly bool _packaged = ApiInfo.HasPackageIdentity;
+
+        /// <summary>
+        /// Where the payload is. <c>AppContext.BaseDirectory</c> ends in a separator and
+        /// <c>InstalledLocation.Path</c> does not, and the difference reaches string
+        /// concatenations, so it is trimmed here rather than at every call site.
+        /// </summary>
+        private static string _installedPath;
+        public static string InstalledPath => _installedPath ??= _packaged
+            ? Package.Current.InstalledLocation.Path
+            : AppContext.BaseDirectory.TrimEnd('\\');
 
         private static string _localPath;
         public static string LocalPath => _localPath ??= _packaged
@@ -85,6 +98,8 @@ namespace Windows.Storage
             return StorageFolder.GetFolderFromPathAsync(path).AsTask().GetAwaiter().GetResult();
         }
 #else
+        public static string InstalledPath => Package.Current.InstalledLocation.Path;
+
         public static string LocalPath => ApplicationData.Current.LocalFolder.Path;
 
         public static string TemporaryPath => ApplicationData.Current.TemporaryFolder.Path;
@@ -97,5 +112,14 @@ namespace Windows.Storage
 
         public static Uri GetLocalUri(string relativePath) => new Uri("ms-appdata:///local/" + relativePath);
 #endif
+
+        /// <summary>
+        /// A path to something in the payload, as <c>InstalledLocation.GetFileAsync</c> takes one:
+        /// relative, and with backslashes.
+        /// </summary>
+        public static string GetInstalledPath(string path)
+        {
+            return Path.Combine(InstalledPath, path);
+        }
     }
 }

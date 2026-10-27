@@ -366,7 +366,7 @@ if(document.documentElement)apply();else document.addEventListener('readystatech
                 AdditionalBrowserArguments = "--disable-features=msSmartScreenProtection --force-webrtc-ip-handling-policy=disable_non_proxied_udp"
             };
 
-            var folder = Path.Combine(ApplicationDataEx.LocalCachePath, "WebProxy");
+            var folder = Path.Combine(AppPaths.LocalCachePath, "WebProxy");
             return await CoreWebView2Environment.CreateWithOptionsAsync(string.Empty, folder, options);
         }
 

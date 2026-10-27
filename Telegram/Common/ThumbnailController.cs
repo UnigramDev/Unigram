@@ -222,7 +222,7 @@ namespace Telegram.Common
         // elsewhere keeps its original path - still needs the broker.
         private static Task<IRandomAccessStream> OpenReadAsync(string path)
         {
-            _localFolder ??= ApplicationDataEx.LocalPath + "\\";
+            _localFolder ??= AppPaths.LocalPath + "\\";
 
             // Opened on the pool: even the direct open costs a few milliseconds, and nothing
             // about it needs the UI thread.

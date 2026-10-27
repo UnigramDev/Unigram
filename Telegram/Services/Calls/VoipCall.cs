@@ -970,7 +970,7 @@ namespace Telegram.Services.Calls
                             user.PhoneNumber,
                             GetPhoto(user),
                             Strings.AppName,
-                            new Uri(PackageEx.GetInstalledPath("Assets\\Logos\\LockScreenLogo.png")),
+                            new Uri(AppPaths.GetInstalledPath("Assets\\Logos\\LockScreenLogo.png")),
                             string.Empty,
                             null,
                             VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video,

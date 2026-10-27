@@ -82,14 +82,14 @@ namespace Telegram.Services
                     return;
                 }
 
-                var destination = await ApplicationDataEx.LocalFolder.CreateFolderAsync("Ocr", CreationCollisionOption.OpenIfExists);
+                var destination = await AppPaths.LocalFolder.CreateFolderAsync("Ocr", CreationCollisionOption.OpenIfExists);
                 await ExtractModelAsync(destination, storage, file);
             }
         }
 
         public async Task<TextRecognitionStatus> EnsureReadyAsync()
         {
-            var destination = await ApplicationDataEx.LocalFolder.CreateFolderAsync("Ocr", CreationCollisionOption.OpenIfExists);
+            var destination = await AppPaths.LocalFolder.CreateFolderAsync("Ocr", CreationCollisionOption.OpenIfExists);
 
             var available = await destination.TryGetItemAsync(ModelFileName);
             if (available != null)
@@ -112,7 +112,7 @@ namespace Telegram.Services
             }
 
             var chatId = _chatId.Value;
-            var fileName = string.Format("Ocr_{0}.zip", PackageEx.Architecture switch
+            var fileName = string.Format("Ocr_{0}.zip", AppIdentity.Architecture switch
             {
                 ProcessorArchitecture.X64 => "x64",
                 ProcessorArchitecture.Arm64 => "arm64",

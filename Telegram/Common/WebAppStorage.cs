@@ -53,7 +53,7 @@ namespace Telegram.Common
         {
             try
             {
-                var localFolder = ApplicationDataEx.LocalFolder;
+                var localFolder = AppPaths.LocalFolder;
                 return await localFolder.CreateFolderAsync(STORAGE_FOLDER_NAME, CreationCollisionOption.OpenIfExists);
             }
             catch
@@ -191,7 +191,7 @@ namespace Telegram.Common
         {
             try
             {
-                var path = System.IO.Path.Combine(ApplicationDataEx.LocalPath, "webapps.key");
+                var path = System.IO.Path.Combine(AppPaths.LocalPath, "webapps.key");
 
                 if (System.IO.File.Exists(path))
                 {

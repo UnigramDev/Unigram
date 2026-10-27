@@ -234,7 +234,7 @@ namespace Telegram.Services.Wallet
             // own: the two belong to the same account and should be found, backed up and deleted
             // together.
             _path = Path.Combine(
-                ApplicationDataEx.LocalPath,
+                AppPaths.LocalPath,
                 _clientService.SessionId.ToString(),
                 "wallet");
 
@@ -350,7 +350,7 @@ namespace Telegram.Services.Wallet
             {
                 if (_recoveryWords == null)
                 {
-                    var path = Path.Combine(Windows.ApplicationModel.PackageEx.InstalledPath, "Assets", "Ton", "wordlist_en.txt");
+                    var path = Path.Combine(AppPaths.InstalledPath, "Assets", "Ton", "wordlist_en.txt");
                     _recoveryWords = File.ReadAllLines(path, Encoding.UTF8);
                 }
 
@@ -2294,7 +2294,7 @@ namespace Telegram.Services.Wallet
 
         private static TonConnectDevice Device()
         {
-            var version = PackageEx.Version;
+            var version = AppIdentity.Version;
 
             return new TonConnectDevice(TonConnectDevicePlatform.Windows, "Unigram",
                 string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build));

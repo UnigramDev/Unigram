@@ -245,7 +245,7 @@
 
   <!--
     The assembly carries the manifest's version rather than 1.0.0.0. Unpackaged there is no
-    package to ask, so PackageEx.Version reads the entry assembly's instead, and the two must not
+    package to ask, so AppIdentity.Version reads the entry assembly's instead, and the two must not
     disagree - "About" would report a different build from the one the installer wrote.
   -->
   <Target Name="ReadManifestVersion" BeforeTargets="GetAssemblyVersion;GenerateAssemblyInfo" Condition="'$(Version)' == '' or '$(Version)' == '1.0.0'">

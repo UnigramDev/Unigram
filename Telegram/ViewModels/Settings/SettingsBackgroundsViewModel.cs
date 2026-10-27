@@ -131,7 +131,7 @@ namespace Telegram.ViewModels.Settings
                 var file = await picker.PickSingleFileAsync(XamlRoot);
                 if (file != null)
                 {
-                    await file.CopyAsync(ApplicationDataEx.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
+                    await file.CopyAsync(AppPaths.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
 
                     var tsc = new TaskCompletionSource<object>();
                     await ShowPopupAsync(new BackgroundPopup(NavigationService, tsc), new BackgroundParameters(Constants.WallpaperLocalFileName, _chatId));

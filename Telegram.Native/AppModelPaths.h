@@ -16,8 +16,8 @@ namespace winrt::Telegram::Native
     /// Package::Current and ApplicationData::Current both throw APPMODEL_ERROR_NO_PACKAGE
     /// (0x80073D54) in a process that was never registered, and the six call sites behind these
     /// three functions are the only places this component asks. Their unpackaged answers have to
-    /// match Telegram\Shims\ApplicationDataEx.cs and PackageEx.cs exactly - the managed and the
-    /// native halves read and write the same folders.
+    /// match Telegram\Common\AppPaths.cs exactly - the managed and the native halves read and
+    /// write the same folders.
     ///
     /// Only the desktop build of this component has the fallbacks. The app container build cannot
     /// load without its package anyway, since it links the Store CRT, and the shell functions the

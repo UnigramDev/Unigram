@@ -1816,7 +1816,7 @@ namespace Telegram.Common
                 var confirm = await navigation.ShowPopupAsync(info.Text, Strings.AppName, Strings.OK, info.NeedUpdateApplication ? Strings.UpdateApp : null);
                 if (confirm == ContentDialogResult.Secondary)
                 {
-                    await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + PackageEx.FamilyName));
+                    await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + AppIdentity.FamilyName));
                 }
             }
         }

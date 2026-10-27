@@ -941,7 +941,7 @@ namespace Telegram.Services.Settings
         // moving, as LocalState does on a reinstall.
         public static string GetThemeFilePath(string id)
         {
-            return System.IO.Path.Combine(Windows.Storage.ApplicationDataEx.LocalPath, "themes", id);
+            return System.IO.Path.Combine(AppPaths.LocalPath, "themes", id);
         }
 
         #endregion

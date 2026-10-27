@@ -899,7 +899,7 @@ namespace Telegram.Services
                 var photo = chat.Photo;
                 if (photo != null && photo.Small.Local.IsDownloadingCompleted)
                 {
-                    var relative = Path.GetRelativePath(ApplicationDataEx.LocalPath, photo.Small.Local.Path);
+                    var relative = Path.GetRelativePath(AppPaths.LocalPath, photo.Small.Local.Path);
                     return "ms-appdata:///local/" + relative.Replace('\\', '/');
                 }
             }

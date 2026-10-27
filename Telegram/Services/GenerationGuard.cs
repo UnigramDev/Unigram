@@ -31,7 +31,7 @@ namespace Telegram.Services
 
         private static string GetPath(string name)
         {
-            _folder ??= Path.Combine(ApplicationDataEx.LocalPath, "generations");
+            _folder ??= Path.Combine(AppPaths.LocalPath, "generations");
             return Path.Combine(_folder, name);
         }
 

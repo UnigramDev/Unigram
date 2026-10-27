@@ -267,7 +267,7 @@ namespace Telegram.Services
             }
 
             var path1 = Path.GetDirectoryName(source.Path).TrimEnd('\\');
-            var path2 = ApplicationDataEx.TemporaryPath.TrimEnd('\\');
+            var path2 = AppPaths.TemporaryPath.TrimEnd('\\');
 
             return string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase);
         }
@@ -682,7 +682,7 @@ namespace Telegram.Services
 
             if (logoSide > 0)
             {
-                var path = Path.Combine(PackageEx.InstalledPath, "Assets", "Animations", "VideoNoteLogo.json");
+                var path = Path.Combine(AppPaths.InstalledPath, "Assets", "Animations", "VideoNoteLogo.json");
 
                 var lottie = LottieAnimation.LoadFromFile(path, logoSize, logoSize, false, null);
                 if (lottie != null)

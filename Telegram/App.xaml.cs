@@ -100,7 +100,7 @@ namespace Telegram
         {
             base.OnBackgroundActivated(args);
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, PackageEx.FamilyName))
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, AppIdentity.FamilyName))
             {
                 BridgeApplicationContext.Connect(appService.AppServiceConnection, args.TaskInstance);
             }
