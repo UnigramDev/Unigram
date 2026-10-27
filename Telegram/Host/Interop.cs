@@ -252,6 +252,7 @@ namespace Telegram.Host
         public const uint MONITOR_DEFAULTTONEAREST = 2;
 
         public const uint WM_EXITSIZEMOVE = 0x0232;
+        public const uint WM_ENDSESSION = 0x0016;
 
         // TRACKMOUSEEVENT flags. NONCLIENT is the one that matters here: the drag bar answers the
         // hit test with caption codes, so its mouse messages are all non-client ones.

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Telegram.Navigation;
+using Telegram.Services.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
@@ -362,6 +363,17 @@ namespace Telegram.Host
                 case Win32.WM_EXITSIZEMOVE:
                     // The end of a drag or a resize, rather than every position it passed through.
                     WindowLayout.Save(hWnd, window?._persistedId);
+                    break;
+
+                case Win32.WM_ENDSESSION:
+                    // Sign-out or shutdown: the process is ended once this returns, and the message
+                    // loop never gets to the flush after it.
+                    if (wParam != IntPtr.Zero)
+                    {
+                        WindowLayout.Save(hWnd, window?._persistedId);
+                        SettingsStore.Local.Flush();
+                    }
+
                     break;
 
                 case Win32.WM_DESTROY:

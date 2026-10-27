@@ -153,7 +153,12 @@ namespace Telegram.Services.Settings
     /// The unpackaged half: the same container tree, held in memory and written to one file.
     /// <see cref="ApplicationData"/> persists as it goes and this cannot, so the write is
     /// debounced rather than deferred to <see cref="Flush"/> alone - a setting the user changed
-    /// and a crash two seconds later must not add up to a setting never changed.
+    /// and a crash two seconds later must not add up to a setting never changed. The host flushes
+    /// on the way out, because it ends the process without waiting for the timer.
+    ///
+    /// Each save is complete or absent: written to a temporary file, forced to disk, then swapped
+    /// in with <see cref="File.Replace(string, string, string, bool)"/>, which keeps the previous
+    /// file as a backup that <see cref="Load"/> falls back to.
     /// </summary>
     public partial class FileSettingsStore : ISettingsStore
     {
@@ -181,6 +186,11 @@ namespace Telegram.Services.Settings
         private readonly FileSettingsStore _root;
         private readonly object _lock;
 
+        // Root only, and always taken before _lock: the tree is held only while a save serializes
+        // it, never while the save waits on the disk. Saves queue on it, so an older snapshot can
+        // never be written over a newer one.
+        private readonly object _saveLock;
+
         private readonly string _path;
         private Timer _timer;
         private bool _dirty;
@@ -196,6 +206,7 @@ namespace Telegram.Services.Settings
         {
             _root = this;
             _lock = new object();
+            _saveLock = new object();
             _path = path;
         }
 
@@ -215,6 +226,13 @@ namespace Telegram.Services.Settings
 
         public void SetValue(string key, object value)
         {
+            // Refused here, as ApplicationData refuses it, rather than when the file is next
+            // written: one value that cannot be written would fail every save after it.
+            if (!CanWrite(value))
+            {
+                throw new NotSupportedException($"{value.GetType()} cannot be stored in the settings file");
+            }
+
             lock (_lock)
             {
                 _values[key] = value;
@@ -319,23 +337,37 @@ namespace Telegram.Services.Settings
 
         public void Flush()
         {
-            lock (_lock)
-            {
-                if (!_root._dirty)
-                {
-                    return;
-                }
+            var root = _root;
 
-                _root._dirty = false;
+            lock (root._saveLock)
+            {
+                byte[] data;
+
+                lock (_lock)
+                {
+                    if (!root._dirty)
+                    {
+                        return;
+                    }
+
+                    data = root.Serialize();
+                    root._dirty = false;
+                }
 
                 try
                 {
-                    _root.Save();
+                    root.Save(data);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Still dirty, so the next flush - the timer's or the caller's - tries again.
-                    _root._dirty = true;
+                    lock (_lock)
+                    {
+                        // Rescheduled as well as marked: without a change after this one, nothing
+                        // else would ever try again.
+                        root.Invalidate();
+                    }
+
+                    Logger.Error("Settings could not be saved", ex);
                 }
             }
         }
@@ -348,47 +380,111 @@ namespace Telegram.Services.Settings
             _root._timer.Change(_debounce, Timeout.InfiniteTimeSpan);
         }
 
-        private void Save()
+        // The caller holds the lock.
+        private byte[] Serialize()
         {
-            var temp = _path + ".tmp";
+            using var stream = new MemoryStream();
 
-            using (var stream = File.Create(temp))
-            using (var writer = new BinaryWriter(stream, Encoding.UTF8))
+            using (var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
             {
                 writer.Write(Magic);
                 writer.Write(Format);
                 Write(writer, this);
             }
 
-            File.Move(temp, _path, overwrite: true);
+            return stream.ToArray();
         }
 
+        // The caller holds the save lock.
+        private void Save(byte[] data)
+        {
+            var temp = _path + ".tmp";
+
+            using (var stream = new FileStream(temp, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                stream.Write(data, 0, data.Length);
+
+                // On the disk before the swap, not just in the cache: NTFS journals the rename but
+                // not the data, so after a power cut the new name could point at zeros.
+                stream.Flush(flushToDisk: true);
+            }
+
+            if (File.Exists(_path))
+            {
+                File.Replace(temp, _path, _path + ".bak", ignoreMetadataErrors: true);
+            }
+            else
+            {
+                File.Move(temp, _path);
+            }
+        }
+
+        // No logging in here: this runs from AppSettings' static initializer, and the logger reads
+        // AppSettings. A file that could not be read is left beside the others as .bad instead.
         private void Load()
         {
-            try
+            lock (_lock)
             {
-                if (!File.Exists(_path))
+                if (TryLoad(_path))
                 {
                     return;
                 }
 
-                using var stream = File.OpenRead(_path);
+                // There but unreadable, as opposed to absent: moved aside, so that the next save
+                // cannot overwrite what may still be recoverable by hand.
+                if (File.Exists(_path))
+                {
+                    try
+                    {
+                        File.Move(_path, _path + ".bad", overwrite: true);
+                    }
+                    catch
+                    {
+                        // Left where it is, and the next save replaces it.
+                    }
+                }
+
+                // One save older. It is also the only copy when Replace failed after moving the
+                // old file aside but before moving the new one in.
+                if (TryLoad(_path + ".bak"))
+                {
+                    Invalidate();
+                }
+            }
+        }
+
+        private bool TryLoad(string path)
+        {
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    return false;
+                }
+
+                using var stream = File.OpenRead(path);
                 using var reader = new BinaryReader(stream, Encoding.UTF8);
 
                 if (reader.ReadUInt32() != Magic || reader.ReadByte() != Format)
                 {
-                    return;
+                    throw new InvalidDataException("Not a settings file");
                 }
 
                 Read(reader, this);
+
+                if (stream.Position != stream.Length)
+                {
+                    throw new InvalidDataException("Trailing data after the settings tree");
+                }
+
+                return true;
             }
             catch
             {
-                // A half-written or unreadable file leaves the app on its defaults rather than
-                // refusing to start, and the file is kept: the next flush overwrites it, and until
-                // then it is the only copy of what the settings were.
+                // Nothing of a file that failed halfway is kept: defaults rather than a mix.
                 _values.Clear();
                 _containers.Clear();
+                return false;
             }
         }
 
@@ -431,6 +527,12 @@ namespace Telegram.Services.Settings
                 Read(reader, child);
                 container._containers[name] = child;
             }
+        }
+
+        // Exactly the types WriteValue has a tag for.
+        private static bool CanWrite(object value)
+        {
+            return value is null or bool or int or uint or long or ulong or float or double or string or byte[];
         }
 
         // The set is closed on purpose: an unknown tag cannot be skipped, so a value that does not
