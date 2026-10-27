@@ -95,6 +95,32 @@ namespace Telegram.Common
             _ = popup.ShowQueuedAsync(frame.XamlRoot);
         }
 
+        // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallWindow and LiveStreamWindow.
+        // Must be removed at some point.
+        public static void ShowPopup(this UserControl frame, ISession session, ModalPopup popup, object parameter = null)
+        {
+            var viewModel = BootStrapper.Current.ViewModelForPage(popup, session);
+            if (viewModel != null)
+            {
+                viewModel.XamlRoot = frame.XamlRoot;
+
+                void OnClosed(ModalPopup sender, ModalPopupClosedEventArgs args)
+                {
+                    viewModel.NavigatedFrom(null, false);
+                    popup.OnNavigatedFrom();
+                    popup.Closed -= OnClosed;
+                }
+
+                popup.DataContext = viewModel;
+
+                _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
+                popup.OnNavigatedTo(parameter);
+                popup.Closed += OnClosed;
+            }
+
+            _ = popup.ShowQueuedAsync(frame.XamlRoot);
+        }
+
         public static void AddCubicBezier(this PathFigure figure, Point controlPoint1, Point controlPoint2, Point endPoint)
         {
             figure.Segments.Add(new BezierSegment

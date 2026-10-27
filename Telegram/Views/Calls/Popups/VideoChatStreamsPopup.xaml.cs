@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Calls.Popups
 {
-    public sealed partial class VideoChatStreamsPopup : ContentPopup
+    public sealed partial class VideoChatStreamsPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;
@@ -42,7 +42,7 @@ namespace Telegram.Views.Calls.Popups
 
         public bool IsScheduleSelected { get; private set; }
 
-        private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private async void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
             var response = await _clientService.SendAsync(new GetVideoChatRtmpUrl(_chatId));
             if (response is RtmpUrl rtmp)

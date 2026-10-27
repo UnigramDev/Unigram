@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Create
 {
-    public sealed partial class NewContactPopup : ContentPopup
+    public sealed partial class NewContactPopup : ModalPopup
     {
         public NewContactViewModel ViewModel => DataContext as NewContactViewModel;
 
@@ -31,7 +31,7 @@ namespace Telegram.Views.Create
             FirstName.Focus(FocusState.Keyboard);
         }
 
-        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             ViewModel.Create();
         }

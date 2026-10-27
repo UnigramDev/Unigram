@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Calls.Popups
 {
-    public sealed partial class ShareGroupCallPopup : ContentPopup
+    public sealed partial class ShareGroupCallPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;

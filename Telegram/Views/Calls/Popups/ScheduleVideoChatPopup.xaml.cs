@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Calls.Popups
 {
-    public sealed partial class ScheduleVideoChatPopup : ContentPopup
+    public sealed partial class ScheduleVideoChatPopup : ModalPopup
     {
         private readonly bool _channel;
 
@@ -62,7 +62,7 @@ namespace Telegram.Views.Calls.Popups
 
         public bool IsUntilOnline { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (Date.Date == null || Date.Date < DateTime.Today)
             {

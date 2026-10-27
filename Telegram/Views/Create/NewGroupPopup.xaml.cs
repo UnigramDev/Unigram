@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Create
 {
-    public sealed partial class NewGroupPopup : ContentPopup
+    public sealed partial class NewGroupPopup : ModalPopup
     {
         public NewGroupViewModel ViewModel => DataContext as NewGroupViewModel;
 
@@ -106,7 +106,7 @@ namespace Telegram.Views.Create
             }
         }
 
-        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (_completion != null)
             {

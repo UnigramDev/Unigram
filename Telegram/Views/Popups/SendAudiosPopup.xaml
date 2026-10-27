@@ -1,14 +1,14 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.SendAudiosPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:cells="using:Telegram.Controls.Cells"
-                       mc:Ignorable="d"
-                       Connected="OnLoaded"
-                       Padding="0,24,0,0"
-                       IsDismissButtonVisible="True">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.SendAudiosPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:cells="using:Telegram.Controls.Cells"
+                     mc:Ignorable="d"
+                     Padding="0,24,0,0"
+                     VerticalContentAlignment="Stretch"
+                     IsDismissButtonVisible="True">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -105,4 +105,4 @@
                                     BottomInset="0"
                                     Grid.Row="4" />
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

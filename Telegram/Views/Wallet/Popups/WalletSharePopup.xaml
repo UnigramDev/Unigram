@@ -1,19 +1,17 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Wallet.Popups.WalletSharePopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Wallet.Popups"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       IsDismissButtonVisible="True"
-                       DismissButtonRequestedTheme="Dark"
-                       VerticalContentAlignment="Center"
-                       Padding="0">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Wallet.Popups.WalletSharePopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:local="using:Telegram.Views.Wallet.Popups"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     mc:Ignorable="d"
+                     IsDismissButtonVisible="True"
+                     DismissButtonRequestedTheme="Dark"
+                     VerticalContentAlignment="Center"
+                     Padding="0">
 
-    <Grid>
+    <Grid CornerRadius="8">
         <Grid.Background>
             <LinearGradientBrush EndPoint="0,1">
                 <GradientStop Color="#088FEE" />
@@ -74,7 +72,7 @@
                     <TextBlock Text="&#xEAC9;"
                                FontFamily="{StaticResource SymbolThemeFontFamily}"
                                FontSize="20"
-                               Margin="0,2,0,-2"/>
+                               Margin="0,2,0,-2" />
                     <TextBlock Text="{CustomResource WalletCopyAddress}"
                                Grid.Column="1" />
                 </Grid>
@@ -149,4 +147,4 @@
                     Height="40" />
         </Border>
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

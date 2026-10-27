@@ -1100,7 +1100,7 @@ namespace Telegram.Views.Popups
 
     #endregion
 
-    public sealed partial class ChooseChatsPopup : ContentPopup
+    public sealed partial class ChooseChatsPopup : ModalPopup
     {
         public ChooseChatsViewModel ViewModel => DataContext as ChooseChatsViewModel;
 
@@ -2196,7 +2196,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             ViewModel.Caption = CaptionInput.GetFormattedText();
 
@@ -2227,7 +2227,7 @@ namespace Telegram.Views.Popups
             deferral.Complete();
         }
 
-        private void OnSecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnSecondaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (RootGrid.Children[0] is SendMessagesView sendMessages)
             {

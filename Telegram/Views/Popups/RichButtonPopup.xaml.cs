@@ -27,7 +27,7 @@ namespace Telegram.Views.Popups
     }
 
     /// <summary>
-    /// A button in a rich message, laid out as TDesktop's EditRichButtonBox: its label, where it
+    /// A button in a rich message: its label, where it
     /// goes, its colour shown as the buttons it can be, and what it does. Regular users may only
     /// make the three kinds offered here - a link, text to copy, a user's profile - which is what
     /// TDLib documents for <c>inlineButton.type</c>.
@@ -126,7 +126,7 @@ namespace Telegram.Views.Popups
             else if (_userId == 0)
             {
                 // A mention needs someone to mention: asked for straight away, and the choice
-                // goes back to what it was if nobody is picked, as TDesktop does.
+                // goes back to what it was if nobody is picked.
                 if (!await ChooseUserAsync())
                 {
                     _reverting = true;

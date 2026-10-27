@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ContactsPopup : ContentPopup
+    public sealed partial class ContactsPopup : ModalPopup
     {
         public ContactsViewModel ViewModel => DataContext as ContactsViewModel;
 

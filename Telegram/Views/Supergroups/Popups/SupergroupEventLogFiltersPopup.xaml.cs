@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupEventLogFiltersPopup : ContentPopup
+    public sealed partial class SupergroupEventLogFiltersPopup : ModalPopup
     {
         private readonly IClientService _clientService;
 
@@ -267,7 +267,7 @@ namespace Telegram.Views.Supergroups.Popups
 
         public Vector<long> UserIds { get; private set; }
 
-        private void ContentPopup_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             Filters = new ChatEventLogFilters
             {

@@ -37,7 +37,7 @@ namespace Telegram.Views.Supergroups.Popups
         public SupergroupChooseMemberMode Mode { get; }
     }
 
-    public sealed partial class SupergroupChooseMemberPopup : ContentPopup
+    public sealed partial class SupergroupChooseMemberPopup : ModalPopup
     {
         public SupergroupChooseMemberViewModel ViewModel => DataContext as SupergroupChooseMemberViewModel;
 
@@ -107,7 +107,7 @@ namespace Telegram.Views.Supergroups.Popups
             }
             else
             {
-                ContentPopup popup = ViewModel.Mode switch
+                ModalPopup popup = ViewModel.Mode switch
                 {
                     SupergroupChooseMemberMode.Promote => new SupergroupEditAdministratorPopup(),
                     SupergroupChooseMemberMode.Restrict => new SupergroupEditRestrictedPopup(),

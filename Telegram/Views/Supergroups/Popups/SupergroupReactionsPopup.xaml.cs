@@ -17,14 +17,13 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupReactionsPopup : ContentPopup
+    public sealed partial class SupergroupReactionsPopup : ModalPopup
     {
         public SupergroupReactionsViewModel ViewModel => DataContext as SupergroupReactionsViewModel;
 
@@ -185,7 +184,7 @@ namespace Telegram.Views.Supergroups.Popups
 
         #endregion
 
-        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             ViewModel.Execute();
         }

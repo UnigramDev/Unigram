@@ -35,7 +35,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public sealed partial class CreatePollPopup : ContentPopup
+    public sealed partial class CreatePollPopup : ModalPopup
     {
         private readonly CreatePollViewModel _viewModel;
 

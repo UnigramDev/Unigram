@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupEditRestrictedPopup : ContentPopup, IMemberPopupDelegate
+    public sealed partial class SupergroupEditRestrictedPopup : ModalPopup, IMemberPopupDelegate
     {
         public SupergroupEditRestrictedViewModel ViewModel => DataContext as SupergroupEditRestrictedViewModel;
 

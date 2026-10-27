@@ -14,9 +14,9 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class FormulaPopup : ContentPopup
+    public sealed partial class FormulaPopup : ModalPopup
     {
-        // TDesktop's samples, one of which is shown while there is no source.
+        // One of these is shown while there is no source.
         private static readonly string[] _samples =
         {
             "e^{i\\pi}=-1",

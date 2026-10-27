@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Calls.Popups
 {
-    public sealed partial class RecordVideoChatPopup : ContentPopup
+    public sealed partial class RecordVideoChatPopup : ModalPopup
     {
         public RecordVideoChatPopup(string title)
         {

@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupTopicPopup : ContentPopup
+    public sealed partial class SupergroupTopicPopup : ModalPopup
     {
         private readonly IClientService _clientService;
 
@@ -115,7 +115,7 @@ namespace Telegram.Views.Supergroups.Popups
             UpdateTopicIcon();
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void ContentDialog_PrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (string.IsNullOrEmpty(NameLabel.Text))
             {

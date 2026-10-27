@@ -1,15 +1,15 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Stories.Popups.StealthPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:common="using:Telegram.Common"
-                       xmlns:controls="using:Telegram.Controls"
-                       mc:Ignorable="d"
-                       Padding="0"
-                       IsDismissButtonVisible="True"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       ButtonsLayout="Vertical">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Stories.Popups.StealthPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:common="using:Telegram.Common"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d"
+                     Padding="0"
+                     IsDismissButtonVisible="True"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     ButtonsLayout="Vertical">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
@@ -102,4 +102,4 @@
                                     ScrollingHost="{x:Bind ScrollingHost}"
                                     BottomInset="0" />
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

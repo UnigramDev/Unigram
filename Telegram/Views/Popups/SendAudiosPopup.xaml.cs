@@ -31,7 +31,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class SendAudiosPopup : ContentPopup, IDiffHandler<PlaybackItem>
+    public sealed partial class SendAudiosPopup : ModalPopup, IDiffHandler<PlaybackItem>
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -149,7 +149,7 @@ namespace Telegram.Views.Popups
             // Do nothing
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             _ = ScrollingHost.ScrollToItem2(LifetimeService.Current.Playback?.CurrentItem, VerticalAlignment.Center);
         }

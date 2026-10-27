@@ -35,7 +35,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public sealed partial class CreateChecklistPopup : ContentPopup
+    public sealed partial class CreateChecklistPopup : ModalPopup
     {
         private readonly CreateChecklistViewModel _viewModel;
 
@@ -538,7 +538,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private async void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private async void OnClosing(ModalPopup sender, ModalPopupClosingEventArgs args)
         {
             if (args.Result != ContentDialogResult.Primary && !AreTheSame())
             {

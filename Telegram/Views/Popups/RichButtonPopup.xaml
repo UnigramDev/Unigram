@@ -10,7 +10,7 @@
 
     <controls:ModalPopup.Resources>
         <!--  A colour, shown as the button it makes: a radio button, so the four are one choice
-              to the keyboard and to a screen reader, drawn as TDesktop's outlined preview.  -->
+              to the keyboard and to a screen reader, drawn as an outlined preview.  -->
         <Style x:Key="ButtonColorOptionStyle"
                TargetType="RadioButton">
             <Setter Property="HorizontalAlignment"

@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Calls.Popups
 {
-    public sealed partial class VideoChatAliasesPopup : ContentPopup
+    public sealed partial class VideoChatAliasesPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly bool _canSchedule;
@@ -131,7 +131,7 @@ namespace Telegram.Views.Calls.Popups
             }
         }
 
-        private void Schedule_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void Schedule_Click(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             IsScheduleSelected = true;
         }

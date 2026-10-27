@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Business.Popups
 {
-    public sealed partial class ChooseAwayPopup : ContentPopup
+    public sealed partial class ChooseAwayPopup : ModalPopup
     {
         public ChooseAwayPopup(string title, DateTime minDate, DateTime date)
         {
@@ -56,7 +56,7 @@ namespace Telegram.Views.Business.Popups
 
         public bool IsUntilOnline { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (IsUntilOnline)
             {

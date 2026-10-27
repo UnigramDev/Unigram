@@ -38,7 +38,7 @@ namespace Telegram.Views.Supergroups.Popups
         }
     }
 
-    public sealed partial class SupergroupEditAdministratorPopup : ContentPopup, IMemberPopupDelegate
+    public sealed partial class SupergroupEditAdministratorPopup : ModalPopup, IMemberPopupDelegate
     {
         public SupergroupEditAdministratorViewModel ViewModel => DataContext as SupergroupEditAdministratorViewModel;
 

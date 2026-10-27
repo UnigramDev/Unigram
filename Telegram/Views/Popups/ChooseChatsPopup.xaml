@@ -1,25 +1,25 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.ChooseChatsPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:cells="using:Telegram.Controls.Cells"
-                       xmlns:drawers="using:Telegram.Controls.Drawers"
-                       xmlns:messages="using:Telegram.Controls.Messages"
-                       xmlns:views="using:Telegram.Controls.Views"
-                       xmlns:viewModels="using:Telegram.ViewModels"
-                       xmlns:chats="using:Telegram.Controls.Chats"
-                       mc:Ignorable="d"
-                       PrimaryButtonText="OK"
-                       PrimaryButtonClick="OnPrimaryButtonClick"
-                       SecondaryButtonClick="OnSecondaryButtonClick"
-                       IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
-                       SecondaryButtonText="Cancel"
-                       VerticalContentAlignment="Stretch"
-                       Padding="24,24,24,0"
-                       Loaded="OnLoaded"
-                       Unloaded="OnUnloaded">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.ChooseChatsPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:cells="using:Telegram.Controls.Cells"
+                     xmlns:drawers="using:Telegram.Controls.Drawers"
+                     xmlns:messages="using:Telegram.Controls.Messages"
+                     xmlns:views="using:Telegram.Controls.Views"
+                     xmlns:viewModels="using:Telegram.ViewModels"
+                     xmlns:chats="using:Telegram.Controls.Chats"
+                     mc:Ignorable="d"
+                     PrimaryButtonText="OK"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     SecondaryButtonClick="OnSecondaryButtonClick"
+                     IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
+                     SecondaryButtonText="Cancel"
+                     VerticalContentAlignment="Stretch"
+                     Padding="24,24,24,0"
+                     Loaded="OnLoaded"
+                     Unloaded="OnUnloaded">
 
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
@@ -311,4 +311,4 @@
                                   Grid.Column="2" />
         </Grid>
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

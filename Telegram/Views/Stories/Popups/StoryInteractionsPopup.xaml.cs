@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Stories.Popups
 {
-    public sealed partial class StoryInteractionsPopup : ContentPopup
+    public sealed partial class StoryInteractionsPopup : ModalPopup
     {
         public StoryInteractionsViewModel ViewModel => DataContext as StoryInteractionsViewModel;
 
@@ -34,7 +34,7 @@ namespace Telegram.Views.Stories.Popups
             SecondaryButtonText = Strings.Close;
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
             ShowHideSkeleton();
 

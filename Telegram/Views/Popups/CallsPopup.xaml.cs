@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class CallsPopup : ContentPopup
+    public sealed partial class CallsPopup : ModalPopup
     {
         public CallsViewModel ViewModel => DataContext as CallsViewModel;
 

@@ -99,7 +99,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        private void OnClosed(ModalPopup sender, ModalPopupClosedEventArgs args)
         {
             if (sender is not ChooseChatsPopup chooseChats)
             {

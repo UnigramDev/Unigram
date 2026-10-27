@@ -444,12 +444,12 @@ namespace Telegram.Controls
 
             if (!_raising)
             {
-                if (result == ContentDialogResult.Primary && HasContent(PrimaryButtonContent))
+                if (result == ContentDialogResult.Primary)
                 {
                     InvokeButton(ContentDialogButton.Primary);
                     return;
                 }
-                else if (result == ContentDialogResult.Secondary && HasContent(SecondaryButtonContent))
+                else if (result == ContentDialogResult.Secondary)
                 {
                     InvokeButton(ContentDialogButton.Secondary);
                     return;

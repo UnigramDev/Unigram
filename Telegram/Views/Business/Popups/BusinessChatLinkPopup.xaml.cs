@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Business.Popups
 {
-    public sealed partial class BusinessChatLinkPopup : ContentPopup
+    public sealed partial class BusinessChatLinkPopup : ModalPopup
     {
         private readonly BusinessChatLinksViewModel _viewModel;
         private readonly BusinessChatLink _chatLink;

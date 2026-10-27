@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class SendLocationPopup : ContentPopup
+    public sealed partial class SendLocationPopup : ModalPopup
     {
         public SendLocationViewModel ViewModel => DataContext as SendLocationViewModel;
 
@@ -90,12 +90,12 @@ namespace Telegram.Views.Popups
             _previewShimmer = visual;
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
 
         }
 
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        private void OnClosed(ModalPopup sender, ModalPopupClosedEventArgs args)
         {
             if (_geolocator != null)
             {

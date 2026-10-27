@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Wallet.Popups
 {
-    public sealed partial class WalletSharePopup : ContentPopup
+    public sealed partial class WalletSharePopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly IWalletService _wallet;
@@ -84,14 +84,6 @@ namespace Telegram.Views.Wallet.Popups
                     Foreground = new SolidColorBrush(index % 2 == 0 ? Colors.Black : Color.FromArgb(0xFF, 0x7A, 0x7A, 0x7A))
                 });
             }
-        }
-
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         // A TON address in its user-friendly form, and the four-character groups

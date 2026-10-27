@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Views.Users.Popups
 {
-    public sealed partial class UserAffiliatePopup : ContentPopup
+    public sealed partial class UserAffiliatePopup : ModalPopup
     {
         public UserAffiliatePopup(bool start, AffiliateProgramParameters parameters)
         {

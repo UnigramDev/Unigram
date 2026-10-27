@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupEditStickerSetPopup : ContentPopup
+    public sealed partial class SupergroupEditStickerSetPopup : ModalPopup
     {
         public SupergroupEditStickerSetViewModel ViewModel => DataContext as SupergroupEditStickerSetViewModel;
 
@@ -80,7 +80,7 @@ namespace Telegram.Views.Supergroups.Popups
             IsPrimaryButtonEnabled = ScrollingHost.SelectedItem != null;
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void OnClosing(ModalPopup sender, ModalPopupClosingEventArgs args)
         {
             _tsc.TrySetResult(ScrollingHost.SelectedItem);
         }

@@ -32,7 +32,7 @@ namespace Telegram.Views.Stories.Popups
 
     }
 
-    public sealed partial class StealthPopup : ContentPopup
+    public sealed partial class StealthPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly DispatcherTimer _cooldownTimer;
@@ -75,7 +75,7 @@ namespace Telegram.Views.Stories.Popups
             Closing += OnClosing;
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void OnClosing(ModalPopup sender, ModalPopupClosingEventArgs args)
         {
             _cooldownTimer.Stop();
         }
@@ -145,7 +145,7 @@ namespace Telegram.Views.Stories.Popups
             args.Handled = true;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (_clientService.StealthMode.CooldownUntilDate > 0)
             {

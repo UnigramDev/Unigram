@@ -34,7 +34,7 @@ namespace Telegram.Views.Popups
         public string NativeName { get; }
     }
 
-    public sealed partial class TranslateToPopup : ContentPopup
+    public sealed partial class TranslateToPopup : ModalPopup
     {
         private readonly List<TranslateToLanguage> _languages;
         private readonly DiffObservableCollection<TranslateToLanguage> _diff;
@@ -48,7 +48,6 @@ namespace Telegram.Views.Popups
 
             var languages = new[]
             {
-                // Same languages as in TDesktop
                 "en", // English
                 "ar", // Arabic
                 "be", // Belarusian
