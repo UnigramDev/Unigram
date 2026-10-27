@@ -709,7 +709,7 @@ namespace Telegram.Controls
                         _spoilerCursor = true;
                         _textSelectionCursor = PointerCursorType.Hand;
                         TextBlock.IsHitTestVisible = false;
-                        WindowContext.SetPointerCursor(PointerCursorType.Hand);
+                        this.SetPointerCursor(PointerCursorType.Hand);
                     }
 
                     e.Handled = true;
@@ -722,7 +722,7 @@ namespace Telegram.Controls
                 _spoilerCursor = false;
                 _textSelectionCursor = PointerCursorType.Arrow;
                 TextBlock.IsHitTestVisible = true;
-                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+                this.SetPointerCursor(PointerCursorType.Arrow);
             }
 
             // Extended: native selection is off, so RichTextBlock won't show the I-beam.
@@ -766,7 +766,7 @@ namespace Telegram.Controls
                     if (_textSelectionCursor != cursor)
                     {
                         _textSelectionCursor = cursor;
-                        WindowContext.SetPointerCursor(cursor);
+                        this.SetPointerCursor(cursor);
                     }
                 }
             }
@@ -805,7 +805,7 @@ namespace Telegram.Controls
                 _spoilerCursor = false;
                 _textSelectionCursor = PointerCursorType.Arrow;
                 TextBlock.IsHitTestVisible = true;
-                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+                this.SetPointerCursor(PointerCursorType.Arrow);
             }
 
             try

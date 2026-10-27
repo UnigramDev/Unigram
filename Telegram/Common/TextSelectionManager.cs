@@ -25,7 +25,14 @@ using Windows.UI.Xaml.Media;
 // handler ends up on the first one's thread, where clearing the selection touches RichTextBlocks
 // it doesn't own and XAML answers RPC_E_WRONG_THREAD. FocusManagerImpl registers through the ABI
 // instead, and the alias keeps the call sites written the way they were.
-#if NET9_0_OR_GREATER
+//
+// Not on WinUI 3, for the same reason CsWinRT.cs keeps CompositionTargetImpl out of it: the bug is
+// about several UWP views on several threads, this host has one thread, and FocusManagerImpl binds
+// the ABI of Windows.UI.Xaml.Input.FocusManager rather than the Microsoft.UI.Xaml.Input one the
+// framework would answer to.
+#if WINUI3
+using FocusManager = Microsoft.UI.Xaml.Input.FocusManager;
+#elif NET9_0_OR_GREATER
 using FocusManager = Telegram.Common.FocusManagerImpl;
 #else
 using FocusManager = Windows.UI.Xaml.Input.FocusManager;

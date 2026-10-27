@@ -10,12 +10,20 @@
 // through the ABI instead, and the alias keeps every call site written the way it always was.
 // Aliasing it in both directions also settles the ambiguity with Windows.UI.Composition's own
 // CompositionTarget, which is why those call sites used to spell the namespace out.
-#if NET9_0_OR_GREATER
+// Not on WinUI 3, where the workaround is both unnecessary and wrong: CsWinRT #2524 is about
+// several UWP views on several threads, this host has one thread, and CompositionTargetImpl binds
+// the ABI interfaces of Windows.UI.Xaml.Media - not the Microsoft.UI.Xaml.Media ones the framework
+// would actually answer to. The plain projected type is right there.
+#if WINUI3
+global using CompositionTarget = Microsoft.UI.Xaml.Media.CompositionTarget;
+global using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
+#elif NET9_0_OR_GREATER
 global using CompositionTarget = Telegram.Common.CompositionTargetImpl;
+global using DispatcherQueue = Windows.System.DispatcherQueue;
 #else
 global using CompositionTarget = Windows.UI.Xaml.Media.CompositionTarget;
-#endif
 global using DispatcherQueue = Windows.System.DispatcherQueue;
+#endif
 global using Object = Telegram.Td.Api.Object;
 global using Point = Windows.Foundation.Point;
 global using TimeZone = Telegram.Td.Api.TimeZone;
@@ -23,7 +31,11 @@ global using User = Telegram.Td.Api.User;
 global using VirtualKey = Windows.System.VirtualKey;
 global using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
 // Not Path: that name is System.IO.Path wherever the Shapes namespace is not imported.
+#if WINUI3
+global using XamlPath = Microsoft.UI.Xaml.Shapes.Path;
+#else
 global using XamlPath = Windows.UI.Xaml.Shapes.Path;
+#endif
 #if NET9_0_OR_GREATER
 using WinRT;
 

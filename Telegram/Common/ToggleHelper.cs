@@ -143,7 +143,7 @@ namespace Telegram.Common
                 // Only when the value did not stick, and then it is repair rather than diagnosis:
                 // the write that failed usually applies before it throws, and re-running one that
                 // already took hold would be a no-op anyway.
-                var ignore = toggle.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                toggle.PostOnUIThread(() =>
                 {
                     Logger.Error("retrying IsChecked = " + value);
                     Write(toggle, value, false);

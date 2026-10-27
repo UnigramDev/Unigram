@@ -20,9 +20,11 @@ using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -380,7 +382,7 @@ namespace Telegram.Controls
             _topText = new TextBlock
             {
                 Style = BootStrapper.Current.Resources["PopupTextBlockStyle"] as Style,
-                FontWeight = Windows.UI.Text.FontWeights.SemiBold,
+                FontWeight = FontWeights.SemiBold,
                 TextAlignment = TextAlignment.Center,
                 TextWrapping = TextWrapping.NoWrap,
                 TextTrimming = TextTrimming.CharacterEllipsis,
@@ -405,7 +407,7 @@ namespace Telegram.Controls
             _centerHost.Children.Add(_topText);
             _centerHost.Children.Add(_bottomText);
 
-            var check = new Windows.UI.Xaml.Shapes.Path
+            var check = new XamlPath
             {
                 Stroke = new SolidColorBrush(Color.FromArgb(0xFF, 0x55, 0xC6, 0x63)),
                 StrokeThickness = 10,
@@ -435,7 +437,7 @@ namespace Telegram.Controls
 
             // Every category the ring draws is listed underneath it, with its name and its size, so
             // there is nothing here a screen reader can reach that it cannot reach better below.
-            AutomationProperties.SetAccessibilityView(this, Windows.UI.Xaml.Automation.Peers.AccessibilityView.Raw);
+            AutomationProperties.SetAccessibilityView(this, AccessibilityView.Raw);
 
             Children.Add(_ringHost);
             Children.Add(_particleHost);
@@ -683,7 +685,7 @@ namespace Telegram.Controls
                 Width = 48,
                 Height = 20,
                 FontSize = 15,
-                FontWeight = Windows.UI.Text.FontWeights.SemiBold,
+                FontWeight = FontWeights.SemiBold,
                 Foreground = new SolidColorBrush(Colors.White),
                 TextAlignment = TextAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,

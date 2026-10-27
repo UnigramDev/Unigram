@@ -7,6 +7,8 @@
 
 using System;
 using System.Collections.Generic;
+using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
 using Windows.Globalization;
@@ -19,6 +21,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+// CoreText reports the Windows.UI.Text enum in every flavour, including the one where the bare
+// name is Microsoft.UI.Text's.
+using CoreTextUnderlineType = Windows.UI.Text.UnderlineType;
 
 namespace Telegram.Controls.RichEditor
 {
@@ -58,7 +63,7 @@ namespace Telegram.Controls.RichEditor
 
         private readonly struct CompositionSegment
         {
-            public CompositionSegment(CoreTextRange range, UnderlineType underline, UIElementType? underlineColor, UIElementType? background)
+            public CompositionSegment(CoreTextRange range, CoreTextUnderlineType underline, UIElementType? underlineColor, UIElementType? background)
             {
                 Range = range;
                 Underline = underline;
@@ -68,7 +73,7 @@ namespace Telegram.Controls.RichEditor
 
             public CoreTextRange Range { get; }
 
-            public UnderlineType Underline { get; }
+            public CoreTextUnderlineType Underline { get; }
 
             public UIElementType? UnderlineColor { get; }
 
@@ -96,7 +101,7 @@ namespace Telegram.Controls.RichEditor
                 args.EnsuredFocusedElementInView = true;
                 ScrollViewer.Margin = new Thickness(0, 0, 0, overlap);
 
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, UpdateCaret);
+                this.PostOnUIThread(UpdateCaret, low: true);
             }
         }
 
@@ -114,7 +119,11 @@ namespace Telegram.Controls.RichEditor
             {
                 try
                 {
+#if WINUI3
+                    _inputPane = InputPaneInterop.GetForWindow(WindowContext.GetWindowHandle(XamlRoot));
+#else
                     _inputPane = InputPane.GetForCurrentView();
+#endif
                     _inputPane.Showing += OnInputPaneShowing;
                     _inputPane.Hiding += OnInputPaneHiding;
                 }
@@ -274,6 +283,15 @@ namespace Telegram.Controls.RichEditor
             if (_engine != null && IsEnabled)
             {
                 e.Handled = true;
+
+#if WINUI3
+                // A keyboard layout that is not a text service types past the store, as WM_CHAR,
+                // where the framework's CoreText picked the characters up by itself.
+                if (_contextFocused)
+                {
+                    _editContext?.ReceiveCharacter(e.Character);
+                }
+#endif
             }
 
             base.OnCharacterReceived(e);
@@ -659,7 +677,7 @@ namespace Telegram.Controls.RichEditor
                 _contextLength = Math.Max(0, held);
 
                 SwitchContext(current);
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, NotifyContextReplaced);
+                this.PostOnUIThread(NotifyContextReplaced);
             }
             else
             {
@@ -736,7 +754,7 @@ namespace Telegram.Controls.RichEditor
                 }
             }
 
-            _composition.Add(new CompositionSegment(range, args.UnderlineType ?? UnderlineType.None, args.UnderlineColor, args.BackgroundColor));
+            _composition.Add(new CompositionSegment(range, args.UnderlineType ?? CoreTextUnderlineType.None, args.UnderlineColor, args.BackgroundColor));
             Peer?.RaiseConversionTargetChanged();
 
             // The text this formats may not be laid out yet - a format follows the update that
@@ -771,13 +789,13 @@ namespace Telegram.Controls.RichEditor
 
             foreach (var segment in _composition)
             {
-                if (segment.Underline == UnderlineType.None && segment.Background == null)
+                if (segment.Underline == CoreTextUnderlineType.None && segment.Background == null)
                 {
                     continue;
                 }
 
                 var rects = view.GetRangeRects(segment.Range.StartCaretPosition, segment.Range.EndCaretPosition);
-                var thickness = segment.Underline is UnderlineType.Thick or UnderlineType.Double ? 2 : 1;
+                var thickness = segment.Underline is CoreTextUnderlineType.Thick or CoreTextUnderlineType.Double ? 2 : 1;
 
                 foreach (var rect in rects)
                 {
@@ -793,7 +811,7 @@ namespace Telegram.Controls.RichEditor
                         fill.Height = rect.Height;
                     }
 
-                    if (segment.Underline != UnderlineType.None)
+                    if (segment.Underline != CoreTextUnderlineType.None)
                     {
                         var line = Take(_compositionLines, ref lines, false);
                         var origin = transform.TransformPoint(new Point(rect.X, rect.Bottom - thickness));
@@ -881,7 +899,11 @@ namespace Telegram.Controls.RichEditor
 
         private void OnLayoutRequested(CoreTextEditContext sender, CoreTextLayoutRequestedEventArgs args)
         {
+#if WINUI3
+            var window = WindowContext.ForXamlRoot(this);
+#else
             var window = CoreWindow.GetForCurrentThread();
+#endif
             if (window == null || Surface == null)
             {
                 return;
@@ -967,7 +989,7 @@ namespace Telegram.Controls.RichEditor
                     break;
                 }
 
-                if (found < 0 && _composition[i].Underline is UnderlineType.Thick or UnderlineType.Double)
+                if (found < 0 && _composition[i].Underline is CoreTextUnderlineType.Thick or CoreTextUnderlineType.Double)
                 {
                     found = i;
                 }

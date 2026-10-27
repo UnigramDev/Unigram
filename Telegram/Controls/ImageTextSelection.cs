@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.AI;
+using Telegram.Common;
 using Telegram.Native.AI;
 using Telegram.Navigation;
 using Windows.Devices.Input;
@@ -183,15 +184,15 @@ namespace Telegram.Controls
 
             if (_selectionPressed == RecognizedTextSelectionType.Text)
             {
-                WindowContext.SetPointerCursor(PointerCursorType.IBeam);
+                this.SetPointerCursor(PointerCursorType.IBeam);
             }
             else if (_selectionPressed == RecognizedTextSelectionType.Link)
             {
-                WindowContext.SetPointerCursor(PointerCursorType.Hand);
+                this.SetPointerCursor(PointerCursorType.Hand);
             }
             else
             {
-                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+                this.SetPointerCursor(PointerCursorType.Arrow);
             }
         }
 
@@ -207,26 +208,26 @@ namespace Telegram.Controls
 
             if (_selectionPressed == RecognizedTextSelectionType.Text)
             {
-                WindowContext.SetPointerCursor(PointerCursorType.IBeam);
+                this.SetPointerCursor(PointerCursorType.IBeam);
             }
             else if (_selectionPressed == RecognizedTextSelectionType.Link)
             {
-                WindowContext.SetPointerCursor(PointerCursorType.Hand);
+                this.SetPointerCursor(PointerCursorType.Hand);
             }
             else
             {
                 var type = _selection.IsPointWithinText(endPoint);
                 if (type == RecognizedTextSelectionType.Text)
                 {
-                    WindowContext.SetPointerCursor(PointerCursorType.IBeam);
+                    this.SetPointerCursor(PointerCursorType.IBeam);
                 }
                 else if (type == RecognizedTextSelectionType.Link)
                 {
-                    WindowContext.SetPointerCursor(PointerCursorType.Hand);
+                    this.SetPointerCursor(PointerCursorType.Hand);
                 }
                 else
                 {
-                    WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+                    this.SetPointerCursor(PointerCursorType.Arrow);
                 }
             }
         }

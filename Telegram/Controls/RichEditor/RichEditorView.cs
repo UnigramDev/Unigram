@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -825,11 +826,20 @@ namespace Telegram.Controls.RichEditor
             if (!_widenPending)
             {
                 _widenPending = true;
+#if WINUI3
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, OnWidenWindow);
+#else
                 _ = Dispatcher.RunIdleAsync(OnWidenWindow);
+#endif
             }
         }
 
+#if WINUI3
+        // A DispatcherQueue has no idle priority; Low is the nearest.
+        private void OnWidenWindow()
+#else
         private void OnWidenWindow(IdleDispatchedHandlerArgs e)
+#endif
         {
             _widenPending = false;
 
@@ -2464,12 +2474,12 @@ namespace Telegram.Controls.RichEditor
             {
                 _invalidOverlay = false;
                 _staleOverlay = false;
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, UpdateSelection);
+                this.PostOnUIThread(UpdateSelection, low: true);
             }
             else if (_staleOverlay)
             {
                 _staleOverlay = false;
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, RedrawOverlay);
+                this.PostOnUIThread(RedrawOverlay, low: true);
             }
 
             return size;

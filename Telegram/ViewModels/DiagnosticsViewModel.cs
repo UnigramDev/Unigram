@@ -749,7 +749,11 @@ namespace Telegram.ViewModels
                 }
             }
 
+#if WINUI3
+            await Telegram.Compat.AppModel.RequestRestartAsync(string.Empty);
+#else
             await CoreApplication.RequestRestartAsync(string.Empty);
+#endif
         }
     }
 

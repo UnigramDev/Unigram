@@ -15,7 +15,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -45,8 +44,6 @@ namespace Telegram.Controls.RichEditor
         // Whether the selection was made by touch: only then are the handles shown.
         private bool _touchSelection;
 
-        private CoreCursor _beamCursor;
-        private CoreCursor _arrowCursor;
         private bool _beam;
 
         /// <summary>Raised for a context menu: right click, Shift+F10, the menu key, or a touch on the selection.</summary>
@@ -649,22 +646,8 @@ namespace Telegram.Controls.RichEditor
                 return;
             }
 
-            var window = CoreWindow.GetForCurrentThread();
-            if (window == null)
-            {
-                return;
-            }
-
             _beam = beam;
-
-            if (beam)
-            {
-                window.PointerCursor = _beamCursor ??= new CoreCursor(CoreCursorType.IBeam, 0);
-            }
-            else
-            {
-                window.PointerCursor = _arrowCursor ??= new CoreCursor(CoreCursorType.Arrow, 0);
-            }
+            this.SetPointerCursor(beam ? PointerCursorType.IBeam : PointerCursorType.Arrow);
         }
 
         // =====================================================================================

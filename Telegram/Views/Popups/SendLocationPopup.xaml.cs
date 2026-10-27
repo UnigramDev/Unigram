@@ -181,11 +181,9 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private async void OnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
+        private void OnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
         {
-            await Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal,
-                () => UpdateLocation(args.Position));
+            this.BeginOnUIThread(() => UpdateLocation(args.Position));
         }
 
         private void UpdateLocation(Geoposition point)

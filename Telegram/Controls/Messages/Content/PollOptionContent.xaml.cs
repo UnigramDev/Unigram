@@ -27,6 +27,9 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
+#if !WINUI3
+using ProgressBar = Windows.UI.Xaml.Controls.ProgressBar;
+#endif
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -56,7 +59,7 @@ namespace Telegram.Controls.Messages.Content
         private HyperlinkButton Media;
         private Border Tick;
         private Ellipse Zero;
-        private Windows.UI.Xaml.Controls.ProgressBar Votes;
+        private ProgressBar Votes;
         private Border VotesLine;
         private Border CheckmarkIcon;
 
@@ -71,7 +74,7 @@ namespace Telegram.Controls.Messages.Content
             TextText = GetTemplateChild(nameof(TextText)) as FormattedTextBlock;
             Tick = GetTemplateChild(nameof(Tick)) as Border;
             Zero = GetTemplateChild(nameof(Zero)) as Ellipse;
-            Votes = GetTemplateChild(nameof(Votes)) as Windows.UI.Xaml.Controls.ProgressBar;
+            Votes = GetTemplateChild(nameof(Votes)) as ProgressBar;
             VotesLine = GetTemplateChild(nameof(VotesLine)) as Border;
             CheckmarkIcon = GetTemplateChild(nameof(CheckmarkIcon)) as Border;
 

@@ -875,7 +875,7 @@ namespace Telegram.Views.Popups
             }
 
             _flushScheduled = true;
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, Flush);
+            this.PostOnUIThread(Flush, low: true);
         }
 
         private void Flush()

@@ -17,6 +17,7 @@ using Telegram.Services.Keyboard;
 using Windows.Foundation;
 using Windows.Security.Credentials.UI;
 using Windows.UI.Composition;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Telegram.Navigation
@@ -368,6 +369,68 @@ namespace Telegram.Navigation
         {
             SetFullScreenMode(true);
             return true;
+        }
+
+        /// <summary>
+        /// An island window is already a window of its own, so there is nothing to detach: this is
+        /// the UWP secondary view's problem and not this host's.
+        /// </summary>
+        public Task<bool> TryShowAsStandaloneAsync()
+        {
+            Activate();
+            return Task.FromResult(true);
+        }
+
+        /// <summary>
+        /// The compact overlay is a UWP view mode. This host has no equivalent, and the callers
+        /// all treat the answer as a capability, so they simply do not offer it.
+        /// </summary>
+        public bool IsCompactOverlaySupported => false;
+
+        public bool IsCompactOverlay => false;
+
+        public Task<bool> TryExitCompactOverlayAsync()
+        {
+            return Task.FromResult(false);
+        }
+
+        public bool IsMouseInteraction => UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse;
+
+        /// <summary>
+        /// The island draws its own caption buttons, so their colours are the theme's rather than
+        /// the system's and there is nothing here to override.
+        /// </summary>
+        public void SetTitleBarForeground(Color? foreground)
+        {
+        }
+
+        /// <summary>
+        /// Always, and it cannot be turned off: the whole window is the app's, and the non-client
+        /// area is drawn by <see cref="IslandWindow"/> rather than by the shell.
+        /// </summary>
+        public bool ExtendViewIntoTitleBar
+        {
+            get => true;
+            set { }
+        }
+
+        public double SystemOverlayLeftInset => 0;
+
+        public double SystemOverlayRightInset => 0;
+
+        /// <summary>
+        /// The strip the app paints its own caption into, which this host owns outright rather
+        /// than sharing with the shell.
+        /// </summary>
+        public double TitleBarHeight => IslandWindow.CaptionHeight;
+
+        /// <summary>
+        /// The media keys and the volume flyout's now-playing panel. An island's thread has a
+        /// CoreWindow, so the controls are the view's as on UWP.
+        /// </summary>
+        public static Windows.Media.SystemMediaTransportControls GetSystemMediaTransportControls()
+        {
+            return Windows.Media.SystemMediaTransportControls.GetForCurrentView();
         }
 
         /// <summary>

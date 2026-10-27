@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
@@ -1203,12 +1204,12 @@ namespace Telegram.Controls
         // are not what is typed into.
         private void AmountHost_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.IBeam);
+            this.SetPointerCursor(PointerCursorType.IBeam);
         }
 
         private void AmountHost_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+            this.SetPointerCursor(PointerCursorType.Arrow);
         }
 
         #endregion

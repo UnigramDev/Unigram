@@ -27,6 +27,7 @@ using Telegram.Views.Wallet;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Core.Preview;
 using Windows.UI.Xaml;
@@ -147,6 +148,21 @@ namespace Telegram.Navigation
         internal Task WaitAsync()
         {
             return _deferral?.Task ?? Task.CompletedTask;
+        }
+    }
+
+    /// <summary>
+    /// A key that reached the window before any control saw it.
+    /// </summary>
+    public class AcceleratorKeyActivatedEventArgs : EventArgs
+    {
+        public VirtualKey Key { get; }
+
+        public bool Handled { get; set; }
+
+        public AcceleratorKeyActivatedEventArgs(VirtualKey key)
+        {
+            Key = key;
         }
     }
 
@@ -554,6 +570,7 @@ namespace Telegram.Navigation
 
         #region Pointer cursor
 
+#if !WINUI3
         // One CoreCursor per type, shared. Every call site used to allocate a fresh one, and
         // FormattedTextBlock does this at pointer sample rate; CoreCursor is immutable and its
         // id argument only means anything for CoreCursorType.Custom, so sharing is safe.
@@ -594,6 +611,7 @@ namespace Telegram.Navigation
                 _ => CoreCursorType.Arrow
             }, 0);
         }
+#endif
 
         #endregion
 
@@ -699,7 +717,7 @@ namespace Telegram.Navigation
         private Task _drain;
         private Deferral _deferral;
 
-        private void OnShutdownStarting(DispatcherQueue sender, Windows.System.DispatcherQueueShutdownStartingEventArgs args)
+        private void OnShutdownStarting(DispatcherQueue sender, DispatcherQueueShutdownStartingEventArgs args)
         {
             sender.ShutdownStarting -= OnShutdownStarting;
 
@@ -719,7 +737,7 @@ namespace Telegram.Navigation
             // keeps the thread pumping long enough for that to be dispatched. If the queue will
             // not take the work, release now anyway: a live handle past teardown is the crash
             // this exists to prevent, and _released covers the handlers that follow.
-            if (!sender.TryEnqueue(Windows.System.DispatcherQueuePriority.Low, OnShutdownDrain))
+            if (!sender.TryEnqueue(DispatcherQueuePriority.Low, OnShutdownDrain))
             {
                 Logger.Info("queue refused, releasing inline");
                 OnShutdownDrain();
@@ -920,11 +938,12 @@ namespace Telegram.Navigation
 
                 SetHostContent(_content);
 
-                // XamlRoot becomes available instantly as the content is set to the Window
-                lock (_allLock)
+                // XamlRoot becomes available instantly as the content is set to the Window - on
+                // UWP. WinUI 3 creates the content island later, so XamlRoot is still null here
+                // and the registration waits for Loaded, which is hooked above either way.
+                if (_content.XamlRoot != null)
                 {
-                    _xamlRoot = _content.XamlRoot;
-                    _mapping.AddOrUpdate(_content.XamlRoot, this);
+                    RegisterXamlRoot();
                 }
             }
 
@@ -935,11 +954,31 @@ namespace Telegram.Navigation
             }
         }
 
+        /// <summary>
+        /// The XamlRoot and everything keyed on it. Called from SetContent where the root is
+        /// already there, and from OnLoaded where it arrives later.
+        /// </summary>
+        private void RegisterXamlRoot()
+        {
+            lock (_allLock)
+            {
+                _xamlRoot = _content.XamlRoot;
+                _mapping.AddOrUpdate(_xamlRoot, this);
+            }
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (sender is Control control)
             {
                 control.Loaded -= OnLoaded;
+            }
+
+            // Where it lands on WinUI 3: the content island exists by the time the presenter is
+            // loaded, so this is the first moment there is a XamlRoot to register.
+            if (_xamlRoot == null && _content?.XamlRoot != null)
+            {
+                RegisterXamlRoot();
             }
 
             ViewService.OnWindowLoaded();
@@ -975,6 +1014,14 @@ namespace Telegram.Navigation
                 }
 
                 All.Remove(this);
+
+                // Main is a window that can now be gone: a host where closing to the notification
+                // area icon really closes it has to be able to make another one, and
+                // ResolveWindowContext keys that off Main being null.
+                if (Main == this)
+                {
+                    Main = null;
+                }
             }
 
             // A window closed while it was up never sees a deactivation, so the count is taken
@@ -1155,6 +1202,33 @@ namespace Telegram.Navigation
         private void RaiseClosed()
         {
             Closed?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// The system's caption buttons moved, appeared or went away over a window that draws its
+        /// own title bar: <see cref="SystemOverlayLeftInset"/> and its right twin are what changed.
+        /// </summary>
+        public event EventHandler<object> TitleBarChanged;
+
+        /// <summary>
+        /// A key, ahead of the focused control. UWP has CoreDispatcher.AcceleratorKeyActivated for
+        /// this and no other host does, so the input listeners raise it instead - which is also
+        /// what keeps a page from having to know which host it is running on.
+        /// </summary>
+        public event EventHandler<AcceleratorKeyActivatedEventArgs> AcceleratorKeyActivated;
+
+        internal bool RaiseAcceleratorKeyActivated(VirtualKey key)
+        {
+            var handler = AcceleratorKeyActivated;
+            if (handler == null)
+            {
+                return false;
+            }
+
+            var args = new AcceleratorKeyActivatedEventArgs(key);
+            handler(this, args);
+
+            return args.Handled;
         }
 
         public IDispatcherContext Dispatcher { get; }

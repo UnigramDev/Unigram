@@ -19,7 +19,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
-using Windows.ApplicationModel.Resources.Core;
 using Windows.Globalization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -205,9 +204,6 @@ namespace Telegram.ViewModels.Settings
             {
                 WindowContext.ForEach(window =>
                 {
-                    ResourceContext.GetForCurrentView().Reset();
-                    ResourceContext.GetForViewIndependentUse().Reset();
-
                     if (window.Content is FrameworkElement frameworkElement)
                     {
                         //window.CoreWindow.FlowDirection = _localeService.FlowDirection == FlowDirection.RightToLeft

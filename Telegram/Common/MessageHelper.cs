@@ -38,7 +38,6 @@ using Telegram.Views.Stars.Popups;
 using Telegram.Views.Wallet.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -1936,9 +1935,6 @@ namespace Telegram.Common
                     {
                         WindowContext.ForEach(window =>
                         {
-                            ResourceContext.GetForCurrentView().Reset();
-                            ResourceContext.GetForViewIndependentUse().Reset();
-
                             if (window.Content is FrameworkElement frameworkElement)
                             {
                                 //window.CoreWindow.FlowDirection = _localeService.FlowDirection == FlowDirection.RightToLeft

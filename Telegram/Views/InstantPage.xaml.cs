@@ -75,12 +75,21 @@ namespace Telegram.Views
             // stay outside the selection.
             _textSelectionManager ??= new TextSelectionManager(this, ScrollingHost, handleContextMenu: true);
 
-            Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            _window = WindowContext.ForXamlRoot(this);
+
+            if (_window != null)
+            {
+                _window.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            if (_window != null)
+            {
+                _window.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+                _window = null;
+            }
 
             // Detach explicitly: the manager hooks the STATIC FocusManager events while a
             // selection is live, which would otherwise keep this page alive for the session.
@@ -88,9 +97,11 @@ namespace Telegram.Views
             _textSelectionManager = null;
         }
 
-        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private WindowContext _window;
+
+        private void OnAcceleratorKeyActivated(object sender, AcceleratorKeyActivatedEventArgs args)
         {
-            if (args.VirtualKey == VirtualKey.Number0 && VirtualKeyModifiers.Control == WindowContext.KeyModifiers())
+            if (args.Key == VirtualKey.Number0 && VirtualKeyModifiers.Control == WindowContext.KeyModifiers())
             {
                 _zoomFactor = 7;
                 ZoomingHost.ZoomFactor = 1.0;
@@ -465,7 +476,7 @@ namespace Telegram.Views
         private async void ByNavigation(Action<INavigationService> action)
         {
             WindowContext.Main.Dispatcher.Dispatch(() => action(WindowContext.Main.GetNavigationService()));
-            await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
+            await WindowContext.Main.SwitchToAsync();
         }
 
         private void Hyperlink_Click(RichTextPhoneNumber phoneNumber)

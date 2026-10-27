@@ -380,6 +380,9 @@
     <ClInclude Include="Graphics\WalletCardSurface.h">
       <DependentUpon>Graphics\WalletCardSurface.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Text\CoreTextEditContext.h" Condition="'$(TelegramWinUI)' == 'true'">
+      <DependentUpon>Text\CoreTextEditContext.idl</DependentUpon>
+    </ClInclude>
     <ClInclude Include="Graphics\WalletCardTextures.h" />
     <ClInclude Include="Composition\DwmThumbnail.h" />
     <ClInclude Include="Composition\WindowVisual.h" />
@@ -1347,6 +1350,9 @@
     <ClCompile Include="Graphics\WalletCardSurface.cpp">
       <DependentUpon>Graphics\WalletCardSurface.idl</DependentUpon>
     </ClCompile>
+    <ClCompile Include="Text\CoreTextEditContext.cpp" Condition="'$(TelegramWinUI)' == 'true'">
+      <DependentUpon>Text\CoreTextEditContext.idl</DependentUpon>
+    </ClCompile>
     <ClCompile Include="Graphics\WalletCardTextures.cpp" />
     <ClCompile Include="Composition\WindowVisual.cpp" />
     <ClCompile Include="Controls\ControlEx.cpp">
@@ -1721,6 +1727,7 @@
     <Midl Include="Graphics\Scene3DPanel.idl" />
     <Midl Include="Graphics\StickerCurlSurface.idl" />
     <Midl Include="Graphics\WalletCardSurface.idl" />
+    <Midl Include="Text\CoreTextEditContext.idl" Condition="'$(TelegramWinUI)' == 'true'" />
     <Midl Include="NativeUtils.idl" />
     <Midl Include="TextHost.idl" />
     <Midl Include="AI\TextRecognizer.idl" />

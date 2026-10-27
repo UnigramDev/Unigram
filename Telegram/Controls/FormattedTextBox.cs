@@ -430,6 +430,11 @@ namespace Telegram.Controls
 
                         // If handwriting panel is open, the app would crash on send.
                         // Still, someone should fill a ticket to Microsoft about this.
+#if WINUI3
+                        // TextBox.HandwritingView is gone in WinUI 3 - handwriting is the shell's
+                        // now - so there is no panel to wait for, and no crash to work around.
+                        if (send)
+#else
                         if (send && HandwritingView.IsOpen)
                         {
                             void handler(object s, RoutedEventArgs args)
@@ -442,6 +447,7 @@ namespace Telegram.Controls
                             HandwritingView.TryClose();
                         }
                         else if (send)
+#endif
                         {
                             OnAccept();
                         }

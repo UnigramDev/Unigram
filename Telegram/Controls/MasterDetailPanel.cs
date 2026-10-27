@@ -7,6 +7,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
@@ -200,20 +201,20 @@ namespace Telegram.Controls
 
         private void Grip_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.SizeWestEast);
+            this.SetPointerCursor(PointerCursorType.SizeWestEast);
         }
 
         private void Grip_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             if (!_pointerPressed)
             {
-                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+                this.SetPointerCursor(PointerCursorType.Arrow);
             }
         }
 
         private void Grip_Unloaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+            this.SetPointerCursor(PointerCursorType.Arrow);
         }
 
         private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -277,7 +278,7 @@ namespace Telegram.Controls
             var point = e.GetCurrentPoint(grip);
             if (point.Position.X is < 0 or > 8)
             {
-                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+                this.SetPointerCursor(PointerCursorType.Arrow);
             }
         }
 

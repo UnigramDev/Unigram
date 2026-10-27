@@ -21,6 +21,13 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.Graphics;
+#if WINUI3
+using CompositionAlphaMode = Microsoft.Graphics.DirectX.DirectXAlphaMode;
+using CompositionPixelFormat = Microsoft.Graphics.DirectX.DirectXPixelFormat;
+#else
+using CompositionAlphaMode = Windows.Graphics.DirectX.DirectXAlphaMode;
+using CompositionPixelFormat = Windows.Graphics.DirectX.DirectXPixelFormat;
+#endif
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -845,7 +852,7 @@ namespace Telegram.Charts
             if (width != _surface?.SizeInt32.Width || height != _surface?.SizeInt32.Height)
             {
                 _surface?.Dispose();
-                _surface = _device.CreateDrawingSurface2(new SizeInt32 { Width = width, Height = height }, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized, Windows.Graphics.DirectX.DirectXAlphaMode.Premultiplied);
+                _surface = _device.CreateDrawingSurface2(new SizeInt32 { Width = width, Height = height }, CompositionPixelFormat.B8G8R8A8UIntNormalized, CompositionAlphaMode.Premultiplied);
 
                 // The brush outlives the surface: a new one per resize leaks the old one.
                 _brush.Surface = _surface;

@@ -110,29 +110,28 @@ namespace Telegram.Views.Host
 
         private void InitializeTitleBar()
         {
-            var sender = CoreApplication.GetCurrentView().TitleBar;
-            sender.IsVisibleChanged += OnLayoutMetricsChanged;
-            sender.LayoutMetricsChanged += OnLayoutMetricsChanged;
+            Window.TitleBarChanged += OnLayoutMetricsChanged;
 
-            OnLayoutMetricsChanged(sender, null);
+            OnLayoutMetricsChanged(Window, null);
         }
 
         private void UnloadTitleBar()
         {
-            var sender = CoreApplication.GetCurrentView().TitleBar;
-            sender.IsVisibleChanged -= OnLayoutMetricsChanged;
-            sender.LayoutMetricsChanged -= OnLayoutMetricsChanged;
+            Window.TitleBarChanged -= OnLayoutMetricsChanged;
         }
 
-        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        private void OnLayoutMetricsChanged(object sender, object args)
         {
             try
             {
-                TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
-                TitleBarrr.ColumnDefinitions[4].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 0), GridUnitType.Pixel);
+                var leftInset = Window.SystemOverlayLeftInset;
+                var rightInset = Window.SystemOverlayRightInset;
 
-                Grid.SetColumn(TitleBarLogo, sender.SystemOverlayLeftInset > 0 ? 3 : 1);
-                StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0
+                TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(leftInset, 0), GridUnitType.Pixel);
+                TitleBarrr.ColumnDefinitions[4].Width = new GridLength(Math.Max(rightInset, 0), GridUnitType.Pixel);
+
+                Grid.SetColumn(TitleBarLogo, leftInset > 0 ? 3 : 1);
+                StateLabel.FlowDirection = leftInset > 0
                     ? FlowDirection.RightToLeft
                     : FlowDirection.LeftToRight;
             }

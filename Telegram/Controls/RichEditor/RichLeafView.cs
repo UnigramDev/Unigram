@@ -15,7 +15,11 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+#if WINUI3
+using XamlTextBlock = Microsoft.UI.Xaml.Controls.TextBlock;
+#else
 using XamlTextBlock = Windows.UI.Xaml.Controls.TextBlock;
+#endif
 
 namespace Telegram.Controls.RichEditor
 {

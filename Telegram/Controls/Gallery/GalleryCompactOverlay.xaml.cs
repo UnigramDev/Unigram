@@ -209,10 +209,12 @@ namespace Telegram.Controls.Gallery
             {
                 try
                 {
+#if !WINUI3
                     var prevId = CoreAppWindowPreview.GetIdFromWindow(window);
                     var nextId = ApplicationView.GetForCurrentView().Id;
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(nextId);
                     await ApplicationViewSwitcher.SwitchAsync(nextId, prevId);
+#endif
                 }
                 catch (Exception ex)
                 {
@@ -409,7 +411,9 @@ namespace Telegram.Controls.Gallery
                     // Navigate the frame to the CompactOverlay page inside it.
                     //appWindowFrame.Navigate(typeof(SecondaryAppWindowPage));
                     // Attach the frame to the window
+#if !WINUI3
                     ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowContent);
+#endif
                     // Let's set the title so that we can tell the windows apart
 
                     var switched = appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);

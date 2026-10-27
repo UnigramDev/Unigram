@@ -299,9 +299,23 @@ namespace Telegram.Controls
         /// Caption buttons drawn white on transparent, for a root that paints its own dark
         /// chrome behind them. Opt-in: it is wrong for anything following the app theme.
         /// </summary>
-        protected static void UseDarkCaptionButtons()
+        // Instance rather than static, for the WinUI 3 flavour's sake: there is no "current view"
+        // to ask, and this content already knows the window it belongs to. All three callers are
+        // instance methods, so the call sites are unchanged.
+        protected void UseDarkCaptionButtons()
         {
+#if WINUI3
+            // Through this content's own window - never WindowContext.Current, which is
+            // thread-static and answers for whichever window was created last.
+            // WindowContext.UpdateTitleBar does the theme-following version of this.
+            var titleBar = Window?.AppWindowTitleBar;
+            if (titleBar == null)
+            {
+                return;
+            }
+#else
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+#endif
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonForegroundColor = Colors.White;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;

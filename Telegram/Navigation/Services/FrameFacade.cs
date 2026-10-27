@@ -195,7 +195,6 @@ namespace Telegram.Navigation.Services
             {
                 object context = Frame.DataContext;
 
-                Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().Reset();
                 // this only works for apps using serializable types
                 var state = Frame.GetNavigationState();
                 Frame.SetNavigationState(state);
@@ -231,7 +230,6 @@ namespace Telegram.Navigation.Services
             try
             {
                 object context = Frame.DataContext;
-                Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().Reset();
                 // navigates to the current page with new parameters.
                 Frame.Navigate(CurrentPageType, param, new SuppressNavigationTransitionInfo());
                 Frame.DataContext = context;

@@ -13,6 +13,9 @@
     <Filter Include="Graphics">
       <UniqueIdentifier>{f7d07f51-a21c-528c-81d2-ded44454a9d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Text">
+      <UniqueIdentifier>{020e8b27-d32c-44bd-8795-c53912763c5a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Graphics\Shaders">
       <UniqueIdentifier>{ea0c0fc8-39c3-5c3f-af8a-0355fdf48f42}</UniqueIdentifier>
     </Filter>
@@ -674,6 +677,9 @@
     </ClCompile>
     <ClCompile Include="Graphics\WalletCardSurface.cpp">
       <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Text\CoreTextEditContext.cpp">
+      <Filter>Text</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\WalletCardTextures.cpp">
       <Filter>Graphics</Filter>
@@ -1414,6 +1420,9 @@
     <ClInclude Include="Graphics\WalletCardSurface.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Text\CoreTextEditContext.h">
+      <Filter>Text</Filter>
+    </ClInclude>
     <ClInclude Include="Graphics\WalletCardTextures.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -1723,6 +1732,9 @@
     </Midl>
     <Midl Include="Graphics\WalletCardSurface.idl">
       <Filter>Graphics</Filter>
+    </Midl>
+    <Midl Include="Text\CoreTextEditContext.idl">
+      <Filter>Text</Filter>
     </Midl>
     <Midl Include="Composition\WindowVisual.idl">
       <Filter>Composition</Filter>

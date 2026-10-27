@@ -63,14 +63,13 @@ namespace Telegram.Common
 
         public async void NavigateToTextEditor(long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
         {
-            var oldViewId = Window.Id;
             var found = false;
 
             await WindowContext.ForEachAsync(window =>
             {
                 if (window.Content is RichTextWindow textEditor && textEditor.AreTheSame(chatId, messageId))
                 {
-                    _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
+                    _ = window.SwitchToAsync();
                     found = true;
                 }
             });
@@ -94,14 +93,13 @@ namespace Telegram.Common
         {
             if (sourceLink != null)
             {
-                var oldViewId = Window.Id;
                 var found = false;
 
                 await WindowContext.ForEachAsync(window =>
                 {
                     if (window.Content is WebAppWindow webApp && webApp.AreTheSame(sourceLink))
                     {
-                        _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
+                        _ = window.SwitchToAsync();
                         found = true;
                     }
                 });
@@ -142,7 +140,6 @@ namespace Telegram.Common
         /// </remarks>
         public async void NavigateToWallet()
         {
-            var oldViewId = Window.Id;
             var sessionId = ClientService.SessionId;
             var found = false;
 
@@ -150,7 +147,7 @@ namespace Telegram.Common
             {
                 if (window.Content is WalletWindow wallet && wallet.SessionId == sessionId)
                 {
-                    _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
+                    _ = window.SwitchToAsync();
                     found = true;
                 }
             });
@@ -238,7 +235,6 @@ namespace Telegram.Common
 
         private async void NavigateToTab(Func<WindowContext, TabViewItem> newTab, ViewServiceOptions parameters)
         {
-            var oldViewId = Window.Id;
             var found = false;
 
             await WindowContext.ForEachAsync(window =>
@@ -247,7 +243,7 @@ namespace Telegram.Common
                 {
                     page.AddNewTab(newTab(window));
 
-                    _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
+                    _ = window.SwitchToAsync();
                     found = true;
                 }
             });

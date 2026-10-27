@@ -16,6 +16,14 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+#if WINUI3
+// The drains are keyed and typed on the UI thread's dispatcher, and in WinUI 3 that is a
+// DispatcherQueue - DependencyObject.Dispatcher is still on the type and always null. Aliasing the
+// name keeps the eight signatures below reading the way they do on the other flavours; only the
+// two places that actually *call* it have to differ.
+using CoreDispatcher = Microsoft.UI.Dispatching.DispatcherQueue;
+using DispatchedHandler = Microsoft.UI.Dispatching.DispatcherQueueHandler;
+#endif
 
 namespace Telegram.Common
 {
@@ -216,7 +224,11 @@ namespace Telegram.Common
 #endif
                 )
             {
+#if WINUI3
+                return element.DispatcherQueue;
+#else
                 return element.Dispatcher;
+#endif
             }
 
             return null;
@@ -381,7 +393,16 @@ namespace Telegram.Common
             {
                 try
                 {
+#if WINUI3
+                    // TryEnqueue returns false rather than throwing when the queue is gone, so the
+                    // catch below cannot be what clears the pending set any more.
+                    if (!_dispatcher.TryEnqueue(_coreHandler))
+                    {
+                        throw new InvalidOperationException("The dispatcher queue is shutting down");
+                    }
+#else
                     _ = _dispatcher.RunAsync(CoreDispatcherPriority.Normal, _coreHandler);
+#endif
                     Interlocked.Increment(ref _hops);
                 }
                 catch

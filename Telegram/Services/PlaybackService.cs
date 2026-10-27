@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Converters;
 using Telegram.Native.Media;
 using Telegram.Streams;
@@ -290,7 +291,7 @@ namespace Telegram.Services
 
             try
             {
-                _transport = WM.SystemMediaTransportControls.GetForCurrentView();
+                _transport = WindowContext.GetSystemMediaTransportControls();
                 _transportQueue = DispatcherQueue.GetForCurrentThread();
 
                 _transport.AutoRepeatMode = ToAutoRepeatMode(_isRepeatEnabled);

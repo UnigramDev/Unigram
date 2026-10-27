@@ -1346,16 +1346,14 @@ namespace Telegram.Views.Calls
 
         private async void RestoreWindow()
         {
-            var applicationView = ApplicationView.GetForCurrentView();
-            if (applicationView.ViewMode != ApplicationViewMode.CompactOverlay)
+            if (!Window.IsCompactOverlay)
             {
                 return;
             }
 
-            var restored = await applicationView.TryEnterViewModeAsync(ApplicationViewMode.Default);
-            if (restored)
+            if (await Window.TryExitCompactOverlayAsync())
             {
-                applicationView.TryResizeView(new Size(720, 540));
+                Window.TryResizeView(new Size(720, 540));
             }
         }
     }

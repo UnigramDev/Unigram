@@ -40,6 +40,7 @@ using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -201,7 +202,14 @@ namespace Telegram.Views
 
         private string PollGC()
         {
+#if WINUI3
+            // GarbageCollectionMonitor is not built for this flavour: it tracks CoreWindow
+            // activation and the UWP suspend/resume events, and has neither here. The other two
+            // call sites are already behind #if !NET9_0_OR_GREATER, so this is the only one.
+            var occurred = string.Empty;
+#else
             var occurred = GarbageCollectionMonitor.Debug();
+#endif
             var first = true;
 
             for (int i = 0; i <= 2; i++)
@@ -3379,7 +3387,7 @@ namespace Telegram.Views
                 batch.Completed += (s, args) =>
                 {
                     visual.Clip = null;
-                    visual.Brush = visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                    visual.Brush = visual.Compositor.CreateColorBrush(Colors.Transparent);
 
                     ElementCompositionPreview.SetElementChildVisual(Transition, visual.Compositor.CreateSpriteVisual());
 

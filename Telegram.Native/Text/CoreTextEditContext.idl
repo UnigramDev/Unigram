@@ -1,0 +1,132 @@
+namespace Telegram.Native.Text
+{
+    // Windows.UI.Text.Core, over the Text Services Framework directly. CoreTextServicesManager is
+    // bound to a CoreWindow and a WinUI 3 window has none, so the WinUI flavour aliases these in by
+    // name: the same classes, members and semantics the editor was written against, the enums and
+    // CoreTextRange being the Windows ones. Only what the app uses is here.
+
+    [default_interface]
+    runtimeclass CoreTextTextRequest
+    {
+        Windows.UI.Text.Core.CoreTextRange Range{ get; };
+        String Text;
+    }
+
+    [default_interface]
+    runtimeclass CoreTextTextRequestedEventArgs
+    {
+        CoreTextTextRequest Request{ get; };
+    }
+
+    [default_interface]
+    runtimeclass CoreTextSelectionRequest
+    {
+        Windows.UI.Text.Core.CoreTextRange Selection;
+    }
+
+    [default_interface]
+    runtimeclass CoreTextSelectionRequestedEventArgs
+    {
+        CoreTextSelectionRequest Request{ get; };
+    }
+
+    [default_interface]
+    runtimeclass CoreTextTextUpdatingEventArgs
+    {
+        Windows.UI.Text.Core.CoreTextRange Range{ get; };
+        String Text{ get; };
+        Windows.UI.Text.Core.CoreTextRange NewSelection{ get; };
+        Windows.UI.Text.Core.CoreTextTextUpdatingResult Result;
+    }
+
+    [default_interface]
+    runtimeclass CoreTextSelectionUpdatingEventArgs
+    {
+        Windows.UI.Text.Core.CoreTextRange Selection{ get; };
+        Windows.UI.Text.Core.CoreTextSelectionUpdatingResult Result;
+    }
+
+    [default_interface]
+    runtimeclass CoreTextFormatUpdatingEventArgs
+    {
+        Windows.UI.Text.Core.CoreTextRange Range{ get; };
+        Windows.Foundation.IReference<Windows.UI.Text.UnderlineType> UnderlineType{ get; };
+        Windows.Foundation.IReference<Windows.UI.ViewManagement.UIElementType> UnderlineColor{ get; };
+        Windows.Foundation.IReference<Windows.UI.ViewManagement.UIElementType> BackgroundColor{ get; };
+        Windows.UI.Text.Core.CoreTextFormatUpdatingResult Result;
+    }
+
+    [default_interface]
+    runtimeclass CoreTextLayoutBounds
+    {
+        // Screen pixels.
+        Windows.Foundation.Rect TextBounds;
+        Windows.Foundation.Rect ControlBounds;
+    }
+
+    [default_interface]
+    runtimeclass CoreTextLayoutRequest
+    {
+        Windows.UI.Text.Core.CoreTextRange Range{ get; };
+        CoreTextLayoutBounds LayoutBounds{ get; };
+    }
+
+    [default_interface]
+    runtimeclass CoreTextLayoutRequestedEventArgs
+    {
+        CoreTextLayoutRequest Request{ get; };
+    }
+
+    [default_interface]
+    runtimeclass CoreTextCompositionStartedEventArgs
+    {
+        Boolean IsCanceled{ get; };
+    }
+
+    [default_interface]
+    runtimeclass CoreTextCompositionCompletedEventArgs
+    {
+        Boolean IsCanceled{ get; };
+    }
+
+    [default_interface]
+    runtimeclass CoreTextEditContext
+    {
+        String Name;
+        Windows.UI.Text.Core.CoreTextInputScope InputScope;
+        Windows.UI.Text.Core.CoreTextInputPaneDisplayPolicy InputPaneDisplayPolicy;
+
+        void NotifyFocusEnter();
+        void NotifyFocusLeave();
+        void NotifyTextChanged(Windows.UI.Text.Core.CoreTextRange modifiedRange, Int32 newLength, Windows.UI.Text.Core.CoreTextRange newSelection);
+        void NotifySelectionChanged(Windows.UI.Text.Core.CoreTextRange selection);
+        void NotifyLayoutChanged();
+
+        // Not CoreText's: a keyboard layout that is not a text service types through WM_CHAR, past
+        // the store, and CoreText fed those characters in itself. The owner hands them here from
+        // CharacterReceived, and they arrive as TextUpdating like any other text.
+        void ReceiveCharacter(Char character);
+
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, CoreTextTextRequestedEventArgs> TextRequested;
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, CoreTextSelectionRequestedEventArgs> SelectionRequested;
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, CoreTextTextUpdatingEventArgs> TextUpdating;
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, CoreTextSelectionUpdatingEventArgs> SelectionUpdating;
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, CoreTextFormatUpdatingEventArgs> FormatUpdating;
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, CoreTextLayoutRequestedEventArgs> LayoutRequested;
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, CoreTextCompositionStartedEventArgs> CompositionStarted;
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, CoreTextCompositionCompletedEventArgs> CompositionCompleted;
+        event Windows.Foundation.TypedEventHandler<CoreTextEditContext, Object> FocusRemoved;
+    }
+
+    [default_interface]
+    runtimeclass CoreTextServicesManager
+    {
+        // One per thread, as the framework's is one per view: TSF's thread manager is per thread.
+        static CoreTextServicesManager GetForCurrentView();
+
+        CoreTextEditContext CreateEditContext();
+
+        Windows.Globalization.Language InputLanguage{ get; };
+        event Windows.Foundation.TypedEventHandler<CoreTextServicesManager, Object> InputLanguageChanged;
+    }
+}

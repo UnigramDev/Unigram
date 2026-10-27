@@ -380,6 +380,14 @@ namespace Telegram.Common
             public readonly ExpressionAnimation StrokeOffset;
             public readonly ExpressionAnimation StrokeSize;
             public readonly ExpressionAnimation StrokeCornerRadius;
+#if WINUI3
+            public readonly ExpressionAnimation BackdropScaleX;
+            public readonly ExpressionAnimation BackdropScaleY;
+            public readonly ExpressionAnimation BackdropOffsetX;
+            public readonly ExpressionAnimation BackdropOffsetY;
+            public readonly ExpressionAnimation BackdropBounce;
+            public readonly ExpressionAnimation BackdropTransform;
+#endif
 
             public readonly SpringScalarNaturalMotionAnimation OpenX;
             public readonly SpringScalarNaturalMotionAnimation OpenY;
@@ -429,6 +437,29 @@ namespace Telegram.Common
                 StrokeOffset = compositor.CreateExpressionAnimation("Vector2(" + left + " + p.Inset, " + top + " + p.Inset)");
                 StrokeSize = compositor.CreateExpressionAnimation("Vector2(" + right + " - " + left + " - p.Inset * 2, " + bottom + " - " + top + " - p.Inset * 2)");
                 StrokeCornerRadius = compositor.CreateExpressionAnimation("Vector2(Max(" + radius + " - p.Inset, 0), Max(" + radius + " - p.Inset, 0))");
+
+#if WINUI3
+                // Maps the backdrop's own rectangle, Natural, onto the shape inside the border, then
+                // applies the overshoot about the same centre. Its corners scale with it:
+                // the radius is the framework's clip, out of reach. In pieces on a property set of
+                // its own, b, because the compositor refuses an expression past a length, and the
+                // whole matrix written out is over it.
+                var scaleX = "(" + right + " - " + left + " - p.BackdropInset * 2) / (p.Natural.Z - p.Natural.X)";
+                var scaleY = "(" + bottom + " - " + top + " - p.BackdropInset * 2) / (p.Natural.W - p.Natural.Y)";
+
+                BackdropScaleX = compositor.CreateExpressionAnimation(scaleX);
+                BackdropScaleY = compositor.CreateExpressionAnimation(scaleY);
+                BackdropOffsetX = compositor.CreateExpressionAnimation(left + " + p.Origin.X + p.BackdropInset - " + scaleX + " * p.Natural.X");
+                BackdropOffsetY = compositor.CreateExpressionAnimation(top + " + p.Origin.Y + p.BackdropInset - " + scaleY + " * p.Natural.Y");
+                BackdropBounce = compositor.CreateExpressionAnimation(bounce);
+
+                BackdropTransform = compositor.CreateExpressionAnimation("Matrix4x4("
+                    + "b.Bounce * b.ScaleX, 0, 0, 0, "
+                    + "0, b.Bounce * b.ScaleY, 0, 0, "
+                    + "0, 0, 1, 0, "
+                    + "b.Bounce * b.OffsetX + p.Center.X * (1 - b.Bounce), "
+                    + "b.Bounce * b.OffsetY + p.Center.Y * (1 - b.Bounce), 0, 1)");
+#endif
 
                 OpenX = compositor.CreateSpringScalarAnimation();
                 OpenX.FinalValue = 1;
@@ -558,6 +589,16 @@ namespace Telegram.Common
             private bool _closeAllowed;
             private bool _targetRestored;
             private bool _released;
+
+#if WINUI3
+            // The menu's acrylic is the popup's system backdrop, drawn by a visual beside the
+            // presenter rather than under it, so neither the clip nor the bounce reaches it. It is
+            // found once the popup has built its tree, and driven by a transform.
+            private Visual _backdrop;
+            private CompositionPropertySet _backdropProps;
+            private int _backdropFrames;
+            private bool _waitingForBackdrop;
+#endif
 
             public Session(MenuFlyout flyout, FrameworkElement target, FrameworkElement placementTarget, FlyoutPlacementMode placement, bool overlap, double cornerRadius)
             {
@@ -897,8 +938,119 @@ namespace Telegram.Common
 
                 _presenterHitTestVisible = _presenter.IsHitTestVisible;
 
+#if WINUI3
+                PrepareBackdrop(body, bodyOrigin);
+#endif
+
                 Animate(false);
             }
+
+#if WINUI3
+            private void PrepareBackdrop(FrameworkElement body, Point bodyOrigin)
+            {
+                // The rectangle the framework gives the backdrop: the popup's child, less a uniform
+                // border with a brush. Read before AttachStroke takes the brush away; the framework
+                // reads it again only when the popup moves, which it does not while this runs.
+                var inset = body is Border border && border.BorderBrush != null && border.BorderThickness.Left == border.BorderThickness.Top
+                    ? (float)border.BorderThickness.Left
+                    : 0;
+
+                var width = (float)_presenter.ActualWidth;
+                var height = (float)_presenter.ActualHeight;
+
+                _props.InsertScalar("BackdropInset", inset);
+                _props.InsertVector4("Natural", new Vector4(inset, inset, width - inset, height - inset));
+                _props.InsertVector2("Origin", new Vector2((float)bodyOrigin.X, (float)bodyOrigin.Y));
+                _props.InsertVector2("Center", new Vector2(_bodyVisual.CenterPoint.X + (float)bodyOrigin.X, _bodyVisual.CenterPoint.Y + (float)bodyOrigin.Y));
+
+                // Opened comes before the popup's first render pass, which is what builds its root
+                // visuals and puts the backdrop among them.
+                _waitingForBackdrop = true;
+                CompositionTarget.Rendering += OnRendering;
+            }
+
+            private void OnRendering(object sender, object e)
+            {
+                if (_released)
+                {
+                    StopWaitingForBackdrop();
+                    return;
+                }
+
+                _backdrop = FindBackdrop(ElementCompositionPreview.GetElementVisual(_presenter));
+
+                if (_backdrop == null)
+                {
+                    // No backdrop: a high contrast theme, or a style without one. Give up after a
+                    // few frames rather than walk the tree for the whole open.
+                    if (++_backdropFrames >= 3)
+                    {
+                        StopWaitingForBackdrop();
+                    }
+
+                    return;
+                }
+
+                StopWaitingForBackdrop();
+
+                _backdropProps = _compositor.CreatePropertySet();
+                _backdropProps.InsertScalar("ScaleX", 1);
+                _backdropProps.InsertScalar("ScaleY", 1);
+                _backdropProps.InsertScalar("OffsetX", 0);
+                _backdropProps.InsertScalar("OffsetY", 0);
+                _backdropProps.InsertScalar("Bounce", 1);
+
+                Start(_backdropProps, "ScaleX", _templates.BackdropScaleX);
+                Start(_backdropProps, "ScaleY", _templates.BackdropScaleY);
+                Start(_backdropProps, "OffsetX", _templates.BackdropOffsetX);
+                Start(_backdropProps, "OffsetY", _templates.BackdropOffsetY);
+                Start(_backdropProps, "Bounce", _templates.BackdropBounce);
+
+                _templates.BackdropTransform.SetReferenceParameter("b", _backdropProps);
+                Start(_backdrop, "TransformMatrix", _templates.BackdropTransform);
+                Start(_backdrop, "Opacity", _templates.BodyOpacity);
+            }
+
+            private void StopWaitingForBackdrop()
+            {
+                if (_waitingForBackdrop)
+                {
+                    _waitingForBackdrop = false;
+                    CompositionTarget.Rendering -= OnRendering;
+                }
+            }
+
+            // The windowed popup's root is ContentIslandRoot > AnimationRoot > { the backdrop's
+            // placement visual, the visual of Popup.Child > ... }, and the framework keeps a
+            // RectangleClip on the placement visual. Of the siblings along the way up, the topmost
+            // one carrying such a clip is the backdrop: rounded-corner clips further down belong
+            // to the presenter's own visuals.
+            private static Visual FindBackdrop(Visual visual)
+            {
+                Visual found = null;
+
+                try
+                {
+                    for (var child = visual; child?.Parent is ContainerVisual parent; child = parent)
+                    {
+                        foreach (var sibling in parent.Children)
+                        {
+                            if (sibling != child && sibling.Clip is RectangleClip)
+                            {
+                                found = sibling;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // A visual of the system's at the top of the island, which does not let itself
+                    // be read.
+                }
+
+                return found;
+            }
+#endif
 
             // The shadow ThemeShadow would have drawn, as ThemeShadowEx builds it. A hollow nine grid
             // is drawn on top of the presenter without covering it, so it needs no slot behind the
@@ -1094,6 +1246,14 @@ namespace Telegram.Common
                     _contentVisual.Scale = _contentScale;
                     _contentVisual.CenterPoint = _contentCenterPoint;
                 }
+
+#if WINUI3
+                StopWaitingForBackdrop();
+
+                // The backdrop is left alone: closing the popup has already closed it, and the next
+                // open makes a new one.
+                _backdropProps?.Dispose();
+#endif
 
                 if (_padded)
                 {

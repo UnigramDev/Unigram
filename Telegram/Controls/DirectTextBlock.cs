@@ -1287,7 +1287,7 @@ namespace Telegram.Controls
             if (cursor != _cursor)
             {
                 _cursor = cursor;
-                WindowContext.SetPointerCursor(cursor);
+                this.SetPointerCursor(cursor);
             }
         }
 
@@ -1439,7 +1439,7 @@ namespace Telegram.Controls
             if (_cursor != PointerCursorType.Arrow)
             {
                 _cursor = PointerCursorType.Arrow;
-                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+                this.SetPointerCursor(PointerCursorType.Arrow);
             }
         }
 

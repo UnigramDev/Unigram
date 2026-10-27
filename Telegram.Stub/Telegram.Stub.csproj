@@ -33,8 +33,4 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="10.0.10" />
-  </ItemGroup>
-
 </Project>

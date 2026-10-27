@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Xaml.Data;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
@@ -55,11 +56,11 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // list that never terminates costs a spinning core instead of a frozen app.
         private static Task YieldToPump()
         {
-            var dispatcher = global::Windows.System.DispatcherQueue.GetForCurrentThread();
+            var dispatcher = DispatcherQueue.GetForCurrentThread();
             if (dispatcher != null)
             {
                 var tcs = new TaskCompletionSource<bool>();
-                if (dispatcher.TryEnqueue(global::Windows.System.DispatcherQueuePriority.Low, () => tcs.TrySetResult(true)))
+                if (dispatcher.TryEnqueue(DispatcherQueuePriority.Low, () => tcs.TrySetResult(true)))
                 {
                     return tcs.Task;
                 }

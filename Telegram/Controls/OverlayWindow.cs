@@ -114,11 +114,7 @@ namespace Telegram.Controls
                 host.PopupOpened();
             }
 
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            //titlebar.BackgroundColor = Colors.Black;
-            titlebar.ForegroundColor = Colors.White;
-            //titlebar.ButtonBackgroundColor = Colors.Black;
-            titlebar.ButtonForegroundColor = Colors.White;
+            window.SetTitleBarForeground(Colors.White);
         }
 
         protected void UnmaskTitleAndStatusBar(WindowContext window)
