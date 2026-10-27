@@ -66,7 +66,7 @@ namespace Telegram.Common
                 Id = id,
                 UserId = userId,
                 ApplicationVersion = _service.ApplicationVersion2,
-                ApplicationArchitecture = Package.Current.Id.Architecture.ToString(),
+                ApplicationArchitecture = PackageEx.Architecture.ToString(),
                 SystemVersion = _service.SystemVersion2,
                 DeviceModel = _service.DeviceModel,
                 Type = error.Exception.Type,

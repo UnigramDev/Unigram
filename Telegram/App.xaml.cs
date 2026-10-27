@@ -100,7 +100,7 @@ namespace Telegram
         {
             base.OnBackgroundActivated(args);
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, PackageEx.FamilyName))
             {
                 BridgeApplicationContext.Connect(appService.AppServiceConnection, args.TaskInstance);
             }
@@ -246,17 +246,22 @@ namespace Telegram
             await RequestExtendedExecutionSessionAsync();
             await Toast.RegisterBackgroundTasks();
 
-            try
+            // Both address the package's own tile and toast history, so there is nothing for them
+            // to clear where there is no package.
+            if (ApiInfo.HasPackageIdentity)
             {
-                TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
-            }
-            catch { }
+                try
+                {
+                    TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
+                }
+                catch { }
 
-            try
-            {
-                ToastNotificationManager.History.Clear("App");
+                try
+                {
+                    ToastNotificationManager.History.Clear("App");
+                }
+                catch { }
             }
-            catch { }
 
             if (Constants.RELEASE && startKind == StartKind.Launch)
             {
@@ -285,7 +290,9 @@ namespace Telegram
 
         private async Task RequestExtendedExecutionSessionAsync()
         {
-            if (_extendedSession == null && ApiInfo.IsDesktop)
+            // The session keeps a suspended app running, and only the app model suspends one: an
+            // unpackaged host is an ordinary process that nothing is going to stop.
+            if (_extendedSession == null && ApiInfo.IsDesktop && ApiInfo.HasPackageIdentity)
             {
                 var session = new ExtendedExecutionSession();
                 session.Reason = ExtendedExecutionReason.Unspecified;

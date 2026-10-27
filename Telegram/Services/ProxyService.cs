@@ -48,7 +48,7 @@ namespace Telegram.Services
             _lifetime = lifetime;
             _database = new LocalDatabase();
 
-            _database.Initialize(Path.Combine(ApplicationData.Current.LocalFolder.Path, "local.db"));
+            _database.Initialize(Path.Combine(ApplicationDataEx.LocalPath, "local.db"));
             _database.CreateTable("Proxy",
                 new[] { "Id", "Server", "Port", "LastUsedDate", "Type", "Secret", "Username", "Password", "HttpOnly" },
                 new[] { "INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT NOT NULL", "INTEGER", "INTEGER", "INTEGER", "TEXT", "TEXT", "TEXT", "INTEGER" });

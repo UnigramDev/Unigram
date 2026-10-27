@@ -1384,7 +1384,7 @@ namespace Telegram.Controls
 
             try
             {
-                var bytes = File.ReadAllBytes(Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "shapes.dat"));
+                var bytes = File.ReadAllBytes(Path.Combine(PackageEx.InstalledPath, "Assets", "shapes.dat"));
                 var offset = 0;
 
                 while (bytes.Length - offset > 5)

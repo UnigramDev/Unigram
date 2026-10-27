@@ -78,7 +78,7 @@ namespace Telegram.Services
 
         private static async void RemoveCollections()
         {
-            if (AppSettings.HasRemovedCollections)
+            if (AppSettings.HasRemovedCollections || !ApiInfo.HasPackageIdentity)
             {
                 return;
             }
@@ -417,6 +417,11 @@ namespace Telegram.Services
 
         public void Handle(UpdateActiveNotifications update)
         {
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return;
+            }
+
             try
             {
                 var history = ToastNotificationManager.History.GetHistory();
@@ -467,11 +472,14 @@ namespace Telegram.Services
         {
             try
             {
-                var history = ToastNotificationManager.History;
-
-                foreach (var removed in update.RemovedNotificationIds)
+                if (ApiInfo.HasPackageIdentity)
                 {
-                    history.Remove($"{removed}", $"{_clientService.SessionId}_{update.NotificationGroupId}");
+                    var history = ToastNotificationManager.History;
+
+                    foreach (var removed in update.RemovedNotificationIds)
+                    {
+                        history.Remove($"{removed}", $"{_clientService.SessionId}_{update.NotificationGroupId}");
+                    }
                 }
             }
             catch
@@ -649,6 +657,14 @@ namespace Telegram.Services
 
         private void UpdateToast(string caption, string message, string account, bool suppressPopup, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply, DateTimeOffset? expirationTime = null)
         {
+            // The notifier below is created from the package's AUMID. Unpackaged, a toast would
+            // need an AUMID in the registry and a COM activator, so the sound and the in-app
+            // badge raised before this are all such a host gets.
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return;
+            }
+
             var xml = $"<toast launch='{launch}' displayTimestamp='{date}'>";
             xml += "<visual><binding template='ToastGeneric'>";
 
@@ -883,7 +899,7 @@ namespace Telegram.Services
                 var photo = chat.Photo;
                 if (photo != null && photo.Small.Local.IsDownloadingCompleted)
                 {
-                    var relative = Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, photo.Small.Local.Path);
+                    var relative = Path.GetRelativePath(ApplicationDataEx.LocalPath, photo.Small.Local.Path);
                     return "ms-appdata:///local/" + relative.Replace('\\', '/');
                 }
             }

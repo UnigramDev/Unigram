@@ -285,7 +285,7 @@ namespace Telegram.Controls.RichEditor
 
             try
             {
-                File.AppendAllText(Path.Combine(ApplicationData.Current.LocalFolder.Path, "editor-meter.txt"), text + Environment.NewLine);
+                File.AppendAllText(Path.Combine(ApplicationDataEx.LocalPath, "editor-meter.txt"), text + Environment.NewLine);
             }
             catch
             {

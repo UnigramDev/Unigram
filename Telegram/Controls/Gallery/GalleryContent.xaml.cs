@@ -288,7 +288,7 @@ namespace Telegram.Controls.Gallery
                     Button.SetGlyph(file.Id, MessageContentState.Photo);
                     Button.Opacity = 0;
 
-                    if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path, out _))
+                    if (Extensions.IsRelativePath(ApplicationDataEx.LocalPath, file.Local.Path, out _))
                     {
                         Texture.Source = UriEx.ToBitmap(file.Local.Path, 0, 0);
                     }

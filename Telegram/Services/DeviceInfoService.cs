@@ -93,9 +93,7 @@ namespace Telegram.Services
         {
             get
             {
-                Package package = Package.Current;
-                PackageId packageId = package.Id;
-                PackageVersion version = packageId.Version;
+                PackageVersion version = PackageEx.Version;
 
                 var revision = version.Revision > 0
                     ? string.Format(" ({0})", version.Revision)
@@ -114,9 +112,7 @@ namespace Telegram.Services
         {
             get
             {
-                Package package = Package.Current;
-                PackageId packageId = package.Id;
-                PackageVersion version = packageId.Version;
+                PackageVersion version = PackageEx.Version;
 
                 return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             }

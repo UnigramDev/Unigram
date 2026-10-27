@@ -350,7 +350,7 @@ namespace Telegram.Controls.Chats
         {
             try
             {
-                var file = await ApplicationData.Current.TemporaryFolder.TryGetItemAsync("LastVideoFrame.png");
+                var file = await ApplicationDataEx.TemporaryFolder.TryGetItemAsync("LastVideoFrame.png");
                 if (file != null)
                 {
                     var source = new SoftwareBitmapSource();
@@ -390,7 +390,7 @@ namespace Telegram.Controls.Chats
                 await target.RenderAsync(_videoElement, 80, 80);
                 var pixels = await target.GetPixelsAsync();
 
-                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("LastVideoFrame.png", CreationCollisionOption.ReplaceExisting);
+                var file = await ApplicationDataEx.TemporaryFolder.CreateFileAsync("LastVideoFrame.png", CreationCollisionOption.ReplaceExisting);
                 using var stream = await file.OpenAsync(FileAccessMode.ReadWrite);
                 var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
 

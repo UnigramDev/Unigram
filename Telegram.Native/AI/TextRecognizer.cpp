@@ -2,6 +2,7 @@
 #include "TextRecognizer.h"
 #include "AI/TextRecognizer.g.cpp"
 
+#include "../AppModelPaths.h"
 #include "TextRecognizerDefault.h"
 #include "TextRecognizerOne.h"
 
@@ -92,7 +93,7 @@ namespace winrt::Telegram::Native::AI::implementation
         std::wstring test = GetFilePathFromHandle(hFile);
         if (test.ends_with(L"oneocr.onemodel"))
         {
-            auto modelPath = L"\\\\?\\" + ApplicationData::Current().LocalFolder().Path() + L"\\Ocr\\oneocr.onemodel";
+            auto modelPath = L"\\\\?\\" + AppModel::LocalPath() + L"\\Ocr\\oneocr.onemodel";
             wcsncpy_s(lpszFilePath, cchFilePath, modelPath.c_str(), modelPath.size());
 
             return modelPath.size();
@@ -130,7 +131,7 @@ namespace winrt::Telegram::Native::AI::implementation
             .data_ptr = (__int64)reinterpret_cast<char*>(data + desc.StartIndex)
         };
 
-        std::string modelPath = winrt::to_string(ApplicationData::Current().LocalFolder().Path() + L"\\Ocr\\oneocr.onemodel");
+        std::string modelPath = winrt::to_string(AppModel::LocalPath() + L"\\Ocr\\oneocr.onemodel");
         std::string decryptionKey = winrt::to_string(m_modelKey);
         const char* model = modelPath.c_str();
         const char* key = decryptionKey.c_str();

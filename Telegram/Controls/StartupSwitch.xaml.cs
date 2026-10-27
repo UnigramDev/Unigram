@@ -7,6 +7,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Services;
 using Telegram.ViewModels.Settings;
 using Windows.ApplicationModel;
@@ -32,7 +33,7 @@ namespace Telegram.Controls
                 FindName(nameof(TraySwitch));
             }
 
-            if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.StartupTaskContract", 2))
+            if (ApiInfo.HasPackageIdentity && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.StartupTaskContract", 2))
             {
                 integrated = true;
 
@@ -41,6 +42,13 @@ namespace Telegram.Controls
 #endif
 
                 OnLoaded();
+            }
+            else
+            {
+                // A StartupTask is declared in the manifest and there is none. The unpackaged
+                // equivalent is a HKCU\...\Run value, which nothing here writes yet, so the
+                // toggle is hidden rather than left as a switch that does nothing.
+                Toggle.Visibility = Visibility.Collapsed;
             }
 
             Visibility = integrated

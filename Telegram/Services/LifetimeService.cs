@@ -105,7 +105,7 @@ namespace Telegram.Services
 
         private IList<AvailableSession> GetSessionsToInitialize(out int nextId)
         {
-            var folders = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+            var folders = Directory.GetDirectories(ApplicationDataEx.LocalPath);
 
             var toBeDeleted = new HashSet<string>();
             var toBeInitialized = new List<AvailableSession>();
@@ -332,7 +332,7 @@ namespace Telegram.Services
             {
                 try
                 {
-                    Directory.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{item.Id}"), true);
+                    Directory.Delete(Path.Combine(ApplicationDataEx.LocalPath, $"{item.Id}"), true);
                 }
                 catch { }
             });

@@ -718,7 +718,7 @@ namespace Telegram.Services
 
             try
             {
-                var file = await ApplicationData.Current.LocalFolder.TryGetItemAsync("shortcuts.json") as StorageFile;
+                var file = await ApplicationDataEx.LocalFolder.TryGetItemAsync("shortcuts.json") as StorageFile;
                 if (file != null)
                 {
                     await file.DeleteAsync();
@@ -902,7 +902,7 @@ namespace Telegram.Services
         {
             try
             {
-                var file = await ApplicationData.Current.LocalFolder.TryGetItemAsync("shortcuts.json") as StorageFile;
+                var file = await ApplicationDataEx.LocalFolder.TryGetItemAsync("shortcuts.json") as StorageFile;
                 if (file == null)
                 {
                     return;
@@ -1154,7 +1154,7 @@ namespace Telegram.Services
         {
             try
             {
-                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("shortcuts.json", CreationCollisionOption.ReplaceExisting);
+                var file = await ApplicationDataEx.LocalFolder.CreateFileAsync("shortcuts.json", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(file, BuildCustom().Stringify());
             }
             catch

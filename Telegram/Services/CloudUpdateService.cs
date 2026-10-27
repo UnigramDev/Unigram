@@ -55,7 +55,10 @@ namespace Telegram.Services
         private readonly IEventAggregator _aggregator;
 
         private static readonly SemaphoreSlim _updateLock = new(1, 1);
-        private static readonly bool _disabled = Constants.DEBUG || ApiInfo.IsStoreRelease;
+        // Also off without an identity: what this downloads is an msixbundle and what installs it
+        // is PackageManager, and neither means anything to a host that was not installed that way.
+        // An unpackaged build has to be updated by whatever put it on disk.
+        private static readonly bool _disabled = Constants.DEBUG || ApiInfo.IsStoreRelease || !ApiInfo.HasPackageIdentity;
 
         private long _fileToken;
 
@@ -98,10 +101,10 @@ namespace Telegram.Services
 
             try
             {
-                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+                var folder = await ApplicationDataEx.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
                 var files = await folder.GetFilesAsync();
 
-                var current = Package.Current.Id.Version.ToVersion();
+                var current = PackageEx.Version.ToVersion();
                 var versions = new List<(Version Version, StorageFile File)>();
 
                 Logger.Info($"Found {files.Count} files");
@@ -241,7 +244,7 @@ namespace Telegram.Services
 
             _lastCheck = Logger.TickCount;
 
-            var current = Package.Current.Id.Version.ToVersion();
+            var current = PackageEx.Version.ToVersion();
             var cloud = await GetNextUpdateAsync();
 
             if (cloud != null && cloud.Version > current)
@@ -281,10 +284,10 @@ namespace Telegram.Services
 
             if (file.Local.IsDownloadingCompleted)
             {
-                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+                var folder = await ApplicationDataEx.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
                 var result = await TryCopyPartLocally(folder, file.Local.Path, cloud.Version);
 
-                var current = Package.Current.Id.Version.ToVersion();
+                var current = PackageEx.Version.ToVersion();
                 if (current < cloud.Version)
                 {
                     _nextUpdate = cloud;
@@ -369,8 +372,8 @@ namespace Telegram.Services
                         Document = document.Document.DocumentValue
                     };
 
-                    var current = Package.Current.Id.Version.ToVersion();
-                    var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+                    var current = PackageEx.Version.ToVersion();
+                    var folder = await ApplicationDataEx.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
 
                     if (set.Version > current)
                     {
