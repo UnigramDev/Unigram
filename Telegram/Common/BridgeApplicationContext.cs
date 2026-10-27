@@ -35,7 +35,7 @@ namespace Telegram.Common
 
         public static async Task AddLoopbackExemptionAsync()
         {
-            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            if (ApiInfo.HasPackageIdentity && ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 try
                 {
@@ -50,7 +50,7 @@ namespace Telegram.Common
 
         public static async Task LaunchAsync()
         {
-            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            if (ApiInfo.HasPackageIdentity && ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 try
                 {

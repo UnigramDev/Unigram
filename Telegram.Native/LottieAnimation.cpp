@@ -6,6 +6,7 @@
 
 #include <winrt/Windows.Storage.h>
 
+#include "AppModelPaths.h"
 #include "Cache/FrameCacheService.h"
 #include "LottieStringUtils.h"
 #include "TlottieFrameProducer.h"
@@ -110,7 +111,7 @@ namespace winrt::Telegram::Native::implementation
             // derived data, and the reader treats a missing one as no cache and rebuilds - so
             // letting the OS reclaim it under pressure costs nothing but the rebuild. It also
             // keeps them out of the sweep, which only walks the per-session sticker directory.
-            auto folder = Windows::Storage::ApplicationData::Current().TemporaryFolder().Path();
+            auto folder = AppModel::TemporaryPath();
             auto base = std::wstring(folder) + L"\\" + std::wstring(cacheKey);
 
             info->m_cachePath = BuildCachePath(base, hash, modifier, pixelWidth, pixelHeight);

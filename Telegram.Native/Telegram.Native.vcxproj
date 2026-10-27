@@ -387,6 +387,7 @@
       <DependentUpon>Controls\ControlEx.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="AppModelPaths.h" />
     <ClInclude Include="UIFlavor.h" />
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="FatalError.h">

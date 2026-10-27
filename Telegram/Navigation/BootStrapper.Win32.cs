@@ -44,11 +44,31 @@ namespace Telegram.Navigation
             }
             else
             {
-                // Unpackaged, or launched by something that provides no arguments at all. The app
-                // has no way to build a LaunchActivatedEventArgs of its own, so this is as far as
-                // the process can get - and identity is required well before this anyway.
-                Logger.Error("No activation arguments; the app cannot be started without identity");
+                // Unpackaged, so a plain start is all this can have been: everything else - a
+                // tg: link, a shared file, a toast - reaches the app through an extension the
+                // shell only dispatches to a package. LaunchActivatedEventArgs is sealed and
+                // cannot be built, so the activate path takes it instead; the only thing the
+                // launch path adds that matters here is the watchdog, called by hand.
+                Logger.Info("No identity; starting as a plain launch");
+
+                WatchDog.Launch(ApplicationExecutionState.NotRunning);
+                CallInternalActivated(new PlainActivatedEventArgs());
             }
+        }
+
+        /// <summary>
+        /// A launch that carries nothing. There is no way to construct a LaunchActivatedEventArgs
+        /// - it is a sealed WinRT class - but the pipeline takes the interface, and everything
+        /// downstream either matches on a concrete activation type or reads Kind. Both answer the
+        /// way a plain start does: no session to switch to, no link to follow, no share to fill in.
+        /// </summary>
+        private sealed partial class PlainActivatedEventArgs : IActivatedEventArgs
+        {
+            public ActivationKind Kind => ActivationKind.Launch;
+
+            public ApplicationExecutionState PreviousExecutionState => ApplicationExecutionState.NotRunning;
+
+            public SplashScreen SplashScreen => null;
         }
 
         /// <summary>

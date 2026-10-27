@@ -101,8 +101,8 @@ namespace Telegram
             _userId = AppSettings.AnonymousUserId;
             _launchTime = MonotonicUnixTime.Now;
 
-            _crashLog = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.id");
-            _reports = Path.Combine(ApplicationData.Current.LocalFolder.Path, "ErrorReports");
+            _crashLog = Path.Combine(ApplicationDataEx.LocalPath, "crash.id");
+            _reports = Path.Combine(ApplicationDataEx.LocalPath, "ErrorReports");
         }
 
         public static bool HasCrashedInLastSession { get; private set; }

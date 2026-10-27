@@ -53,7 +53,7 @@ namespace Telegram.Common
         {
             try
             {
-                var localFolder = ApplicationData.Current.LocalFolder;
+                var localFolder = ApplicationDataEx.LocalFolder;
                 return await localFolder.CreateFolderAsync(STORAGE_FOLDER_NAME, CreationCollisionOption.OpenIfExists);
             }
             catch
@@ -147,6 +147,11 @@ namespace Telegram.Common
 
         private IBuffer GetSecretKey()
         {
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return GetSecretKeyFromFile();
+            }
+
             try
             {
                 // Generate or retrieve encryption key using Windows Credential Locker
@@ -170,6 +175,33 @@ namespace Telegram.Common
 
                 credential.RetrievePassword();
                 return CryptographicBuffer.DecodeFromBase64String(credential.Password);
+            }
+            catch
+            {
+                throw new InvalidOperationException("UNKNOWN_ERROR");
+            }
+        }
+
+        /// <summary>
+        /// The credential locker is keyed by package identity and has no unpackaged equivalent, so
+        /// the key sits beside what it encrypts instead. That is no weaker than the rest of the
+        /// folder, whose TDLib databases are not encrypted either.
+        /// </summary>
+        private static IBuffer GetSecretKeyFromFile()
+        {
+            try
+            {
+                var path = System.IO.Path.Combine(ApplicationDataEx.LocalPath, "webapps.key");
+
+                if (System.IO.File.Exists(path))
+                {
+                    return CryptographicBuffer.DecodeFromBase64String(System.IO.File.ReadAllText(path));
+                }
+
+                var keyMaterial = CryptographicBuffer.GenerateRandom(32);
+                System.IO.File.WriteAllText(path, CryptographicBuffer.EncodeToBase64String(keyMaterial));
+
+                return keyMaterial;
             }
             catch
             {

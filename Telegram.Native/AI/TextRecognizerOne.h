@@ -3,6 +3,8 @@
 #include <string>
 #include <winrt/Windows.Storage.h>
 
+#include "../AppModelPaths.h"
+
 typedef struct
 {
     __int32 t;
@@ -85,8 +87,8 @@ private:
 
     TextRecognizerOne()
     {
-        hstring onnxruntime = ApplicationData::Current().LocalFolder().Path() + L"\\Ocr\\onnxruntime.dll";
-        hstring oneocr = ApplicationData::Current().LocalFolder().Path() + L"\\Ocr\\oneocr.dll";
+        hstring onnxruntime = winrt::Telegram::Native::AppModel::LocalPath() + L"\\Ocr\\onnxruntime.dll";
+        hstring oneocr = winrt::Telegram::Native::AppModel::LocalPath() + L"\\Ocr\\oneocr.dll";
         m_hOnnxRuntime = LoadLibraryW(onnxruntime.c_str());
         m_hOneOcr = LoadLibraryW(oneocr.c_str());
         if (!m_hOnnxRuntime || !m_hOneOcr) return;

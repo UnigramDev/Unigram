@@ -6,9 +6,8 @@
 //
 
 using System;
-using Windows.Foundation;
+using System.Threading.Tasks;
 using Windows.Storage;
-using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
 
 namespace Telegram.Services
 {
@@ -45,7 +44,7 @@ namespace Telegram.Services
                 // use of it points the conversion string at another file.
                 var token = Guid.NewGuid().ToString("N");
 
-                SAP.FutureAccessList.AddOrReplace(token, item);
+                AccessList.Future.AddOrReplace(token, item);
                 return token;
             }
             catch
@@ -78,7 +77,7 @@ namespace Telegram.Services
 
             try
             {
-                SAP.FutureAccessList.AddOrReplace(token, item);
+                AccessList.Future.AddOrReplace(token, item);
             }
             catch
             {
@@ -90,9 +89,9 @@ namespace Telegram.Services
         /// Throws when the file is gone, as the access list does: every caller is a conversion that
         /// reports the failure back to TDLib.
         /// </summary>
-        public static IAsyncOperation<StorageFile> GetFileAsync(string token)
+        public static Task<StorageFile> GetFileAsync(string token)
         {
-            return SAP.FutureAccessList.GetFileAsync(token);
+            return AccessList.Future.GetFileAsync(token);
         }
     }
 }

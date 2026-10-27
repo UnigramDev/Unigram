@@ -29,7 +29,7 @@ namespace Telegram.Host
         private const string ContainerName = "WindowLayout";
 
         private static ISettingsStore _store;
-        private static ISettingsStore Store => _store ??= ApplicationDataSettingsStore.Local.GetContainer(ContainerName);
+        private static ISettingsStore Store => _store ??= SettingsStore.Local.GetContainer(ContainerName);
 
         /// <summary>
         /// Call between creating the window and showing it, so it opens where it belongs rather

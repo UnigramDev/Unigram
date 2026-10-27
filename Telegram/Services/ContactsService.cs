@@ -7,6 +7,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Windows.UI.StartScreen;
 
 namespace Telegram.Services
@@ -37,7 +38,9 @@ namespace Telegram.Services
 
             try
             {
-                if (JumpList.IsSupported())
+                // The list is keyed by the app's identity, and an unpackaged host has none: the
+                // entries would go somewhere nothing reads.
+                if (ApiInfo.HasPackageIdentity && JumpList.IsSupported())
                 {
                     var current = await JumpList.LoadCurrentAsync();
                     current.SystemGroupKind = JumpListSystemGroupKind.None;

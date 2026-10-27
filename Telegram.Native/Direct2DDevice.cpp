@@ -4,6 +4,7 @@
 #include "Direct2DDevice.g.cpp"
 #endif
 
+#include "AppModelPaths.h"
 #include "SVG/nanosvg.h"
 #include "StringUtils.h"
 #include "Helpers\COMHelper.h"
@@ -1208,7 +1209,7 @@ namespace winrt::Telegram::Native::implementation
 
         m_customEmoji = winrt::make_self<CustomEmojiInlineObject>();
 
-        hstring path = Package::Current().InstalledLocation().Path();
+        hstring path = AppModel::InstalledPath();
 
         auto loader = winrt::make_self<CustomFontLoader>(path + L"\\Assets\\Fonts\\Telegram.ttf", path + L"\\Assets\\Emoji\\apple.ttf");
         m_customLoader = loader.as<IDWriteFontCollectionLoader>();

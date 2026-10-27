@@ -42,7 +42,7 @@ namespace Telegram.Services
         private readonly ISettingsStore _own;
 
         public SettingsService(int session)
-            : base(ApplicationDataSettingsStore.Local.GetContainer($"{session}"))
+            : base(SettingsStore.Local.GetContainer($"{session}"))
         {
             _session = session;
             _own = _container;
@@ -53,7 +53,7 @@ namespace Telegram.Services
         // constructed, so the value has to be in the container first.
         public static bool IsAuthorized(int session)
         {
-            return ApplicationDataSettingsStore.Local.TryGetContainer($"{session}", out var container)
+            return SettingsStore.Local.TryGetContainer($"{session}", out var container)
                 && container.ContainsKey("UserId");
         }
 
@@ -63,7 +63,7 @@ namespace Telegram.Services
         // what the setting defaulted to. Delete it with the migration.
         public static bool ConsumeUseSystemProxy(int session)
         {
-            var container = ApplicationDataSettingsStore.Local.GetContainer($"{session}");
+            var container = SettingsStore.Local.GetContainer($"{session}");
             var value = container.GetValueOrDefault("UseSystemProxy", true);
 
             container.Remove("UseSystemProxy");
@@ -72,7 +72,7 @@ namespace Telegram.Services
 
         public static void SetUseTestDC(int session, bool value)
         {
-            ApplicationDataSettingsStore.Local.GetContainer($"{session}").SetValue("UseTestDC", value);
+            SettingsStore.Local.GetContainer($"{session}").SetValue("UseTestDC", value);
         }
 
         public int Session => _session;

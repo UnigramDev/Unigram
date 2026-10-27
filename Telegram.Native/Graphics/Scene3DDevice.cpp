@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Scene3DDevice.h"
 #include "Scene3DRenderer.h"
+#include "../AppModelPaths.h"
 
 #include <winrt/Telegram.Native.h>
 #include <winrt/Windows.ApplicationModel.h>
@@ -50,8 +51,7 @@ namespace Graphics3D
 
         try
         {
-            path = winrt::Windows::ApplicationModel::Package::Current()
-                .InstalledLocation().Path().c_str();
+            path = winrt::Telegram::Native::AppModel::InstalledPath().c_str();
         }
         catch (...)
         {

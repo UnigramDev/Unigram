@@ -160,14 +160,14 @@ namespace Telegram.Services
         public bool CanRemember(StorageFile file)
         {
             // A file in our own local folder is TDLib's copy, which it is free to evict.
-            if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, file.Path, out _))
+            if (Extensions.IsRelativePath(ApplicationDataEx.LocalPath, file.Path, out _))
             {
                 return false;
             }
 
             try
             {
-                return SAP.FutureAccessList.CheckAccess(file);
+                return AccessList.Future.CheckAccess(file);
             }
             catch
             {
@@ -199,7 +199,7 @@ namespace Telegram.Services
             {
                 try
                 {
-                    return new DownloadFolder(true, await SAP.FutureAccessList.GetFolderAsync(FolderToken));
+                    return new DownloadFolder(true, await AccessList.Future.GetFolderAsync(FolderToken));
                 }
                 catch
                 {
@@ -237,7 +237,7 @@ namespace Telegram.Services
                 {
                     Remove(FolderToken);
                 }
-                else if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, folder.Path, out _))
+                else if (Extensions.IsRelativePath(ApplicationDataEx.LocalPath, folder.Path, out _))
                 {
                     Remove(FolderToken);
                 }
@@ -284,7 +284,7 @@ namespace Telegram.Services
             {
                 try
                 {
-                    var folder = await SAP.FutureAccessList.GetFolderAsync(FolderToken);
+                    var folder = await AccessList.Future.GetFolderAsync(FolderToken);
                     return await folder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
                 }
                 catch
@@ -301,6 +301,13 @@ namespace Telegram.Services
         /// </summary>
         private async Task MigrateAsync()
         {
+            // There is no list to migrate out of where there was never one to write to: the
+            // unpackaged host has only ever kept paths.
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return;
+            }
+
             try
             {
                 if (SAP.MostRecentlyUsedList.ContainsItem(FolderToken))
@@ -342,7 +349,7 @@ namespace Telegram.Services
 
             try
             {
-                return SAP.FutureAccessList.ContainsItem(token);
+                return AccessList.Future.ContainsItem(token);
             }
             catch
             {
@@ -356,7 +363,7 @@ namespace Telegram.Services
             {
                 if (Contains(token))
                 {
-                    return await SAP.FutureAccessList.GetFileAsync(token);
+                    return await AccessList.Future.GetFileAsync(token);
                 }
 
                 return null;
@@ -374,7 +381,7 @@ namespace Telegram.Services
 
             try
             {
-                SAP.FutureAccessList.AddOrReplace(token, item);
+                AccessList.Future.AddOrReplace(token, item);
             }
             catch
             {
@@ -388,7 +395,7 @@ namespace Telegram.Services
             {
                 if (Contains(token))
                 {
-                    SAP.FutureAccessList.Remove(token);
+                    AccessList.Future.Remove(token);
                 }
             }
             catch
@@ -407,14 +414,15 @@ namespace Telegram.Services
             try
             {
                 // Access to entries should probably be locked around the app...
-                if (SAP.FutureAccessList.Entries.Count >= SAP.FutureAccessList.MaximumItemsAllowed - 10)
+                if (AccessList.Future.Count >= AccessList.Future.MaximumItemsAllowed - 10)
                 {
-                    for (int i = SAP.FutureAccessList.Entries.Count - 1; i >= 0; i--)
+                    var tokens = AccessList.Future.Tokens;
+
+                    for (int i = tokens.Count - 1; i >= 0; i--)
                     {
-                        var entry = SAP.FutureAccessList.Entries[i];
-                        if (entry.Token != FolderToken)
+                        if (tokens[i] != FolderToken)
                         {
-                            SAP.FutureAccessList.Remove(entry.Token);
+                            AccessList.Future.Remove(tokens[i]);
                             break;
                         }
                     }
@@ -437,7 +445,7 @@ namespace Telegram.Services
 
                 try
                 {
-                    SAP.FutureAccessList.Clear();
+                    AccessList.Future.Clear();
                 }
                 catch
                 {

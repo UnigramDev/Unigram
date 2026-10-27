@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Runtime.InteropServices;
 using Telegram.Native;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
@@ -13,12 +14,42 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Common
 {
-    public static class ApiInfo
+    // partial because the source-generated P/Invoke below requires it.
+    public static partial class ApiInfo
     {
         private static bool? _isStoreRelease;
-        public static bool IsStoreRelease => _isStoreRelease ??= (Package.Current.SignatureKind == PackageSignatureKind.Store);
+        public static bool IsStoreRelease => _isStoreRelease ??= HasPackageIdentity && Package.Current.SignatureKind == PackageSignatureKind.Store;
 
         public static bool IsPackagedRelease => !IsStoreRelease;
+
+#if UNPACKAGED
+        private const int APPMODEL_ERROR_NO_PACKAGE = 15700;
+
+        [LibraryImport("kernel32.dll")]
+        private static unsafe partial int GetCurrentPackageFullName(ref uint packageFullNameLength, char* packageFullName);
+
+        // The one thing every other identity-dependent check is built on. The buffer is
+        // deliberately null, so with an identity this returns ERROR_INSUFFICIENT_BUFFER; only
+        // APPMODEL_ERROR_NO_PACKAGE means there is none.
+        private static bool? _hasPackageIdentity;
+        public static unsafe bool HasPackageIdentity
+        {
+            get
+            {
+                if (_hasPackageIdentity == null)
+                {
+                    uint length = 0;
+                    _hasPackageIdentity = GetCurrentPackageFullName(ref length, null) != APPMODEL_ERROR_NO_PACKAGE;
+                }
+
+                return _hasPackageIdentity.Value;
+            }
+        }
+#else
+        // Only the flavours that can be launched without a package define UNPACKAGED. The UWP app
+        // model cannot, so the check is not worth making.
+        public static bool HasPackageIdentity => true;
+#endif
 
         private static bool? _isDesktop;
         public static bool IsDesktop => _isDesktop ??= string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop");

@@ -344,7 +344,7 @@ namespace Telegram
 
         private static void Open()
         {
-            _logPath ??= Path.Combine(ApplicationData.Current.LocalFolder.Path, LogFileName);
+            _logPath ??= Path.Combine(ApplicationDataEx.LocalPath, LogFileName);
 
             // Shared so that the diagnostics page can read the file, and TDLib upload it, while it
             // is still being written to. bufferSize 1 asks for no buffering of our own.
@@ -360,7 +360,7 @@ namespace Telegram
             _log = null;
 
             // Move refuses an existing destination, so the previous log goes first.
-            var old = Path.Combine(ApplicationData.Current.LocalFolder.Path, OldLogFileName);
+            var old = Path.Combine(ApplicationDataEx.LocalPath, OldLogFileName);
 
             File.Delete(old);
             File.Move(_logPath, old);

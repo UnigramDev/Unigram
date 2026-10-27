@@ -1290,6 +1290,7 @@
     <Compile Include="Services\ClientService.Files.cs" />
     <Compile Include="Services\FileReadLease.cs" />
     <Compile Include="Services\ProfilePhotoService.cs" />
+    <Compile Include="Services\AccessList.cs" />
     <Compile Include="Services\DownloadFolderService.cs" />
     <Compile Include="Services\StorageService.cs" />
     <Compile Include="Services\StoryService.cs" />
@@ -2516,10 +2517,12 @@
     <Compile Include="Collections\TransactionTabs.cs" />
     <Compile Include="Common\Emoticon.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Shims\ApplicationDataEx.cs" />
     <Compile Include="Shims\ClipboardEx.cs" />
     <Compile Include="Shims\ConditionalWeakTableExtensions.cs" />
     <Compile Include="Shims\FocusManagerEx.cs" />
     <Compile Include="Shims\IncrementalLoading.cs" />
+    <Compile Include="Shims\PackageEx.cs" />
     <Compile Include="Shims\PickerExtensions.cs" />
     <Compile Include="Common\Extensions.Collections.cs" />
     <Compile Include="Common\Extensions.Geometry.cs" />

@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Telegram.Common;
 using Windows.ApplicationModel;
 using Windows.System;
 using Windows.Storage;
@@ -66,8 +67,10 @@ namespace Telegram.Host
 
             // The real arguments rather than an invented launch: a packaged app gets them from
             // AppInstance, and everything downstream - protocol links, share targets, file
-            // activation - already knows how to read them.
-            app.Start(AppInstance.GetActivatedEventArgs());
+            // activation - already knows how to read them. AppInstance is the package's own
+            // activation queue though, so unpackaged there is nothing to ask and Start invents
+            // the plain launch instead.
+            app.Start(ApiInfo.HasPackageIdentity ? AppInstance.GetActivatedEventArgs() : null);
 
             while (Win32.GetMessageW(out var message, IntPtr.Zero, 0, 0) > 0)
             {

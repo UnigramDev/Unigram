@@ -236,7 +236,7 @@ namespace Telegram.Common.Recording
 
             // Unique rather than fail: the name is only second-accurate, and two recordings
             // within the same second is a tap away.
-            return ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName).AsTask();
+            return ApplicationDataEx.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName).AsTask();
         }
 
         /// <summary>

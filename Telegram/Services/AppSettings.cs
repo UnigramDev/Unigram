@@ -25,7 +25,7 @@ namespace Telegram.Services
     // disambiguate, and every read saves a null check.
     public static partial class AppSettings
     {
-        private static readonly ISettingsStore _local = ApplicationDataSettingsStore.Local;
+        private static readonly ISettingsStore _local = SettingsStore.Local;
 
         private static StickersSettings _stickers;
         public static StickersSettings Stickers => _stickers ??= new StickersSettings(_local);

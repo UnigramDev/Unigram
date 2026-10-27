@@ -58,7 +58,7 @@ namespace Telegram.Views.Host
                 try
                 {
                     var options = new Windows.System.LauncherOptions();
-                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+                    options.TargetApplicationPackageFamilyName = PackageEx.FamilyName;
 
                     await Windows.System.Launcher.LaunchUriAsync(new Uri("tg://"), options);
                 }

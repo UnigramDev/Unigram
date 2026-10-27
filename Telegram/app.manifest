@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The side-by-side manifest for the two desktop flavours. It exists for one line.
+
+  Without maxversiontested, WindowsXamlManager.InitializeForCurrentThread() fails E_UNEXPECTED in
+  an unpackaged process: the XAML core reads the manifested OS version to decide which behaviour
+  set it is allowed to use, and a packaged app gets that from its package manifest instead. Inert
+  in a packaged build, which is why it is not conditional.
+
+  Deliberately absent: dpiAware / dpiAwareness. Both hosts call
+  SetProcessDpiAwarenessContext themselves, at the top of Main and from a module initializer
+  respectively, so that the two set it the same way and at the same point.
+-->
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 and 11 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+      <maxversiontested Id="10.0.26100.0" />
+    </application>
+  </compatibility>
+</assembly>

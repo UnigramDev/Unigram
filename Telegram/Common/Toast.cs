@@ -21,6 +21,13 @@ namespace Telegram.Common
     {
         public static async Task RegisterBackgroundTasks()
         {
+            // Background tasks are registered against the package, so without one there is nothing
+            // to register or unregister.
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return;
+            }
+
             try
             {
                 //BackgroundExecutionManager.RemoveAccess();

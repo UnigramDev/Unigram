@@ -119,7 +119,7 @@
     <!-- DISABLE_XAML_GENERATED_MAIN suppresses the Main the XAML compiler emits, which calls
          Application.Start - the UWP entry point. Host\Program.cs runs instead and owns the
          message loop. -->
-    <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;UNPACKAGED;CODE_ANALYSIS;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <NoWarn>$(NoWarn);2008</NoWarn>
 
     <!-- The one key in the repository, shared by every project that packages the app. Only
@@ -237,9 +237,35 @@
   </ItemGroup>
 
 
+  <PropertyGroup>
+    <!-- See the file: it exists for maxversiontested, without which WindowsXamlManager fails
+         E_UNEXPECTED in a process with no package manifest to read the OS version from. -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
   <!--
-    Identity, and it is not optional: LifetimeService.Initialize touches ApplicationData.Current
-    from App's constructor, so an unpackaged launch dies before XAML matters.
+    The assembly carries the manifest's version rather than 1.0.0.0. Unpackaged there is no
+    package to ask, so PackageEx.Version reads the entry assembly's instead, and the two must not
+    disagree - "About" would report a different build from the one the installer wrote.
+  -->
+  <Target Name="ReadManifestVersion" BeforeTargets="GetAssemblyVersion;GenerateAssemblyInfo" Condition="'$(Version)' == '' or '$(Version)' == '1.0.0'">
+    <XmlPeek XmlInputPath="Package.appxmanifest"
+             Namespaces="&lt;Namespace Prefix='f' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;"
+             Query="/f:Package/f:Identity/@Version">
+      <Output TaskParameter="Result" PropertyName="_ManifestVersion" />
+    </XmlPeek>
+    <PropertyGroup>
+      <Version>$(_ManifestVersion)</Version>
+      <FileVersion>$(_ManifestVersion)</FileVersion>
+      <AssemblyVersion>$(_ManifestVersion)</AssemblyVersion>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+    Identity. The managed side no longer needs it, on the shims in Telegram\Shims and the second
+    ISettingsStore, but the natives this flavour links are the app container build and do: they
+    import the Store CRT. Beyond that, identity buys the six shell extensions - share target,
+    appUriHandler, protocol, file associations, the execution alias - and the msixbundle updater.
 
     Patched out of the one real manifest rather than kept as a copy, for the reason
     Telegram.Modern.csproj gives - 108 lines of capabilities, extensions and file associations

@@ -536,7 +536,7 @@ namespace Telegram.Services
                 InitializeFlush();
 
                 _client.Send(new SetOption("ignore_background_updates", new OptionValueBoolean(AppSettings.Diagnostics.DisableDatabase)));
-                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
+                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationDataEx.LocalPath, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString(LocaleService.LANGPACK)));
                 _client.Send(new SetOption("language_pack_id", new OptionValueString(AppSettings.LanguagePackId)));
                 //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
@@ -546,7 +546,7 @@ namespace Telegram.Services
                 _client.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(AppSettings.Diagnostics.StorageMaxTimeFromLastAccess)));
                 _client.Send(new SetTdlibParameters(
                     useTestDc: _settings.UseTestDC,
-                    databaseDirectory: System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session.Id}"),
+                    databaseDirectory: System.IO.Path.Combine(ApplicationDataEx.LocalPath, $"{_session.Id}"),
                     filesDirectory: string.Empty,
                     databaseEncryptionKey: null,
                     useFileDatabase: true,
@@ -567,7 +567,7 @@ namespace Telegram.Services
         {
             TdThroughput.Enabled = AppSettings.Diagnostics.MeasureDeserialization;
 
-            Client.Execute(new SetLogStream(new LogStreamFile(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024, false)));
+            Client.Execute(new SetLogStream(new LogStreamFile(System.IO.Path.Combine(ApplicationDataEx.LocalPath, "tdlib_log.txt"), 100 * 1024 * 1024, false)));
             Client.Execute(new SetLogVerbosityLevel(AppSettings.VerbosityLevel));
 
             var tags = Client.Execute(new GetLogTags()) as LogTags;
@@ -621,7 +621,7 @@ namespace Telegram.Services
         /// </remarks>
         private void FlushStickerCache()
         {
-            var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session.Id}", "stickers");
+            var path = System.IO.Path.Combine(ApplicationDataEx.LocalPath, $"{_session.Id}", "stickers");
 
             try
             {
@@ -1042,7 +1042,7 @@ namespace Telegram.Services
 
         private void DeleteDatabase()
         {
-            var databasePath = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session.Id}", "db.sqlite");
+            var databasePath = System.IO.Path.Combine(ApplicationDataEx.LocalPath, $"{_session.Id}", "db.sqlite");
             if (System.IO.File.Exists(databasePath))
             {
                 try
