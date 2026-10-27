@@ -4844,7 +4844,7 @@ namespace Telegram.Td.Api
 
         public static File GetLocalFile(string path, string uniqueId = "")
         {
-            return new File(0, 0, 0, new LocalFile(Windows.ApplicationModel.PackageEx.GetInstalledPath(path), false, false, false, true, 0, 0, 0), new RemoteFile(string.Empty, uniqueId, false, false, 0));
+            return new File(0, 0, 0, new LocalFile(AppPaths.GetInstalledPath(path), false, false, false, true, 0, 0, 0), new RemoteFile(string.Empty, uniqueId, false, false, 0));
         }
     }
 

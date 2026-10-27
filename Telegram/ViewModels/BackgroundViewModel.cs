@@ -127,7 +127,7 @@ namespace Telegram.ViewModels
                 var split = data.Slug.Split('#');
                 if (split[0] == Constants.WallpaperLocalFileName)
                 {
-                    var local = TdExtensions.GetLocalFile(System.IO.Path.Combine(ApplicationDataEx.TemporaryPath, Constants.WallpaperLocalFileName));
+                    var local = TdExtensions.GetLocalFile(System.IO.Path.Combine(AppPaths.TemporaryPath, Constants.WallpaperLocalFileName));
                     var document = new Document(Constants.WallpaperLocalFileName, "image/jpeg", null, null, local);
 
                     background = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperLocalFileName, document, new BackgroundTypeWallpaper(false, false));
@@ -541,7 +541,7 @@ namespace Telegram.ViewModels
             {
                 try
                 {
-                    var item = await ApplicationDataEx.TemporaryFolder.GetFileAsync(Constants.WallpaperLocalFileName);
+                    var item = await AppPaths.TemporaryFolder.GetFileAsync(Constants.WallpaperLocalFileName);
                     var generated = await GenerationService.PrepareAsync(item, ConversionType.Copy, forceCopy: true);
 
                     return new BackgroundInfo(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark);

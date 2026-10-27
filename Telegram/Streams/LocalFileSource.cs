@@ -56,7 +56,7 @@ namespace Telegram.Streams
             switch (split[0])
             {
                 case "ms-appx:":
-                    split[0] = PackageEx.InstalledPath;
+                    split[0] = AppPaths.InstalledPath;
                     return Path.Combine(split);
                 default:
                     return uri;

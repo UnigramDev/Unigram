@@ -898,6 +898,8 @@
     <Compile Include="Common\AnimatedListHandler.cs" />
     <Compile Include="Common\ScrollViewerIncrementalLoader.cs" />
     <Compile Include="Common\ApiInfo.cs" />
+    <Compile Include="Common\AppIdentity.cs" />
+    <Compile Include="Common\AppPaths.cs" />
     <Compile Include="Common\AutocompleteEntityFinder.cs" />
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Controls\MenuFlyoutSlider.cs" />
@@ -2517,12 +2519,10 @@
     <Compile Include="Collections\TransactionTabs.cs" />
     <Compile Include="Common\Emoticon.cs" />
     <Compile Include="Common\Extensions.cs" />
-    <Compile Include="Shims\ApplicationDataEx.cs" />
     <Compile Include="Shims\ClipboardEx.cs" />
     <Compile Include="Shims\ConditionalWeakTableExtensions.cs" />
     <Compile Include="Shims\FocusManagerEx.cs" />
     <Compile Include="Shims\IncrementalLoading.cs" />
-    <Compile Include="Shims\PackageEx.cs" />
     <Compile Include="Shims\PickerExtensions.cs" />
     <Compile Include="Common\Extensions.Collections.cs" />
     <Compile Include="Common\Extensions.Geometry.cs" />

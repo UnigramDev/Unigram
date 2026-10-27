@@ -55,7 +55,7 @@ namespace Telegram.Controls.Messages.Service
             {
                 // Called from a window with no session to check through, so the Store listing is all
                 // that's left to offer.
-                await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + PackageEx.FamilyName));
+                await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + AppIdentity.FamilyName));
             }
             else
             {

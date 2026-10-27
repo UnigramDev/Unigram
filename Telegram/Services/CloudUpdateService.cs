@@ -101,10 +101,10 @@ namespace Telegram.Services
 
             try
             {
-                var folder = await ApplicationDataEx.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+                var folder = await AppPaths.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
                 var files = await folder.GetFilesAsync();
 
-                var current = PackageEx.Version.ToVersion();
+                var current = AppIdentity.Version.ToVersion();
                 var versions = new List<(Version Version, StorageFile File)>();
 
                 Logger.Info($"Found {files.Count} files");
@@ -244,7 +244,7 @@ namespace Telegram.Services
 
             _lastCheck = Logger.TickCount;
 
-            var current = PackageEx.Version.ToVersion();
+            var current = AppIdentity.Version.ToVersion();
             var cloud = await GetNextUpdateAsync();
 
             if (cloud != null && cloud.Version > current)
@@ -284,10 +284,10 @@ namespace Telegram.Services
 
             if (file.Local.IsDownloadingCompleted)
             {
-                var folder = await ApplicationDataEx.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+                var folder = await AppPaths.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
                 var result = await TryCopyPartLocally(folder, file.Local.Path, cloud.Version);
 
-                var current = PackageEx.Version.ToVersion();
+                var current = AppIdentity.Version.ToVersion();
                 if (current < cloud.Version)
                 {
                     _nextUpdate = cloud;
@@ -372,8 +372,8 @@ namespace Telegram.Services
                         Document = document.Document.DocumentValue
                     };
 
-                    var current = PackageEx.Version.ToVersion();
-                    var folder = await ApplicationDataEx.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+                    var current = AppIdentity.Version.ToVersion();
+                    var folder = await AppPaths.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
 
                     if (set.Version > current)
                     {

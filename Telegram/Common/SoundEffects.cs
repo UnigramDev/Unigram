@@ -85,7 +85,7 @@ namespace Telegram.Common
 
         private static void PlayAsset(string name, int loopCount, SoundCategory category)
         {
-            _assets ??= System.IO.Path.Combine(PackageEx.InstalledPath, "Assets", "Audio");
+            _assets ??= System.IO.Path.Combine(AppPaths.InstalledPath, "Assets", "Audio");
             SoundPlayer.Play(System.IO.Path.Combine(_assets, name), loopCount, category);
         }
     }

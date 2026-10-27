@@ -169,7 +169,7 @@ namespace Telegram.Entities
             var bitmap = await package.GetBitmapAsync();
 
             var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
-            var cache = await ApplicationDataEx.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+            var cache = await AppPaths.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
             using (var source = await bitmap.OpenReadAsync())
             using (var destination = await cache.OpenAsync(FileAccessMode.ReadWrite))

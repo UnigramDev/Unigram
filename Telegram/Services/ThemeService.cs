@@ -80,7 +80,7 @@ namespace Telegram.Services
 
             try
             {
-                var folder = await ApplicationDataEx.LocalFolder.CreateFolderAsync("themes", CreationCollisionOption.OpenIfExists);
+                var folder = await AppPaths.LocalFolder.CreateFolderAsync("themes", CreationCollisionOption.OpenIfExists);
                 var files = await folder.GetFilesAsync();
 
                 foreach (var file in files)
@@ -195,7 +195,7 @@ namespace Telegram.Services
                 return;
             }
 
-            var folder = await ApplicationDataEx.LocalFolder.GetFolderAsync("themes");
+            var folder = await AppPaths.LocalFolder.GetFolderAsync("themes");
             var result = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
 
             var theme = await ThemeCustomInfo.FromFileAsync(_clientService, result);
@@ -339,7 +339,7 @@ namespace Telegram.Services
                 }
             }
 
-            var file = await ApplicationDataEx.LocalFolder.CreateFileAsync("themes\\" + fileName.TextValue + ".unigram-theme", CreationCollisionOption.GenerateUniqueName);
+            var file = await AppPaths.LocalFolder.CreateFileAsync("themes\\" + fileName.TextValue + ".unigram-theme", CreationCollisionOption.GenerateUniqueName);
             await SerializeAsync(file, preparing);
 
             preparing.Path = file.Path;

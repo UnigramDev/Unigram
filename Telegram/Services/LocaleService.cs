@@ -74,7 +74,7 @@ namespace Telegram.Services
 
         public LocaleService()
         {
-            _languagePath = Path.Combine(ApplicationDataEx.LocalPath, "langpack");
+            _languagePath = Path.Combine(AppPaths.LocalPath, "langpack");
 
             _languageCode = AppSettings.LanguagePackId;
             _languageBase = AppSettings.LanguageBaseId;

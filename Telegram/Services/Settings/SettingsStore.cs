@@ -24,7 +24,7 @@ namespace Telegram.Services.Settings
         private static ISettingsStore _local;
         public static ISettingsStore Local => _local ??= ApiInfo.HasPackageIdentity
             ? ApplicationDataSettingsStore.Local
-            : FileSettingsStore.Open(Path.Combine(ApplicationDataEx.LocalPath, "settings.bin"));
+            : FileSettingsStore.Open(Path.Combine(AppPaths.LocalPath, "settings.bin"));
 #else
         public static ISettingsStore Local => ApplicationDataSettingsStore.Local;
 #endif

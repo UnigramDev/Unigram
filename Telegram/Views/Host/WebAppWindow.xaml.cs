@@ -2248,7 +2248,7 @@ namespace Telegram.Views.Host
                         }
                     }
 
-                    var folder = await ApplicationDataEx.LocalFolder.CreateFolderAsync("WebApps", CreationCollisionOption.OpenIfExists);
+                    var folder = await AppPaths.LocalFolder.CreateFolderAsync("WebApps", CreationCollisionOption.OpenIfExists);
                     var file = await folder.CreateFileAsync("web_app_" + _clientService.SessionId + "_" + _botUser.Id + ".png", CreationCollisionOption.ReplaceExisting);
 
                     using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
@@ -2256,7 +2256,7 @@ namespace Telegram.Views.Host
                         await target.SaveAsync(stream, CanvasBitmapFileFormat.Png);
                     }
 
-                    return ApplicationDataEx.GetLocalUri("WebApps/web_app_" + _clientService.SessionId + "_" + _botUser.Id + ".png");
+                    return AppPaths.GetLocalUri("WebApps/web_app_" + _clientService.SessionId + "_" + _botUser.Id + ".png");
                 }
             }
             catch

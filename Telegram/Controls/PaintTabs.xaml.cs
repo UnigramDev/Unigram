@@ -591,7 +591,7 @@ namespace Telegram.Controls
 
             using var bitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
-            var session = await ApplicationDataEx.LocalFolder.CreateFolderAsync($"{sessionId}", CreationCollisionOption.OpenIfExists);
+            var session = await AppPaths.LocalFolder.CreateFolderAsync($"{sessionId}", CreationCollisionOption.OpenIfExists);
             var folder = await session.CreateFolderAsync("photos", CreationCollisionOption.OpenIfExists);
             var output = await folder.CreateFileAsync("photo.png", CreationCollisionOption.GenerateUniqueName);
 

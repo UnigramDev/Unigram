@@ -68,9 +68,9 @@ namespace Telegram.Controls
 
         public static string GetVersion()
         {
-            PackageVersion version = PackageEx.Version;
+            PackageVersion version = AppIdentity.Version;
 
-            var type = PackageEx.SignatureKind switch
+            var type = AppIdentity.SignatureKind switch
             {
                 PackageSignatureKind.Store => "",
                 PackageSignatureKind.Enterprise => " Direct",
@@ -83,10 +83,10 @@ namespace Telegram.Controls
 
             if (version.Build > 0)
             {
-                return string.Format("{0}.{1}.{2}{3} {4}{5}", version.Major, version.Minor, version.Build, revision, PackageEx.Architecture, type);
+                return string.Format("{0}.{1}.{2}{3} {4}{5}", version.Major, version.Minor, version.Build, revision, AppIdentity.Architecture, type);
             }
 
-            return string.Format("{0}.{1}{2} {3}{4}", version.Major, version.Minor, revision, PackageEx.Architecture, type);
+            return string.Format("{0}.{1}{2} {3}{4}", version.Major, version.Minor, revision, AppIdentity.Architecture, type);
         }
     }
 }
