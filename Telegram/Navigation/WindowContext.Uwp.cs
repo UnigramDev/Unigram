@@ -9,6 +9,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Native;
 using Telegram.Navigation.Services;
@@ -129,6 +130,10 @@ namespace Telegram.Navigation
             {
                 AttachLifetime(new ViewLifetimeControl(window));
             }
+
+            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.IsVisibleChanged += OnTitleBarChanged;
+            coreTitleBar.LayoutMetricsChanged += OnTitleBarChanged;
 
             // WARNING: this is used by Xbox (and some Windows users)
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
@@ -293,6 +298,10 @@ namespace Telegram.Navigation
             _inputListener.Release();
             sender.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             sender.Consolidated -= OnConsolidated;
+
+            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.IsVisibleChanged -= OnTitleBarChanged;
+            coreTitleBar.LayoutMetricsChanged -= OnTitleBarChanged;
 
             ClearTitleBar(sender);
 
@@ -472,6 +481,71 @@ namespace Telegram.Navigation
         public bool TryEnterFullScreenMode()
         {
             return ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
+        }
+
+        /// <summary>
+        /// Shows this view in a window of its own. A secondary view is hosted inside the one that
+        /// launched it until this is called.
+        /// </summary>
+        public Task<bool> TryShowAsStandaloneAsync()
+        {
+            return ApplicationViewSwitcher.TryShowAsStandaloneAsync(Id).AsTask();
+        }
+
+        public bool IsCompactOverlaySupported => ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
+
+        public bool IsCompactOverlay => ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay;
+
+        public Task<bool> TryExitCompactOverlayAsync()
+        {
+            return ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default).AsTask();
+        }
+
+        /// <summary>
+        /// Mouse rather than touch. This follows tablet mode, not whether a mouse is attached.
+        /// </summary>
+        public bool IsMouseInteraction => UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse;
+
+        /// <summary>
+        /// The title bar's own colours, for a window that puts something dark behind it. Null puts
+        /// each one back to the system's.
+        /// </summary>
+        public void SetTitleBarForeground(Color? foreground)
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            titlebar.ForegroundColor = foreground;
+            titlebar.ButtonForegroundColor = foreground;
+        }
+
+        public bool ExtendViewIntoTitleBar
+        {
+            get => CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
+            set => CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = value;
+        }
+
+        /// <summary>
+        /// How much of the window the system's caption buttons take on each side. Both, because
+        /// which side they sit on follows the flow direction.
+        /// </summary>
+        public double SystemOverlayLeftInset => CoreApplication.GetCurrentView().TitleBar.SystemOverlayLeftInset;
+
+        public double SystemOverlayRightInset => CoreApplication.GetCurrentView().TitleBar.SystemOverlayRightInset;
+
+        public double TitleBarHeight => CoreApplication.GetCurrentView().TitleBar.Height;
+
+        /// <summary>
+        /// The media keys and the volume flyout's now-playing panel. Static, and so the calling
+        /// thread's: the controls belong to the view that asks for them, and the playback service
+        /// asks from whichever one it was started on.
+        /// </summary>
+        public static Windows.Media.SystemMediaTransportControls GetSystemMediaTransportControls()
+        {
+            return Windows.Media.SystemMediaTransportControls.GetForCurrentView();
+        }
+
+        private void OnTitleBarChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            TitleBarChanged?.Invoke(this, args);
         }
 
         public void SetTitleBar(UIElement titleBar)

@@ -39,7 +39,11 @@ namespace Telegram.ViewModels.Settings
                 .Select(x => new SettingsOptionFontFamily(x, x, x));
 
             FontFamilyOptions = new List<SettingsOptionFontFamily>(fonts);
+#if WINUI3
+            FontFamilyOptions.Insert(0, new SettingsOptionFontFamily(string.Empty, Strings.Default, Microsoft.UI.Xaml.Media.FontFamily.XamlAutoFontFamily.Source));
+#else
             FontFamilyOptions.Insert(0, new SettingsOptionFontFamily(string.Empty, Strings.Default, Windows.UI.Xaml.Media.FontFamily.XamlAutoFontFamily.Source));
+#endif
 
             ChatThemes = new RangeObservableCollection<ChatThemeViewModel>();
 

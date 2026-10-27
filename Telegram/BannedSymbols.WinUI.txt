@@ -1,0 +1,34 @@
+# The UWP app model, banned in the WinUI 3 flavour only.
+#
+# Every symbol below is PRESENT in the Windows SDK projection this flavour compiles against, so
+# none of them is a compile error: they bind, the build is clean, and they return null or throw at
+# runtime. That is why this file exists rather than a note. GlobalUsings.WinUI.cs deliberately does
+# not map them - there is nothing to map them to - and "the compiler will name them" turned out to be
+# false.
+#
+# Measured in the shared sources this flavour compiles (the .Uwp.cs and .Win32.cs halves it does
+# not compile are excluded): 37 CoreWindow, 11 Window.Current, 11 CoreApplication, 9
+# ApplicationView.GetForCurrentView, 7 ApplicationViewSwitcher, 4 SystemNavigationManager.
+
+T:Windows.UI.Core.CoreWindow;There is no CoreWindow in a WinUI 3 app. Input state comes from Microsoft.UI.Input, the cursor from UIElement.ProtectedCursor.
+T:Windows.UI.Core.CoreDispatcher;Use DispatcherQueue - UIElement.DispatcherQueue, or WindowContext.Dispatcher.
+T:Windows.System.DispatcherQueue;Not the UI thread's queue here: GetForCurrentThread answers null. The DispatcherQueue alias is the Microsoft.UI.Dispatching one.
+T:Windows.ApplicationModel.Core.CoreApplication;The UWP app model. Windows are made by the app here, not by CoreApplication.
+T:Windows.ApplicationModel.Core.CoreApplicationView;The UWP app model. WindowContext is what stands in for a view.
+T:Windows.UI.ViewManagement.ApplicationView;Use Window.AppWindow - its presenters, Title, Resize and TitleBar.
+T:Windows.UI.ViewManagement.ApplicationViewSwitcher;A view here is a Window: activate it, or ask ViewService for one.
+T:Windows.UI.Core.SystemNavigationManager;The shell back button is a UWP concept. InputListener raises back for this host.
+T:Windows.UI.Core.Preview.SystemNavigationManagerPreview;Close is AppWindow.Closing, which WindowContext already handles.
+M:Windows.UI.ViewManagement.UIViewSettings.GetForCurrentView;View-bound, so null here. Use UIViewSettingsInterop.GetForWindow with the window's handle.
+M:Windows.Media.SystemMediaTransportControls.GetForCurrentView;View-bound. Use SystemMediaTransportControlsInterop.GetForWindow, or WindowContext.GetSystemMediaTransportControls.
+M:Windows.UI.ViewManagement.InputPane.GetForCurrentView;View-bound. Use InputPaneInterop.GetForWindow with the window's handle.
+M:Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView;MRT Core: Microsoft.Windows.ApplicationModel.Resources.ResourceManager.
+M:Windows.Graphics.Display.DisplayInformation.GetForCurrentView;View-bound. Use DisplayInformationInterop.GetForWindow (Windows 11 22H2 and later), the window's DPI, or DisplayArea for the monitor.
+
+# Present on the WinUI 3 types themselves, and null on every one of them. These are the quiet
+# ones: the type is the right type, the property is not.
+
+P:Microsoft.UI.Xaml.Window.Current;Always null outside UWP. WindowContext.Main or WindowContext.ForXamlRoot answers this.
+P:Microsoft.UI.Xaml.Window.CoreWindow;Always null outside UWP.
+P:Microsoft.UI.Xaml.Window.Dispatcher;Always null outside UWP. Use DispatcherQueue.
+P:Microsoft.UI.Xaml.DependencyObject.Dispatcher;Always null outside UWP. Use DispatcherQueue, which is beside it on every DependencyObject.

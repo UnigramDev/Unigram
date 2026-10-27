@@ -5,7 +5,7 @@
     <!-- Only these consume vcpkg: the two native components link against it, and the app needs
          the runtime DLLs in its output and its package - both builds of it, since Telegram.Modern
          packages the same dependencies. -->
-    <TelegramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram' Or '$(MSBuildProjectName)' == 'Telegram.Modern' Or '$(MSBuildProjectName)' == 'Telegram.Win32'">true</TelegramUsesVcpkg>
+    <TelegramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram' Or '$(MSBuildProjectName)' == 'Telegram.Modern' Or '$(MSBuildProjectName)' == 'Telegram.Win32' Or '$(MSBuildProjectName)' == 'Telegram.WinUI'">true</TelegramUsesVcpkg>
   </PropertyGroup>
 
   <!-- Where vcpkg lives, in order of preference: an explicit override, the VCPKG_ROOT variable,

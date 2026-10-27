@@ -261,11 +261,11 @@ namespace Telegram.Controls.Gallery
 
             if (show)
             {
-                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+                this.SetPointerCursor(PointerCursorType.Arrow);
             }
             else
             {
-                WindowContext.SetPointerCursor(PointerCursorType.Hidden);
+                this.SetPointerCursor(PointerCursorType.Hidden);
             }
 
             var parent = ElementComposition.GetElementVisual(BottomPanel);
@@ -859,7 +859,7 @@ namespace Telegram.Controls.Gallery
             Element1.Unload();
             Element2.Unload();
 
-            WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+            this.SetPointerCursor(PointerCursorType.Arrow);
         }
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs args)
@@ -1063,7 +1063,7 @@ namespace Telegram.Controls.Gallery
             LayoutRoot.HasPrevious = index > 0;
             LayoutRoot.HasNext = index < viewModel.Items.Count - 1;
 
-            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            if (Window.IsMouseInteraction)
             {
                 PrevButton.IsEnabled = index > 0;
                 NextButton.IsEnabled = index < viewModel.Items.Count - 1;

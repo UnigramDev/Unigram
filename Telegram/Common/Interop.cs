@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -38,7 +38,13 @@ namespace Telegram.Common
     [ComImport]
     [InterfaceType(ComInterfaceType.InterfaceIsIInspectable)]
 #endif
+#if WINUI3
+    // The lifted compositor's own copy of the private interface: same vtable, different IID, and
+    // the system one answers E_NOINTERFACE there.
+    [Guid("9B151826-F42E-5218-A4A6-184215BE8E68")]
+#else
     [Guid("F26DA89E-683D-4C67-AEA7-BA29B2217A70")]
+#endif
     public partial interface ICompositionVisualSurfacePartner
     {
 #if NET9_0_OR_GREATER
@@ -140,7 +146,7 @@ namespace Telegram.Common
         unsafe void GetBuffer(out byte* buffer, out uint capacity);
     }
 
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER && !WINUI3
     // RoGetActivationFactory by hand, because the projection caches one statics object for the whole
     // process and the types below need the calling thread's.
     // No #else pair: every caller is already NET9-only.

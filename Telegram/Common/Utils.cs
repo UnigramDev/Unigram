@@ -22,11 +22,15 @@ namespace Telegram.Common
         // TODO: find better location for this method
         internal static void ReleaseHandle(object handle)
         {
+            // Not in the WinUI flavour, where a handle is the XAML object itself: its RCW is the
+            // one every managed caller shares, and disposing it would cut theirs too.
+#if !WINUI3
             // Dispose is idempotent, so a handle reachable from two of the lists is fine.
             if (handle is WinRT.IWinRTObject projected)
             {
                 projected.NativeObject.Dispose();
             }
+#endif
         }
 
         [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_disposedFlags")]

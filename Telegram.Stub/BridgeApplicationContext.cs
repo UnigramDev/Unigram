@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Win32;
 using System.Buffers.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -28,11 +27,11 @@ namespace Telegram.Stub
 
         public BridgeApplicationContext(NotifyIcon notifyIcon)
         {
-            SystemEvents.SessionEnded += OnSessionEnded;
-
             _notifyIcon = notifyIcon;
             _notifyIcon.Click += OnClick;
             _notifyIcon.Exit += OnExit;
+            // On the icon's own window, so it arrives on the thread that owns everything this handler touches.
+            _notifyIcon.SessionEnded += OnSessionEnded;
 
             try
             {
@@ -52,9 +51,9 @@ namespace Telegram.Stub
             }
         }
 
-        private void OnSessionEnded(object sender, SessionEndedEventArgs e)
+        private void OnSessionEnded(object? sender, EventArgs e)
         {
-            SystemEvents.SessionEnded -= OnSessionEnded;
+            _notifyIcon.SessionEnded -= OnSessionEnded;
 
             if (_connection != null)
             {

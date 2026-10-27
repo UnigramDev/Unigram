@@ -16,7 +16,11 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+#if WINUI3
+using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
+#else
 using AcrylicBrush = Windows.UI.Xaml.Media.AcrylicBrush;
+#endif
 
 namespace Telegram.Common
 {

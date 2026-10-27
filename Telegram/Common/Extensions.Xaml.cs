@@ -342,13 +342,39 @@ namespace Telegram.Common
 
         public static bool HasThreadAccess(this DependencyObject element)
         {
+#if WINUI3
+            // DependencyObject.Dispatcher is still on the type in WinUI 3 and is always null.
+            // DispatcherQueue is the one that answers, and it sits right beside it.
+            return element.DispatcherQueue.HasThreadAccess;
+#else
             return element.Dispatcher.HasThreadAccess;
+#endif
         }
 
         public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             try
             {
+#if WINUI3
+                if (element.DispatcherQueue.HasThreadAccess)
+                {
+                    action();
+                }
+                else
+                {
+                    element.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        try
+                        {
+                            action();
+                        }
+                        catch
+                        {
+                            // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+                        }
+                    });
+                }
+#else
                 if (element.Dispatcher.HasThreadAccess)
                 {
                     action();
@@ -367,11 +393,79 @@ namespace Telegram.Common
                         }
                     });
                 }
+#endif
             }
             catch
             {
                 // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
             }
+        }
+
+#if WINUI3
+        /// <summary>
+        /// ProtectedCursor is protected, so only the element itself may assign it - and every
+        /// caller here is a control setting its own. Rather than adding the same three lines to
+        /// five unrelated bases (Control, ContentControl, Panel, FormattedTextBlockBase), the
+        /// setter is bound by name: an UnsafeAccessor is resolved at compile time, works under
+        /// NativeAOT, and set_ProtectedCursor is what the projection calls it.
+        /// </summary>
+        [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "set_ProtectedCursor")]
+        private static extern void SetProtectedCursor(UIElement element, Microsoft.UI.Input.InputCursor value);
+#endif
+
+        /// <summary>
+        /// The cursor while the pointer is over this element. UWP has one cursor per window and
+        /// ignores the element - which is why the call sites reset it to Arrow on the way out, and
+        /// why they have to keep doing so here: an element that says Arrow is not the same as one
+        /// that says nothing, but it looks the same and the two hosts then behave alike.
+        /// </summary>
+        public static void SetPointerCursor(this UIElement element, PointerCursorType cursor)
+        {
+#if WINUI3
+            SetProtectedCursor(element, WindowContext.GetInputCursor(cursor));
+#else
+            WindowContext.SetPointerCursor(cursor);
+#endif
+        }
+
+        /// <summary>
+        /// Runs the action on a later turn of the dispatcher, never inline - which is the whole
+        /// point, and what <see cref="BeginOnUIThread"/> deliberately does not promise: a caller
+        /// here is already on the UI thread and is asking to get off the current stack, out of a
+        /// nested dispatch or an event the framework is still inside.
+        ///
+        /// Low is the priority XAML's own activation work runs above, so it is what a caller uses
+        /// to run after the framework has finished rather than merely after this frame.
+        /// </summary>
+        public static void PostOnUIThread(this DependencyObject element, Action action, bool low = false)
+        {
+#if WINUI3
+            element.DispatcherQueue.TryEnqueue(
+                low ? Microsoft.UI.Dispatching.DispatcherQueuePriority.Low : Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal,
+                () =>
+                {
+                    try
+                    {
+                        action();
+                    }
+                    catch
+                    {
+                        // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+                    }
+                });
+#else
+            _ = element.Dispatcher.RunAsync(low ? CoreDispatcherPriority.Low : CoreDispatcherPriority.Normal, () =>
+            {
+                try
+                {
+                    action();
+                }
+                catch
+                {
+                    // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+                }
+            });
+#endif
         }
 
         public static T GetChild<T>(this XamlRoot parentContainer)
@@ -506,10 +600,17 @@ namespace Telegram.Common
         {
             var tcs = new TaskCompletionSource<bool>();
 
+#if WINUI3
+            element.DispatcherQueue.TryEnqueue(() =>
+            {
+                tcs.TrySetResult(true);
+            });
+#else
             _ = element.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 tcs.TrySetResult(true);
             });
+#endif
 
             return tcs.Task;
         }

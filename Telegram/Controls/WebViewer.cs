@@ -107,6 +107,11 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(WebViewer);
 
+#if WINUI3
+            // Nothing to choose between: WebView2 is the framework's own control here, and the
+            // EdgeHTML WebView the fallback is built on does not exist at all.
+            _presenter = new ChromiumWebPresenter();
+#else
             if (ChromiumWebPresenter.IsSupported())
             {
                 _presenter = new ChromiumWebPresenter();
@@ -115,6 +120,7 @@ namespace Telegram.Controls
             {
                 _presenter = new EdgeWebPresenter();
             }
+#endif
 
             _presenter.Navigating += OnNavigating;
             _presenter.Navigated += OnNavigated;
@@ -133,6 +139,10 @@ namespace Telegram.Controls
             }
 
             var succeeded = await _presenter.EnsureInitializedAsync();
+#if WINUI3
+            // And nothing to fall back to, so a failure to initialise is final here.
+            _initialized = succeeded || _closed;
+#else
             if (succeeded || _closed || _presenter is not ChromiumWebPresenter)
             {
                 _initialized = true;
@@ -160,6 +170,7 @@ namespace Telegram.Controls
             {
                 _presenter.Close();
             }
+#endif
 
         Cleanup:
             return !_closed && _presenter is not null;
@@ -323,6 +334,10 @@ namespace Telegram.Controls
         }
     }
 
+    // The EdgeHTML WebView has no WinUI 3 equivalent, and needs none: WebView2 ships with the
+    // framework there, so the fallback this class is has nothing left to be a fallback for. Its
+    // style in Themes\Generic.xaml goes with it - see the markup patch in Telegram.WinUI.Rewriter.
+#if !WINUI3
     public partial class EdgeWebPresenter : WebPresenter
     {
         private WebView View;
@@ -404,6 +419,7 @@ namespace Telegram.Controls
             View?.NavigateToString(string.Empty);
         }
     }
+#endif
 
     public partial class ChromiumWebPresenter : WebPresenter
     {

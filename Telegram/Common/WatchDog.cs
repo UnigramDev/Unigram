@@ -114,7 +114,10 @@ namespace Telegram
         public static void Initialize()
         {
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
+#if !WINUI3
+            // WinUI 3 has no CoreApplication, so errors raised across the WinRT boundary go unreported there.
             CoreApplication.UnhandledErrorDetected += OnUnhandledExceptionDetected;
+#endif
 
             BootStrapper.Current.UnhandledException += OnUnhandledException;
 
@@ -505,7 +508,11 @@ namespace Telegram
         }
 
         [HandleProcessCorruptedStateExceptions, SecurityCritical]
+#if WINUI3
+        private static void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs args)
+#else
         private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs args)
+#endif
         {
             args.Handled = args.Exception is not LayoutCycleException
                 && args.Exception.HResult != unchecked((int)0x8001010A);
@@ -520,7 +527,7 @@ namespace Telegram
                 return;
             }
 
-            if (AppSettings.Diagnostics.ShowMemoryUsage && Window.Current?.Content?.XamlRoot != null)
+            if (AppSettings.Diagnostics.ShowMemoryUsage && WindowContext.Current?.XamlRoot != null)
             {
                 _ = MessagePopup.ShowAsync(WindowContext.Current.XamlRoot, args.Exception.ToString(), "Unhandled exception", "OK");
             }
@@ -531,13 +538,16 @@ namespace Telegram
         /// still opening - reliably so when the owner is a Hyperlink. It arrives here as a
         /// NotSupportedException, and the app only survives if every visible tooltip is forced
         /// through close/open/close, which is what detaches it from the dead owner.
-        ///
-        /// Window.Current is deliberate: this runs from the app-wide exception handler, with no
-        /// element to resolve a XamlRoot from.
         /// </summary>
         private static void MitigateToolTipCrash()
         {
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            var xamlRoot = WindowContext.Current?.XamlRoot;
+            if (xamlRoot == null)
+            {
+                return;
+            }
+
+            var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot);
 
             foreach (var popup in popups)
             {

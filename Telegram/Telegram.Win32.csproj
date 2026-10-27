@@ -148,6 +148,7 @@
          shared half, and only one of the two is ever compiled - which is what makes the contract
          a compile error rather than an interface. -->
     <Compile Remove="**\*.Uwp.cs" />
+    <Compile Remove="**\*.WinUI.cs" />
   </ItemGroup>
 
 

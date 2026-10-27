@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The WinUI 3 flavour's build tool: it patches the two markup files XAML cannot remap with a
+       using, and regenerates Telegram\GlobalUsings.WinUI.cs on demand.
+
+       An exe rather than an MSBuild task, for the reason Telegram.Generators.Cli gives: a task
+       assembly is loaded and locked by the build node, so rebuilding it fails until the nodes are
+       killed. -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <Platforms>AnyCPU</Platforms>
+    <IsPublishable>false</IsPublishable>
+    <!-- NETSDK1150, the same opt-out and the same reason as Telegram.Generators.Cli: the app is
+         self-contained and may not reference an executable that is not, but this one is never
+         carried by the app - it is only invoked through Exec at build time. -->
+    <ShouldBeValidatedAsExecutableReference>false</ShouldBeValidatedAsExecutableReference>
+  </PropertyGroup>
+
+</Project>

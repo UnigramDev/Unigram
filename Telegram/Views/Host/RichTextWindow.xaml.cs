@@ -410,7 +410,7 @@ namespace Telegram.Views.Host
             {
                 // Low priority: XAML assigns its own initial focus while activating, and
                 // whichever runs last wins.
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, TryFocus);
+                this.PostOnUIThread(TryFocus, low: true);
             }
         }
 

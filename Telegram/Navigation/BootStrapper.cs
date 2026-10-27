@@ -45,13 +45,26 @@ namespace Telegram.Navigation
         // Per thread rather than per window - the compositor XAML composes this thread's content
         // with - so it needs neither WindowContext.Current nor a fork. Window.Current is a stub
         // inside an island rather than a real window, and this is one of the things it answers.
-        public Compositor Compositor => Window.Current.Compositor;
+        [ThreadStatic]
+        private static Compositor _compositor;
+
+        public Compositor Compositor => _compositor ??=
+#if WINUI3
+            // Fully qualified: CsWinRT.cs aliases the bare CompositionTarget to CompositionTargetImpl.
+            Microsoft.UI.Xaml.Media.CompositionTarget.GetCompositorForCurrentThread();
+#else
+            Window.Current.Compositor;
+#endif
 
         public BootStrapper()
         {
             Current = this;
+#if !WINUI3
+            // Application.Suspending and .Resuming are UWP app model events: a desktop process is
+            // never suspended, so WinUI 3 has neither.
             Resuming += OnResuming;
             Suspending += OnSuspending;
+#endif
 
             UISettings.TextScaleFactorChanged += OnTextScaleFactorChanged;
             TextScaleFactor = UISettings.TextScaleFactor;
@@ -66,6 +79,28 @@ namespace Telegram.Navigation
         {
             return WindowContext.ForEachAsync(window => window.ConsolidateAsync());
         }
+
+        /// <summary>
+        /// The notification area icon was clicked. Usually there is a window to raise; on a host
+        /// where closing to the icon closes the window for real there is not, and the app has to
+        /// be opened again from nothing.
+        /// </summary>
+        public void ActivateFromNotifyIcon()
+        {
+            if (WindowContext.Main is WindowContext window)
+            {
+                window.Activate();
+                return;
+            }
+
+            ReopenFromNotifyIcon();
+        }
+
+        /// <summary>
+        /// Only the hosts that really close their windows implement this; where the window was
+        /// merely hidden the call above found it and this is elided.
+        /// </summary>
+        partial void ReopenFromNotifyIcon();
 
         protected virtual void OnWindowActivated(WindowContext window, bool active)
         {
@@ -126,6 +161,12 @@ namespace Telegram.Navigation
 
         // it is the intent of Template 10 to no longer require Launched/Activated overrides, only OnStartAsync()
 
+        // Microsoft.UI.Xaml.Application has OnLaunched and nothing else: every other activation
+        // kind reaches a WinUI 3 app through AppInstance.GetActivatedEventArgs instead of through
+        // an override. So the seven below are not overriding anything there - the entry point is
+        // BootStrapper.WinUI.cs, which reads the same arguments out of AppInstance and calls the
+        // same CallInternalActivated. Everything past that line is shared by all four flavours.
+#if !WINUI3
         protected sealed override void OnActivated(IActivatedEventArgs e)
         {
             Logger.Info();
@@ -167,6 +208,7 @@ namespace Telegram.Navigation
             Logger.Info();
             CallInternalActivated(args);
         }
+#endif
 
         public bool PrelaunchActivated { get; private set; }
 

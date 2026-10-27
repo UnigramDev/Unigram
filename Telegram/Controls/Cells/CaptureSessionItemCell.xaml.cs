@@ -14,6 +14,13 @@ using Telegram.Services;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
+#if WINUI3
+using CompositionAlphaMode = Microsoft.Graphics.DirectX.DirectXAlphaMode;
+using CompositionPixelFormat = Microsoft.Graphics.DirectX.DirectXPixelFormat;
+#else
+using CompositionAlphaMode = Windows.Graphics.DirectX.DirectXAlphaMode;
+using CompositionPixelFormat = Windows.Graphics.DirectX.DirectXPixelFormat;
+#endif
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -116,7 +123,7 @@ namespace Telegram.Controls.Cells
             var compositor = BootStrapper.Current.Compositor;
             var compositionGraphicsDevice = CanvasComposition.CreateCompositionGraphicsDevice(compositor, _device);
 
-            _surface = compositionGraphicsDevice.CreateDrawingSurface(new Size(0, 0), DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
+            _surface = compositionGraphicsDevice.CreateDrawingSurface(new Size(0, 0), CompositionPixelFormat.B8G8R8A8UIntNormalized, CompositionAlphaMode.Premultiplied);
             _brush = compositor.CreateSurfaceBrush(_surface);
             _brush.HorizontalAlignmentRatio = 0.5f;
             _brush.VerticalAlignmentRatio = 0.5f;

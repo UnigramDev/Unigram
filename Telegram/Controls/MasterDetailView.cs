@@ -17,6 +17,10 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Views;
+#if WINUI3
+using Microsoft.UI.Windowing;
+using Telegram.Host;
+#endif
 using Windows.Graphics.Display;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -877,11 +881,29 @@ namespace Telegram.Controls
         {
             get
             {
+#if WINUI3
+                // DisplayInformation.GetForCurrentView throws outright here - "must be called on a
+                // thread that is associated with a CoreWindow" - and there is no current view to
+                // replace it with, because this is a static and WindowContext.Current is not an
+                // answer on a host that puts every window on one thread.
+                //
+                // So: the primary display and the system scale. That is exact on one monitor and an
+                // approximation on several - it is Chrome's max_size, a coarse cap on how far a pan
+                // may travel, so being off by another monitor's size changes the feel of nothing
+                // until the window is on the smaller screen. Making it exact means giving the three
+                // callers an element to resolve their own display from.
+                var bounds = DisplayArea.Primary.OuterBounds;
+                var scale = Win32.GetDpiForSystem() / 96.0;
+
+                var width = bounds.Width / scale;
+                var height = bounds.Height / scale;
+#else
                 var display = DisplayInformation.GetForCurrentView();
                 var scale = display.RawPixelsPerViewPixel;
 
                 var width = display.ScreenWidthInRawPixels / scale;
                 var height = display.ScreenHeightInRawPixels / scale;
+#endif
 
                 return (float)Math.Max(width, height);
             }

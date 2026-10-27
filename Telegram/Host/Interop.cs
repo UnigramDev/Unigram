@@ -322,6 +322,10 @@ namespace Telegram.Host
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+        [LibraryImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool AllowSetForegroundWindow(uint dwProcessId);
+
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool DestroyWindow(IntPtr hWnd);

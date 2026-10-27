@@ -1,8 +1,8 @@
 <!--
-  The MSBuild half of TdSchemaMode, shared by Telegram.Modern.csproj and Telegram.Win32.csproj.
-  Both are CsWinRT flavours and both compile the Telegram.Td.Api surface from
+  The MSBuild half of TdSchemaMode, shared by Telegram.Modern.csproj, Telegram.Win32.csproj and Telegram.WinUI.csproj.
+  All three are CsWinRT flavours and all compile the Telegram.Td.Api surface from
   Telegram.Generators.Cli rather than from the Roslyn generator, so a fix to one of them has to be
-  a fix to both - which is why this is a file and not a block copied twice. Telegram.csproj stays
+  a fix to all - which is why this is a file and not a block copied per project. Telegram.csproj stays
   on the Roslyn path: .NET Native has its own projection and none of this applies to it.
 
   The importing project sets TdParsers and references Telegram.Generators as an analyzer; this

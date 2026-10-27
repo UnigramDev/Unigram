@@ -96,6 +96,12 @@ namespace Telegram
             }
         }
 
+        // Microsoft.UI.Xaml.Application has no OnBackgroundActivated: a packaged desktop app is
+        // handed a background activation through AppInstance like every other kind, and it cannot
+        // host the in-process app service this reads either - which is why Package.Win32.xslt,
+        // shared with the WinUI flavour, deletes the windows.appService extension outright. The
+        // toast half still has to be re-hung somewhere.
+#if !WINUI3
         protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             base.OnBackgroundActivated(args);
@@ -132,6 +138,7 @@ namespace Telegram
                 deferral.Complete();
             }
         }
+#endif
 
         public override void OnInitialize(IActivatedEventArgs args)
         {
@@ -184,9 +191,8 @@ namespace Telegram
 
                 if (startKind != StartKind.Launch && window.IsInMainView)
                 {
-                    var view = ApplicationView.GetForCurrentView();
-                    await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
-                    //view.TryResizeView(WindowContext.Current.Bounds.ToSize());
+                    await window.TryShowAsStandaloneAsync();
+                    //window.TryResizeView(window.Bounds.ToSize());
                 }
             }
             else if (window.Content is ShareWindow sharePage)
@@ -280,7 +286,10 @@ namespace Telegram
                 await BridgeApplicationContext.AddLoopbackExemptionAsync();
             }
 
+#if !WINUI3
+            // Nothing prelaunches a desktop process, and CoreApplication throws in one.
             Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
+#endif
 
             if (updateService != null)
             {

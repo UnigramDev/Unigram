@@ -7,6 +7,7 @@
 
 using Microsoft.UI.Xaml.Controls;
 using System;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Windows.ApplicationModel.Core;
@@ -44,8 +45,7 @@ namespace Telegram.Views.Host
         {
             InitializeComponent();
 
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.ExtendViewIntoTitleBar = true;
+            Window.ExtendViewIntoTitleBar = true;
 
             if (forWebApps)
             {
@@ -64,7 +64,7 @@ namespace Telegram.Views.Host
                 MenuButton.Visibility = Visibility.Collapsed;
                 CloseButton.Visibility = Visibility.Collapsed;
 
-                coreTitleBar.LayoutMetricsChanged += OnLayoutMetricsChanged;
+                Window.TitleBarChanged += OnLayoutMetricsChanged;
             }
 
             if (newTab != null)
@@ -78,8 +78,10 @@ namespace Telegram.Views.Host
 
         protected override void OnUnloaded()
         {
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.LayoutMetricsChanged -= OnLayoutMetricsChanged;
+            if (Window != null)
+            {
+                Window.TitleBarChanged -= OnLayoutMetricsChanged;
+            }
         }
 
         protected override UIElement TitleBarElement => Footer;
@@ -174,8 +176,9 @@ namespace Telegram.Views.Host
             Navigation.SelectedIndex++;
         }
 
-        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        private void OnLayoutMetricsChanged(object sender, object args)
         {
+            var window = Window;
             // To ensure that the tabs in the titlebar are not occluded by shell
             // content, we must ensure that we account for left and right overlays.
             // In LTR layouts, the right inset includes the caption buttons and the
@@ -186,17 +189,17 @@ namespace Telegram.Views.Host
             // then when our flow direction is RTL.
             if (Navigation.FlowDirection == FlowDirection.LeftToRight)
             {
-                Footer.MinWidth = sender.SystemOverlayRightInset;
-                Header.MinWidth = sender.SystemOverlayLeftInset;
+                Footer.MinWidth = window.SystemOverlayRightInset;
+                Header.MinWidth = window.SystemOverlayLeftInset;
             }
             else
             {
-                Footer.MinWidth = sender.SystemOverlayLeftInset;
-                Header.MinWidth = sender.SystemOverlayRightInset;
+                Footer.MinWidth = window.SystemOverlayLeftInset;
+                Header.MinWidth = window.SystemOverlayRightInset;
             }
 
             // Ensure that the height of the custom regions are the same as the titlebar.
-            Footer.Height = Header.Height = sender.Height;
+            Footer.Height = Header.Height = window.TitleBarHeight;
         }
 
         private void OnTabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
@@ -205,7 +208,7 @@ namespace Telegram.Views.Host
             // dispatch, and mutating TabItems there fails the removal with E_INVALIDARG. Close on
             // the next turn instead.
             var tab = args.Tab;
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => CloseTab(tab));
+            this.PostOnUIThread(() => CloseTab(tab));
         }
 
         private void CloseTab(TabViewItem tab)

@@ -1,0 +1,485 @@
+﻿<!--
+  Sdk.props is imported by hand rather than through the Sdk attribute because three properties
+  have to be set before it: the two output paths, so this project does not share obj\ and bin\
+  with Telegram.csproj, and DefaultItemExcludes, because the default globs would otherwise
+  compile Telegram.csproj's own generated output - its XamlTypeInfo.g.cs, every page's .g.cs, and
+  the .NET Native ilc sources under bin\ - as if they were app source.
+
+  This is the WinUI 3 flavour: the same app sources on Microsoft.UI.Xaml over the Windows App SDK,
+  forked from Telegram.Modern.csproj. It differs from it in four places - the output paths, UseWinUI
+  instead of UseUwp, GlobalUsings.WinUI.cs remapping Windows.UI.* onto Microsoft.UI.*, and the host
+  file fork.
+-->
+<Project>
+
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>obj\winui\</BaseIntermediateOutputPath>
+    <BaseOutputPath>bin\winui\</BaseOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj\**;bin\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- Program.WinUI.cs, and only for XamlOptionalChanges: DXamlCore locks that bitmask as the
+         first statement of its initialisation, so it has to be set before Application.Start and
+         the generated Main leaves no room. Everything else about that Main is reproduced there
+         verbatim. The constant is what turns the generated one off. -->
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <!-- The Windows App SDK's own floor - it still ships projections for 17763, and a restore at
+         this minimum resolves. The three other flavours say 18362 because that is what UWP XAML
+         supports. -->
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>Telegram</RootNamespace>
+    <AssemblyName>Telegram</AssemblyName>
+    <DefaultLanguage>en</DefaultLanguage>
+    <UseWinUI>true</UseWinUI>
+    <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+
+    <!-- Defaulted from the platform rather than left to the caller, for the reason
+         Telegram.Win32.csproj gives: a RID-less build resolves no package assets at all - the
+         projections vanish and the compiler reports thousands of errors that look like a broken
+         projection rather than a missing property. Telegram.Modern.csproj gets its RID from the
+         packaging project that references it; this one has no packaging project. -->
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$(Platform.ToLowerInvariant())</RuntimeIdentifier>
+    <SelfContained Condition="'$(SelfContained)' == ''">true</SelfContained>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>preview</LangVersion>
+
+    <!-- Release only, as in the other two SDK-style flavours. WinAppSDK claims NativeAOT support
+         from 1.6, but nothing here has exercised it - this flavour has never linked - so treat the
+         Release path as unproven rather than as a supported configuration. -->
+    <PublishAot Condition="'$(Configuration)' != 'Debug'">true</PublishAot>
+    <!-- The MSIX tooling takes the payload from the publish items when PublishAot is on, and drops
+         the managed assemblies from it - but not the app's own IL pdb, which the debug symbols
+         output group contributes separately. That one and ILC's both want to be Telegram.pdb in
+         the package, which MakeAppx refuses as APPX1101. ILC's is the one to keep: it is the only
+         one that can read a stack in a native binary. -->
+    <IncludeDebugSymbolsProjectOutputGroup Condition="'$(PublishAot)' == 'true'">false</IncludeDebugSymbolsProjectOutputGroup>
+    <!-- The four analyzer switches are off in Debug for the reason measured on the Modern flavour:
+         the trim analyzer alone is 765 CPU-seconds, nothing is trimmed in a Debug build, and
+         Release still runs them, so they gate releases rather than the inner loop. -->
+    <EnableTrimAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableTrimAnalyzer>
+    <EnableAotAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableAotAnalyzer>
+    <EnableSingleFileAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableSingleFileAnalyzer>
+    <EnableNETAnalyzers Condition="'$(Configuration)' == 'Debug'">false</EnableNETAnalyzers>
+    <!-- Only blittable types may cross a P/Invoke; everything else is marshalled by the
+         LibraryImport generator. Safe here for the same reason it is safe on Modern - every
+         DllImport has a LibraryImport counterpart and both delegates handed to native code became
+         function pointers - and deliberately absent from Telegram.csproj. -->
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <EmitCompilerGeneratedFiles Condition="'$(Configuration)' != 'Debug'">true</EmitCompilerGeneratedFiles>
+
+    <CsWinRTAotOptimizerEnabled Condition="'$(Configuration)' == 'Debug'">false</CsWinRTAotOptimizerEnabled>
+    <CsWinRTAotWarningLevel Condition="'$(Configuration)' == 'Debug'">0</CsWinRTAotWarningLevel>
+
+    <AssemblyTitle>Telegram</AssemblyTitle>
+    <Product>Telegram</Product>
+    <Copyright>Copyright ©  2015</Copyright>
+
+    <!-- WINUI3 is the constant the shared sources switch on for the UI framework, and UNPACKAGED
+         the one for running without a package identity, which the Win32 flavour shares.
+         NETFX_CORE and WINDOWS_UWP are deliberately absent where the other three define
+         them: nothing in the tree reads either today, and both name an app model this flavour is
+         not - so a file that grows an `#if WINDOWS_UWP` later gets the answer it expects. -->
+    <DefineConstants>$(DefineConstants);WINUI3;UNPACKAGED;CODE_ANALYSIS</DefineConstants>
+    <NoWarn>$(NoWarn);2008</NoWarn>
+    <!-- See the BannedApiAnalyzers reference below. RS0030 is the UWP app model, and it is the
+         only thing standing between a clean build and a null CoreWindow at runtime - so it is an
+         error by default and stays reported either way.
+
+         -p:WinUIBannedApisAsErrors=false demotes it to a warning, for a running binary while new
+         sites are being ported: they compile, and the ones that matter announce themselves by
+         crashing on the paths that actually run. -->
+    <WinUIBannedApisAsErrors Condition="'$(WinUIBannedApisAsErrors)' == ''">true</WinUIBannedApisAsErrors>
+    <WarningsAsErrors Condition="'$(WinUIBannedApisAsErrors)' == 'true'">$(WarningsAsErrors);RS0030</WarningsAsErrors>
+  </PropertyGroup>
+
+  <!--
+    The file fork. Three flavours share these sources, so each host-specific member lives in a
+    *.Uwp.cs / *.Win32.cs / *.WinUI.cs partial beside its shared half and only one is ever
+    compiled - which is what makes the contract a compile error rather than an interface.
+
+    What this flavour takes from the Win32 half is everything that is about being a desktop
+    process rather than about hosting XAML: the notification area icon, the passkey and WebAuthn
+    interop, the tray. What it does not take is the island host itself - WinUI 3 is a desktop
+    process that hosts its own XAML, so Window, AppWindow and the backdrops replace all of it.
+  -->
+  <ItemGroup>
+    <Compile Remove="Common\HttpServer.cs" />
+    <Compile Remove="Common\MediaHttpServer.cs" />
+    <Compile Remove="Controls\SettingsCheckBox.cs" />
+    <Compile Remove="Entities\SourceGenerationContext.cs" />
+    <!-- The SDK generates these attributes itself, and two sets of them is CS0579. -->
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+
+    <!-- The UWP app model: CoreApplication views, ApplicationView, CoreWindow. -->
+    <Compile Remove="**\*.Uwp.cs" />
+
+    <!-- The XAML islands host. Interop.cs is the exception and is put back below: it is nothing
+         but P/Invoke declarations, and NotifyIcon.Win32.cs - which this flavour does compile -
+         builds its message window out of them. -->
+    <Compile Remove="Host\**" />
+    <Compile Include="Host\Interop.cs" />
+    <!-- The Win32 flavour's entry point. This one has its own, Program.WinUI.cs. -->
+    <Compile Remove="Program.cs" />
+
+    <!-- The four host halves that are about hosting XAML rather than about Win32, each with a
+         *.WinUI.cs twin beside it. -->
+    <Compile Remove="Navigation\WindowContext.Win32.cs" />
+    <Compile Remove="Navigation\BootStrapper.Win32.cs" />
+    <Compile Remove="Navigation\InputListener.Win32.cs" />
+    <Compile Remove="Services\ViewService\ViewService.Win32.cs" />
+    <!-- No twin, and none needed: it puts Handled back on a key the framework marked handled,
+         because a ContentDialog inside an island stops delivering characters to the focused text
+         box. A WinUI 3 window is not an island and the framework's own flag holds, so the partial
+         is simply not implemented here - which is legal, and elides the call. -->
+    <Compile Remove="Controls\ContentPopup.Win32.cs" />
+  </ItemGroup>
+
+  <!--
+    The namespace remap is GlobalUsings.WinUI.cs, which this project picks up like any other source
+    and the other flavours exclude with the rest of *.WinUI.cs. Telegram.WinUI.Rewriter regenerates
+    it; the sites a global using cannot reach are #if WINUI3 in the sources.
+
+    The markup needs no remap: the default XAML namespace URI is the same string in both frameworks,
+    and `xmlns:muxc="using:Microsoft.UI.Xaml.Controls"` resolves to the built-in controls here. Two
+    files are patched, because XAML has no #if; see the Markup table in the rewriter.
+  -->
+  <PropertyGroup>
+    <WinUISourceDir>$(BaseIntermediateOutputPath)src\</WinUISourceDir>
+    <WinUIRewriter>$(MSBuildThisFileDirectory)..\Telegram.WinUI.Rewriter\bin\$(Configuration)\net10.0\Telegram.WinUI.Rewriter.dll</WinUIRewriter>
+  </PropertyGroup>
+
+  <!-- Before MarkupCompilePass1, which reads the patched files. The output directory is trimmed of
+       its trailing separator, and that is not cosmetic: cmd reads the backslash before a closing
+       quote as an escape, so a directory passed as "...\" swallows the quote and takes the next
+       argument with it. The same trap TdSchemaDir documents in TdSchema.targets. -->
+  <Target Name="PatchWinUIMarkup" BeforeTargets="MarkupCompilePass1">
+    <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; &quot;$(WinUIRewriter)&quot; --markup &quot;$(MSBuildProjectDirectory)&quot; &quot;$(MSBuildProjectDirectory)\$(WinUISourceDir.TrimEnd('\'))&quot;" />
+  </Target>
+
+  <!--
+    Link is what keeps the patched files addressable. The markup compiler derives a page's resource
+    path from its item path, so without it Themes\Generic.xaml would be published as
+    ms-appx:///obj/winui/src/Themes/Generic.xaml, and every custom control in the app would come
+    up with no template at all - at runtime, silently, since DefaultStyleKey resolution simply
+    finds nothing.
+  -->
+  <ItemGroup>
+    <ApplicationDefinition Remove="App.xaml" />
+    <ApplicationDefinition Include="$(WinUISourceDir)App.xaml" Link="App.xaml" />
+    <Page Remove="Themes\Generic.xaml" />
+    <Page Include="$(WinUISourceDir)Themes\Generic.xaml" Link="Themes\Generic.xaml" />
+  </ItemGroup>
+
+  <!--
+    Unpackaged (-p:Unpackaged=true): the same sources, run straight out of the output folder with
+    no identity. The binaries are not the same ones, and cannot be - see below.
+
+    WindowsPackageType=None is what makes the Windows App SDK emit its bootstrap
+    auto-initializer, and without it an unpackaged process cannot find the runtime at all: there
+    is no package dependency to resolve it with.
+
+    AppxPackage has to follow it. The two together are rejected outright -
+    "Improper project configuration: WindowsPackageType is set to None, but AppxPackage is set to
+    true" - so a build cannot both bootstrap and package, and this is a configuration rather than
+    a switch on one output. EnableMsixTooling stays on regardless: it is what brings in the PRI
+    targets, and resources.pri is what every {CustomResource} in the app resolves through whether
+    there is a package around it or not.
+  -->
+  <PropertyGroup Condition="'$(Unpackaged)' == 'true'">
+    <WindowsPackageType>None</WindowsPackageType>
+    <AppxPackage>false</AppxPackage>
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- See the file: it exists for maxversiontested, without which WindowsXamlManager fails
+         E_UNEXPECTED in a process with no package manifest to read the OS version from. -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <!--
+    A separate identity, so this installs beside the other three rather than replacing any of them.
+    Patched into obj rather than kept as a second manifest, for the reason Telegram.Modern.csproj
+    gives: the real one is 108 lines of capabilities, extensions and file associations, and a copy
+    would drift the first time one of them changes.
+  -->
+  <PropertyGroup>
+    <AppxPackage Condition="'$(Unpackaged)' != 'true'">true</AppxPackage>
+    <EnableMsixTooling>true</EnableMsixTooling>
+
+    <!-- Layout is what Add-AppxPackage -Register installs during development; Bundle is the
+         msixbundle Build.WinUI.ps1 produces. Two identities and not one, for the reason
+         Telegram.Msix.Modern.wapproj gives: Windows will not move an installed app between a
+         registered loose layout and a bundle, so a shared name leaves whichever went on first
+         blocking the other. The identity is part of the manifest path as well as the condition,
+         because the patch target is incremental on that file - flipping the property alone would
+         hand the packaging whatever the last build wrote. -->
+    <WinUIIdentity Condition="'$(WinUIIdentity)' == ''">Layout</WinUIIdentity>
+    <WinUIPackageIdentity Condition="'$(WinUIIdentity)' == 'Bundle'">38833FF26BA1D.UnigramWinUIBundle</WinUIPackageIdentity>
+    <WinUIPackageDisplayName Condition="'$(WinUIIdentity)' == 'Bundle'">Unigram WinUI (bundle)</WinUIPackageDisplayName>
+    <!-- Distinct from the layout's, so the two installed at once do not claim the same protocol,
+         alias and file type - the shell gives a duplicate to one of them and does not say which. -->
+    <WinUIClaimSuffix Condition="'$(WinUIIdentity)' == 'Bundle'">winui-bundle</WinUIClaimSuffix>
+    <WinUIPackageIdentity Condition="'$(WinUIPackageIdentity)' == ''">38833FF26BA1D.UnigramWinUI</WinUIPackageIdentity>
+    <WinUIPackageDisplayName Condition="'$(WinUIPackageDisplayName)' == ''">Unigram WinUI</WinUIPackageDisplayName>
+    <WinUIClaimSuffix Condition="'$(WinUIClaimSuffix)' == ''">winui</WinUIClaimSuffix>
+    <!-- The source manifest is Telegram\Package.appxmanifest, which says 12.7.0.12195 and has not
+         moved since - it is only used to deploy the app project from Visual Studio, so nothing
+         bumps it. Set here instead, and in the generated manifest's path for the reason the
+         identity is: the patch target is incremental on that file, so -p:WinUIPackageVersion=
+         alone would otherwise reuse the manifest the last build wrote. Bump the last part for a
+         package that supersedes the one installed; the first three follow develop. -->
+    <WinUIPackageVersion Condition="'$(WinUIPackageVersion)' == ''">13.0.0.0</WinUIPackageVersion>
+    <!-- The assembly carries the same number, because unpackaged there is no package to ask:
+         AppIdentity.Version falls back to the entry assembly's, and the two must not disagree. -->
+    <Version>$(WinUIPackageVersion)</Version>
+    <WinUIAppxManifest>$(BaseIntermediateOutputPath)Package.WinUI.$(WinUIIdentity).$(WinUIPackageVersion).appxmanifest</WinUIAppxManifest>
+    <PackageCertificateKeyFile>..\Telegram_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <WinUIManifestNamespaces>&lt;Namespace Prefix='f' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='uap' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;&lt;Namespace Prefix='uap5' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10/5' /&gt;&lt;Namespace Prefix='rescap' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities' /&gt;</WinUIManifestNamespaces>
+  </PropertyGroup>
+
+  <Target Name="PatchWinUIAppxManifest" BeforeTargets="PrepareForBuild" Inputs="Package.appxmanifest;Package.Win32.xslt;$(MSBuildThisFileFullPath)" Outputs="$(WinUIAppxManifest)">
+    <PropertyGroup>
+      <_WinUIManifestFull>$([System.IO.Path]::GetFullPath('$(WinUIAppxManifest)'))</_WinUIManifestFull>
+      <_SourceManifestFull>$([System.IO.Path]::GetFullPath('Package.appxmanifest'))</_SourceManifestFull>
+    </PropertyGroup>
+    <Error Condition="'$(_WinUIManifestFull)' == '$(_SourceManifestFull)'" Text="WinUIAppxManifest resolves to the source manifest; patching it would rewrite the shipping identity." />
+    <Copy SourceFiles="Package.appxmanifest" DestinationFiles="$(WinUIAppxManifest)" />
+
+    <!-- Package.Win32.xslt, not a copy of it: what it removes is everything the UWP app model
+         means and a full trust desktop process does not have, and that set is identical for both
+         desktop flavours. A second stylesheet would drift the first time one of them changed. -->
+    <XslTransformation XmlInputPaths="$(WinUIAppxManifest)" XslInputPath="Package.Win32.xslt" OutputPaths="$(WinUIAppxManifest).tmp" />
+    <Copy SourceFiles="$(WinUIAppxManifest).tmp" DestinationFiles="$(WinUIAppxManifest)" />
+    <Delete Files="$(WinUIAppxManifest).tmp" />
+
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Identity/@Name" Value="$(WinUIPackageIdentity)" />
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Identity/@Version" Value="$(WinUIPackageVersion)" />
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Properties/f:DisplayName" Value="$(WinUIPackageDisplayName)" />
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Applications/f:Application/uap:VisualElements/@DisplayName" Value="$(WinUIPackageDisplayName)" />
+
+    <!-- The source says 10.0.0.0, which the UWP packaging rewrites from TargetPlatformMinVersion
+         and this project system does not. MakeAppx reads it as a bundle targeting a platform from
+         before .msix existed and refuses to bundle one - 0x80080215, "Non appx extensions are not
+         allowed for payload packages targeting older platforms". -->
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Dependencies/f:TargetDeviceFamily/@MinVersion" Value="$(TargetPlatformMinVersion)" />
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Dependencies/f:TargetDeviceFamily/@MaxVersionTested" Value="$(TargetPlatformVersion)" />
+
+    <!-- A packaged WinUI 3 app is a full trust entry point rather than a UWP activatable class,
+         and the two extensions that name the class have to follow it. -->
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Applications/f:Application/@EntryPoint" Value="Windows.FullTrustApplication" />
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Applications/f:Application/f:Extensions/uap5:Extension/@EntryPoint" Value="Windows.FullTrustApplication" />
+
+    <!-- This flavour installs beside a Telegram the machine is actually used with, so it must not
+         compete for anything the shell dispatches. XmlPoke cannot delete nodes, so the claims are
+         renamed out of the way instead: a tg: link, a typed Telegram.exe or a .unigram-theme file
+         still reach the shipping app. -->
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Applications/f:Application/f:Extensions/uap:Extension/uap:Protocol[@Name='tg']/@Name" Value="tg-$(WinUIClaimSuffix)" />
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Applications/f:Application/f:Extensions/uap:Extension/uap:Protocol[@Name='tonsite']/@Name" Value="tonsite-$(WinUIClaimSuffix)" />
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Applications/f:Application/f:Extensions/uap5:Extension/uap5:AppExecutionAlias/uap5:ExecutionAlias/@Alias" Value="Telegram-$(WinUIClaimSuffix).exe" />
+    <XmlPoke XmlInputPath="$(WinUIAppxManifest)" Namespaces="$(WinUIManifestNamespaces)" Query="/f:Package/f:Applications/f:Application/f:Extensions/uap:Extension/uap:FileTypeAssociation/uap:SupportedFileTypes/uap:FileType" Value=".unigram-theme-$(WinUIClaimSuffix)" />
+  </Target>
+
+  <ItemGroup>
+    <!-- The .resw under Strings\ need no PRIResource items: with the MSIX tooling on, the SDK
+         globs them itself, and listing them as well is NETSDK1022.
+
+         The manifest itself is refused alongside WindowsPackageType=None - "Improper project
+         configuration: WindowsPackageType is set to None, but a AppxManifest is specified" - and
+         means nothing to a process that will not be registered anyway. -->
+    <AppxManifest Condition="'$(Unpackaged)' != 'true'" Include="$(WinUIAppxManifest)" />
+  </ItemGroup>
+
+  <!-- The two CRTs the payload links against, added to the generated manifest for the reason
+       Package.Win32.Final.xslt documents: without them Telegram.Native fails to load inside
+       the package, and CsWinRT reports that as REGDB_E_CLASSNOTREG, which reads like a
+       registration problem and is not one. -->
+  <Target Name="PatchWinUIFinalManifest" AfterTargets="_GenerateAppxManifest" Condition="Exists('$(FinalAppxManifestName)')">
+    <PropertyGroup>
+      <_VCLibsName Condition="'$(Configuration)' == 'Debug'">Microsoft.VCLibs.140.00.Debug</_VCLibsName>
+      <_VCLibsName Condition="'$(_VCLibsName)' == ''">Microsoft.VCLibs.140.00</_VCLibsName>
+      <_DesktopVCLibsName Condition="'$(Configuration)' != 'Debug'">Microsoft.VCLibs.140.00.UWPDesktop</_DesktopVCLibsName>
+    </PropertyGroup>
+    <XslTransformation XmlInputPaths="$(FinalAppxManifestName)" XslInputPath="Package.Win32.Final.xslt" OutputPaths="$(FinalAppxManifestName).tmp" Parameters="&lt;Parameter Name='VCLibsName' Value='$(_VCLibsName)' /&gt;&lt;Parameter Name='DesktopVCLibsName' Value='$(_DesktopVCLibsName)' /&gt;" />
+    <Copy SourceFiles="$(FinalAppxManifestName).tmp" DestinationFiles="$(FinalAppxManifestName)" />
+    <Delete Files="$(FinalAppxManifestName).tmp" />
+  </Target>
+
+  <!--
+    Content needs CopyToOutputDirectory here, as it does in the other two SDK-style flavours: the
+    legacy UWP project system packaged Content implicitly and SDK-style does not, and without it
+    the app starts, initialises TDLib, and then dies on `Cannot locate resource from
+    'ms-appx:///Assets/grammars.dat'`.
+  -->
+  <ItemGroup>
+    <!-- The LottieGen inputs under Icons\ and the C# they generate (compiled, never shipped), the
+         mockup art that only theme_preview_image.jpg is used from, the icon font's glyph map, and
+         the shader sources beside the compiled i420.bin. -->
+    <Content Remove="Assets\Icons\**" />
+    <Content Remove="Assets\Mockup\**" />
+    <Content Include="Assets\Mockup\theme_preview_image.jpg" />
+    <Content Remove="Assets\Fonts\Telegram.json" />
+    <Content Remove="Assets\i420.bat" />
+    <Content Remove="Assets\i420.fxlib" />
+    <Content Remove="Assets\i420.hlsl" />
+
+    <Content Update="Assets\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Content rather than ReferenceCopyLocalPaths, for the reason Telegram.Modern.csproj gives:
+         the engine has no project to arrive from, and copy-local never reaches the package layout. -->
+    <Content Include="$(TelegramRoot)Libraries\wallet-engine\$(Platform)\wallet_engine.dll" Link="wallet_engine.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Assets\i420.hlsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      The two halves of the Windows App SDK this app is, rather than the Microsoft.WindowsAppSDK
+      metapackage that pulls all ten. WinUI brings Base, Foundation and InteractiveExperiences with
+      it; Runtime is the framework package reference and the MSIX tooling. The versions are the
+      ones the 2.5.1 metapackage pins, so this is the same servicing set, minus the four leaves
+      nothing here calls: AI, ML, Widgets and Search.
+
+      ML is the one that pays for itself. It ships app-local rather than in the framework package -
+      DirectML.dll alone is 18 MB, plus onnxruntime and the MachineLearning projection - and no
+      part of this app names a single type from it. DWrite is dropped for a different reason: the
+      framework package supplies DWriteCore, and nothing here uses the app-local one.
+    -->
+    <!--
+      All four are named, and they have to be: the Runtime package checks the version of every
+      component it sees and fails the build on a mismatch, and WinUI's own transitive pins are
+      older than what Runtime 2.5.1 expects (InteractiveExperiences 2.1.8 against 2.1.9). These
+      are the metapackage's versions, so what resolves is exactly what it would have resolved.
+    -->
+    <PackageReference Include="Microsoft.WindowsAppSDK.Base" Version="2.0.4" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="2.5.1" />
+    <PackageReference Include="Markdig" Version="1.3.2" />
+    <!-- The WinUI 3 build of Win2D. Same Microsoft.Graphics.Canvas API as Win2D.uwp, against
+         Microsoft.UI.Composition instead of Windows.UI.Composition. 1.4.0 rather than 1.3.2
+         because it depends on Microsoft.WindowsAppSDK.WinUI - the split package layout - so it
+         resolves against the 2.x metapackage instead of pinning a 1.x one beside it. -->
+    <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.4.0" />
+    <!-- Ahead of the version the Windows App SDK depends on, and pinned to the one the other
+         flavours use so the three agree on the WebView2 runtime contract. -->
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4129.50" />
+    <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3" Version="2.1.11" />
+    <!-- Microsoft.UI.Xaml, the WinUI 2 package, is deliberately absent: its controls are the
+         framework here, and merging XamlControlsResources a second time is what App.xaml already
+         does through the muxc prefix, which resolves to the built-in types. -->
+  </ItemGroup>
+
+  <!--
+    The two local WinRT components, referenced as Telegram.Modern.csproj does: CsWinRT generates the
+    projection from the winmds the ProjectReferences below bring in, and only the namespaces in
+    CsWinRTIncludes are emitted.
+  -->
+  <PropertyGroup>
+    <CsWinRTIncludes>Telegram.Native</CsWinRTIncludes>
+    <CsWinRTAotWarningLevel Condition="'$(CsWinRTAotWarningLevel)' == ''">3</CsWinRTAotWarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The Windows App SDK brings no CsWinRT package of its own on 2.x. -->
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+  </ItemGroup>
+
+  <!-- Kept in step with Telegram.csproj by hand: the generator reads TdParsers and emits parsers,
+       the hand-written code reads the constants and calls them, so the two projects must agree or
+       the generated file calls helpers that were compiled out.
+
+       Changing this needs obj's generated editorconfig deleted: the value reaches the
+       generator through it, and it is not rewritten when the property alone changes, so
+       the next build emits one parser set against the other's constants. -->
+  <PropertyGroup>
+    <TdParsers>Pointer</TdParsers>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TdParsers)' != 'Pointer'">
+    <DefineConstants>$(DefineConstants);TD_READER_PARSER</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TdParsers)' != 'Reader'">
+    <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
+  </PropertyGroup>
+
+  <Import Project="TdSchema.targets" />
+
+  <!-- Opt-in (-p:Instrumented=true): compiles in the Profiler probes and Instrumentation.Register,
+       which keeps a WeakReference per registered object for the session, so it must not reach a
+       shipping build. -->
+  <PropertyGroup Condition="'$(Instrumented)' == 'true'">
+    <DefineConstants>$(DefineConstants);INSTRUMENTATION</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <!-- DynamicCastRootGenerator runs a semantic query per cast in the app - 8.8s a build - and
+         exists only so trimming cannot drop the metadata a cast needs. Debug is not trimmed, so
+         what it emits there is inert. -->
+    <ProjectReference Include="..\Telegram.Generators.WinRT\Telegram.Generators.WinRT.csproj" Condition="'$(Configuration)' != 'Debug'" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <!-- The UWP app model does not fail to compile here - it fails at runtime. Every
+         CoreWindow, CoreApplication, ApplicationView and Window.Current in the shared sources binds
+         cleanly against the Windows SDK projection and then answers null, so this analyzer is what
+         turns them into build errors. BannedSymbols.WinUI.txt says what each one becomes.
+
+         RS0030 is a warning by default and is raised to an error below: a warning in a build this
+         size is a line nobody reads. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" PrivateAssets="all" />
+    <AdditionalFiles Include="BannedSymbols.WinUI.txt" />
+    <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
+    <AdditionalFiles Include="Strings\en\Resources.xml" />
+    <CompilerVisibleProperty Include="TdParsers" />
+    <ProjectReference Include="..\Telegram.Native.Calls\Telegram.Native.Calls.vcxproj" />
+    <ProjectReference Include="..\Telegram.Native\Telegram.Native.vcxproj" />
+    <!-- Ordering only, hence ReferenceOutputAssembly=false: the rewriter is run by path from an
+         Exec. Platform is removed because it is AnyCPU and the app builds x64 and ARM64. -->
+    <ProjectReference Include="..\Telegram.WinUI.Rewriter\Telegram.WinUI.Rewriter.csproj" ReferenceOutputAssembly="false" GlobalPropertiesToRemove="Platform;RuntimeIdentifier;PublishAot;SelfContained" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OpenSSLPlatform>-$(Platform)</OpenSSLPlatform>
+  </PropertyGroup>
+
+  <!-- tdjson.pdb by name, like the other flavours: it arrives as a copy local path rather than a
+       Reference, so RAR never runs its related-file discovery and without this the symbols are
+       missing from every TDLib crash. -->
+  <ItemGroup>
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.pdb" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\zlib1.dll" />
+  </ItemGroup>
+
+  <!--
+    ILC's pdb, the only one that can read a stack in the app itself. The NativeAOT targets take the
+    IL pdb out of the publish list and put nothing back, and _CopyAotSymbols runs after Publish,
+    long after the publish item list has been computed - so without this the .appxsym has no
+    symbols for the app at all.
+  -->
+  <Target Name="PublishNativeSymbols" AfterTargets="ComputeResolvedFilesToPublishList" Condition="'$(PublishAot)' == 'true'">
+    <ItemGroup>
+      <!-- The IL pdb is still in the list here, unlike in the Modern flavour, and both want to be
+           Telegram.pdb in the package - which MakeAppx refuses as APPX1101. It is the one to drop:
+           it describes assemblies that are not in an AOT package, and the ILC pdb is the only one
+           that can read a stack in the shipped binary. -->
+      <_ILSymbolsToDrop Include="@(ResolvedFileToPublish)" Condition="'%(ResolvedFileToPublish.RelativePath)' == '$(TargetName).pdb'" />
+      <ResolvedFileToPublish Remove="@(_ILSymbolsToDrop)" />
+
+      <ResolvedFileToPublish Include="$(NativeOutputPath)$(TargetName)$(NativeSymbolExt)">
+        <RelativePath>$(TargetName)$(NativeSymbolExt)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+</Project>

@@ -32,6 +32,8 @@ namespace Telegram.Common
     {
         private const int WM_DESTROY = 0x0002;
         private const int WM_NCDESTROY = 0x0082;
+        private const int WM_QUERYENDSESSION = 0x0011;
+        private const int WM_ENDSESSION = 0x0016;
         private const int WM_USER = 0x0400;
         private const int WM_LBUTTONUP = 0x0202;
         private const int WM_RBUTTONUP = 0x0205;
@@ -161,6 +163,26 @@ namespace Telegram.Common
                     Destroy();
                     return IntPtr.Zero;
 
+                // The window is invisible but top level, so it is asked like any other - which is
+                // what makes it the right place to hear about a shutdown. The answer is left to
+                // DefWindowProc, which allows it: refusing here is what would hold the session up.
+                case WM_QUERYENDSESSION:
+                    SessionEnding?.Invoke(this, EventArgs.Empty);
+                    break;
+
+                // The answer to that question, which is not always yes: another app may refuse,
+                // and then wParam is FALSE and everything carries on.
+                case WM_ENDSESSION:
+                    if (wParam != IntPtr.Zero)
+                    {
+                        SessionEnded?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        SessionEndCancelled?.Invoke(this, EventArgs.Empty);
+                    }
+                    break;
+
                 case WM_USER:
                     if ((int)lParam == WM_RBUTTONUP)
                     {
@@ -229,6 +251,29 @@ namespace Telegram.Common
         public event EventHandler Click;
 
         public event EventHandler Exit;
+
+        /// <summary>
+        /// Windows is asking whether the session may end - a shutdown, a restart or a sign out.
+        /// It may still be refused, by this app or another, so this says "probably" and
+        /// <see cref="SessionEndCancelled"/> is what takes it back.
+        ///
+        /// A host that keeps itself alive for a notification area icon has to stop doing that now:
+        /// the answer is due, and holding the session up is what blocks a shutdown - and with it
+        /// the app's own update.
+        /// </summary>
+        public event EventHandler SessionEnding;
+
+        /// <summary>
+        /// The session is ending, for certain. This is what SystemEvents.SessionEnded reports, and
+        /// the point at which anything that must not outlive the session has to go.
+        /// </summary>
+        public event EventHandler SessionEnded;
+
+        /// <summary>
+        /// The end was called off - something refused it. Anything <see cref="SessionEnding"/> put
+        /// aside has to come back.
+        /// </summary>
+        public event EventHandler SessionEndCancelled;
 
         const uint IMAGE_ICON = 1;
         const uint LR_DEFAULTCOLOR = 0x0;

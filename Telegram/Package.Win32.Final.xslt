@@ -16,6 +16,10 @@
   <!-- Microsoft.VCLibs.140.00 in Release, .Debug in Debug. -->
   <xsl:param name="VCLibsName" select="'Microsoft.VCLibs.140.00'" />
 
+  <!-- Microsoft.VCLibs.140.00.UWPDesktop in Release; empty in Debug, where Visual Studio's own
+       debug CRT is what the components load. -->
+  <xsl:param name="DesktopVCLibsName" select="''" />
+
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()" />
@@ -23,11 +27,14 @@
   </xsl:template>
 
   <!--
-    The store CRT the C++/WinRT components link against. Without it Telegram.Native.dll and
-    Telegram.Native.Calls.dll fail to load inside the package, and CsWinRT reports that as
-    REGDB_E_CLASSNOTREG out of ActivationFactory.ManifestFreeGet - which reads like a registration
-    problem and is not one. Telegram.Modern.csproj has this entry generated for it; this project
-    does not, and that difference is the whole reason the app could not start.
+    Two CRTs, because the payload links against both. The vcpkg libraries are built for the UWP
+    triplet and import the store CRT (VCRUNTIME140_APP.dll); the two C++/WinRT components and the
+    wallet engine are desktop binaries and import the desktop one (VCRUNTIME140.dll). Neither is in
+    the package, and Microsoft.VCLibs.140.00 holds only the _app half, so a machine without the
+    Visual C++ redistributable in System32 cannot load Telegram.Native.dll.
+
+    A component that fails to load surfaces as REGDB_E_CLASSNOTREG out of
+    ActivationFactory.ManifestFreeGet - which reads like a registration problem and is not one.
   -->
   <xsl:template match="f:Dependencies">
     <xsl:copy>
@@ -35,6 +42,10 @@
       <xsl:apply-templates select="f:TargetDeviceFamily" />
       <PackageDependency Name="{$VCLibsName}" MinVersion="14.0.33519.0"
                          Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+      <xsl:if test="$DesktopVCLibsName != ''">
+        <PackageDependency Name="{$DesktopVCLibsName}" MinVersion="14.0.33728.0"
+                           Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+      </xsl:if>
       <xsl:apply-templates select="node()[not(self::f:TargetDeviceFamily)]" />
     </xsl:copy>
   </xsl:template>

@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
@@ -563,7 +564,7 @@ namespace Telegram.Controls
                 Width = PatternSourceSize,
                 Height = PatternSourceSize,
                 FrameSize = new Size(PatternSourceSize, PatternSourceSize),
-                DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                DecodeFrameType = DecodePixelType.Logical,
                 AutoPlay = false,
                 IsViewportAware = false,
                 IsHitTestVisible = false,

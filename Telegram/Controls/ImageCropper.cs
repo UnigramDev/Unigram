@@ -893,7 +893,7 @@ namespace Telegram.Controls
 
         private void Thumb_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.Arrow);
+            this.SetPointerCursor(PointerCursorType.Arrow);
         }
 
         private void Thumb_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -1398,22 +1398,22 @@ namespace Telegram.Controls
 
         private void NWSEThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.SizeNorthwestSoutheast);
+            this.SetPointerCursor(PointerCursorType.SizeNorthwestSoutheast);
         }
 
         private void NESWThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.SizeNortheastSouthwest);
+            this.SetPointerCursor(PointerCursorType.SizeNortheastSouthwest);
         }
 
         private void WEThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.SizeWestEast);
+            this.SetPointerCursor(PointerCursorType.SizeWestEast);
         }
 
         private void NSThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            WindowContext.SetPointerCursor(PointerCursorType.SizeNorthSouth);
+            this.SetPointerCursor(PointerCursorType.SizeNorthSouth);
         }
 
         #endregion
