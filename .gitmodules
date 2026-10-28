@@ -25,3 +25,9 @@
 [submodule "Libraries/gzip-hpp"]
 	path = Libraries/gzip-hpp
 	url = https://github.com/mapbox/gzip-hpp.git
+[submodule "Libraries/twidget"]
+	path = Libraries/twidget
+	url = https://github.com/TelegramMessenger/twidget
+[submodule "Libraries/widget-sandbox"]
+	path = Libraries/widget-sandbox
+	url = https://github.com/TelegramMessenger/widget-sandbox
