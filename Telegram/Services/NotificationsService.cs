@@ -111,6 +111,14 @@ namespace Telegram.Services
 
         private void UpdateUnreadCount(int count)
         {
+#if UNPACKAGED
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                TaskbarBadge.SetCount(count);
+                return;
+            }
+#endif
+
             try
             {
                 var updater = BadgeUpdateManager.CreateBadgeUpdaterForApplication("App");

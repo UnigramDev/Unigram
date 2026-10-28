@@ -84,6 +84,13 @@ namespace Telegram
         {
             NightModeService.Current.UpdateTimer();
 
+#if UNPACKAGED
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                TaskbarBadge.OnWindowActivated(window, active);
+            }
+#endif
+
             var navigation = window.GetNavigationService();
             if (navigation != null)
             {
