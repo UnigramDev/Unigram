@@ -99,7 +99,7 @@ namespace Telegram.Navigation
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
 
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER || true
             window.CoreWindow.DispatcherQueue.ShutdownStarting += OnShutdownStarting;
 #endif
             window.CoreWindow.DispatcherQueue.ShutdownCompleted += OnShutdownCompleted;
@@ -213,7 +213,7 @@ namespace Telegram.Navigation
         {
             _window.Content = new Border();
 
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER || true
             ReleaseNative();
             ReleaseRoots();
 
@@ -777,7 +777,7 @@ namespace Telegram.Navigation
             ReleaseAndClose();
         }
 
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER || true
         private async void ReleaseAndClose()
         {
             // Order matters throughout, and every step depends on the one before it. ReleaseNative

@@ -700,7 +700,7 @@ namespace Telegram.Navigation
 
         #endregion
 
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER || true
         // A stuck finalizer must not keep a closed window alive, so the drain is bounded.
         private static readonly TimeSpan ShutdownDrainTimeout = TimeSpan.FromSeconds(10);
 
@@ -746,8 +746,10 @@ namespace Telegram.Navigation
 
         private void ReleaseNative()
         {
+#if NET9_0_OR_GREATER
             FormattedTextBlock.ReleaseNative(_xamlRoot);
             FormattedTextBlockRecyclePool.Release(_xamlRoot);
+#endif
 
             AnimatedImageLoader.Release(_xamlRoot);
 
