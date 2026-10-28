@@ -698,27 +698,6 @@
                             </Grid>
                         </Grid>
 
-                        <Grid VerticalAlignment="Bottom"
-                              HorizontalAlignment="Center"
-                              Margin="12"
-                              Grid.Row="1">
-                            <Rectangle x:Name="UpdateShadow"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Stretch"
-                                       Fill="#2ca5e0"
-                                       RadiusX="18"
-                                       RadiusY="18" />
-                            <Button x:Name="UpdateCloud"
-                                    Click="{x:Bind ViewModel.UpdateApp}"
-                                    Visibility="{x:Bind ViewModel.IsUpdateAvailable, Mode=OneWay}"
-                                    Content="{CustomResource UpdateTelegram}"
-                                    Style="{StaticResource StartButtonStyle}"
-                                    Padding="16,3,16,5"
-                                    CornerRadius="18"
-                                    Margin="0"
-                                    Height="36" />
-                        </Grid>
-
                         <Grid x:Name="ManagePanel"
                               Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                               VerticalAlignment="Bottom"
@@ -824,6 +803,27 @@
                             Margin="24,8"
                             Grid.RowSpan="2"
                             Canvas.ZIndex="1">
+                    <Grid VerticalAlignment="Bottom"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,4"
+                          Grid.Row="1">
+                        <Rectangle x:Name="UpdateShadow"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"
+                                   Fill="#2ca5e0"
+                                   RadiusX="18"
+                                   RadiusY="18" />
+                        <Button x:Name="UpdateCloud"
+                                Click="{x:Bind ViewModel.UpdateApp}"
+                                Visibility="{x:Bind ViewModel.IsUpdateAvailable, Mode=OneWay}"
+                                Content="{CustomResource UpdateTelegram}"
+                                Style="{StaticResource StartButtonStyle}"
+                                Padding="16,3,16,5"
+                                CornerRadius="18"
+                                Margin="0"
+                                Height="36" />
+                    </Grid>
+
                     <controls:DownloadsFooter x:Name="Downloads"
                                               x:Load="False"
                                               Click="Downloads_Click"
