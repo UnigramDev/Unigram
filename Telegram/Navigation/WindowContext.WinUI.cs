@@ -85,6 +85,15 @@ namespace Telegram.Navigation
             // hands the rest of the window to the content.
             _window.ExtendsContentIntoTitleBar = true;
 
+            // A package's windows take their icon from the manifest. Without one the taskbar
+            // button still finds the exe's, but its thumbnails and Alt+Tab ask the window.
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                SetIcon(_handle);
+            }
+
+            Title = _window.Title;
+
             _window.Activated += OnActivated;
             _window.VisibilityChanged += OnVisibilityChanged;
             _window.SizeChanged += OnSizeChanged;
@@ -272,10 +281,37 @@ namespace Telegram.Navigation
 
         #region Helper methods
 
+        /// <summary>
+        /// The whole window text, which the taskbar's thumbnails and Alt+Tab show. ApplicationView
+        /// puts the app's name there when the title is empty, and nothing does that here.
+        /// </summary>
         public string Title
         {
             get => _window.Title;
-            set => _window.Title = value ?? string.Empty;
+            set => _window.Title = string.IsNullOrEmpty(value) ? Strings.AppDisplayName : value;
+        }
+
+        private static IntPtr _smallIcon;
+        private static IntPtr _bigIcon;
+
+        private static void SetIcon(IntPtr handle)
+        {
+            const uint WM_SETICON = 0x0080;
+
+            if (_smallIcon == IntPtr.Zero)
+            {
+                var dpi = Win32.GetDpiForWindow(handle);
+                var module = Win32.GetModuleHandleW(IntPtr.Zero);
+
+                // IDI_APPLICATION, the id ApplicationIcon is compiled into the exe under. Loaded
+                // once and never destroyed: WM_SETICON does not take ownership, and every window
+                // shares them.
+                _smallIcon = Win32.LoadImageW(module, (IntPtr)32512, 1 /* IMAGE_ICON */, Win32.GetSystemMetricsForDpi(49 /* SM_CXSMICON */, dpi), Win32.GetSystemMetricsForDpi(49, dpi), 0);
+                _bigIcon = Win32.LoadImageW(module, (IntPtr)32512, 1 /* IMAGE_ICON */, Win32.GetSystemMetricsForDpi(11 /* SM_CXICON */, dpi), Win32.GetSystemMetricsForDpi(11, dpi), 0);
+            }
+
+            Win32.SendMessageW(handle, WM_SETICON, (IntPtr)0 /* ICON_SMALL */, _smallIcon);
+            Win32.SendMessageW(handle, WM_SETICON, (IntPtr)1 /* ICON_BIG */, _bigIcon);
         }
 
         /// <summary>

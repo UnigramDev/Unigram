@@ -484,5 +484,8 @@ namespace Telegram.Host
 
         [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
         public static partial int SetCurrentProcessExplicitAppUserModelID(string appID);
+
+        [LibraryImport("user32.dll")]
+        public static partial IntPtr LoadImageW(IntPtr hInst, IntPtr name, uint type, int cx, int cy, uint fuLoad);
     }
 }
