@@ -505,11 +505,6 @@ namespace Telegram.Navigation
 
             _context.RaisePopupActivated(true);
 
-            if (OverlayWindow.PopupOpened(XamlRoot))
-            {
-                return;
-            }
-
             if (Content is IPopupHost content)
             {
                 content.PopupOpened();
@@ -529,11 +524,6 @@ namespace Telegram.Navigation
             }
 
             _context.RaisePopupActivated(false);
-
-            if (OverlayWindow.PopupClosed(XamlRoot))
-            {
-                return;
-            }
 
             if (Content is IPopupHost content)
             {
