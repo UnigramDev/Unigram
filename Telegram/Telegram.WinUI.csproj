@@ -138,6 +138,8 @@
          box. A WinUI 3 window is not an island and the framework's own flag holds, so the partial
          is simply not implemented here - which is legal, and elides the call. -->
     <Compile Remove="Controls\ContentPopup.Win32.cs" />
+    <!-- Turns connected animations off because an island cannot run them. A WinUI 3 window can. -->
+    <Compile Remove="Common\ConnectedAnimationServiceEx.Win32.cs" />
   </ItemGroup>
 
   <!--
