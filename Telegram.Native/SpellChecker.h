@@ -10,12 +10,13 @@ namespace winrt::Telegram::Native::implementation
 {
     struct SpellChecker : SpellCheckerT<SpellChecker>
     {
-        SpellChecker(hstring languageTag, winrt::com_ptr<::ISpellChecker> checker);
+        SpellChecker(hstring languageTag, hstring scripts, winrt::com_ptr<::ISpellChecker> checker);
 
         static bool IsSupported(hstring languageTag);
         static winrt::Telegram::Native::SpellChecker Create(hstring languageTag);
 
         hstring LanguageTag();
+        hstring Scripts();
 
         winrt::Windows::Foundation::Collections::IVector<int32_t> Check(hstring text);
         winrt::Windows::Foundation::Collections::IVector<hstring> Suggest(hstring word);
@@ -26,7 +27,11 @@ namespace winrt::Telegram::Native::implementation
     private:
         static winrt::com_ptr<ISpellCheckerFactory> Factory();
 
+        void Check(const wchar_t* text, int32_t offset, winrt::Windows::Foundation::Collections::IVector<int32_t> const& result);
+        bool IsOwnScript(const wchar_t* word, int32_t length);
+
         hstring m_languageTag;
+        hstring m_scripts;
         winrt::com_ptr<::ISpellChecker> m_checker;
     };
 }

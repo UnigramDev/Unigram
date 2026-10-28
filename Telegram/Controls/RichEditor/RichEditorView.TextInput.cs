@@ -203,6 +203,7 @@ namespace Telegram.Controls.RichEditor
         private void OnInputLanguageChanged(CoreTextServicesManager sender, object args)
         {
             UpdateKeyboardDirection();
+            RefreshSpellingLanguages();
         }
 
         private void UpdateKeyboardDirection()

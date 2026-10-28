@@ -12,7 +12,12 @@
 
         String LanguageTag { get; };
 
+        // The scripts the language is written in, as the locale gives them: "Latn;".
+        String Scripts { get; };
+
         // The misspelled ranges of the text, in UTF-16 units: start, length, start, length...
+        // Only words in the language's scripts: the system's checker takes any other word for a
+        // misspelling, so a word in another script is for another checker to judge.
         Windows.Foundation.Collections.IVector<Int32> Check(String text);
 
         Windows.Foundation.Collections.IVector<String> Suggest(String word);

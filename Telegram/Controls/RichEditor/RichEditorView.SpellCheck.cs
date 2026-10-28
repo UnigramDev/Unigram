@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Native;
 using Telegram.Services;
@@ -19,7 +20,7 @@ using Windows.UI.Xaml.Shapes;
 namespace Telegram.Controls.RichEditor
 {
     /// <summary>
-    /// Spelling, by the system's checker in the keyboard's language, checked when a word ends as
+    /// Spelling, by the system's checkers for the user's languages, checked when a word ends as
     /// the system's text boxes do: a separator typed or deleted, the caret moved away, a block
     /// added. Only the leaves that changed are checked; between checks, what was found follows
     /// the edits, and only the word being edited loses its squiggle.
@@ -40,11 +41,10 @@ namespace Telegram.Controls.RichEditor
         private bool _spellingDirty;
         private bool _spellingDue;
 
-        // Made and used on the thread pool only: the system's checker lives in the multithreaded
-        // apartment. The input language it was picked for, so it is picked again only when the
-        // keyboard changes; null with no checker means there is no dictionary to check against.
-        private SpellChecker _spellChecker;
-        private string _spellingInput;
+        // The set of checkers the results were found with, and whether the user's languages are
+        // read again before the next check: when the editor opens and when the keyboard changes.
+        private int _spellingLanguages;
+        private bool _spellingRefresh = true;
 
         private Rectangle SpellingSwatch;
 
@@ -208,50 +208,31 @@ namespace Telegram.Controls.RichEditor
                 (work ??= new List<SpellingWork>()).Add(new SpellingWork(leaf, leaf.Version, start, leaf.Substring(start, end - start), Outside(result.Ranges, start, end)));
             }
 
-            if (work == null)
+            if (work == null && !_spellingRefresh)
             {
                 DrawSpelling();
                 return;
             }
 
             _spellingRunning = true;
-            _ = CheckSpellingAsync(work, Windows.Globalization.Language.CurrentInputMethodLanguageTag);
+            _ = CheckSpellingAsync(work ?? new List<SpellingWork>(), Windows.Globalization.Language.CurrentInputMethodLanguageTag, _spellingRefresh);
+            _spellingRefresh = false;
         }
 
-        private async Task CheckSpellingAsync(List<SpellingWork> work, string input)
+        private void RefreshSpellingLanguages()
         {
-            var checker = _spellChecker;
-            var resolved = _spellingInput;
+            _spellingRefresh = true;
+            CheckSpelling();
+        }
+
+        private async Task CheckSpellingAsync(List<SpellingWork> work, string input, bool refresh)
+        {
             List<int[]> found = null;
+            var languages = 0;
 
             try
             {
-                found = await Task.Run(() =>
-                {
-                    if (resolved != input)
-                    {
-                        checker = CreateSpellChecker(input);
-                        resolved = input;
-                    }
-
-                    var results = new List<int[]>(work.Count);
-
-                    foreach (var item in work)
-                    {
-                        if (checker == null)
-                        {
-                            results.Add(Array.Empty<int>());
-                            continue;
-                        }
-
-                        var ranges = checker.Check(item.Text);
-                        var copy = new int[ranges.Count];
-                        ranges.CopyTo(copy, 0);
-                        results.Add(copy);
-                    }
-
-                    return results;
-                });
+                found = await Task.Run(() => SpellCheckers.Check(work, input, refresh, out languages));
             }
             catch
             {
@@ -259,8 +240,6 @@ namespace Telegram.Controls.RichEditor
                 found = null;
             }
 
-            _spellChecker = checker;
-            _spellingInput = resolved;
             _spellingRunning = false;
 
             if (found != null && _engine != null)
@@ -290,6 +269,19 @@ namespace Telegram.Controls.RichEditor
 
                     _spelling[leaf] = new SpellingResult(leaf.Version, Filter(leaf, ranges), dirtyStart, dirtyEnd);
                     _spellingDirty |= item.Version != leaf.Version;
+                }
+
+                // Checkers that came or went since the rest was found may see it differently. The
+                // first check found everything there was, with the checkers it had.
+                if (languages != _spellingLanguages)
+                {
+                    if (_spellingLanguages != 0)
+                    {
+                        InvalidateSpelling();
+                        _spellingPending = true;
+                    }
+
+                    _spellingLanguages = languages;
                 }
 
                 DrawSpelling();
@@ -552,25 +544,302 @@ namespace Telegram.Controls.RichEditor
         }
 
         /// <summary>
-        /// The keyboard's language when the system has a dictionary for it, and otherwise the first
-        /// of the user's languages that has one. On the thread pool.
+        /// The system's checkers for the user's languages, shared by every editor. A checker takes
+        /// any word outside its language for a misspelling, so a word is misspelled only when every
+        /// checker for its script finds it so. Used on the thread pool only, as the system's checker
+        /// lives in the multithreaded apartment, and one call at a time, as it is not promised to
+        /// be thread safe.
         /// </summary>
-        private static SpellChecker CreateSpellChecker(string input)
+        private static class SpellCheckers
         {
-            if (!string.IsNullOrEmpty(input) && SpellChecker.Create(input) is SpellChecker checker)
-            {
-                return checker;
-            }
+            private const int MaxSuggestions = 5;
 
-            foreach (var language in GlobalizationPreferences.Languages)
+            private static readonly object _lock = new();
+
+            private static SpellChecker[] _checkers = Array.Empty<SpellChecker>();
+            private static string[] _scripts = Array.Empty<string>();
+            private static int _version;
+
+            public static List<int[]> Check(List<SpellingWork> work, string input, bool refresh, out int version)
             {
-                if (language != input && SpellChecker.Create(language) is SpellChecker fallback)
+                lock (_lock)
                 {
-                    return fallback;
+                    if (refresh || _version == 0)
+                    {
+                        Refresh();
+                    }
+
+                    version = _version;
+
+                    var first = IndexOf(input);
+                    var results = new List<int[]>(work.Count);
+
+                    foreach (var item in work)
+                    {
+                        results.Add(Check(item.Text, first));
+                    }
+
+                    return results;
                 }
             }
 
-            return null;
+            public static IList<string> Suggest(string word, string input)
+            {
+                lock (_lock)
+                {
+                    var first = IndexOf(input);
+                    var suggestions = new List<string>(MaxSuggestions);
+
+                    for (int i = 0; i < _checkers.Length && suggestions.Count < MaxSuggestions; i++)
+                    {
+                        // A checker for another script leaves the word alone, and knows nothing to
+                        // suggest for it.
+                        var checker = _checkers[Order(i, first)];
+                        if (checker.Check(word).Count == 0)
+                        {
+                            continue;
+                        }
+
+                        foreach (var suggestion in checker.Suggest(word))
+                        {
+                            if (suggestions.Count == MaxSuggestions)
+                            {
+                                break;
+                            }
+
+                            if (!suggestions.Contains(suggestion))
+                            {
+                                suggestions.Add(suggestion);
+                            }
+                        }
+                    }
+
+                    return suggestions;
+                }
+            }
+
+            public static void Teach(string word, bool add, string input)
+            {
+                lock (_lock)
+                {
+                    var first = IndexOf(input);
+
+                    for (int i = 0; i < _checkers.Length; i++)
+                    {
+                        var checker = _checkers[Order(i, first)];
+
+                        if (!add)
+                        {
+                            checker.Ignore(word);
+                        }
+                        else if (checker.Check(word).Count > 0)
+                        {
+                            // One checker taking the word is enough, and its dictionary is every
+                            // app's: only the first that judges it, the keyboard's when it does.
+                            checker.Add(word);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // The user's languages as Settings lists them. Nothing says when they change, or when a
+            // dictionary is installed for one, so they are read again when an editor asks.
+            private static void Refresh()
+            {
+                var languages = GlobalizationPreferences.Languages;
+                var checkers = new List<SpellChecker>(languages.Count);
+
+                foreach (var language in languages)
+                {
+                    var checker = Find(language) ?? SpellChecker.Create(language);
+                    if (checker != null)
+                    {
+                        checkers.Add(checker);
+                    }
+                }
+
+                if (_version != 0 && checkers.Count == _checkers.Length)
+                {
+                    var same = true;
+
+                    for (int i = 0; i < checkers.Count && same; i++)
+                    {
+                        same = ReferenceEquals(checkers[i], _checkers[i]);
+                    }
+
+                    if (same)
+                    {
+                        return;
+                    }
+                }
+
+                _checkers = checkers.ToArray();
+                _scripts = new string[_checkers.Length];
+
+                for (int i = 0; i < _checkers.Length; i++)
+                {
+                    _scripts[i] = _checkers[i].Scripts;
+                }
+
+                _version++;
+            }
+
+            private static SpellChecker Find(string language)
+            {
+                foreach (var checker in _checkers)
+                {
+                    if (string.Equals(checker.LanguageTag, language, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return checker;
+                    }
+                }
+
+                return null;
+            }
+
+            // The keyboard's language goes first: what it finds is the least for the rest to look at.
+            private static int IndexOf(string input)
+            {
+                for (int i = 0; i < _checkers.Length; i++)
+                {
+                    if (string.Equals(_checkers[i].LanguageTag, input, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return i;
+                    }
+                }
+
+                return 0;
+            }
+
+            private static int Order(int index, int first)
+            {
+                return index == 0 ? first : index <= first ? index - 1 : index;
+            }
+
+            /// <summary>
+            /// For each script, its first checker over the whole text, and each of the others over
+            /// only what the ones before it found: one call each, however many languages there are.
+            /// </summary>
+            private static int[] Check(string text, int first)
+            {
+                int[] found = null;
+
+                for (int i = 0; i < _checkers.Length; i++)
+                {
+                    var script = _scripts[Order(i, first)];
+                    var lead = true;
+
+                    for (int k = 0; k < i && lead; k++)
+                    {
+                        lead = _scripts[Order(k, first)] != script;
+                    }
+
+                    if (!lead)
+                    {
+                        continue;
+                    }
+
+                    var ranges = ToArray(_checkers[Order(i, first)].Check(text));
+
+                    for (int j = i + 1; j < _checkers.Length && ranges.Length > 0; j++)
+                    {
+                        if (_scripts[Order(j, first)] == script)
+                        {
+                            ranges = Confirm(_checkers[Order(j, first)], text, ranges);
+                        }
+                    }
+
+                    found = found == null ? ranges : Merge(found, ranges);
+                }
+
+                return found ?? Array.Empty<int>();
+            }
+
+            // The words found that the checker finds misspelled too, checked on their own, joined
+            // by spaces, in one call.
+            private static int[] Confirm(SpellChecker checker, string text, int[] ranges)
+            {
+                var words = new StringBuilder();
+                var starts = new int[ranges.Length / 2];
+
+                for (int i = 0; i + 1 < ranges.Length; i += 2)
+                {
+                    if (words.Length > 0)
+                    {
+                        words.Append(' ');
+                    }
+
+                    starts[i / 2] = words.Length;
+                    words.Append(text, ranges[i], ranges[i + 1]);
+                }
+
+                var found = checker.Check(words.ToString());
+                List<int> kept = null;
+
+                for (int i = 0; i < starts.Length; i++)
+                {
+                    var start = starts[i];
+                    var end = start + ranges[i * 2 + 1];
+
+                    for (int j = 0; j + 1 < found.Count; j += 2)
+                    {
+                        if (found[j] < end && found[j] + found[j + 1] > start)
+                        {
+                            kept ??= new List<int>(ranges.Length);
+                            kept.Add(ranges[i * 2]);
+                            kept.Add(ranges[i * 2 + 1]);
+                            break;
+                        }
+                    }
+                }
+
+                return kept?.ToArray() ?? Array.Empty<int>();
+            }
+
+            // Two scripts' findings, in the order of the text.
+            private static int[] Merge(int[] left, int[] right)
+            {
+                if (left.Length == 0)
+                {
+                    return right;
+                }
+                else if (right.Length == 0)
+                {
+                    return left;
+                }
+
+                var merged = new int[left.Length + right.Length];
+                int i = 0, j = 0, k = 0;
+
+                while (i < left.Length || j < right.Length)
+                {
+                    if (j >= right.Length || (i < left.Length && left[i] <= right[j]))
+                    {
+                        merged[k++] = left[i++];
+                        merged[k++] = left[i++];
+                    }
+                    else
+                    {
+                        merged[k++] = right[j++];
+                        merged[k++] = right[j++];
+                    }
+                }
+
+                return merged;
+            }
+
+            private static int[] ToArray(IList<int> ranges)
+            {
+                if (ranges.Count == 0)
+                {
+                    return Array.Empty<int>();
+                }
+
+                var copy = new int[ranges.Count];
+                ranges.CopyTo(copy, 0);
+                return copy;
+            }
         }
 
         /// <summary>
@@ -802,26 +1071,16 @@ namespace Telegram.Controls.RichEditor
 
         public async Task<IList<string>> SuggestAsync(string word)
         {
-            var checker = _spellChecker;
-            if (checker == null || string.IsNullOrEmpty(word))
+            if (string.IsNullOrEmpty(word))
             {
                 return Array.Empty<string>();
             }
 
+            var input = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
+
             try
             {
-                return await Task.Run(() =>
-                {
-                    var suggestions = checker.Suggest(word);
-                    var copy = new string[Math.Min(suggestions.Count, 5)];
-
-                    for (int i = 0; i < copy.Length; i++)
-                    {
-                        copy[i] = suggestions[i];
-                    }
-
-                    return (IList<string>)copy;
-                });
+                return await Task.Run(() => SpellCheckers.Suggest(word, input));
             }
             catch
             {
@@ -841,50 +1100,41 @@ namespace Telegram.Controls.RichEditor
         /// <summary>The word at the caret into the user's dictionary, which every app shares.</summary>
         public void AddToDictionary() => Teach(true);
 
-        /// <summary>The word at the caret left alone for as long as the checker lives.</summary>
+        /// <summary>The word at the caret left alone for as long as the checkers live: until the user's languages change.</summary>
         public void IgnoreMisspelling() => Teach(false);
 
         private void Teach(bool add)
         {
-            var checker = _spellChecker;
-            if (checker == null || !TryGetMisspelling(out string word))
+            if (TryGetMisspelling(out string word))
             {
-                return;
+                _ = TeachAsync(word, add, Windows.Globalization.Language.CurrentInputMethodLanguageTag);
             }
-
-            _ = TeachAsync(checker, word, add);
         }
 
-        private async Task TeachAsync(SpellChecker checker, string word, bool add)
+        private async Task TeachAsync(string word, bool add, string input)
         {
             try
             {
-                await Task.Run(() =>
-                {
-                    if (add)
-                    {
-                        checker.Add(word);
-                    }
-                    else
-                    {
-                        checker.Ignore(word);
-                    }
-                });
+                await Task.Run(() => SpellCheckers.Teach(word, add, input));
             }
             catch
             {
                 return;
             }
 
-            // The word may be anywhere else too: everything is checked again, and what is shown
-            // stays until then.
+            // The word may be anywhere else too.
+            InvalidateSpelling();
+            CheckSpelling();
+        }
+
+        // Everything checked again, and what is shown stays until then.
+        private void InvalidateSpelling()
+        {
             foreach (var leaf in new List<RichTextLeaf>(_spelling.Keys))
             {
                 var result = _spelling[leaf];
                 _spelling[leaf] = new SpellingResult(result.Version, result.Ranges, 0, ToTheEnd);
             }
-
-            CheckSpelling();
         }
     }
 }
