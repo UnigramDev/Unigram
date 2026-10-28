@@ -14,6 +14,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Settings;
 using Microsoft.Windows.AppLifecycle;
+using Telegram.Common;
 using Telegram.Host;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -65,6 +66,8 @@ namespace Telegram
             }
 
             keyInstance.Activated += OnRedirected;
+
+            Toast.RegisterApplication();
 
             EnableOptionalChanges();
 

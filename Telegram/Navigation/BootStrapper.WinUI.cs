@@ -88,11 +88,12 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// Unpackaged, so a plain start is all this can have been: everything else - a tg: link,
-        /// a shared file, a toast - reaches the app through an extension the shell only
-        /// dispatches to a package. LaunchActivatedEventArgs is sealed and cannot be built, so the
-        /// activate path takes it instead; the only thing the launch path adds that matters here
-        /// is the watchdog, called by hand.
+        /// Unpackaged, so a plain start is all this can have been: a tg: link or a shared file
+        /// reaches the app through an extension the shell only dispatches to a package, and a toast
+        /// clicked while the app was closed is a plain start followed by ToastActivator's call.
+        /// LaunchActivatedEventArgs is sealed and cannot be built, so the activate path takes it
+        /// instead; the only thing the launch path adds that matters here is the watchdog, called
+        /// by hand.
         ///
         /// async void so that a failure surfaces as an unhandled exception rather than in a task
         /// nobody observes. The continuation is back on this thread: Main installed the
@@ -106,6 +107,8 @@ namespace Telegram.Navigation
 
             WatchDog.Launch(ApplicationExecutionState.NotRunning);
             CallInternalActivated(new PlainActivatedEventArgs(ApplicationExecutionState.NotRunning));
+
+            ToastActivator.Ready();
         }
 
         /// <summary>
@@ -137,7 +140,7 @@ namespace Telegram.Navigation
         /// </summary>
         /// Partial because CsWinRT says so, and it is not decoration: implementing a WinRT
         /// interface means the object can be asked for one, and Toast.GetSession does exactly that
-        /// when it tests for ToastNotificationActivatedEventArgs. Without the vtable the generator
+        /// when it tests for IToastNotificationActivatedEventArgs. Without the vtable the generator
         /// emits for a partial type, that QI has nothing to answer with under NativeAOT - which is
         /// a crash on the first click, not a trimming warning.
         private sealed partial class PlainActivatedEventArgs : IActivatedEventArgs

@@ -10,15 +10,72 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Services;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
 using Windows.System.Profile;
 using Windows.UI.Notifications;
+#if UNPACKAGED
+using Microsoft.Win32;
+using System.IO;
+using Telegram.Host;
+#endif
 
 namespace Telegram.Common
 {
     public partial class Toast
     {
+#if UNPACKAGED
+        // Fixed: the installer puts it on the shortcuts and deletes the key below by this name.
+        private const string UnpackagedApplicationId = "TelegramFZ-LLC.Windows";
+
+        /// <summary>
+        /// The id toasts are shown and listed under: the manifest's application id when packaged,
+        /// the app's own otherwise - and null until <see cref="RegisterApplication"/> has
+        /// registered that one, because an id the shell does not know shows nothing.
+        /// </summary>
+        public static string ApplicationId { get; private set; } = ApiInfo.HasPackageIdentity ? "App" : null;
+
+        /// <summary>
+        /// Unpackaged, what the manifest does for a package: the shell takes a toast's name and
+        /// icon from this key. Written on every start, not only by the installer, so that it
+        /// follows the payload wherever it runs from; the uninstaller deletes it.
+        ///
+        /// Before any window, because the process id set here is also what puts the windows on
+        /// the same taskbar button as the shortcuts.
+        /// </summary>
+        public static void RegisterApplication()
+        {
+            if (ApiInfo.HasPackageIdentity)
+            {
+                return;
+            }
+
+            try
+            {
+                using var key = Registry.CurrentUser.CreateSubKey(@"Software\Classes\AppUserModelId\" + UnpackagedApplicationId);
+
+                // The packaged app's VisualElements DisplayName, so a toast reads the same either way.
+                key.SetValue("DisplayName", "Unigram");
+                key.SetValue("IconUri", Path.Combine(AppPaths.InstalledPath, @"Assets\Logos\Square44x44Logo.altform-unplated_targetsize-256.png"));
+
+                key.SetValue("CustomActivator", ToastActivator.Clsid.ToString("B"));
+
+                Win32.SetCurrentProcessExplicitAppUserModelID(UnpackagedApplicationId);
+                ApplicationId = UnpackagedApplicationId;
+
+                // Last: without it a toast still shows, and only a click on it does nothing.
+                ToastActivator.Register();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+        }
+#else
+        public static string ApplicationId => "App";
+#endif
+
         public static async Task RegisterBackgroundTasks()
         {
             // Background tasks are registered against the package, so without one there is nothing
@@ -114,7 +171,7 @@ namespace Telegram.Common
 
             switch (args)
             {
-                case ToastNotificationActivatedEventArgs toastNotification:
+                case IToastNotificationActivatedEventArgs toastNotification:
                     arguments = toastNotification.Argument;
                     break;
                 case LaunchActivatedEventArgs launch:
@@ -162,6 +219,23 @@ namespace Telegram.Common
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// A toast button - reply, mark as read - run without bringing up the app.
+        /// </summary>
+        public static async Task ProcessAsync(Dictionary<string, string> data)
+        {
+            var session = LifetimeService.Current.ActiveItem.Id;
+            if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+            {
+                session = result;
+            }
+
+            if (LifetimeService.Current.TryResolve(session, out INotificationsService service))
+            {
+                await service.ProcessAsync(data);
+            }
         }
 
         public static Dictionary<string, string> GetData(IActivatedEventArgs args)

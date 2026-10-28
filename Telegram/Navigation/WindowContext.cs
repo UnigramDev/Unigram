@@ -1511,7 +1511,7 @@ namespace Telegram.Navigation
             {
                 Activate(commandLine.Operation.Arguments, service);
             }
-            else if (args is ToastNotificationActivatedEventArgs toastNotificationActivated)
+            else if (args is IToastNotificationActivatedEventArgs toastNotificationActivated)
             {
                 Activate(toastNotificationActivated.Argument, service);
             }

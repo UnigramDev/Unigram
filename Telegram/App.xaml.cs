@@ -122,16 +122,7 @@ namespace Telegram
                         return;
                     }
 
-                    var session = LifetimeService.Current.ActiveItem.Id;
-                    if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
-                    {
-                        session = result;
-                    }
-
-                    if (LifetimeService.Current.TryResolve(session, out INotificationsService service))
-                    {
-                        await service.ProcessAsync(data);
-                    }
+                    await Toast.ProcessAsync(data);
                 }
 
                 deferral.Complete();
@@ -251,8 +242,7 @@ namespace Telegram
             await RequestExtendedExecutionSessionAsync();
             await Toast.RegisterBackgroundTasks();
 
-            // Both address the package's own tile and toast history, so there is nothing for them
-            // to clear where there is no package.
+            // The tile is the package's own, so there is nothing to clear where there is no package.
             if (ApiInfo.HasPackageIdentity)
             {
                 try
@@ -260,10 +250,13 @@ namespace Telegram
                     TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
                 }
                 catch { }
+            }
 
+            if (Toast.ApplicationId is string applicationId)
+            {
                 try
                 {
-                    ToastNotificationManager.History.Clear("App");
+                    ToastNotificationManager.History.Clear(applicationId);
                 }
                 catch { }
             }

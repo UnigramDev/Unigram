@@ -18,6 +18,9 @@ using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+#if UNPACKAGED
+using Windows.Foundation.Collections;
+#endif
 
 namespace Telegram.Navigation
 {
@@ -101,6 +104,48 @@ namespace Telegram.Navigation
         /// merely hidden the call above found it and this is elided.
         /// </summary>
         partial void ReopenFromNotifyIcon();
+
+#if UNPACKAGED
+        /// <summary>
+        /// A toast was clicked. The same pipeline a tg: link arriving at a running app goes
+        /// through, so it navigates to the chat and copes with the window having been closed to the
+        /// notification area icon.
+        /// </summary>
+        public void ActivateFromToast(string argument, Dictionary<string, string> input)
+        {
+            Logger.Info();
+            CallInternalActivated(new ToastClickedEventArgs(argument, input));
+        }
+
+        /// <summary>
+        /// What the shell builds for a package and hands nobody else. Partial for the same reason
+        /// PlainActivatedEventArgs is.
+        /// </summary>
+        private sealed partial class ToastClickedEventArgs : IToastNotificationActivatedEventArgs
+        {
+            public ToastClickedEventArgs(string argument, Dictionary<string, string> input)
+            {
+                Argument = argument;
+                UserInput = new ValueSet();
+
+                foreach (var item in input)
+                {
+                    UserInput[item.Key] = item.Value;
+                }
+            }
+
+            public string Argument { get; }
+
+            public ValueSet UserInput { get; }
+
+            public ActivationKind Kind => ActivationKind.ToastNotification;
+
+            // ToastActivator holds every click until the first activation has run.
+            public ApplicationExecutionState PreviousExecutionState => ApplicationExecutionState.Running;
+
+            public SplashScreen SplashScreen => null;
+        }
+#endif
 
         protected virtual void OnWindowActivated(WindowContext window, bool active)
         {

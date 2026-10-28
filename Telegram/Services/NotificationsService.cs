@@ -416,14 +416,17 @@ namespace Telegram.Services
 
         public void Handle(UpdateActiveNotifications update)
         {
-            if (!ApiInfo.HasPackageIdentity)
+            // Without an id there is no history to ask, and the failure branch below would take
+            // that as every notification being gone.
+            var applicationId = Toast.ApplicationId;
+            if (applicationId == null)
             {
                 return;
             }
 
             try
             {
-                var history = ToastNotificationManager.History.GetHistory();
+                var history = ToastNotificationManager.History.GetHistory(applicationId);
                 var hash = new HashSet<string>();
 
                 foreach (var item in history)
@@ -471,13 +474,14 @@ namespace Telegram.Services
         {
             try
             {
-                if (ApiInfo.HasPackageIdentity)
+                var applicationId = Toast.ApplicationId;
+                if (applicationId != null)
                 {
                     var history = ToastNotificationManager.History;
 
                     foreach (var removed in update.RemovedNotificationIds)
                     {
-                        history.Remove($"{removed}", $"{_clientService.SessionId}_{update.NotificationGroupId}");
+                        history.Remove($"{removed}", $"{_clientService.SessionId}_{update.NotificationGroupId}", applicationId);
                     }
                 }
             }
@@ -656,10 +660,8 @@ namespace Telegram.Services
 
         private void UpdateToast(string caption, string message, string account, bool suppressPopup, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply, DateTimeOffset? expirationTime = null)
         {
-            // The notifier below is created from the package's AUMID. Unpackaged, a toast would
-            // need an AUMID in the registry and a COM activator, so the sound and the in-app
-            // badge raised before this are all such a host gets.
-            if (!ApiInfo.HasPackageIdentity)
+            var applicationId = Toast.ApplicationId;
+            if (applicationId == null)
             {
                 return;
             }
@@ -715,7 +717,7 @@ namespace Telegram.Services
 
             try
             {
-                var notifier = ToastNotificationManager.CreateToastNotifier("App");
+                var notifier = ToastNotificationManager.CreateToastNotifier(applicationId);
                 var document = new XmlDocument();
                 document.LoadXml(xml);
 

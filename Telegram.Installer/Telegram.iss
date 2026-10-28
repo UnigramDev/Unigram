@@ -19,6 +19,9 @@
 #endif
 
 #define AppName "Telegram for Windows (Unigram)"
+; Toast.RegisterApplication's, which the app sets on its process: the shortcuts must carry the same
+; one, or a pinned shortcut and the running window are two taskbar buttons.
+#define AppUserModelId "TelegramFZ-LLC.Windows"
 
 [Setup]
 ; Never change it: Telegram.Updater writes the version into this entry's {AppId}_is1 key.
@@ -76,8 +79,14 @@ Type: filesandordirs; Name: "{app}\app.old"
 Source: "{#PublishDir}\*"; DestDir: "{app}\app"; Excludes: "*.pdb"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{userprograms}\{#AppName}"; Filename: "{app}\app\Telegram.exe"
-Name: "{userdesktop}\{#AppName}"; Filename: "{app}\app\Telegram.exe"
+Name: "{userprograms}\{#AppName}"; Filename: "{app}\app\Telegram.exe"; AppUserModelID: "{#AppUserModelId}"
+Name: "{userdesktop}\{#AppName}"; Filename: "{app}\app\Telegram.exe"; AppUserModelID: "{#AppUserModelId}"
+
+[Registry]
+; The app fills it on every start; here it is only created empty, so that uninstall removes it.
+Root: HKCU; Subkey: "Software\Classes\AppUserModelId\{#AppUserModelId}"; Flags: uninsdeletekey
+; ToastActivator.Clsid, the class the shell starts the app through when a toast is clicked.
+Root: HKCU; Subkey: "Software\Classes\CLSID\{{3542F50C-8B9A-4A2B-A47D-9E5EAF762103}"; Flags: uninsdeletekey
 
 [Run]
 Filename: "{app}\app\Telegram.exe"; Flags: nowait skipifsilent
