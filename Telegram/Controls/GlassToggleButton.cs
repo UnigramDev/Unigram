@@ -86,7 +86,7 @@ namespace Telegram.Controls
             // only reference is a temporary can be finalized while CombineWith is still running.
             using var format = new CanvasTextFormat
             {
-                FontFamily = ContentPresenter.FontFamily.Source,
+                FontFamily = AppPaths.GetCanvasFontFamily(ContentPresenter.FontFamily.Source),
                 FontSize = (float)ContentPresenter.FontSize,
                 HorizontalAlignment = CanvasHorizontalAlignment.Center,
                 VerticalAlignment = CanvasVerticalAlignment.Center

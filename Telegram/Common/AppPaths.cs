@@ -98,6 +98,25 @@ namespace Telegram
                 : new Uri(Path.Combine(LocalPath, relativePath));
         }
 
+        private static string _installedUri;
+
+        /// <summary>
+        /// A XAML font family in the form Win2D can load. Win2D opens an <c>ms-appx:</c> font with
+        /// GetFileFromApplicationUriAsync, which fails E_INVALIDARG without package identity. The
+        /// Windows App SDK build takes a <c>file:</c> URI to the same file instead; Win2D.uwp, which
+        /// the Win32 flavour runs, takes neither.
+        /// </summary>
+        public static string GetCanvasFontFamily(string source)
+        {
+            if (_packaged || source == null || !source.Contains("ms-appx:///", StringComparison.OrdinalIgnoreCase))
+            {
+                return source;
+            }
+
+            _installedUri ??= new Uri(InstalledPath + "\\").AbsoluteUri;
+            return source.Replace("ms-appx:///", _installedUri, StringComparison.OrdinalIgnoreCase);
+        }
+
         private static string EnsureFolder(string name)
         {
             var path = Path.Combine(
@@ -116,6 +135,8 @@ namespace Telegram
         public static string TemporaryPath => ApplicationData.Current.TemporaryFolder.Path;
 
         public static string LocalCachePath => ApplicationData.Current.LocalCacheFolder.Path;
+
+        public static string GetCanvasFontFamily(string source) => source;
 
         public static StorageFolder LocalFolder => ApplicationData.Current.LocalFolder;
 

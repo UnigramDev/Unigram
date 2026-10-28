@@ -628,7 +628,7 @@ namespace Telegram.Controls
         {
             return _format ??= new CanvasTextFormat
             {
-                FontFamily = FontFamily?.Source ?? string.Empty,
+                FontFamily = AppPaths.GetCanvasFontFamily(FontFamily?.Source) ?? string.Empty,
                 FontSize = (float)FontSize,
                 FontWeight = FontWeight,
                 FontStyle = FontStyle,
