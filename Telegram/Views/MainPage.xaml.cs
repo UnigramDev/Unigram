@@ -3424,7 +3424,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MenuItemWallet, Strings.WalletAttachMoney, Icons.Gram);
             }
 
-            flyout.ShowAt(Photo, FlyoutPlacementMode.BottomEdgeAlignedLeft, FlyoutShowMode.TransientWithDismissOnPointerMoveAway, overlap: true);
+            flyout.ShowAt(Photo, FlyoutPlacementMode.BottomEdgeAlignedLeft, overlap: true);
         }
 
         private void MenuItemSettings()
