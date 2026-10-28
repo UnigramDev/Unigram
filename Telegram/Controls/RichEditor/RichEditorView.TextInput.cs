@@ -121,7 +121,7 @@ namespace Telegram.Controls.RichEditor
                 try
                 {
 #if WINUI3
-                    _inputPane = InputPaneInterop.GetForWindow(WindowContext.GetWindowHandle(XamlRoot));
+                    _inputPane = WindowInterop.GetInputPane(WindowContext.GetWindowHandle(XamlRoot));
 #else
                     _inputPane = InputPane.GetForCurrentView();
 #endif

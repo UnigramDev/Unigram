@@ -467,7 +467,7 @@ namespace Telegram.Navigation
             return Task.FromResult(true);
         }
 
-        public bool IsMouseInteraction => UIViewSettingsInterop.GetForWindow(_handle).UserInteractionMode == UserInteractionMode.Mouse;
+        public bool IsMouseInteraction => WindowInterop.GetUIViewSettings(_handle).UserInteractionMode == UserInteractionMode.Mouse;
 
         /// <summary>
         /// The title bar's own colours, for a window that puts something dark behind it. Null puts
@@ -504,7 +504,7 @@ namespace Telegram.Navigation
         public static Windows.Media.SystemMediaTransportControls GetSystemMediaTransportControls()
         {
             var window = Main ?? _current;
-            return window == null ? null : Windows.Media.SystemMediaTransportControlsInterop.GetForWindow(window._handle);
+            return window == null ? null : WindowInterop.GetSystemMediaTransportControls(window._handle);
         }
 
         private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
