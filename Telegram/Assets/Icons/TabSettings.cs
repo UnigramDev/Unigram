@@ -62,7 +62,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #FFFFFF        | Foreground   | Color | #FFFFFFFF White |
     // -----------------------------------------------------------
-    public sealed class TabSettings
+    public sealed partial class TabSettings
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -213,7 +213,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class TabSettings_AnimatedVisual_UAPv15
+        sealed partial class TabSettings_AnimatedVisual_UAPv15
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
@@ -909,7 +909,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class TabSettings_AnimatedVisual_UAPv11
+        sealed partial class TabSettings_AnimatedVisual_UAPv11
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
@@ -1616,7 +1616,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class TabSettings_AnimatedVisual_UAPv7
+        sealed partial class TabSettings_AnimatedVisual_UAPv7
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {

@@ -57,7 +57,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 30
     // Duration:    500.0 mS
-    public sealed class PaintEraser
+    public sealed partial class PaintEraser
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -159,7 +159,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class PaintEraser_AnimatedVisual_UAPv15
+        sealed partial class PaintEraser_AnimatedVisual_UAPv15
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
@@ -591,7 +591,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class PaintEraser_AnimatedVisual_UAPv11
+        sealed partial class PaintEraser_AnimatedVisual_UAPv11
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
@@ -1021,7 +1021,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class PaintEraser_AnimatedVisual_UAPv7
+        sealed partial class PaintEraser_AnimatedVisual_UAPv7
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
             , Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
