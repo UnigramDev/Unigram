@@ -113,10 +113,9 @@ namespace Telegram
         public static void Initialize()
         {
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
-#if !WINUI3
-            // WinUI 3 has no CoreApplication, so errors raised across the WinRT boundary go unreported there.
+            // Not a UWP-only event: combase raises it from RoReportUnhandledError in a desktop
+            // process too, CoreApplication.Run or not.
             CoreApplication.UnhandledErrorDetected += OnUnhandledExceptionDetected;
-#endif
 
             BootStrapper.Current.UnhandledException += OnUnhandledException;
 
