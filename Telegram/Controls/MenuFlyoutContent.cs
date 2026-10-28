@@ -79,6 +79,14 @@ namespace Telegram.Controls
         }
     }
 
+    public partial class MenuFlyoutChatFolder : MenuFlyoutContent
+    {
+        public MenuFlyoutChatFolder()
+        {
+            DefaultStyleKey = typeof(MenuFlyoutChatFolder);
+        }
+    }
+
     public partial class MenuFlyoutContentAutomationPeer : MenuFlyoutItemAutomationPeer
     {
         private readonly MenuFlyoutContent _owner;

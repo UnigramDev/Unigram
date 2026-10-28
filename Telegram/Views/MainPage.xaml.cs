@@ -47,6 +47,7 @@ using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -3635,8 +3636,24 @@ namespace Telegram.Views
                         var icon = Icons.ParseFolder(folder.Icon);
                         var glyph = Icons.FolderToGlyph(icon);
 
-                        // TODO: Custom emojis
-                        item.CreateFlyoutItem(viewModel.AddToFolder, (folder.Id, chat), folder.Name.Text.Text, glyph.Item1);
+                        var textBlock = new RichTextBlock
+                        {
+                            IsTextSelectionEnabled = false
+                        };
+
+                        var paragraph = new Paragraph();
+                        textBlock.Blocks.Add(paragraph);
+
+                        CustomEmojiIcon.Add(textBlock, paragraph.Inlines, ViewModel.ClientService, folder.Name);
+
+                        var folderItem = new MenuFlyoutChatFolder
+                        {
+                            Icon = MenuFlyoutHelper.CreateIcon(glyph.Item1),
+                            Content = textBlock,
+                            CommandParameter = (folder.Id, chat),
+                            Command = new RelayCommand<(int, Chat)>(viewModel.AddToFolder)
+                        };
+                        item.Items.Add(folderItem);
                     }
                 }
 
