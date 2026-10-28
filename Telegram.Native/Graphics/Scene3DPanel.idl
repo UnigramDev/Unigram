@@ -1,7 +1,6 @@
 namespace Telegram.Native.Graphics
 {
-    // Diamond is the TON stone; Star and Coin are the Android app's Premium/Stars star and
-    // Business coin, which move themselves and take a tap as well as a drag.
+    // Diamond is the TON stone; Star and Coin are the Premium/Stars star and the Business coin, which move themselves and take a tap as well as a drag.
     enum Scene3DModel
     {
         Diamond,
@@ -9,9 +8,8 @@ namespace Telegram.Native.Graphics
         Coin
     };
 
-    // The looks a scene is authored in. Ice and Cool are the diamond's, and both names are the
-    // source's own: the beta calls palette 2 the "Cool diamond", and the shader builds palette 1
-    // around a colour it names ice. Golden is the star's, as the Stars screens show it; its
+    // The looks a scene is authored in. Ice and Cool are the diamond's: palette 2 is the "Cool
+    // diamond", and the shader builds palette 1 around a colour it names ice. Golden is the star's, as the Stars screens show it; its
     // Default is the purple Premium star.
     enum Scene3DPalette
     {
@@ -37,7 +35,7 @@ namespace Telegram.Native.Graphics
         Scene3DModel Model;
 
         // Whether it turns on its own. Scenes whose highlights are authored for square-on say no
-        // by default, and the one in the app being matched does.
+        // by default.
         Boolean IsSpinning;
 
         // How fast it turns while spinning, in degrees per second. Zero for the scene's own rate,
@@ -48,20 +46,19 @@ namespace Telegram.Native.Graphics
         // scene used as an ornament wants.
         Boolean IsInteractive;
 
-        // Which of the scene's looks to wear. Every live diamond in the beta is Default; Cool is
-        // what its transaction bubbles show, through a path that renders off screen into a bitmap
-        // rather than onto a surface of its own.
+        // Which of the scene's looks to wear. Every live diamond is Default; Cool is what
+        // transaction bubbles show, rendered off screen into a bitmap rather than onto a surface
+        // of their own.
         Scene3DPalette Palette;
 
-        // How much a press grows it, springing back when it is let go. One for not at all.
-        //
-        // Three, which is what the beta springs its own view to.
+        // How much a press grows it, springing back when it is let go. One for not at all; three
+        // is the usual.
         Double PressScale;
 
         // Where that growth is centred, in units of the panel's own size: 0.5, 0.5 is its middle
         // and anything outside 0 to 1 is a point beyond its edges. The same convention
-        // RenderTransformOrigin uses, and the reason it is a property at all - the beta centres
-        // the send screen's diamond on itself and the transaction card's on the card, which is
+        // RenderTransformOrigin uses, and the reason it is a property at all - the send screen's
+        // diamond is centred on itself and the transaction card's on the card, which is
         // below the panel's own bottom edge.
         Windows.Foundation.Point PressScaleOrigin;
 
@@ -70,8 +67,8 @@ namespace Telegram.Native.Graphics
         // degrees per second, and repeated kicks add up.
         //
         // The idle spin is about 34 degrees a second, so a couple of hundred is a firm shove.
-        // Typing a digit kicks forwards and deleting one kicks back, which is what the beta's
-        // send screen does as an amount is entered.
+        // On the send screen, typing a digit of the amount kicks forwards and deleting one kicks
+        // back.
         void Kick(Double degreesPerSecond);
 
         // Moves what this panel is drawing to another panel showing the same model - the swap

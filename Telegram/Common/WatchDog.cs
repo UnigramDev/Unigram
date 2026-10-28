@@ -26,7 +26,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;

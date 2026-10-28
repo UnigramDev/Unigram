@@ -8,7 +8,6 @@
 using Telegram.Controls;
 using Telegram.ViewModels.Create;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Create
 {

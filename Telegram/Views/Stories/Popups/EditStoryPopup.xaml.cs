@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Entities;
 using Telegram.Navigation;

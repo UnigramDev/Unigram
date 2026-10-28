@@ -9,7 +9,6 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.ViewModels;
-using Windows.ApplicationModel;
 using Windows.System;
 using Windows.UI.Xaml;
 

@@ -16,7 +16,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
 using Windows.System.Display;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;

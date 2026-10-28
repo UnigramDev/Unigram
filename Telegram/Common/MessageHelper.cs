@@ -36,7 +36,6 @@ using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Stars.Popups;
 using Telegram.Views.Wallet.Popups;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;

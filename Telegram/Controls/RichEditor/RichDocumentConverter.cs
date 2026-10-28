@@ -617,7 +617,7 @@ namespace Telegram.Controls.RichEditor
         /// <summary>
         /// The document to send, or null when nothing in it is. The server refuses a message with
         /// an empty block anywhere in it, with nothing to tell the user which, so whatever has no
-        /// content goes - by the rules TDesktop applies on send. Null when nothing is left.
+        /// content goes. Null when nothing is left.
         /// </summary>
         /// <param name="inputs">What media is sent as, where not as it was added: one already uploading goes by its file id.</param>
         public static InputRichMessage ToInputRichMessage(RichDocument document, IRichMediaInputs inputs = null)

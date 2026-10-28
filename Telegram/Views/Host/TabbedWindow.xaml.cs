@@ -10,8 +10,6 @@ using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -101,73 +99,6 @@ namespace Telegram.Views.Host
 
             //    OnIsBackButtonVisibleChanged(addedItem, null);
             //}
-        }
-
-        private bool _backButtonCollapsed = true;
-
-        private void OnIsBackButtonVisibleChanged(object sender, EventArgs e)
-        {
-            //if (sender is not TabbedPageItem item)
-            //{
-            //    return;
-            //}
-
-            //MenuButton.IsChecked = item.IsBackButtonVisible;
-
-            //var show = item.IsBackButtonVisible;
-            //if (show != _backButtonCollapsed)
-            //{
-            //    return;
-            //}
-
-            //_backButtonCollapsed = !show;
-            //BackButton.Visibility = Visibility.Visible;
-
-            //var tabContainerGrid = Navigation.GetChild<Grid>(x => x.Name == "TabContainerGrid");
-            //if (tabContainerGrid == null)
-            //{
-            //    return;
-            //}
-
-            //ElementCompositionPreview.SetIsTranslationEnabled(tabContainerGrid, true);
-
-            //var visual1 = ElementComposition.GetElementVisual(BackButton);
-            //var visual2 = ElementComposition.GetElementVisual(tabContainerGrid);
-
-            //var batch = visual1.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            //batch.Completed += (s, args) =>
-            //{
-            //    visual2.Properties.InsertVector3("Translation", Vector3.Zero);
-            //    BackButton.Visibility = show
-            //        ? Visibility.Visible
-            //        : Visibility.Collapsed;
-            //};
-
-            //var offset = visual1.Compositor.CreateScalarKeyFrameAnimation();
-            //offset.InsertKeyFrame(0, show ? -40 : 0);
-            //offset.InsertKeyFrame(1, show ? 0 : -40);
-            //offset.Duration = Constants.FastAnimation;
-
-            //var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
-            //scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
-            //scale.Duration = Constants.FastAnimation;
-
-            //var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            //opacity.InsertKeyFrame(show ? 0 : 1, 0);
-            //opacity.InsertKeyFrame(show ? 1 : 0, 1);
-
-            //visual1.CenterPoint = new Vector3(24);
-
-            //visual2.StartAnimation("Translation.X", offset);
-            //visual1.StartAnimation("Scale", scale);
-            //visual1.StartAnimation("Opacity", opacity);
-            //batch.End();
-        }
-
-        private void Navigation_AddTabButtonClick(TabView sender, object args)
-        {
-            throw new System.NotImplementedException();
         }
 
         public void AddNewTab(TabViewItem newTab)

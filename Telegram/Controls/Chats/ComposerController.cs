@@ -13,8 +13,6 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.RichEditor;
 using Telegram.Navigation;
-using Telegram.Services;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
@@ -340,7 +338,7 @@ namespace Telegram.Controls.Chats
             public CancellationTokenSource Cancellation { get; } = new CancellationTokenSource();
         }
 
-        // As TDesktop has it: on screen for 9 seconds, and offered at most once in 30.
+        // On screen for 9 seconds, and offered at most once in 30.
         private const int OfferDuration = 9;
         private const ulong OfferInterval = 30000;
 

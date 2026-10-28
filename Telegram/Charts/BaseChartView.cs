@@ -837,10 +837,6 @@ namespace Telegram.Charts
             invalidatePickerChart = true;
         }
 
-        int lastW = 0;
-        int lastH = 0;
-
-        //@Override
         protected virtual void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
             // The surface holds device pixels while everything else here is in DIPs, so a scale
@@ -962,8 +958,7 @@ namespace Telegram.Charts
                 return;
             }
 
-            // minMaxUpdateStep is a per-frame increment inherited from the Android original, whose
-            // loop ran at 60 Hz. Left as one, the transition finishes three times too fast at 200 Hz
+            // minMaxUpdateStep is a per-frame increment, tuned for a 60 Hz loop. Left as one, the transition finishes three times too fast at 200 Hz
             // and stretches into slow motion the moment frames get expensive, because its duration
             // is a frame count rather than a time. Scaled back onto that 60 Hz baseline.
             var step = minMaxUpdateStep * 60 * (_frameTimestamp - _minMaxTimestamp) / (float)Stopwatch.Frequency;
@@ -1339,11 +1334,9 @@ namespace Telegram.Charts
                 transitionAlpha = transitionParams.progress;
             }
 
-            // The band is masked to a rounded rectangle, as SharedUiComponents.getPickerMaskBitmap
-            // did on Android - a bitmap of the window background with a rounded hole punched out of
-            // it, drawn over the top. That cannot be copied here: this surface is transparent, so
-            // painting the theme colour into the corners would cover the page behind them. A
-            // geometry clip is the same shape and keeps the transparency.
+            // The band is masked to a rounded rectangle with a geometry clip, not by painting the
+            // theme colour into the corners: this surface is transparent, so that would cover the
+            // page behind them.
             using (var mask = CanvasGeometry.CreateRoundedRectangle(canvas,
                 CreateRect(HORIZONTAL_PADDING, top, MeasuredWidth - HORIZONTAL_PADDING, bottom), 4, 4))
             using (canvas.CreateLayer(1, mask))
@@ -1390,7 +1383,7 @@ namespace Telegram.Charts
                         //bottomChartBitmap.eraseColor(0);
                         //drawPickerChart(bottomChartCanvas);
 
-                        // Erased and reused, as the Android original did. Every picker height listener
+                        // Erased and reused. Every picker height listener
                         // sets invalidatePickerChart on each update tick, so allocating here meant one
                         // GPU texture per frame for the length of an animation - none of them disposed.
                         //

@@ -32,7 +32,6 @@ using Telegram.Views.Settings.Popups;
 using Telegram.Views.Stars.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;

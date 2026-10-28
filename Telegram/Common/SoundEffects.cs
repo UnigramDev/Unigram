@@ -7,7 +7,6 @@
 
 using Telegram.Native.Media;
 using Telegram.Td.Api;
-using Windows.ApplicationModel;
 
 namespace Telegram.Common
 {

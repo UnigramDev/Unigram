@@ -8,7 +8,6 @@
 using Telegram.Common;
 using Telegram.Services;
 using Windows.ApplicationModel.Activation;
-using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Resources;

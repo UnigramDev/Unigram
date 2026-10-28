@@ -9,7 +9,6 @@ using System;
 using Telegram.Common;
 using Telegram.Native.Media;
 using Telegram.Td.Api;
-using Windows.ApplicationModel;
 using Path = System.IO.Path;
 
 namespace Telegram.Streams

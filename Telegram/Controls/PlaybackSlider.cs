@@ -71,7 +71,6 @@ namespace Telegram.Controls
         }
 
         private bool _pressed;
-        private bool _entered;
 
         public bool IsScrubbing => _pressed;
 
@@ -304,7 +303,6 @@ namespace Telegram.Controls
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
-            _entered = true;
             VisualStateManager.GoToState(this, "PointerOver", true);
         }
 
@@ -346,12 +344,10 @@ namespace Telegram.Controls
         {
             if (_pressed)
             {
-                _entered = true;
                 VisualStateManager.GoToState(this, "PointerOver", true);
             }
             else
             {
-                _entered = false;
                 VisualStateManager.GoToState(this, "Normal", true);
             }
         }
@@ -410,12 +406,10 @@ namespace Telegram.Controls
             var pointer = e.GetCurrentPoint(this);
             if (pointer.Position.X >= 0 && pointer.Position.Y >= 0 && pointer.Position.X <= ActualWidth && pointer.Position.Y <= ActualHeight)
             {
-                _entered = true;
                 VisualStateManager.GoToState(this, "PointerOver", true);
             }
             else
             {
-                _entered = false;
                 VisualStateManager.GoToState(this, "Normal", true);
             }
         }

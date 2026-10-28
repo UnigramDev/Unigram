@@ -232,7 +232,7 @@ namespace Telegram.ViewModels.Stories
                     ToastPopup.ShowError(XamlRoot, error);
                     break;
 
-                // CanPostStoryResultBoostNeeded is for channels, which cannot post stories yet.
+                    // CanPostStoryResultBoostNeeded is for channels, which cannot post stories yet.
             }
 
             return false;

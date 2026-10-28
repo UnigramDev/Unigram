@@ -8,7 +8,6 @@
 using System;
 using System.Numerics;
 using System.Text;
-using Telegram.Common;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -389,7 +388,7 @@ namespace Telegram.Controls.Messages
                         HeaderBrush =
                         BorderBrush = new SolidColorBrush(colors[0]);
 
-                    SetStripes( colors.Count > 1 ? colors[1] : default, colors.Count > 2 ? colors[2] : default);
+                    SetStripes(colors.Count > 1 ? colors[1] : default, colors.Count > 2 ? colors[2] : default);
                 }
                 else
                 {

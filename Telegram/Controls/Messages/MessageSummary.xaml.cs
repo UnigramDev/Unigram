@@ -51,8 +51,6 @@ namespace Telegram.Controls.Messages
         private Rectangle BackgroundOverlay;
         private TextBlock Label;
 
-        private bool _templateApplied;
-
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
@@ -60,8 +58,6 @@ namespace Telegram.Controls.Messages
             Label = GetTemplateChild(nameof(Label)) as TextBlock;
 
             BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
-
-            _templateApplied = true;
         }
 
         #endregion

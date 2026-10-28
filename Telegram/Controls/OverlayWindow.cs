@@ -13,7 +13,6 @@ using Telegram.Navigation.Services;
 using Telegram.Views.Host;
 using Windows.Devices.Input;
 using Windows.UI;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -208,7 +207,7 @@ namespace Telegram.Controls
             return false;
         }
 
-        public void PopupOpened()
+        private void PopupOpened()
         {
             UnmaskTitleAndStatusBar(Window);
         }
@@ -224,7 +223,7 @@ namespace Telegram.Controls
             return false;
         }
 
-        public void PopupClosed()
+        private void PopupClosed()
         {
             MaskTitleAndStatusBar(Window);
         }

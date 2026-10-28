@@ -148,7 +148,7 @@ namespace Telegram.Collections
 
         /// <summary>
         /// Reloads when any of <paramref name="messageIds"/> is in the list, so deleted messages
-        /// leave it the way Android drops them, without shifting every later index by hand.
+        /// leave it without every later index being shifted by hand.
         /// </summary>
         public void Delete(long chatId, HashSet<long> messageIds)
         {
@@ -634,7 +634,7 @@ namespace Telegram.Collections
                 {
                     // The search leaves out what TDLib does not index under the filter, which the
                     // server's positions still count. Asked for by id, those come back as something
-                    // else and stay empty, like on Android; one the search merely did not reach,
+                    // else and stay empty; one the search merely did not reach,
                     // as when TDLib answers from its database and stops where that ends, fills in.
                     var response2 = await _clientService.SendAsync(new GetMessages(segment.ChatId, missing.ToVector()));
                     if (ct.IsCancellationRequested)

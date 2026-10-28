@@ -10,8 +10,7 @@ namespace winrt::Telegram::Native::Cache
     // The contract is deliberately **sequential**. An index-based RenderFrame fits a vector
     // animation and lies about ffmpeg, which cannot seek cheaply; a producer that only ever goes
     // forward is honest for both, and random access is a property of the finished cache file's
-    // index rather than of the backend. Android's BitmapsCache.Cacheable has the same shape for the
-    // same reason.
+    // index rather than of the backend.
     //
     // The asymmetry that survives is the uncached fallback: a vector animation can render an
     // arbitrary frame on demand while the cache builds, a video cannot. That is what

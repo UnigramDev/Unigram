@@ -423,9 +423,8 @@ namespace Telegram.Controls.Cells
             //chartView.legendSignatureView.chevron.setAlpha(1f);
             zoomedChartView.SetHeader(null);
 
-            // The date the chart was zoomed into, not whatever is selected now. Android reads the
-            // live selection here and can, because it is touch driven and nothing clears it; we
-            // clear on pointer exit, and moving the mouse to the header to click back does exactly
+            // The date the chart was zoomed into, not whatever is selected now. The selection is
+            // cleared on pointer exit, and moving the mouse to the header to click back does exactly
             // that. GetSelectedDate then returns -1, the transition's binary search misses, and it
             // falls back to the last date - anchoring the whole animation to the right edge.
             long d = data.activeZoom;

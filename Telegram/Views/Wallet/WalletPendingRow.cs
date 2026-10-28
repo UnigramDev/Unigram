@@ -26,7 +26,7 @@ namespace Telegram.Views.Wallet
     /// avatar - and how it sinks back once the transfer has settled, either way.
     /// </summary>
     /// <remarks>
-    /// After the Android prototype the wallet is being matched to. Everything runs on the
+    /// Everything runs on the
     /// compositor off one property set - <c>Lift</c>, <c>Press</c> and <c>Arrived</c> - so a row
     /// that is pending for half a minute costs nothing on the UI thread while it waits.
     ///

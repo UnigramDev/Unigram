@@ -888,7 +888,7 @@ namespace Telegram.Controls
                 return reveal;
             }
 
-            private int LogoCells =>(_replaceTill - _replaceFrom) * (_replaceTill - _replaceFrom);
+            private int LogoCells => (_replaceTill - _replaceFrom) * (_replaceTill - _replaceFrom);
 
             private bool IsFinder(int x, int y)
             {

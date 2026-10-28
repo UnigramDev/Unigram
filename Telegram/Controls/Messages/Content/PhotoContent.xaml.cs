@@ -139,7 +139,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            if (small.Id != big.Photo.Id && !big.Photo.Local.IsDownloadingCompleted || isSecret || hasSpoiler)
+            if ((small.Id != big.Photo.Id && !big.Photo.Local.IsDownloadingCompleted) || isSecret || hasSpoiler)
             {
                 UpdateThumbnail(message, small, photo.Minithumbnail, true, isSecret, hasSpoiler);
             }

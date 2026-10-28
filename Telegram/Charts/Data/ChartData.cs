@@ -35,10 +35,8 @@ namespace Telegram.Charts.Data
         /// there is no second axis, which is every graph but revenue.
         /// </summary>
         /// <remarks>
-        /// A divisor rather than a rate because that is the shape Android uses, and keeping it lets
-        /// the two implementations be diffed. TDLib's statisticalGraphData carries no rate of its
-        /// own - unlike the raw TL type Android reads - so the caller sets this from the usd_rate
-        /// that came alongside the graph.
+        /// TDLib's statisticalGraphData carries no rate of its own, so the caller sets this from
+        /// the usd_rate that came alongside the graph.
         /// </remarks>
         public float yRate = 0;
 
@@ -327,8 +325,8 @@ namespace Telegram.Charts.Data
             return right;
         }
 
-        // Matched on the formatter name the graph carries rather than on the graph type, which is
-        // how Android picks it: the same type serves both currencies.
+        // Matched on the formatter name the graph carries rather than on the graph type: the same
+        // type serves both currencies.
         public static int GetFormatter(string value)
         {
             if (string.IsNullOrEmpty(value))

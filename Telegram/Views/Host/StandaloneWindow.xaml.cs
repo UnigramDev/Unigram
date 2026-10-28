@@ -11,7 +11,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

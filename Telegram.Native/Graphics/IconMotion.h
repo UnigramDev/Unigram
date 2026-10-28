@@ -7,13 +7,11 @@
 namespace Graphics3D
 {
     /// <summary>
-    /// How the star and the coin move: GLIconTextureView's animators, ported one for one.
+    /// How the star and the coin move.
     /// </summary>
     /// <remarks>
-    /// Kept in the Android view's own terms - angleX turns about the vertical axis, angleY about
-    /// the horizontal one, angleX2 lifts the model in model units - so that it can be read against
-    /// GLIconTextureView.java line by line. IconScene turns those into a matrix exactly as
-    /// GLIconRenderer.onDrawFrame does.
+    /// In three values: angleX turns about the vertical axis, angleY about the horizontal one,
+    /// angleX2 lifts the model in model units. IconScene turns those into a matrix.
     ///
     /// At rest it is still. Two seconds after anything ends, it plays one of its idle tricks,
     /// drawn from a shuffled deck so that none repeats until all have played: for the star a nod,
@@ -50,15 +48,15 @@ namespace Graphics3D
         enum class Curve : std::uint8_t
         {
             Linear,
-            Standard,       // CubicBezierInterpolator.DEFAULT
-            EaseOut,        // CubicBezierInterpolator.EASE_OUT
-            EaseOutQuint,   // CubicBezierInterpolator.EASE_OUT_QUINT
-            Overshoot,      // OvershootInterpolator, tension 2
-            Wobble          // sleepAnimation's ten linear keyframes
+            Standard,       // cubic Bezier (0.25, 0.1, 0.25, 1)
+            EaseOut,        // cubic Bezier (0, 0, 0.58, 1)
+            EaseOutQuint,   // cubic Bezier (0.23, 1, 0.32, 1)
+            Overshoot,      // overshoot, tension 2
+            Wobble          // the doze's ten linear keyframes
         };
 
-        // One ValueAnimator of the set that is playing. They all start together and the delay
-        // is each one's startDelay, as in AnimatorSet.playTogether.
+        // One animation of the set that is playing. They all start together, each after its
+        // own delay.
         struct Track
         {
             Channel channel;
@@ -98,7 +96,7 @@ namespace Graphics3D
         float m_setTime = 0;
         bool m_setRunning = false;
 
-        // startBackAnimation: a separate animator, not part of the set.
+        // The spring back to rest: separate, not part of the set.
         float m_backFrom[3] = {};
         float m_backTime = 0;
         bool m_backRunning = false;

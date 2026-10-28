@@ -21,7 +21,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
 using Windows.Data.Xml.Dom;
-using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

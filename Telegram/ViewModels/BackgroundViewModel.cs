@@ -19,7 +19,6 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml.Navigation;
 

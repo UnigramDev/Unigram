@@ -386,7 +386,7 @@ namespace Telegram.Controls.RichEditor
 
             if (group != null)
             {
-                // Named for the layout it switches to, as TDesktop's is.
+                // Named for the layout it switches to.
                 parts.LayoutButton.Content = group.IsSlideshow ? Icons.Apps : Icons.Image;
                 AutomationProperties.SetName(parts.LayoutButton, group.IsSlideshow ? Strings.AccDescrCollage : Strings.AccDescrIVSlideshow);
             }

@@ -7,13 +7,10 @@
 
 using Microsoft.Web.WebView2.Core;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Entities;
-using Telegram.Td.Api;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Data.Json;

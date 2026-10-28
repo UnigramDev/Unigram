@@ -21,9 +21,8 @@ namespace Graphics3D
         constexpr float Pi = 3.14159265358979f;
         constexpr float ToRadians = Pi / 180.0f;
 
-        // Under Assets\Models. The file names are the Android app's own, apart from
-        // start_texture.png, which is its res/raw/start_texture.svg rasterised as Icon3D asks
-        // SvgHelper to: 240 pixels square, white.
+        // Under Assets\Models. start_texture.png is start_texture.svg rasterised 240 pixels
+        // square, white.
         constexpr wchar_t AssetFolder[] = L"Icon";
 
         constexpr const wchar_t* StarModels[] = { L"star.binobj" };
@@ -33,15 +32,14 @@ namespace Graphics3D
         // Position, normal and texture coordinate, as floats.
         constexpr UINT VertexStride = 32;
 
-        // Icon3D's TYPE_ constants, which fragment3 compares against.
+        // The model types the coin's pixel shader compares against (TYPE_* in Icon.hlsl).
         constexpr std::int32_t TypeStar = 0;
         constexpr std::int32_t TypeCoin = 1;
         constexpr std::int32_t TypeGoldenStar = 2;
 
-        // The theme colours GLIconRenderer reads, at their defaults. Every sheet that shows the
-        // star sets its colorKey1/2 to premiumGradient2 and premiumGradient1, and every Stars
-        // screen to starsGradient1 and 2; the background bitmap is premiumGradient2 blended
-        // halfway into dialogBackground, whose dark value is night.attheme's.
+        // The theme colours, at their defaults. The Premium star takes the two Premium gradient
+        // colours, second first, and the Stars one the two Stars colours; the background is the
+        // second Premium colour blended halfway into the dialog background, light or night.
         constexpr std::uint32_t PremiumGradient1 = 0x55A5FF;
         constexpr std::uint32_t PremiumGradient2 = 0xA767FF;
         constexpr std::uint32_t StarsGradient1 = 0xFEC846;
@@ -49,7 +47,7 @@ namespace Graphics3D
         constexpr std::uint32_t LightDialogBackground = 0xFFFFFF;
         constexpr std::uint32_t DarkDialogBackground = 0x1E1E1E;
 
-        // GLIconRenderer.onSurfaceChanged and setLookAtM.
+        // The camera's projection and the eye's distance from the model.
         constexpr float FieldOfView = 53.13f;
         constexpr float NearPlane = 1.0f;
         constexpr float FarPlane = 200.0f;
@@ -67,7 +65,7 @@ namespace Graphics3D
             out[2] = Channel(color, 0);
         }
 
-        // ColorUtils.blendARGB, without the alpha.
+        // A linear blend per channel, alpha left out.
         void Blend(std::uint32_t from, std::uint32_t to, float ratio, float (&out)[3])
         {
             for (int i = 0; i < 3; i++)
@@ -77,7 +75,7 @@ namespace Graphics3D
             }
         }
 
-        // DataInputStream, which is big-endian.
+        // The model files are big-endian.
         class BigEndianReader
         {
         public:
@@ -137,13 +135,12 @@ namespace Graphics3D
         };
 
         /// <summary>
-        /// ObjLoader: three float arrays - positions, texture coordinates, normals - and then a
+        /// A .binobj: three float arrays - positions, texture coordinates, normals - and then a
         /// triangle list of index triples into them, expanded here into an interleaved buffer.
         /// </summary>
         /// <remarks>
-        /// The texture coordinate's v is flipped, and an index outside its array reads zero, both
-        /// as ObjLoader does it - coin_inner relies on the second. Its other indices are not
-        /// checked there; here they reject the file.
+        /// The texture coordinate's v is flipped, and a texture index outside its array reads
+        /// zero - coin_inner relies on that. Any other index out of range rejects the file.
         /// </remarks>
         bool ParseModel(const std::vector<std::uint8_t>& data, std::vector<float>& vertices)
         {
@@ -185,8 +182,8 @@ namespace Graphics3D
                 vertices.insert(vertices.end(), positions.begin() + p, positions.begin() + p + 3);
                 vertices.insert(vertices.end(), normals.begin() + n, normals.begin() + n + 3);
 
-                // `index < 0 || index >= size ? 0 : textures.get(index)` for u, and the same with
-                // `1 - ` for v - so a missing v is 0, not 1.
+                // A missing u is 0, and so is a missing v: the flip applies only to one that
+                // exists, so it is 0, not 1.
                 const std::int64_t t = std::int64_t(texture) * 2;
 
                 vertices.push_back(hasCoordinate(t) ? coordinates[static_cast<size_t>(t)] : 0.0f);
@@ -214,8 +211,8 @@ namespace Graphics3D
         /// Decodes a PNG into an RGBA texture, unpremultiplied.
         /// </summary>
         /// <remarks>
-        /// The phone uploads its bitmaps premultiplied. Of the three textures that only matters to
-        /// start_texture, whose colour the star reads - so it is baked with its colour channels
+        /// The shaders were written against premultiplied textures. Of the three that only matters
+        /// to start_texture, whose colour the star reads - so it is baked with its colour channels
         /// equal to its coverage, which reads the same either way. flecks.png is opaque and only
         /// the alpha of coin_border.png is read.
         /// </remarks>
@@ -306,8 +303,8 @@ namespace Graphics3D
         // The back buffer's format, which the multisampled target must share to be resolved into it.
         constexpr DXGI_FORMAT TargetFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
 
-        // Matrix.perspectiveM, but with D3D's [0, 1] depth. Right-handed, viewer at +z, like the
-        // look-at it is paired with.
+        // A GL-style perspective, but with D3D's [0, 1] depth. Right-handed, viewer at +z, like
+        // the look-at it is paired with.
         Matrix4 Perspective(float aspect)
         {
             const float f = 1.0f / std::tan(FieldOfView * ToRadians / 2.0f);
@@ -328,7 +325,7 @@ namespace Graphics3D
         winrt::com_ptr<ID3D11Buffer> vertices;
         UINT count = 0;
 
-        // modelIndex, which fragment3 tells the coin's parts apart by.
+        // modelIndex, which the coin's pixel shader tells its parts apart by.
         winrt::com_ptr<ID3D11Buffer> model;
     };
 
@@ -467,8 +464,7 @@ namespace Graphics3D
         samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
         samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-        // GL's defaults, which Icon3D never changes: depth test less-than, no blending - the
-        // shaders write their own alpha - and no culling.
+        // Depth test less-than, no blending - the shaders write their own alpha - and no culling.
         D3D11_DEPTH_STENCIL_DESC depthDesc = {};
         depthDesc.DepthEnable = TRUE;
         depthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -606,13 +602,13 @@ namespace Graphics3D
 
     void IconScene::UpdateColors()
     {
-        // GLIconRenderer.updateColors, with `golden` either nothing or everything.
+        // `golden` is either nothing or everything.
         ToFloat3(m_golden ? StarsGradient1 : PremiumGradient2, m_uniforms.gradientColor1);
         ToFloat3(m_golden ? StarsGradient2 : PremiumGradient1, m_uniforms.gradientColor2);
         Blend(PremiumGradient2, m_dark ? DarkDialogBackground : LightDialogBackground, 0.5f,
             m_uniforms.backgroundColor);
 
-        // onSurfaceCreated's isDarkBackground: a dimmer, broader highlight on a dark sheet.
+        // A dimmer, broader highlight on a dark sheet.
         m_uniforms.spec1 = m_dark ? 1.0f : 2.0f;
         m_uniforms.spec2 = m_dark ? 0.2f : 0.13f;
 
@@ -636,8 +632,7 @@ namespace Graphics3D
             }
         }
 
-        // In the order the view sees them: down, scroll, up, then the tap its detector reports
-        // after the up.
+        // In the order they happen: down, drag, up, then the tap, which is reported after the up.
         if (gesture.pressed)
         {
             m_motion.Press();
@@ -660,8 +655,8 @@ namespace Graphics3D
 
         m_motion.Advance(step);
 
-        // Icon3D.draw steps these per frame - enterAlpha by 16 / 220, xOffset by 0.0005 - so
-        // at the sixty frames a second they assume, a 220 ms fade and 0.03 a second of drift.
+        // A 220 ms fade in, and 0.03 a second of drift: 16 / 220 and 0.0005 a frame at sixty
+        // frames a second, made independent of the frame rate.
         m_uniforms.alpha = std::min(1.0f, m_uniforms.alpha + step / 0.22f);
         m_uniforms.xOffset = std::fmod(m_uniforms.xOffset + step * 0.03f, 1.0f);
         m_uniforms.time += step;
@@ -677,7 +672,7 @@ namespace Graphics3D
         auto* context = target.context;
         const IconResources& resources = *m_resources;
 
-        // GLIconRenderer.onDrawFrame: the model is lifted, tipped about x and turned about y,
+        // The model is lifted, tipped about x and turned about y,
         // both negated, and seen from 100 units down +z.
         Matrix4 rotation;
         rotation.at(3, 1) = m_motion.Lift();

@@ -14,7 +14,6 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Telegram.Native;
 using Telegram.Services;
-using Windows.Storage;
 
 namespace Telegram
 {

@@ -13,7 +13,6 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Storage;
 using Windows.System;
 
 namespace Telegram.Common
@@ -811,7 +810,7 @@ if(document.documentElement)apply();else document.addEventListener('readystatech
         private static bool _keepActiveFailureLogged;
 
         // Windows demotes the processes of a web view nobody can see, which throttles the relay
-        // page's timers and network loop. TDesktop restores them every second for the same reason.
+        // page's timers and network loop, so they are restored every second.
         private void OnKeepActiveTick(DispatcherQueueTimer sender, object args)
         {
             if (_environment == null)

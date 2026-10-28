@@ -32,7 +32,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    // The storage and network donut, ported from Android's org.telegram.ui.Components.CacheChart.
+    // The storage and network donut.
     //
     // It owns the whole of what the pages used to assemble around it: the ring, the percentage on
     // each sector, the size in the middle, the indeterminate state, the empty state, and the icons

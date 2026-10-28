@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Calls;
@@ -15,11 +14,9 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Calls;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Calls;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Telegram.Services.Calls

@@ -7,12 +7,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using Telegram.Common;
-using Telegram.Services.Settings;
 using Windows.Storage;
 using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
+#if UNPACKAGED
+using System.IO;
+using Telegram.Common;
+using Telegram.Services.Settings;
+#endif
 
 namespace Telegram.Services
 {

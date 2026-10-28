@@ -19,7 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using Telegram.Entities;
-using Windows.ApplicationModel;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Effects;

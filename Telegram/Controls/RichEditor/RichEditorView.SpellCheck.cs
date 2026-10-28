@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Native;
 using Telegram.Services;
-using Windows.Foundation;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

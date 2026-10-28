@@ -66,8 +66,7 @@ namespace Graphics3D
         // sized in physical ones and scaled back down so one texel is one physical pixel.
         void SetSize(float width, float height, float scale);
 
-        // UI thread. Degrees already, so that the two hosts being matched can be compared against
-        // this line for line.
+        // UI thread. Degrees already.
         void BeginDrag();
         void Drag(float horizontalPixels, float verticalPixels);
         void EndDrag();

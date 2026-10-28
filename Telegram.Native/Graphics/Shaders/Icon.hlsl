@@ -1,7 +1,7 @@
-// The Android app's 3D icon shaders - vertex2.glsl, fragment4.glsl (the star) and fragment3.glsl
-// (the coin), from TMessagesProj/src/main/assets/shaders - translated by hand. Unlike the
-// diamond's there is no generator: they are short, and kept line for line with the GLSL so that a
-// change upstream can be diffed across. What had to change is noted where it happens.
+// The 3D icon shaders: one vertex shader, and a pixel shader each for the star and the coin,
+// translated by hand from GLSL. Unlike the diamond's there is no generator: they are short, and
+// kept line for line with the GLSL so that the two stay diffable. What had to change is noted
+// where it happens.
 
 #pragma pack_matrix(column_major)
 
@@ -55,7 +55,7 @@ struct VertexIn
     float2 a_TexCoordinate : TEXCOORD0;
 };
 
-// vertex2's `depth` varying is written and never read, so it is not carried.
+// The GLSL's `depth` varying is written and never read, so it is not carried.
 struct Varyings
 {
     float4 position : SV_Position;
@@ -74,7 +74,7 @@ Varyings VS(VertexIn input)
     return output;
 }
 
-// fragment4.glsl
+// The star
 
 float4 premium_star(Varyings i)
 {
@@ -188,7 +188,7 @@ float4 StarPS(Varyings i) : SV_Target
     return lerp(premium_star(i), golden_star(i), golden);
 }
 
-// fragment3.glsl
+// The coin
 
 float4 CoinPS(Varyings i) : SV_Target
 {

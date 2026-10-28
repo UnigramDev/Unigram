@@ -25,7 +25,7 @@ namespace Telegram.Controls.RichEditor
     /// A copy goes out three ways: plain text; the chat's own text-with-entities format, so it
     /// pastes into the composer with its styles; and HTML, in the markup <see cref="RichHtml"/>
     /// reads, for everything else. The document
-    /// itself, media included, stays in this process, as in tdesktop and Android: the
+    /// itself, media included, stays in this process: the
     /// clipboard carries a token naming it, and only a paste that finds the same token gets it
     /// back whole. Files cannot round-trip through the clipboard, so a document can't either.
     /// </summary>

@@ -5,10 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using Microsoft.Graphics.Canvas.Geometry;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;

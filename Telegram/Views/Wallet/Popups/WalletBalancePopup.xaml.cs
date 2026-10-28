@@ -26,7 +26,7 @@ namespace Telegram.Views.Wallet.Popups
     public sealed partial class WalletBalancePopup : ModalPopup
     {
         // How far the note and the buttons rise into place as they come in, and how small the
-        // buttons start: the beta's 8 dp, 16 dp and 0.8.
+        // buttons start.
         private const float TipRise = 8;
         private const float ActionsRise = 16;
         private const float ActionsStartScale = 0.8f;

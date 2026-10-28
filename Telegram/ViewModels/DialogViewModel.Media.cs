@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Controls;
-using Telegram.Controls.Media;
 using Telegram.Entities;
 using Telegram.Services;
 using Telegram.Services.Factories;
@@ -21,7 +19,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

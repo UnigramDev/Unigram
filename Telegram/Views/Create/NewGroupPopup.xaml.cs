@@ -15,7 +15,6 @@ using Telegram.ViewModels.Create;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media.Imaging;
 

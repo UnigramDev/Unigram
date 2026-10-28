@@ -13,7 +13,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.UI.Xaml.Controls;

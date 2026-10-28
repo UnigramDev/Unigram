@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 // Based on Rg.DiffUtils <https://github.com/rotorgames/Rg.DiffUtils>, itself a port of
-// Android's androidx.recyclerview.widget.DiffUtil. Reworked here: batching dropped, the
+// androidx.recyclerview.widget.DiffUtil. Reworked here: batching dropped, the
 // per-item and per-step objects turned into values, and move detection's quadratic
 // allocation removed.
 //

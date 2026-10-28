@@ -14,8 +14,8 @@ using namespace winrt::UIComposition;
 
 namespace winrt::Telegram::Native::Graphics::implementation
 {
-    // The curl's shape as a share of the sticker's side, and how far the eye is: tuned on the
-    // phone prototype the motion comes from. A lifted point rises on screen by Rise of its height.
+    // The curl's shape as a share of the sticker's side, and how far the eye is, tuned by eye.
+    // A lifted point rises on screen by Rise of its height.
     static constexpr float CurlBend = 0.72f;
     static constexpr float CurlRadius = 0.3f;
     static constexpr float CurlEye = 3.2f;

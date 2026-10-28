@@ -49,13 +49,11 @@ namespace Telegram.Services
 
         /// <summary>
         /// What an outgoing bubble takes when its fill is far enough from the accent that the
-        /// themed foregrounds no longer sit on it - Android's <c>textColor = MSG_OUT_COLOR_WHITE</c>
-        /// branch, key for key.
+        /// themed foregrounds no longer sit on it: white text, and every key derived from it.
         /// </summary>
         /// <remarks>
         /// <c>MessageMediaForegroundOutgoing</c> is the one that is not a shade of the text colour:
-        /// Android gives <c>outMediaIcon</c> and <c>outFileProgress</c> the fill's first colour, so
-        /// the glyph reads as a hole punched in the white circle. The constant here stands in for
+        /// it should be the fill's first colour, so the glyph reads as a hole punched in the white circle. The constant here stands in for
         /// that until it is threaded through.
         /// </remarks>
         protected static readonly Dictionary<string, Color> _foregroundOverride = new()
@@ -74,8 +72,8 @@ namespace Telegram.Services
         };
 
         /// <summary>
-        /// The same for a fill light enough to need dark text - Android's
-        /// <c>MSG_OUT_COLOR_BLACK</c> branch, which is #212121 rather than pure black.
+        /// The same for a fill light enough to need dark text, which is #212121 rather than pure
+        /// black.
         /// </summary>
         /// <remarks>
         /// Mirrored from the white table rather than authored: the inversions in particular want
@@ -97,9 +95,9 @@ namespace Telegram.Services
         };
 
         /// <summary>
-        /// The keys the override writes even when the server sent an outbox accent. Android keeps
-        /// the rest inside <c>if (accentColor2 == 0)</c>, so the reply line and name stay accent
-        /// coloured while the text it quotes still flips - the block ends up mixed on purpose.
+        /// The keys the override writes even when the server sent an outbox accent; the rest are
+        /// written only without one, so the reply line and name stay accent coloured while the
+        /// text it quotes still flips - the block ends up mixed on purpose.
         /// </summary>
         protected static readonly HashSet<string> _alwaysOverride = new()
         {

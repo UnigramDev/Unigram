@@ -72,7 +72,7 @@ namespace Telegram.Controls.RichEditor
     /// <see cref="Changed"/>; nothing in this class knows about XAML, so it can be exercised on
     /// its own.
     ///
-    /// Undo is a snapshot per transaction, like tdesktop's and Android's editors: every
+    /// Undo is a snapshot per transaction: every
     /// operation that is not plain typing clones the document first. Documents are bounded by
     /// the server limits (a few hundred blocks), and a clone shares every immutable payload.
     /// </summary>

@@ -38,20 +38,15 @@ namespace Graphics3D
     static_assert(sizeof(IconUniforms) == 224, "IconUniforms must match the cbuffer in Icon.hlsl");
 
     /// <summary>
-    /// The star and the coin from the Android app's Premium, Stars and Business screens - its
-    /// Icon3D, ported mesh for mesh and shader for shader.
+    /// The star and the coin of the Premium, Stars and Business screens.
     /// </summary>
     /// <remarks>
-    /// Source of truth is the open-source Android client, `org.telegram.ui.Components.Premium.GLIcon`
-    /// with its assets; the beta's copies are byte-identical. `notes/icon-3d-component.md` says where
-    /// each number came from.
-    ///
     /// The star wears two looks through the same shader, which blends between them on `golden`: the
     /// purple Premium star and the golden Stars one. The coin is four meshes - rim, face, logo and
     /// the ring of stars - told apart in the shader by their index.
     ///
-    /// One pass, multisampled and resolved into the back buffer, because the phone asks its EGL
-    /// surface for sample buffers and an aliased silhouette at desktop sizes is plain to see.
+    /// One pass, multisampled and resolved into the back buffer, because an aliased silhouette at
+    /// desktop sizes is plain to see.
     /// </remarks>
     class IconScene final : public IScene3D
     {

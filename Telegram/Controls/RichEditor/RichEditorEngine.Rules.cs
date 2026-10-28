@@ -12,7 +12,7 @@ namespace Telegram.Controls.RichEditor
 {
     /// <summary>
     /// Markdown typed at the start of a line, turned into the block it stands for as the space
-    /// after it is typed - the rules tdesktop and Android apply. A rule is one undo step of its
+    /// after it is typed. A rule is one undo step of its
     /// own, after the typing, so Undo - or Backspace straight away - gives the characters back.
     /// </summary>
     public sealed partial class RichEditorEngine

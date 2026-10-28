@@ -18,8 +18,9 @@ namespace Telegram.Common
     /// <remarks>
     /// This is Windows' own algorithm, reversed from
     /// SettingsHandlers_nt!palette_formula::get_palette_from_color: CIELab places the ends of the
-    /// ramp, plain RGB walks it, HSL puts back the saturation the walk washed out. Reproduced
-    /// bit-exact against the shipping function over 5000 colors, bar 15 rounding ties.
+    /// ramp, plain RGB walks it, HSL puts back the saturation the walk washed out. It reproduced
+    /// the shipping function bit-exact over 5000 colors, bar 15 rounding ties, before the two
+    /// deliberate departures noted below - the omitted lightness clamp and Light2's weight.
     ///
     /// These are not <see cref="ThemeColorizer"/>'s shades and can't be swapped for them: the
     /// framework brushes reach much further from the accent than Telegram's do (in dark theme
@@ -52,7 +53,12 @@ namespace Telegram.Common
         {
             new Step(true, 0.00), // Default, never used
             new Step(true, 0.16), // Light1
-            new Step(true, 0.58), // Light2
+            // 0.40 where Windows travels 0.58. Light2 is the accent in dark theme - 82 of the
+            // shade-valued keys resolve to it, against Dark1's 79 in light - and at 0.58 it lands
+            // 2.4x further from the accent than Dark1 does, far enough to read as another colour
+            // altogether. Contrast is not what pays for that distance: black text on it clears
+            // 7.6:1 here against 10:1 there, where 4.5:1 is the bar.
+            new Step(true, 0.40), // Light2
             new Step(true, 0.82), // Light3
             new Step(false, 0.78), // Dark1
             new Step(false, 0.50), // Dark2
@@ -87,6 +93,33 @@ namespace Telegram.Common
                 : Interpolate(endpoint, accent, step.Weight);
 
             return SaturateMatch(accent, mixed);
+        }
+
+        /// <summary>
+        /// Pulls an accent into the lightness Windows derives from, leaving hue and chroma alone.
+        /// An accent already in the band comes back untouched.
+        /// </summary>
+        /// <remarks>
+        /// This is the one step of Windows' algorithm that <see cref="GetShade"/> leaves out,
+        /// because there the accent has to stay the theme's. It belongs wherever the shades feed
+        /// the framework's own brushes, which pair the fill with a foreground that is flatly white
+        /// or black by theme and so assume a fill near the middle of the range.
+        ///
+        /// Over the accents this app ships it takes white on Dark1, in light theme, from anywhere
+        /// between 2.97:1 and 6.33:1 to a consistent 6.1-6.6:1, and it stops a light accent
+        /// washing out in dark theme - #58BFE8 fills with #43E6FF rather than #88E4F5.
+        /// </remarks>
+        public static Color Normalize(Color accent)
+        {
+            RgbToLab(accent, out var l, out var a, out var b);
+
+            if (l >= 49 && l <= 50)
+            {
+                return accent;
+            }
+
+            var normalized = LabToRgb(Math.Clamp(l, 49, 50), a, b);
+            return Color.FromArgb(accent.A, normalized.R, normalized.G, normalized.B);
         }
 
         private static Color Interpolate(Color x, Color y, double weight)

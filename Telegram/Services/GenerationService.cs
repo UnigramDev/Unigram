@@ -24,7 +24,6 @@ using Telegram.Native.Media;
 using Telegram.Native.Opus;
 using Telegram.Streams;
 using Telegram.Td.Api;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;

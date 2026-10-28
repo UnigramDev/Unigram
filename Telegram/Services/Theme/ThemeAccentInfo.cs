@@ -83,16 +83,16 @@ namespace Telegram.Services
                 }
             }
 
-            // Three conditions, the first two as Android's fillAccentColors has them.
+            // Three conditions.
             //
             // A. Only a real gradient is a candidate, and only when it sits far enough from the
             //    colour the accent would have produced on its own - otherwise the themed
             //    foregrounds still work and replacing them would be gratuitous.
             // B. Which of the two sets, decided by the fill's perceived brightness.
             // C. A server-sent outbox accent keeps most of the set: only the text follows, so the
-            //    reply line and name stay the accent while the message they quote flips. Android
-            //    stops there, at provenance - but that says nothing about whether the result can
-            //    be read, and #4BB065 over a green fill colorizes the timestamp to #7C907B, which
+            //    reply line and name stay the accent while the message they quote flips. Where the
+            //    accent came from says nothing about whether the result can be read, though, and
+            //    #4BB065 over a green fill colorizes the timestamp to #7C907B, which
             //    is 1.06:1 against the gradient. So honour the accent only while it survives on
             //    the colours actually painted.
             var fill = outgoingFill is BackgroundFillFreeformGradient or BackgroundFillGradient
@@ -148,7 +148,7 @@ namespace Telegram.Services
         }
 
         /// <summary>
-        /// Android's threshold, in its own red-weighted metric.
+        /// In the red-weighted metric of Colors.GetColorDistance.
         /// </summary>
         private const int NearDistance = 35000;
 

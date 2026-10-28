@@ -8,12 +8,10 @@
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
 using Windows.Globalization;
 using Windows.UI.Core;
-using Windows.UI.Text;
 using Windows.UI.Text.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -24,6 +22,9 @@ using Windows.UI.Xaml.Shapes;
 // CoreText reports the Windows.UI.Text enum in every flavour, including the one where the bare
 // name is Microsoft.UI.Text's.
 using CoreTextUnderlineType = Windows.UI.Text.UnderlineType;
+#if UNPACKAGED
+using Telegram.Navigation;
+#endif
 
 namespace Telegram.Controls.RichEditor
 {

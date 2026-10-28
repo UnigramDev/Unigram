@@ -5,13 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
 using System.Collections.Generic;
+using Windows.Storage;
+#if UNPACKAGED
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using Telegram.Common;
-using Windows.Storage;
+#endif
 
 namespace Telegram.Services.Settings
 {

@@ -16,8 +16,6 @@ using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Native;
 using Telegram.Services;
-using Windows.Storage;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 

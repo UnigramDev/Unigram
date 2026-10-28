@@ -5,15 +5,17 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using Telegram.Common;
 using Windows.ApplicationModel;
 // ProcessorArchitecture is aliased because System.Reflection has one of its own, and the runtime
 // Architecture because a bare Architecture binds to the property below before the type.
 using ProcessorArchitecture = Windows.System.ProcessorArchitecture;
+#if UNPACKAGED
+using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using Telegram.Common;
 using RuntimeArchitecture = System.Runtime.InteropServices.Architecture;
+#endif
 
 namespace Telegram
 {

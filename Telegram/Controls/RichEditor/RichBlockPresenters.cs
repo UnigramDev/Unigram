@@ -9,15 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Telegram.Common;
-using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.RichEditor
 {
@@ -1181,7 +1178,7 @@ namespace Telegram.Controls.RichEditor
         public readonly List<RichMediaSource> ShownItems = new();
     }
 
-    /// <summary>A round button over a picture, as TDesktop's editor puts them there.</summary>
+    /// <summary>A round button over a picture.</summary>
     public sealed partial class RichMediaControlButton : Button
     {
         public RichMediaControlButton()

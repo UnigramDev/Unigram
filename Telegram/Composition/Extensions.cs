@@ -9,7 +9,6 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -297,8 +296,7 @@ namespace Telegram.Composition
                 _outLength = outLength;
             }
 
-            // Both handles are the same fraction of their chord, as they are on Android and iOS.
-            // The smoothness the blob shapes pass is the circular arc constant, which is only the
+            // Both handles are the same fraction of their chord. The smoothness the blob shapes pass is the circular arc constant, which is only the
             // right length while that holds: scaling one side and not the other, as this used to,
             // takes the incoming handle past the point where the segment stays convex.
             public readonly Vector2 SmoothIn()

@@ -9,7 +9,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Native;
 using Telegram.Navigation.Services;

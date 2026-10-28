@@ -7,7 +7,6 @@
 
 using System.Numerics;
 using Telegram.Common;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

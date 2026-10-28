@@ -18,9 +18,8 @@ namespace Telegram.Collections
         Remove,
         Move,
 
-        // The item survived the diff. Emitted inline rather than collected, which is the
-        // order Android dispatches it in too: nothing here depends on a position, so it
-        // does not matter that a later step still moves the row.
+        // The item survived the diff. Emitted inline rather than collected: nothing here
+        // depends on a position, so it does not matter that a later step still moves the row.
         Unchanged
     }
 
@@ -324,7 +323,7 @@ namespace Telegram.Collections
 
         // Upstream copied the whole pending list on every moved item, only so that it could
         // keep iterating past a RemoveAt - which made move detection allocate O(moves^2).
-        // Android indexes in place, and so does this.
+        // This indexes in place instead.
         private bool TryTakePostponed(int posInList, bool removal, out PostponedUpdate result)
         {
             if (_postponed != null)

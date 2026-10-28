@@ -9,21 +9,20 @@ namespace Graphics3D
 {
     namespace
     {
-        // idleDelay for both models, from attach, release and the end of every trick.
+        // For both models, from attach, release and the end of every trick.
         constexpr float IdleDelaySeconds = 2.0f;
 
-        // onScroll adds `distance * 0.5` and `distance * 0.05` in raw pixels. A logical pixel here
-        // is a density-independent one, so this assumes the xxhdpi density of 3 the phone is
-        // designed at - the one number in this file that is ours rather than read.
+        // A drag adds `distance * 0.5` and `distance * 0.05` in raw pixels at a density of 3. A
+        // logical pixel here is a density-independent one, hence the factor.
         constexpr float Density = 3.0f;
         constexpr float YawPerPixel = 0.5f * Density;
         constexpr float PitchPerPixel = 0.05f * Density;
 
-        // sleepAnimation's lift: ofFloat(0, 2, -3, 2, -1, 2, -3, 2, -1, 0), evenly spaced.
+        // The doze's lift, evenly spaced keyframes.
         constexpr float WobbleKeys[] = { 0, 2, -3, 2, -1, 2, -3, 2, -1, 0 };
 
-        // CubicBezierInterpolator, including its Newton solve for x, so the curves land on the
-        // same values the phone's do.
+        // A cubic Bezier easing with a Newton solve for x - at most 13 steps to within 1e-3 -
+        // so the curves land on the values they were designed with.
         float CubicBezier(float x1, float y1, float x2, float y2, float time)
         {
             const float cx = 3 * x1;
@@ -54,7 +53,7 @@ namespace Graphics3D
         : m_coin(coin)
         , m_random(std::random_device{}())
     {
-        // animationsCount: one for the coin, five for the star - index 0 is the pull, 1 the slow
+        // One trick for the coin, five for the star - index 0 is the pull, 1 the slow
         // flip, 2 the doze and 3 and 4 both the quick flip, so that one comes up twice a deck.
         m_deckSize = coin ? 1 : 5;
         for (int i = 0; i < m_deckSize; i++)
@@ -64,7 +63,6 @@ namespace Graphics3D
 
         Shuffle();
 
-        // onAttachedToWindow.
         ScheduleIdle();
     }
 
@@ -101,14 +99,14 @@ namespace Graphics3D
 
     void IconMotion::Enter(float delaySeconds)
     {
-        // startEnterAnimation ignores its angle argument and always starts from -180.
+        // Always from -180, whatever the angle.
         m_values[X] = -180;
         m_enterIn = delaySeconds;
     }
 
     void IconMotion::Press()
     {
-        // onDown: everything stops where it is, and nothing idles until the release.
+        // Everything stops where it is, and nothing idles until the release.
         Cancel();
         m_idleIn = -1;
     }
@@ -126,8 +124,7 @@ namespace Graphics3D
 
     void IconMotion::Tap(float x, float y)
     {
-        // onSingleTapUp. It arrives after the release has already started the spring back, and
-        // replaces it - unless the model is turned too far, when the spring is let run instead.
+        // A tap arrives after the release has already started the spring back, and replaces it - unless the model is turned too far, when the spring is let run instead.
         const float toX = (40 + Random(30)) * x;
         const float toY = (40 + Random(30)) * y;
 
@@ -171,7 +168,7 @@ namespace Graphics3D
 
     void IconMotion::StartBack()
     {
-        // startBackAnimation: from wherever it is to rest, all three together, and the next
+        // From wherever it is to rest, all three together, and the next
         // trick queued from now rather than from when the spring ends.
         Cancel();
 
@@ -230,9 +227,8 @@ namespace Graphics3D
         }
         else
         {
-            // A spin of a turn and a third, or one turn for the coin, either way round. The
-            // first animator starts from angleY, not angleX - the original's slip, kept because
-            // at rest both are zero and it is the original.
+            // A spin of a turn and a third, or one turn for the coin, either way round. It starts
+            // from angleY, not angleX, which is harmless: at rest both are zero.
             const float turn = m_coin ? 360.0f : 485.0f;
             const float to = variant == 2 ? -turn : turn;
 
@@ -259,7 +255,7 @@ namespace Graphics3D
     void IconMotion::Sleep()
     {
         // Turned over and tipped back, bobbing for ten seconds, then sprung upright. The return
-        // starts from 180 and 60 rather than the 184 and 50 it went to, as the original does.
+        // starts from 180 and 60 rather than the 184 and 50 it went to.
         Add(X, m_values[X], 184, 0, 0.6f, Curve::EaseOut);
         Add(Y, m_values[Y], 50, 0, 0.6f, Curve::EaseOut);
         Add(X2, 0, 0, 0, 10.0f, Curve::Wobble);
@@ -356,7 +352,7 @@ namespace Graphics3D
 
             if (done)
             {
-                // onAnimationEnd: every trick ends a whole number of turns round, so the reset
+                // Every trick ends a whole number of turns round, so the reset
                 // is invisible and only keeps the angle from growing.
                 m_values[X] = 0;
                 m_setRunning = false;

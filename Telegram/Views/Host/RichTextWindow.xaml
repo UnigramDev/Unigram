@@ -572,7 +572,7 @@
             </Setter>
         </Style>
 
-        <!--  On a tool whose feature needs Premium, for a user without it, as TDesktop marks them.  -->
+        <!--  On a tool whose feature needs Premium, for a user without it.  -->
         <Style x:Key="ToolbarPremiumStyle"
                TargetType="TextBlock">
             <Setter Property="Text"
@@ -687,7 +687,7 @@
                                    Grid.Row="2"
                                    Grid.RowSpan="2" />
 
-        <!--  Laid out as TDesktop's editor: history at the left, the tools in the middle and
+        <!--  History at the left, the tools in the middle and
               emoji at the right, all at the top; Send alone at the bottom.  -->
         <Grid x:Name="ToolbarRoot"
               Background="{ThemeResource LayerFillColorDefaultBrush}"

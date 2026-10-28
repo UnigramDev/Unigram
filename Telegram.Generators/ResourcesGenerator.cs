@@ -32,7 +32,7 @@ namespace Telegram.Generators
             isEnabledByDefault: true);
 
         /// <summary>
-        /// Android's plural forms, which the XML carries as separate suffixed entries. A key
+        /// The plural forms, which the XML carries as separate suffixed entries. A key
         /// wearing one of these gets an R constant instead of a property: it is read through
         /// Locale.Declension, which picks the form from the current language's rules.
         /// </summary>
@@ -244,7 +244,7 @@ namespace Telegram.Generators
         }
 
         /// <summary>
-        /// Android's own escaping, which the XML carries exactly as it was exported.
+        /// The escaping the XML carries exactly as it was exported.
         /// </summary>
         private static string Unescape(string value)
         {

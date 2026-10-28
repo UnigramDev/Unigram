@@ -19,7 +19,6 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Telegram.Native;
 using Telegram.Services;
-using Windows.ApplicationModel;
 
 namespace Telegram.Common
 {

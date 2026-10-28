@@ -16,8 +16,7 @@ namespace Telegram.Controls
     // How a transaction reads in a list row and at the top of its receipt popup, for both
     // currencies: 45 StarTransactionType constructors and 9 TonTransactionType ones. The
     // list and the popup resolve through here rather than each carrying its own chain;
-    // notes/star-transactions.md maps both unions back to MTProto and to the Android
-    // branches these strings come from.
+    // notes/star-transactions.md maps both unions back to MTProto.
     public readonly struct TransactionInfo
     {
         public readonly ProfilePictureSource Photo;

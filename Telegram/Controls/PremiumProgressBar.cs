@@ -99,8 +99,6 @@ namespace Telegram.Controls
             Exit = 2
         }
 
-        private PointerState _animateState;
-
         private double _animateTo;
         private TransitionState _transition;
 
@@ -179,7 +177,6 @@ namespace Telegram.Controls
         protected override void OnValueChanged(double oldValue, double newValue)
         {
             _newValue = newValue;
-            _animateState = PointerState.Released;
 
             base.OnValueChanged(oldValue, newValue);
 

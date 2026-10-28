@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 namespace Telegram.Views.Wallet.Popups
 {
     /// <summary>
-    /// What the wallet should ask for before it spends anything. Modelled on tdesktop's.
+    /// What the wallet should ask for before it spends anything.
     /// </summary>
     /// <remarks>
     /// The three are alternatives rather than layers - two of them would mean the weaker one

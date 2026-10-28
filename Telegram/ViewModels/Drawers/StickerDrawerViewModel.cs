@@ -720,8 +720,7 @@ namespace Telegram.ViewModels.Drawers
     }
 
     /// <summary>
-    /// The sticker panel search. Runs the same four sources Telegram Desktop and Android do, in
-    /// the order they present them: stickers already installed, then what the server finds, then
+    /// The sticker panel search. Runs four sources, in this order: stickers already installed, then what the server finds, then
     /// the packs whose name matches — locally first, then on the server.
     /// </summary>
     /// <remarks>
@@ -793,9 +792,7 @@ namespace Telegram.ViewModels.Drawers
 
             // Local first, so something is on screen while the two cloud requests are out — and
             // the cloud stickers last of all, because that is the group that pages: anything below
-            // it would be pushed further down every time another page arrives. Desktop and Android
-            // can afford to put the packs underneath only because theirs live in a strip above the
-            // grid rather than in it.
+            // it would be pushed further down every time another page arrives.
             await SearchInstalledSetsAsync();
             await ResolveEmojisAsync();
             await SearchLocalStickersAsync();
@@ -815,8 +812,8 @@ namespace Telegram.ViewModels.Drawers
         private async Task ResolveEmojisAsync()
         {
             // The server's sticker search takes the text and the emoji it stands for side by side.
-            // Desktop and Android both fill the second from their own keyword database; ours lives
-            // in TDLib, so this is the one request that has to happen before the cloud pass.
+            // The keyword database lives in TDLib, so this is the one request that has to happen
+            // before the cloud pass.
             if (Emoji.ContainsSingleEmoji(_query))
             {
                 _emojis = _query;

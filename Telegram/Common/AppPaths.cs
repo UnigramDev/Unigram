@@ -7,10 +7,12 @@
 
 using System;
 using System.IO;
-using System.Threading.Tasks;
-using Telegram.Common;
 using Windows.ApplicationModel;
 using Windows.Storage;
+#if UNPACKAGED
+using System.Threading.Tasks;
+using Telegram.Common;
+#endif
 
 namespace Telegram
 {

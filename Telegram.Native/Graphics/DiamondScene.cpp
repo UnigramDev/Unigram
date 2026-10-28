@@ -23,7 +23,7 @@ namespace Graphics3D
         constexpr float Pi = 3.14159265358979f;
         constexpr float ToRadians = Pi / 180.0f;
 
-        // Where the assets are packaged, under Assets\Models. The names are the beta's own.
+        // Where the assets are packaged, under Assets\Models.
         constexpr wchar_t AssetFolder[] = L"Diamond";
 
         // The baked animation: 1441 frames of 42 floats at 240 frames a second, so the loop is
@@ -32,8 +32,8 @@ namespace Graphics3D
         constexpr int FrameFloats = 42;
         constexpr float FramesPerSecond = 240.0f;
 
-        // How long it takes to appear. The beta's own, which its draw advances as `z += dt / 0.22`
-        // and multiplies into what the copy pass brings out - so the stone arrives rather than
+        // How long it takes to appear: each draw advances the entry as `z += dt / 0.22` and
+        // multiplies it into what the copy pass brings out - so the stone arrives rather than
         // being switched on. It doubles as the pause before the idle spin: the two were separate
         // numbers that turned out to be the same one.
         constexpr float EntrySeconds = 0.22f;
@@ -98,11 +98,9 @@ namespace Graphics3D
         /// The most samples this adapter will give the offscreen, up to four.
         /// </summary>
         /// <remarks>
-        /// The beta antialiases nothing - its EGL config asks for colour and depth and no samples
-        /// at all - and gets away with it because a phone draws this three or four times larger on
-        /// a screen dense enough to hide the rest. At 1x on a monitor the silhouette has nothing
-        /// hiding it, and the shader smooths only the facet seams inside the stone, never its
-        /// outline. So this is one place the port deliberately improves on the original.
+        /// The shader smooths only the facet seams inside the stone, never its outline, and at 1x
+        /// on a monitor nothing else hides a jagged silhouette - a dense mobile screen drawing it
+        /// three or four times larger would.
         ///
         /// Multisampling rather than drawing it oversized: the samples of a pixel share one pixel
         /// shader invocation, and that shader is by far the expensive half of this scene.
@@ -197,19 +195,17 @@ namespace Graphics3D
     {
         SceneMotion motion;
 
-        // All four read out of the beta, not chosen:
+        // Measured, not chosen:
         //
-        //   Ltg/f;.e        ValueAnimator.ofFloat(yaw, yaw + 360), LinearInterpolator,
-        //                   setRepeatCount(-1), duration 10540.18445322793 ms
-        //   g5.onTouchEvent  yaw += dx * (0.8 / density), pitch += dy * (0.8 / density)
+        //   idle spin   yaw to yaw + 360, linear, repeating, 10540.18445322793 ms a turn
+        //   drag        yaw += dx * (0.8 / density), pitch += dy * (0.8 / density)
         //
-        // This is how long a turn takes and not which way it goes: the sign in that animator is
-        // the beta's own yaw convention, which is not ours, and the direction was settled by
-        // watching the phone instead. See Advance.
+        // This is how long a turn takes and not which way it goes: the direction was settled by
+        // watching it. See Advance.
         motion.secondsPerTurn = 10.54018445322793f;
 
-        // Long enough to be seen square-on before it turns away, which is how it reads on the
-        // phone: the face carrying the anchored sparkle is the authored one, and the sparkle only
+        // Long enough to be seen square-on before it turns away: the face carrying the anchored
+        // sparkle is the authored one, and the sparkle only
         // shows within twelve degrees of square - about a third of a second of each turn - so a
         // stone that starts turning immediately presents its least interesting angle first.
         //
@@ -218,20 +214,18 @@ namespace Graphics3D
         motion.spinStartDelaySeconds = EntrySeconds;
 
         // Long enough that a kick reads as the stone being hurried along rather than as a jolt:
-        // about a third of it survives half a second and it is spent inside two. Not a number
-        // from the beta - the keystroke impulse is driven from somewhere the dex tooling could
-        // not follow - so this and the size of each kick are both ours to settle by eye.
+        // about a third of it survives half a second and it is spent inside two. Settled by eye,
+        // as is the size of each kick.
         motion.kickDecaySeconds = 0.5f;
-        // One coefficient for both axes, and it is per **density-independent** pixel: the beta
-        // divides 0.8 by the display density, so a drag covers the same angle on any screen. The
-        // pointer positions this is fed arrive in XAML's logical pixels, which is the same thing.
+        // One coefficient for both axes, and it is per **density-independent** pixel: 0.8 divided
+        // by the display density, so a drag covers the same angle on any screen. The pointer
+        // positions this is fed arrive in XAML's logical pixels, which is the same thing.
         //
-        // The gesture detector on the view carries its own pair - 0.5 for the yaw and 0.05 for
-        // the pitch, per raw pixel - but the container handles the touch itself and that path
-        // never runs on this screen. Taking the view's is why the stone barely tilted.
+        // Not 0.5 for the yaw and 0.05 for the pitch per raw pixel: with those the stone barely
+        // tilted.
         motion.dragYawPerPixel = 0.8f;
 
-        // Far below the beta's own 0.8, which tipped the stone over almost at a touch. The soft
+        // Far below the yaw's 0.8, which tipped the stone over almost at a touch. The soft
         // limit supplies the shape of the resistance and this sets how much drag it takes to work
         // through it, so it is the one number here settled by eye rather than read: 45 degrees of
         // tilt costs about 330 logical pixels, and a face comes fully round at about 850.
@@ -239,18 +233,15 @@ namespace Graphics3D
         // Steps smaller than about a halving are not felt - 0.8 to 0.5 was reported as no change
         // at all - so move it by thirds or not at all.
         motion.dragPitchPerPixel = 0.15f;
-        // Not clamped. Nothing in the beta bounds the tilt - the accumulator is linear and the
-        // renderer takes it raw - and on the phone a long drag does bring the top or bottom face
-        // fully into view. So this is the angle the resistance builds towards rather than a wall
+        // Not clamped: a long drag is meant to bring the top or bottom face fully into view. So
+        // this is the angle the resistance builds towards rather than a wall
         // the drag stops at: ninety degrees is looking straight at that face.
         motion.pitchSoftLimitDegrees = 90.0f;
 
-        // Ltg/f;.d - the release handler - captures both angles and runs them to zero over 600 ms
-        // through an OvershootInterpolator at its default tension of 2.
+        // On release both angles run to zero over 600 ms through an overshoot curve of tension 2.
         motion.settleSeconds = 0.6f;
 
-        // Off, as it is on the phone: of the five callers of setIdleAnimationEnabled, four pass
-        // false. It matters because the idle spin and the anchored sparkle fight each other by
+        // Off. It matters because the idle spin and the anchored sparkle fight each other by
         // design - sparkleShape.x bursts twice per six-second loop, and the visibility term only
         // opens within 12 degrees of square-on, so a turning stone hides almost every burst.
         motion.spinsByDefault = false;
@@ -467,7 +458,7 @@ namespace Graphics3D
         D3D11_DEPTH_STENCIL_DESC depth = {};
         depth.DepthEnable = TRUE;
         depth.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-        depth.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;      // GL_LEQUAL, as the beta sets it
+        depth.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
         if (FAILED(device->CreateDepthStencilState(&depth, depthOn.put())))
         {
@@ -612,11 +603,10 @@ namespace Graphics3D
     /// Which of the three palettes the fragment shader takes.
     /// </summary>
     /// <remarks>
-    /// 0 is the authored blue stone and is what every live view uses. 2 is the one the beta calls
-    /// the "Cool diamond" - a saturated blue with an inner glow - and it reaches the screen
-    /// through a different path entirely: `Ltg/d;` renders it into an off-screen pbuffer and
-    /// reads it back as a bitmap, which is how a message bubble shows one without a GL surface
-    /// of its own. 1 is an icy white, whose sparkle keeps only the circular halo.
+    /// 0 is the authored blue stone and is what every live view uses. 2 is the "Cool diamond" - a
+    /// saturated blue with an inner glow - meant to be rendered off screen and shown as a bitmap,
+    /// which is how a message bubble shows one without a surface of its own. 1 is an icy white,
+    /// whose sparkle keeps only the circular halo.
     /// </remarks>
     void DiamondScene::SetVariant(int variant)
     {
@@ -645,7 +635,7 @@ namespace Graphics3D
                 std::clamp(k, 0, static_cast<int>(m_resources->widths.size()) - 1))];
         };
 
-        // The beta's own cubic: value, a tangent built from the neighbours, and a curvature term.
+        // A cubic: value, a tangent built from the neighbours, and a curvature term.
         const float p0 = at(i), p1 = at(i + 1);
         const float slope = (p1 - p0) * 3.0f - ((p1 - at(i - 1)) / 2.0f) * 2.0f - (at(i + 2) - p0) / 2.0f;
 
@@ -686,7 +676,7 @@ namespace Graphics3D
     Matrix4 DiamondScene::Projection(float aspect, float squeeze) const
     {
         // D3D depth is [0, 1]. The GLSL ends its vertex shaders with a remap to GL's [-1, 1] that
-        // the translated shaders deliberately drop, so this is the matrix Metal was handed.
+        // the translated shaders deliberately drop, so this matrix lands in [0, 1] by itself.
         //
         // Right-handed: depth DECREASES with z, so the viewer sits at +z. That is not a
         // preference, it is what both shaders assume - `view` is the literal float3(0, 0, 1) in
@@ -695,7 +685,7 @@ namespace Graphics3D
         // while the shading and the sparkle gating pick the near one, so the sparkles anchor to
         // the side facing away and appear to travel against the body.
         //
-        // `s` is CONSTANT: the beta divides by the reference width 0.9975 and multiplies by
+        // `s` is CONSTANT: it divides by the reference width 0.9975 and multiplies by
         // widths[0] - the table's own first sample, indexed literally, not the splined one.
         const float baseWidth = m_resources->widths.empty() ? 0.9975f : m_resources->widths[0];
         const float distance = m_resources->camera[1];
@@ -766,15 +756,13 @@ namespace Graphics3D
 
         auto context = target.context;
 
-        // Three axes, in this order, because that is what Ltg/e;.c does: setIdentityM, then
-        // rotateM about Z by -roll, about X by +(pitch + the camera's reference pitch), and about
-        // Y by +yaw. Matrix.rotateM post-multiplies, so the model is Rz * Rx * Ry.
+        // Three axes, in this order: identity, then about Z by -roll, about X by +(pitch + the
+        // camera's reference pitch), and about Y by +yaw, each post-multiplied, so the model is
+        // Rz * Rx * Ry.
         //
-        // Beta 8 was two axes with both angles negated and no reference pitch, and beta 11
-        // changed all three of those things at once. The reference pitch is the visible one: the
-        // stone now sits tilted by it at rest rather than square-on. The dropped negation is the
-        // subtle one - it inverts the yaw convention, which is why the drag had to flip sign to
-        // stay following the finger.
+        // The reference pitch makes the stone sit tilted at rest rather than square-on. Neither
+        // angle is negated: negating them inverts the yaw convention, and the drag's sign is
+        // what keeps the stone following the finger under this one.
         const Matrix4 model =
             Matrix4::RotationZ(-pose.roll * ToRadians)
             * Matrix4::RotationX((pose.pitch * ToRadians) + m_resources->camera[0])
@@ -783,7 +771,7 @@ namespace Graphics3D
         m_uniforms.model = model;
         m_uniforms.inverseModel = model.Transposed();   // rotation only, so transpose is inverse
 
-        // The anchored sparkle's visibility, as Ltg/g;.onDrawFrame computes it: two smoothsteps
+        // The anchored sparkle's visibility: two smoothsteps
         // multiplied. The second is how square-on the stone is, faded over pi/15 - which is why
         // it shows for well under a second of each turn, not for half of it. The first gates on
         // the turn rate: 2pi/15 divided by the angular speed is how long the sparkle would have
@@ -815,8 +803,7 @@ namespace Graphics3D
 
         m_uniforms.parameters[0] = pose.time;
 
-        // Fades in over its first moment on screen, which is both what the beta does and what
-        // covers the cost of getting here: a device, a swap chain, three targets and a pixel
+        // Fades in over its first moment on screen, which also covers the cost of getting here: a device, a swap chain, three targets and a pixel
         // shader for the driver to compile all stand between being shown and the first frame, so
         // arriving at nothing and rising is kinder than arriving late at full strength.
         m_composite.opacity = std::clamp(pose.time / EntrySeconds, 0.0f, 1.0f);
@@ -869,8 +856,7 @@ namespace Graphics3D
         context->VSSetShader(m_resources->sparkleVertexShader.get(), nullptr, 0);
         context->PSSetShader(m_resources->sparklePixelShader.get(), nullptr, 0);
 
-        // Two draws, which in the beta are one loop over the two sparkle vertex arrays with a
-        // branch picking the instance count. main.bin is instance 0: the single large anchored
+        // Two draws, one per sparkle vertex array. main.bin is instance 0: the single large anchored
         // sparkle, layers 0, 1 and 2, the ones sparkleHalo and sparkleShape steer. small.bin is
         // instances 1 to 7: the twinkles, which pulse out of phase and are gated on their own
         // facet facing the viewer.

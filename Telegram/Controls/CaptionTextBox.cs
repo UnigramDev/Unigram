@@ -11,7 +11,6 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Chats;
 using Telegram.Navigation;
-using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Text;

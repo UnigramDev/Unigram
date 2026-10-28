@@ -19,8 +19,8 @@ namespace Graphics3D
 
     namespace
     {
-        // The app being matched caps the frame delta before it advances anything, so that a
-        // stall does not jump the animation a quarter turn.
+        // The frame delta is capped before anything advances, so that a stall does not jump the
+        // animation a quarter turn.
         constexpr float MaximumStep = 0.1f;
 
         /// <summary>
@@ -29,13 +29,9 @@ namespace Graphics3D
         /// <remarks>
         /// tanh, scaled so that small drags are very nearly one for one and the resistance only
         /// builds as the limit nears. At the limit itself the stone is looking straight up, so
-        /// the top face can be brought fully into view - it just costs progressively more drag,
-        /// which is what the phone feels like.
+        /// the top face can be brought fully into view - it just costs progressively more drag.
         ///
-        /// **The curve is not from the beta.** Its accumulator is linear and its renderer takes
-        /// the tilt raw - there is no clamp and no soft limit anywhere in the package - so the
-        /// resistance is applied in a step between the two that the dex tooling could not follow
-        /// across objects. This shape was chosen to match the behaviour as described: unbounded
+        /// The shape was chosen, not measured, to give the intended behaviour: unbounded
         /// horizontally, resisted vertically, poles reachable with a long drag.
         /// </remarks>
         float SoftLimit(float degrees, float limit)
@@ -62,7 +58,7 @@ namespace Graphics3D
             return degrees - 180.0f;
         }
 
-        // Lets go with an OvershootInterpolator, whose default tension is 2.
+        // Lets go with an overshoot of tension 2.
         float Overshoot(float t)
         {
             constexpr float tension = 2.0f;
@@ -667,14 +663,11 @@ namespace Graphics3D
         const bool held = pose.time < m_motion.spinStartDelaySeconds;
 
         // Not while settling either: the release owns both angles until it is done, and a spin
-        // added underneath it would fight the spring. The app being matched cancels its spin
-        // animator for the same reason and restarts it when the settle ends.
+        // added underneath it would fight the spring. It resumes when the settle ends.
         if (m_spinning && !m_dragging && !settling && !held && m_motion.secondsPerTurn > 0)
         {
-            // Added, which is what the beta's own animator does - it runs the yaw from d to
-            // d + 360. It turns the scene left to right because beta 11 stopped negating the
-            // yaw in its model matrix; under beta 8's convention the same sign went the other
-            // way, which is why this needed a hand-held minus before the re-port.
+            // Added, running the yaw from d to d + 360. It turns the scene left to right because
+            // the model matrix does not negate the yaw; negating it there would flip this sign.
             const float speed = m_spinSpeed;
             turned += (speed > 0 ? speed : 360.0f / m_motion.secondsPerTurn) * step;
         }
@@ -829,7 +822,7 @@ namespace Graphics3D
         else if (m_wasDragging && !dragging && m_motion.settleSeconds > 0)
         {
             // Releasing springs the scene back to where it stood when the press began, not
-            // to rest. The beta blends `yaw = M * (1 - t) + E`, with E the pose at the press
+            // to rest: `yaw = M * (1 - t) + E`, with E the pose at the press
             // and M the amount dragged since, so a stone that was already turned returns to
             // being turned. The two coincide only from rest, which is why this looked like a
             // return to zero.

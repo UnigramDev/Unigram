@@ -51,7 +51,7 @@ namespace Graphics3D
     };
 
     /// <summary>
-    /// The TON diamond, ported from the Android beta's own shaders and assets.
+    /// The TON diamond.
     /// </summary>
     /// <remarks>
     /// Three passes. The body goes into an offscreen target, depth-tested and opaque; the sparkle
@@ -59,10 +59,8 @@ namespace Graphics3D
     /// is where the fade applies - fading the passes individually would show the sparkles through
     /// the stone.
     ///
-    /// The numbers in here are read out of the beta, not chosen, and the ones that look arbitrary
-    /// are the ones that matter most. `C:\Source\DiamondSpike\README.md` carries the derivation of
-    /// every one of them, along with the dex reader that produced them; do not adjust anything
-    /// here without reading it.
+    /// The numbers in here are measured, not chosen, and the ones that look arbitrary are the ones
+    /// that matter most: do not adjust them by eye.
     /// </remarks>
     class DiamondScene final : public IScene3D
     {
@@ -79,7 +77,7 @@ namespace Graphics3D
         // model matrix and the sparkle's visibility comes from there, so this is most of the look.
         void Animate(float seconds);
 
-        // Splined half-width for a yaw in radians, sampled the way the beta samples it: fold into
+        // Splined half-width for a yaw in radians: fold into
         // a quarter turn, scale to 0..90, then a cubic through four neighbours.
         float WidthAt(float yawRadians) const;
 
@@ -87,7 +85,7 @@ namespace Graphics3D
         // faded out as the stone is pitched.
         float HorizontalSqueeze(float yawRadians, float pitchRadians) const;
 
-        // The beta's own projection, element for element. `squeeze` belongs to k[0] alone - giving
+        // `squeeze` belongs to k[0] alone - giving
         // it to k[5] as well makes the stone breathe towards and away from the camera.
         Matrix4 Projection(float aspect, float squeeze) const;
 

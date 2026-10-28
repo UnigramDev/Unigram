@@ -1028,7 +1028,7 @@
                                           FontSize="12" />
                             </Button>
 
-                            <!--  As TDesktop's editor has them: the menu top left (one per tile
+                            <!--  The menu top left (one per tile
                                   in a collage, placed by the renderer), more media and the
                                   layout switch top right.  -->
                             <local:RichCollagePanel x:Name="TileControls"

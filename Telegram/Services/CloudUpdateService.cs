@@ -17,7 +17,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.ApplicationModel;
 using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.System;

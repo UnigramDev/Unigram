@@ -12,7 +12,6 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
-using Telegram.Native;
 using Telegram.Native.Media;
 using Telegram.Services;
 using Telegram.Streams;

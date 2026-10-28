@@ -5,12 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Runtime.InteropServices;
 using Telegram.Native;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.System.Profile;
 using Windows.UI.Xaml.Navigation;
+#if UNPACKAGED
+using System.Runtime.InteropServices;
+#endif
 
 namespace Telegram.Common
 {

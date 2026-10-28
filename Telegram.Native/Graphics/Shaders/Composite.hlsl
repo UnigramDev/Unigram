@@ -1,8 +1,6 @@
 // The final blit: the diamond is drawn into an offscreen target and copied out with an opacity
 // and a desaturate-to-alpha knob, which is how the app fades it in and out without touching the
 // render itself.
-//
-// Translated from assets/shaders/diamond/fullscreenVertex.glsl and copyFragment.glsl.
 
 Texture2D<float4> image : register(t0);
 SamplerState imageSampler : register(s0);

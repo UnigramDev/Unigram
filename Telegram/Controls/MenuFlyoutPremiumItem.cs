@@ -9,8 +9,8 @@ using Windows.UI.Xaml.Controls;
 namespace Telegram.Controls
 {
     /// <summary>
-    /// A menu item for a feature that needs Premium, marked with the star at its end, as
-    /// TDesktop's editor marks them. It still works: what is gated is sending the result.
+    /// A menu item for a feature that needs Premium, marked with the star at its end. It still
+    /// works: what is gated is sending the result.
     /// </summary>
     public partial class MenuFlyoutPremiumItem : MenuFlyoutItem
     {

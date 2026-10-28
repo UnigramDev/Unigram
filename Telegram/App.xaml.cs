@@ -53,7 +53,6 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.UI.Notifications;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

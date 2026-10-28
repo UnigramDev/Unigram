@@ -173,8 +173,8 @@ namespace Telegram.Charts.DataView
         /// </summary>
         /// <remarks>
         /// Toncoin is formatted here rather than through Formatter.FormatAmount, which renders TON
-        /// with no decimals at all - every label on a revenue axis would read the same. Android
-        /// shows two decimals above one TON and up to six below, which is what this mirrors.
+        /// with no decimals at all - every label on a revenue axis would read the same. This shows
+        /// two decimals above one TON and up to six below.
         /// </remarks>
         public static string Format(int a, long v, int formatter, long dif = 0)
         {

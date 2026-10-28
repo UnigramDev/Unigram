@@ -41,8 +41,8 @@ namespace winrt::Telegram::Native::Graphics::implementation
             }
         }
 
-        // GestureDetector's limits for a tap: ViewConfiguration's touch slop of 8 dp, and the
-        // long-press timeout past which a release is no longer one.
+        // The limits for a tap: a touch slop of 8 logical pixels, and the long-press timeout past
+        // which a release is no longer one.
         constexpr float TapSlop = 8.0f;
         constexpr std::chrono::milliseconds TapTimeout{ 400 };
     }
@@ -368,7 +368,7 @@ namespace winrt::Telegram::Native::Graphics::implementation
             }
             else
             {
-                // The scene's own answer, which is the one the app being matched uses.
+                // The scene's own answer.
                 m_spinning = m_renderer->IsSpinning();
             }
 
@@ -595,9 +595,8 @@ namespace winrt::Telegram::Native::Graphics::implementation
     /// depth targets, so the first frame of a press can be long. For anything on the pointer's
     /// usual path that trade would invert again.
     ///
-    /// Which is the bargain the beta strikes too - `setRenderScale(view, 3.5)` as the press
-    /// begins and `setRenderScale(view, 1)` when it ends. It oversamples a little past its own
-    /// press scale of three, which is where the headroom in the cap comes from.
+    /// The cap leaves headroom past a press scale of three: a render scale of 3.5 while pressed
+    /// and 1 at rest is the intended trade.
     ///
     /// Safe to resize at all because neither shader reads the pixel dimensions: `viewport.x` and
     /// `.y` go unread and only the optical plane count and the flat-mode flag beside them are
@@ -619,19 +618,19 @@ namespace winrt::Telegram::Native::Graphics::implementation
     /// Grows the panel while it is held, and lets it spring back when it is let go.
     /// </summary>
     /// <remarks>
-    /// The whole element scales, swap chain and all, which is what the beta does to its view -
-    /// and the reason this is here rather than in the renderer: the growth is a property of how
+    /// The whole element scales, swap chain and all, and this is here rather than in the
+    /// renderer because the growth is a property of how
     /// the scene is presented, not of what is in it, which is why the two screens that do it
     /// centre it differently.
     ///
-    /// The damping ratio is the beta's - 0.55, and being dimensionless it carries over as it is.
-    /// The period does not: **Period is the period of the spring's oscillation, not the length of
+    /// The damping ratio is 0.55, and being dimensionless it carries over from a stiffness-based
+    /// spring as it is. The period does not: **Period is the period of the spring's oscillation, not the length of
     /// the animation.** A settle takes several of them, shortened by the damping, so the useful
     /// range is tens of milliseconds - Composition's own default is 50 - and a value in the
     /// hundreds reads as a slow wobble rather than a press.
     ///
-    /// Which is why there is no number from the beta here. Converting its androidx stiffness of
-    /// 280 as a frequency gives 2 pi / sqrt(280), or 376 ms, and that is arithmetically faithful
+    /// Which is why the period is not converted from a stiffness. Taking a stiffness of 280 as a
+    /// frequency gives 2 pi / sqrt(280), or 376 ms, and that is arithmetically faithful
     /// and far too slow on screen. 37 was settled by watching it.
     ///
     /// The magnification this would otherwise cost is covered by <see cref="Oversample"/>.
@@ -775,10 +774,9 @@ namespace winrt::Telegram::Native::Graphics::implementation
         // it, and is in the same logical pixels the drag coefficients are calibrated for.
         const auto point = args.GetCurrentPoint(nullptr).Position();
 
-        // Previous minus current, which is the sign the gesture detector being matched reports -
-        // a drag to the right gives it a negative distance. The renderer subtracts that again,
-        // as beta 11 does, and the model matrix no longer negates anything. Two negations, and
-        // the stone follows the pointer.
+        // Previous minus current - a drag to the right gives a negative distance. The renderer
+        // subtracts that again, and the model matrix negates nothing. Two negations, and the
+        // stone follows the pointer.
         m_renderer->Drag(m_dragFrom.X - point.X, m_dragFrom.Y - point.Y);
 
         m_dragFrom = point;

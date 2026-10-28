@@ -18,8 +18,7 @@ using Telegram.ViewModels.Drawers;
 namespace Telegram.Collections
 {
     /// <summary>
-    /// The emoji panel search, in the order Telegram Desktop and Android both present it: the
-    /// plain emoji the query resolves to, then the custom emoji already installed, then what the
+    /// The emoji panel search, in this order: the plain emoji the query resolves to, then the custom emoji already installed, then what the
     /// server finds.
     /// </summary>
     public partial class SearchEmojiCollection : IncrementalCollection<object>

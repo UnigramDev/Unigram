@@ -11,7 +11,6 @@ using System.Numerics;
 using Telegram.Native;
 using Telegram.Services;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;

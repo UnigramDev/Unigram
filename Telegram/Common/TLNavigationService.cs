@@ -28,7 +28,6 @@ using Telegram.Views.Stars.Popups;
 using Telegram.Views.Tabbed;
 using Telegram.Views.Wallet;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;

@@ -13,20 +13,18 @@ using Telegram.Td.Api;
 namespace Telegram.Common
 {
     /// <summary>
-    /// Parses the clipboard HTML that Telegram Android writes
-    /// (<c>org/telegram/ui/iv/RichHtml.java</c>) and that this app's own rich editor writes
-    /// (<see cref="Telegram.Controls.RichEditor.RichClipboard.ToHtml"/>) into page blocks — the inverse of
+    /// Parses the clipboard HTML that Telegram's rich editors write, this app's own included
+    /// (<see cref="Telegram.Controls.RichEditor.RichClipboard.ToHtml"/>), into page blocks — the inverse of
     /// <see cref="PageBlockHelper.Flatten"/>'s world, and the way rich content pasted from
     /// another client keeps its structure instead of arriving as loose text.
     /// </summary>
     /// <remarks>
-    /// <para>Unlike Android — whose editor holds a flat list of rows — this builds the nested
+    /// <para>This builds the nested
     /// <c>pageBlock*</c> tree directly, so a list, a quote of blocks and a collapsible section
     /// come out the shape TDLib expects.</para>
     /// <para>Media is dropped. The HTML carries only a file id, which means nothing outside the
-    /// process that copied it, so a photo can't be reconstructed here — Android does the same
-    /// with an id it can't resolve. A caption left without its media becomes a paragraph, so
-    /// the words at least survive.</para>
+    /// process that copied it, so a photo can't be reconstructed here. A caption left without
+    /// its media becomes a paragraph, so the words at least survive.</para>
     /// <para>Anything unrecognized is descended into rather than dropped, which is what makes
     /// this survive the wrapper soup real browsers put on the clipboard.</para>
     /// </remarks>
@@ -257,8 +255,8 @@ namespace Telegram.Common
                     continue;
                 }
 
-                // Android writes a nested list as a SIBLING of the <li> it belongs to
-                // rather than inside it. Give it back to the item above.
+                // A nested list can come as a SIBLING of the <li> it belongs to rather
+                // than inside it. Give it back to the item above.
                 if (child.Tag == "ul" || child.Tag == "ol")
                 {
                     if (lastBlocks != null)
@@ -287,8 +285,8 @@ namespace Telegram.Common
                 items.Add(new PageBlockListItem
                 {
                     Blocks = blocks,
-                    // Both are presence tests on Android, so an unchecked item never
-                    // carries data-checked at all.
+                    // Both are presence tests: an unchecked item never carries
+                    // data-checked at all.
                     HasCheckbox = child.Has("data-checkbox") || child.HasClass("checkbox"),
                     IsChecked = child.Has("data-checked"),
                     Label = ordered ? value.ToString(CultureInfo.InvariantCulture) : string.Empty,
@@ -979,8 +977,8 @@ namespace Telegram.Common
         /// <summary>
         /// Collapses the runs of whitespace HTML uses for indentation into a single space,
         /// the way any renderer would. Our own clipboard HTML has none of it; the HTML real
-        /// browsers write is full of it, and Android — which keeps it verbatim — pastes the
-        /// indentation along with the text.
+        /// browsers write is full of it, and kept verbatim it would paste the indentation along
+        /// with the text.
         /// </summary>
         private static string Collapse(string text)
         {
@@ -1193,8 +1191,8 @@ namespace Telegram.Common
                 return Attributes != null && Attributes.ContainsKey(name);
             }
 
-            // Substring, not a word match: this is what Android tests, and the classes it
-            // looks for ("pull", "checkbox") are written exactly that way.
+            // Substring, not a word match: the classes looked for ("pull", "checkbox") are
+            // matched that way wherever this HTML is read.
             public bool HasClass(string name)
             {
                 var value = Attribute("class");

@@ -8,10 +8,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
-using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
 using Windows.UI.Composition;

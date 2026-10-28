@@ -425,7 +425,7 @@ namespace Telegram.Common
         }
 
         /// <summary>
-        /// Rec. 709 luminance, 0 to 1 - Android's computePerceivedBrightness.
+        /// Rec. 709 luminance, 0 to 1.
         /// </summary>
         public static double PerceivedBrightness(int color)
         {
@@ -440,7 +440,7 @@ namespace Telegram.Common
         }
 
         /// <summary>
-        /// Android's getColorDistance: red-weighted rather than Euclidean, so it tracks how
+        /// Red-weighted rather than Euclidean, so it tracks how
         /// different two colours look rather than how far apart they sit in the cube.
         /// </summary>
         public static int GetColorDistance(int color1, int color2)
@@ -455,8 +455,8 @@ namespace Telegram.Common
         }
 
         /// <summary>
-        /// Whether a fill's colours are close enough to read as one colour. The threshold is
-        /// Android's, which uses it to decide a gradient is not worth treating as one.
+        /// Whether a fill's colours are close enough to read as one colour: below the threshold, a
+        /// gradient is not worth treating as one.
         /// </summary>
         public static bool AreNear(IReadOnlyList<int> colors, int threshold = 35000)
         {
@@ -560,10 +560,10 @@ namespace Telegram.Common
         /// how well the winner reads at its worst.
         /// </summary>
         /// <remarks>
-        /// Android decides this from the perceived brightness of a chained average, which weights
-        /// the last colour by a half: [white, white, white, red] averages to #FE7F7F, scores 0.604
-        /// and takes white, over a bubble that is three quarters white. Comparing the worst case of
-        /// each candidate asks the question the reader actually has.
+        /// Not the perceived brightness of a chained average, which weights the last colour by a
+        /// half: [white, white, white, red] averages to #FE7F7F, scores 0.604 and takes white, over
+        /// a bubble that is three quarters white. Comparing the worst case of each candidate asks
+        /// the question the reader actually has.
         /// </remarks>
         public static bool UseBlackText(IReadOnlyList<int> colors, out double contrast)
         {
@@ -597,8 +597,8 @@ namespace Telegram.Common
         public const double ReadableContrast = 3;
 
         /// <summary>
-        /// Where Android gives up on white, as a contrast ratio: it switches at a perceived
-        /// brightness of 0.705, a relative luminance of 0.457, over which white still reads at 2.07.
+        /// Where white is given up, as a contrast ratio: a perceived brightness of 0.705, a relative
+        /// luminance of 0.457, over which white still reads at 2.07.
         /// </summary>
         private const double WhiteTextFloor = 2.1;
 

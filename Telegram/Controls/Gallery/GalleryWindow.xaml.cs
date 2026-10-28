@@ -26,7 +26,6 @@ using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;

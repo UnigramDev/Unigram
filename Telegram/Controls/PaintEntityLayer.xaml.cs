@@ -29,7 +29,6 @@ using Telegram.Td.Api;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
-using Windows.System;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;

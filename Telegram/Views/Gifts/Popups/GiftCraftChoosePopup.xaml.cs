@@ -23,7 +23,6 @@ using Telegram.Views.Stars.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Gifts.Popups
 {

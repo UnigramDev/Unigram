@@ -98,7 +98,7 @@ namespace Telegram.Common
         }
 
         /// <summary>
-        /// Android's changeColorAccent guard: a light theme must not make a colour brighter than
+        /// A light theme must not make a colour brighter than
         /// it was, nor a dark theme darker, or a foreground drifts into the background it sits on.
         /// The correction is deliberately partial - 0.6 of the new brightness is kept.
         /// </summary>

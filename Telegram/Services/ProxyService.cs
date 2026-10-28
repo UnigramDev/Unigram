@@ -14,7 +14,6 @@ using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.Storage;
 
 namespace Telegram.Services
 {

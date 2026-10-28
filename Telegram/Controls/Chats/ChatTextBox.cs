@@ -10,7 +10,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,10 +22,8 @@ using Telegram.Services.Settings;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
@@ -35,7 +32,6 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {

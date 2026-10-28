@@ -9,7 +9,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
 

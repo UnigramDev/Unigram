@@ -34,8 +34,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Composition;
-using Windows.UI.Core;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;

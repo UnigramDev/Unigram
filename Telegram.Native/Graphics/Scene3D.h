@@ -34,8 +34,8 @@ namespace Graphics3D
     /// How a scene turns: at rest, under the pointer, and on release.
     /// </summary>
     /// <remarks>
-    /// The mechanism is the host's and the numbers are the scene's, because every one of them was
-    /// read out of the app being matched rather than chosen. A scene that should not be turned at
+    /// The mechanism is the host's and the numbers are the scene's, because every one of them is
+    /// specific to that scene's design. A scene that should not be turned at
     /// all asks for no spin and no drag, and then nothing in the host moves it.
     /// </remarks>
     struct SceneMotion
@@ -73,24 +73,23 @@ namespace Graphics3D
     /// Where the scene stands this frame.
     /// </summary>
     /// <remarks>
-    /// Degrees, because that is what the motion constants are in and what the hosts being matched
-    /// accumulate. A scene converts once, where it builds its matrices.
+    /// Degrees, because that is what the motion constants are in. A scene converts once, where it
+    /// builds its matrices.
     /// </remarks>
     struct ScenePose
     {
         float yaw = 0;
         float pitch = 0;
 
-        // The third axis, which the diamond gained in beta 11. Nothing drives it yet: the field
-        // the beta reads it from is written somewhere the dex tooling could not follow across
-        // objects, so it stays at rest until that is found or someone asks for it.
+        // The third axis, which the diamond's model matrix takes. Nothing drives it yet, so it
+        // stays at rest until something needs it.
         float roll = 0;
 
         // Seconds the scene has been shown, which stops while it is off screen so that a baked
         // animation resumes where it left rather than jumping.
         float time = 0;
 
-        // Seconds since the last frame, capped the way the app being matched caps it, and the
+        // Seconds since the last frame, capped, and the
         // signed yaw rate over that step - which anything reacting to being turned reads.
         float step = 0;
         float yawPerSecond = 0;
@@ -112,13 +111,12 @@ namespace Graphics3D
 
         // A release that never moved far enough or stayed down long enough to be anything else.
         // Where, as the fraction of half the panel's width from its centre: positive towards the
-        // left and top edges, one at the left edge. The Android view measures both axes against
-        // its width, and so does this.
+        // left and top edges, one at the left edge. Both axes are measured against the width.
         bool tapped = false;
         float tapX = 0;
         float tapY = 0;
 
-        // Logical pixels, previous minus current - the sign a GestureDetector reports.
+        // Logical pixels, previous minus current.
         float dragX = 0;
         float dragY = 0;
     };
@@ -190,8 +188,8 @@ namespace Graphics3D
     /// One drawable thing, with its shaders, its buffers and its own idea of what a frame is.
     /// </summary>
     /// <remarks>
-    /// The seam sits here rather than at "a mesh" deliberately. The two 3D families in the app
-    /// being matched share no shader, no vertex layout and no uniform block: the diamond is a
+    /// The seam sits here rather than at "a mesh" deliberately. The two 3D families share no
+    /// shader, no vertex layout and no uniform block: the diamond is a
     /// hull with authored facet optics and a baked 42-float animation table, while the star, the
     /// coin and the card are textured meshes with a normal map and an MVP matrix. What they do
     /// share is everything in <see cref="Scene3DRenderer"/> - a device, a swap chain sized to a
@@ -226,8 +224,7 @@ namespace Graphics3D
 
         // True for a scene that owns its own motion. The host then neither spins nor settles it,
         // and only delivers the pointer through Choreograph, once a frame before Render. The star
-        // and the coin are such scenes: on Android they are driven by a shuffled set of keyframed
-        // animations and a tap response that the host's spin and spring cannot express.
+        // and the coin are such scenes: they are driven by a shuffled set of keyframed animations and a tap response that the host's spin and spring cannot express.
         virtual bool Choreographs() const { return false; }
         virtual void Choreograph(const SceneGesture& gesture, float step) {}
     };

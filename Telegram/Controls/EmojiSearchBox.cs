@@ -95,7 +95,7 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// Shows that a search is in flight, as Telegram Desktop and Android both do: the glyph
+        /// Shows that a search is in flight: the glyph
         /// gives way to a spinner rather than the results simply arriving late.
         /// </summary>
         public void SetLoading(bool loading)

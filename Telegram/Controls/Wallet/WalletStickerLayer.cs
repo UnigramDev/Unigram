@@ -13,7 +13,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;

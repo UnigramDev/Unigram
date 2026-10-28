@@ -18,13 +18,9 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
-using Telegram.Controls.Messages;
 using Telegram.Controls.RichEditor;
-using Telegram.Entities;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using Telegram.Converters;
-using Telegram.Native.Highlight;
+using Telegram.Entities;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -32,11 +28,9 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.UI;
-using Windows.UI.Core;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -256,7 +250,7 @@ namespace Telegram.Views.Host
         }
 
         /// <summary>
-        /// Whether what needs Premium is marked with a star. Only marked, as TDesktop does: every
+        /// Whether what needs Premium is marked with a star. Only marked: every
         /// tool still works, and it is sending the result that asks for Premium.
         /// </summary>
         private bool IsPremiumMarked => _clientService.IsPremiumAvailable && !_clientService.IsPremium;
@@ -470,7 +464,7 @@ namespace Telegram.Views.Host
             GroupTableButton.IsChecked = status.Table != null;
             GroupRegularButton.IsEnabled = status.CanFormat;
 
-            // Links go on text, so the button waits for some, as TDesktop's does.
+            // Links go on text, so the button waits for some.
             GroupLinkButton.IsEnabled = status.CanFormat;
             GroupIndentButton.IsEnabled = _engine.CanIndent(MaxDepth);
             GroupOutdentButton.IsEnabled = _engine.CanOutdent();
@@ -775,8 +769,8 @@ namespace Telegram.Views.Host
 
         private void PopulateAttachFlyout(IList<MenuFlyoutItemBase> flyout)
         {
-            // The divider, the button and the toggle block went to the menus TDesktop has them in:
-            // the block style, the link and the list.
+            // The divider, the button and the toggle block are in other menus: the block style,
+            // the link and the list.
             flyout.Add(CreateItem(Strings.ArticleCommandImage, Icons.Image, new RelayCommand(PickMedia), premium: true));
             flyout.Add(CreateItem(Strings.ArticleCommandAudio, Icons.MusicNote2, new RelayCommand(PickAudio), premium: true));
             flyout.Add(CreateItem(Strings.AttachDocument, Icons.Document, new RelayCommand(PickFile), premium: true));
@@ -1173,7 +1167,7 @@ namespace Telegram.Views.Host
             return (await PickPlaceAsync()).Location;
         }
 
-        /// <summary>A point, or a venue: the caption of a map of a venue is its name and address, as TDesktop has it.</summary>
+        /// <summary>A point, or a venue: the caption of a map of a venue is its name and address.</summary>
         private async Task<(Location Location, string Caption)> PickPlaceAsync()
         {
             var popup = new SendLocationPopup(_clientService.Session);
@@ -1488,7 +1482,7 @@ namespace Telegram.Views.Host
         }
 
         /// <summary>
-        /// The marks, as TDesktop's Text Style menu has them: what a regular message has first,
+        /// The marks: what a regular message has first,
         /// unmarked, then what only a rich message has.
         /// </summary>
         private void PopulateTextStyleFlyout(IList<MenuFlyoutItemBase> flyout, RichEditorStatus status)
@@ -1685,7 +1679,7 @@ namespace Telegram.Views.Host
 
             PopulateHeadingFlyout(heading.Items, status);
 
-            // In TDesktop's order, starred where it is: a quote and code are in regular messages too.
+            // Starred where it is: a quote and code are in regular messages too.
             flyout.Add(heading);
             flyout.Add(CreateToggle(Strings.ArticleText, Icons.TextT, status.TextKind == RichBlockKind.Paragraph && !status.InBlockQuote, new RelayCommand(SetParagraph)));
             flyout.Add(CreateToggle(Strings.ArticleQuote, Icons.QuoteBlock, status.InBlockQuote, new RelayCommand(_engine.ToggleBlockQuote)));
@@ -1740,7 +1734,7 @@ namespace Telegram.Views.Host
             var command = new RelayCommand<RichListStyle>(_engine.ToggleList);
 
             // Outside a list, the lists that can be inserted; in one, what it can be changed to -
-            // inserting there would change it instead - as TDesktop's List menu has it.
+            // inserting there would change it instead.
             if (status.ListStyle != null)
             {
                 var change = new MenuFlyoutSubItem
@@ -1968,7 +1962,7 @@ namespace Telegram.Views.Host
 
         private async void InsertFormula()
         {
-            // On a line of its own unless told otherwise, as TDesktop's new formula is.
+            // On a line of its own unless told otherwise.
             var choice = GetSeparateLineChoice(true);
             var popup = new FormulaPopup(null, choice);
 

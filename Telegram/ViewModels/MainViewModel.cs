@@ -598,7 +598,7 @@ namespace Telegram.ViewModels
 
         public async void MarkFolderAsRead(ChatFolderViewModel folder)
         {
-            var confirm = await ShowPopupAsync(Strings.AreYouSure, Strings.AppName, Strings.MarkAllAsRead, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSure, Strings.MarkAllAsRead, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

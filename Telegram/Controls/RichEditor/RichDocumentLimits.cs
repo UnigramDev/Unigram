@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using Telegram.Td.Api;
 
 namespace Telegram.Controls.RichEditor

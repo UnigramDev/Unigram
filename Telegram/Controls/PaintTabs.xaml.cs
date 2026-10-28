@@ -6,6 +6,9 @@
 //
 
 using Microsoft.Graphics.Canvas.Geometry;
+using System;
+using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
@@ -18,20 +21,16 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
 using Telegram.Views.Stories.Popups;
-using System.Numerics;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media.Imaging;
-using System;
 
 namespace Telegram.Controls
 {

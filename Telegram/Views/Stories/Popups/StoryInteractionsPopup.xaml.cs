@@ -18,7 +18,6 @@ using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Stories.Popups

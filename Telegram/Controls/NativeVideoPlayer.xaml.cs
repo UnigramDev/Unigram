@@ -385,8 +385,6 @@ namespace Telegram.Controls
             //OnVolumeChanged(args.Volume / 100d);
         }
 
-        private bool _volumeWorkaround = true;
-
         private void OnEESelected(AsyncMediaPlayer sender, AsyncMediaPlayerStreamSelectedEventArgs args)
         {
             if (args.Type == AsyncMediaPlayerStreamType.Video && args.Id != -1)

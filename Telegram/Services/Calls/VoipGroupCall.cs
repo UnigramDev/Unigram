@@ -20,7 +20,6 @@ using Telegram.Views.Calls.Popups;
 using Windows.ApplicationModel.Calls;
 using Windows.Data.Json;
 using Windows.Foundation;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
