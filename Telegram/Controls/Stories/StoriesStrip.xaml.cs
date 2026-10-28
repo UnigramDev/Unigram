@@ -575,7 +575,7 @@ namespace Telegram.Controls.Stories
 
             ControlledList.SizeChanged += ControlledList_SizeChanged;
             ControlledList.Margin = new Thickness(0, TopPadding, 0, 0);
-            ControlledList.Padding = new Thickness();
+            ControlledList.Padding = new Thickness(0, 0, 0, 62);
 
             var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
             var compositor = properties.Compositor;
@@ -819,7 +819,7 @@ namespace Telegram.Controls.Stories
 
             Stack.SetGathered(true);
 
-            ControlledList.Padding = new Thickness(0);
+            ControlledList.Padding = new Thickness(0, 0, 0, 62);
             _progressAnimation.Properties.InsertBoolean("Collapsed", true);
             _scrollViewer.SetVerticalPadding(0, 0);
 
@@ -876,7 +876,7 @@ namespace Telegram.Controls.Stories
 
             Stack.SetGathered(false);
 
-            ControlledList.Padding = new Thickness(0, 88, 0, 0);
+            ControlledList.Padding = new Thickness(0, 88, 0, 62);
             _progressAnimation.Properties.InsertBoolean("Collapsed", false);
             _scrollViewer.SetVerticalPadding(88, 0);
 
