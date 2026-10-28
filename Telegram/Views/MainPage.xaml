@@ -841,7 +841,8 @@
                                          BorderThickness="1"
                                          CornerRadius="24"
                                          Height="48"
-                                         Padding="0,0,8,0">
+                                         Padding="0,0,8,0"
+                                         Visibility="Collapsed">
                         <controls:TopNavView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"

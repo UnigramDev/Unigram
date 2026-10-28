@@ -17,6 +17,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
@@ -463,6 +464,21 @@ namespace Telegram.ViewModels.Settings
         }
 
 
+
+        public bool UseNavigationBar
+        {
+            get => AppSettings.Appearance.DisableNavigationBar;
+            set
+            {
+                if (AppSettings.Appearance.DisableNavigationBar == value)
+                {
+                    AppSettings.Appearance.DisableNavigationBar = !value;
+                    RaisePropertyChanged();
+
+                    Aggregator.Publish(new UpdateNavigationBar());
+                }
+            }
+        }
 
         public bool FullScreenGallery
         {

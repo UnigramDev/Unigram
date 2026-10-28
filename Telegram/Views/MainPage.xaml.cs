@@ -104,6 +104,7 @@ namespace Telegram.Views
             InitializeLock();
 
             UpdateChatFolders();
+            UpdateNavigationBar();
 
             VisualUtilities.DropShadow(UpdateShadow);
 
@@ -932,6 +933,20 @@ namespace Telegram.Views
             this.BeginOnUIThread(UpdateChatFoldersLayout);
         }
 
+        public void Handle(UpdateNavigationBar update)
+        {
+            this.BeginOnUIThread(UpdateNavigationBar);
+        }
+
+        private void UpdateNavigationBar()
+        {
+            Navigation.Visibility = AppSettings.Appearance.DisableNavigationBar
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            UpdatePaneToggleButtonVisibility();
+        }
+
         #endregion
 
         private bool _tabsTopCollapsed = true;
@@ -1231,6 +1246,7 @@ namespace Telegram.Views
             Show(SettingsRoot, _prevIndex > INDEX_SETTINGS, INDEX_SETTINGS);
 
             _prevIndex = INDEX_SETTINGS;
+            UpdatePaneToggleButtonVisibility();
         }
 
         private void UpdateUser(User user)
@@ -1356,6 +1372,7 @@ namespace Telegram.Views
                 .Subscribe<UpdateSuggestedActions>(Handle)
                 .Subscribe<UpdateActiveCall>(Handle)
                 .Subscribe<UpdateChatFoldersLayout>(Handle)
+                .Subscribe<UpdateNavigationBar>(Handle)
                 .Subscribe<UpdateConfetti>(Handle);
         }
 
@@ -2003,7 +2020,8 @@ namespace Telegram.Views
         private void UpdatePaneToggleButtonVisibility()
         {
             var visible = ViewModel.Chats.Items.ChatList is ChatListArchive
-                || !_searchCollapsed;
+                || !_searchCollapsed
+                || (_prevIndex != INDEX_CHATS && AppSettings.Appearance.DisableNavigationBar);
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
@@ -3324,10 +3342,66 @@ namespace Telegram.Views
         {
             var theme = ActualTheme;
             var flyout = new MenuFlyout();
+
             flyout.CreateFlyoutItem(MenuItemSwitchTheme, theme == ElementTheme.Dark ? Strings.SwitchThemeToDay : Strings.SwitchThemeToNight, theme == ElementTheme.Dark ? Icons.Sun : Icons.Moon);
             flyout.CreateFlyoutSeparator();
+
+            if (AppSettings.Appearance.DisableNavigationBar)
+            {
+                var items = LifetimeService.Current.GetItemsForMenu(true, out _);
+
+                foreach (var session in items)
+                {
+                    var template = Resources["SessionItemTemplate"] as DataTemplate;
+                    var content = template.LoadContent() as Grid;
+                    content.DataContext = session;
+
+                    var user = session.ClientService.GetUser(session.UserId);
+                    if (user == null)
+                    {
+                        session.ClientService.Send(new GetUser(session.UserId));
+                        continue;
+                    }
+
+                    var title = content.FindName("TitleLabel") as TextBlock;
+                    title.Text = user.FullName();
+
+                    var photo = content.Children[0] as ProfilePicture;
+                    photo.Source = ProfilePictureSource.User(session.ClientService, user);
+
+                    var identity = content.FindName("Identity") as IdentityIcon;
+                    var botVerified = content.FindName("BotVerified") as CustomEmojiIcon;
+
+                    identity.SetStatus(session.ClientService, user, botVerified);
+
+                    var item = new MenuFlyoutButton
+                    {
+                        Content = content,
+                        CommandParameter = session,
+                        Command = new RelayCommand<ISession>(Root.Switch)
+                    };
+
+                    AutomationProperties.SetName(item, user.FullName());
+
+                    flyout.Items.Add(item);
+                }
+
+                if (items.Count < Constants.MaxAccountCount)
+                {
+                    flyout.CreateFlyoutItem(MenuItemAddAccount, Strings.AddAccount, Icons.AddCircle);
+                }
+
+                flyout.CreateFlyoutSeparator();
+            }
+
             flyout.CreateFlyoutItem(MenuItemContacts, Strings.Contacts, Icons.Person);
             flyout.CreateFlyoutItem(MenuItemCalls, Strings.Calls, Icons.Call);
+
+            if (AppSettings.Appearance.DisableNavigationBar)
+            {
+                flyout.CreateFlyoutItem(MenuItemSettings, Strings.Settings, Icons.Settings);
+            }
+
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(MenuItemCreateGroup, Strings.NewGroup, Icons.People);
 
@@ -3344,7 +3418,12 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MenuItemWallet, Strings.WalletAttachMoney, Icons.Gram);
             }
 
-            flyout.ShowAt(Photo, FlyoutPlacementMode.BottomEdgeAlignedLeft, overlap: true);
+            flyout.ShowAt(Photo, FlyoutPlacementMode.BottomEdgeAlignedLeft, FlyoutShowMode.TransientWithDismissOnPointerMoveAway, overlap: true);
+        }
+
+        private void MenuItemSettings()
+        {
+            SetPivotSelectedIndex(INDEX_SETTINGS);
         }
 
         private async void MenuItemSwitchTheme()

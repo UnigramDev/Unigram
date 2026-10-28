@@ -302,6 +302,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _fontFamily, "FontFamily", value);
         }
 
+        private bool? _disableNavigationBar;
+        public bool DisableNavigationBar
+        {
+            get => _disableNavigationBar ??= GetValueOrDefault("DisableNavigationBar", true);
+            set => AddOrUpdateValue(ref _disableNavigationBar, "DisableNavigationBar", value);
+        }
+
         #region Worn theme
 
         private sealed class WornTheme

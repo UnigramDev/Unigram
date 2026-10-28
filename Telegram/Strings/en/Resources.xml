@@ -14517,4 +14517,6 @@
   <string name="WelcomeMessageHint_few">New members will see these messages\nwhen they join</string>
   <string name="WelcomeMessageHint_many">New members will see these messages\nwhen they join</string>
   <string name="WelcomeMessageHint_other">New members will see these messages\nwhen they join</string>
+
+  <string name="UseNavigationBar">Use Navigation Bar</string>
 </resources>

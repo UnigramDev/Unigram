@@ -262,6 +262,10 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource OtherSettings}">
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.UseNavigationBar, Mode=TwoWay}"
+                              Content="{CustomResource UseNavigationBar}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
                               Content="{CustomResource EnableFullScreenGallery}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
