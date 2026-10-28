@@ -19,7 +19,7 @@ namespace Telegram.Controls
 {
     public partial class MasterDetailPanel : Panel
     {
-        private const double columnCompactWidthLeft = 72;
+        private const double columnCompactWidthLeft = 84;
         private const double columnMinimalWidthLeft = 260;
         private const double columnMaximalWidthLeft = 540;
         private const double columnMinimalWidthMain = 380;
