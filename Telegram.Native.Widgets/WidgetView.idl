@@ -1,0 +1,180 @@
+namespace Telegram.Native.Widgets
+{
+    // The chat's theme for the bubble the widget sits in (docs/sdk-v1.md §2.3, §2.4, §5.1).
+    runtimeclass WidgetTheme
+    {
+        WidgetTheme();
+
+        // "light" or "dark"; anything but "dark" is light.
+        String ColorScheme;
+        // The 15 Mini Apps keys (bg_color, text_color, ...) as #rrggbb. Every key, as the client
+        // passes all of them; the host drops other keys and other values.
+        Windows.Foundation.Collections.IMap<String, String> Params { get; };
+
+        // The client's own button. Empty, or NaN for the opacities, leaves the template's default.
+        String ButtonBackground;
+        String ButtonForeground;
+        String ButtonRadius;
+        String ButtonFont;
+        String ButtonPadding;
+        String ButtonHeight;
+        Double ButtonPressedOpacity;
+        Double ButtonDisabledOpacity;
+
+        // The client's message text: the chat's text size in CSS px (8 to 64), a unitless line height (1 to 3),
+        // and the inset from the bubble's edge (one to four lengths). NaN or empty leaves the reference set's
+        // 15 px, 1.35 and 8px 12px.
+        Double TextFontSize;
+        Double TextLineHeight;
+        String TextPadding;
+    }
+
+    // Everything a host is created with besides the HTML and the theme.
+    runtimeclass WidgetOptions
+    {
+        WidgetOptions();
+
+        // CSS px: the bubble's width, or the bot's fixed width, already clamped.
+        Double Width;
+        Double DevicePixelRatio;
+        // The UI language, BCP 47.
+        String Locale;
+        // The badge over a dead widget's last frame, localised.
+        String StoppedLabel;
+        // This message's Web Storage as the client keeps it: local from disk, session from memory.
+        Windows.Foundation.Collections.IMap<String, String> LocalStorage { get; };
+        Windows.Foundation.Collections.IMap<String, String> SessionStorage { get; };
+
+        // The bot's state as the message has it now (docs/sdk-v1.md §2.13); empty is none. Later edits go to SetData.
+        String ChatData;
+        String PublicData;
+
+        // The message's flags from the server and where it is (docs/sdk-v1.md §4.4), fixed for the view's life.
+        // Without CanQuery every request is refused.
+        Boolean IsCopy;
+        Boolean CanQuery;
+        Boolean BackgroundQuery;
+        // "private", "group", "supergroup" or "channel"; empty for a copy.
+        String ChatType;
+        // The account looking at the widget; 0 for none. The host leaves it out of a copy without CanQuery.
+        Int64 ViewerId;
+        String ViewerFirstName;
+        String ViewerLastName;
+        String ViewerUsername;
+        Boolean ViewerIsPremium;
+    }
+
+    enum WidgetActionKind
+    {
+        Ready = 0,
+        OpenLink = 1,
+        OpenTelegramLink = 2,
+        Haptic = 3,
+    };
+
+    // What the widget asked the client to do, already checked: URL rules, user activation, the
+    // haptic rate limit. At most one link action per pointer press.
+    struct WidgetAction
+    {
+        WidgetActionKind Kind;
+        // OpenLink, OpenTelegramLink: scheme and host lowercase, non-ASCII percent-encoded.
+        String Url;
+        // Haptic: "impact", "notification" or "selection", and the style or type.
+        String HapticKind;
+        String HapticValue;
+    };
+
+    enum WidgetRequestFailure
+    {
+        Timeout = 1,
+        RateLimited = 2,
+        Failed = 3,
+    };
+
+    // A request the widget sends to the bot (TelegramWidget.request), already checked. Complete it exactly once,
+    // from any thread; until then the widget's next request is refused as busy.
+    runtimeclass WidgetRequest
+    {
+        // 1 to 64 bytes, as the widget passed them: the query's data.
+        String Data { get; };
+
+        // The bot's answer; empty for none.
+        void Complete(String result);
+        void Fail(WidgetRequestFailure failure);
+    }
+
+    // The new full content of one Web Storage area, at the end of each task that changed it.
+    runtimeclass WidgetStorageCommit
+    {
+        // "local" or "session"
+        String Area { get; };
+        Windows.Foundation.Collections.IMapView<String, String> Values { get; };
+    }
+
+    // One widget: its QuickJS sandbox, the trusted validator and TwidgetCore painting into Visual
+    // through Direct2D. Sizes and coordinates are CSS px, which are DIPs here.
+    //
+    // Start() builds the widget on a thread of its own; calls before it is ready are kept and applied then.
+    // Every event is raised on the widget's threads, never the caller's. Close() blocks until they are gone,
+    // and StorageCommitted can still be raised during it, so its handler must not wait for the caller's thread.
+    [default_interface]
+    runtimeclass WidgetView : Windows.Foundation.IClosable
+    {
+        // The directory holding the sandbox and validator bundles and libs/ (packages/desktop/WidgetJS).
+        static void LoadResources(String directory);
+
+        // html: the widget's UTF-8 source, as the payload gunzips to.
+        WidgetView(Windows.UI.Composition.Compositor compositor, UInt8[] html, WidgetTheme theme, WidgetOptions options);
+
+        // Sized by its parent visual; the renderer draws into it from its own thread.
+        Windows.UI.Composition.Visual Visual { get; };
+
+        // The height of the frame on screen, in [50, 600]; 0 before the first. It changes on the UI thread,
+        // with Changed raised there, in the same frame as the new pixels: a host that resizes the bubble
+        // from that handler, without dispatching, shows both together.
+        Double ContentHeight { get; };
+        // Whether the frame on screen came with the widget's bottom edge as its resize anchor (TelegramWidget.setResizeAnchor,
+        // docs/sdk-v1.md §2.12), rather than the top: the edge a host keeps still on screen when ContentHeight changes.
+        Boolean KeepsBottom { get; };
+        // The widget's scripts ran.
+        Boolean IsLoaded { get; };
+        // The runtime is gone: the renderer keeps the last frame with the stopped badge.
+        Boolean IsDead { get; };
+        String Error { get; };
+        // A one-line diagnostics snapshot; any thread.
+        String Summary { get; };
+        // Whether the widget follows its shared public_data live (watchPublicData): poll it only while this is true and the
+        // widget is on screen. Changed is raised when it changes.
+        Boolean WatchesPublicData { get; };
+
+        void Start();
+        void SetTheme(WidgetTheme theme);
+        void SetWidth(Double width);
+        // Off-screen pause: no animation frames, timers at 1 Hz, document.hidden inside the widget.
+        void SetVisible(Boolean visible);
+        // The bot's state changed: the full new state of both, empty for none. The widget is told what differs.
+        void SetData(String chatData, String publicData);
+        // action: 0 down, 1 move, 2 up, 3 cancel. modifiers: bit0 alt, bit1 ctrl, bit2 meta, bit3 shift. button: 0 main,
+        // 2 a mouse's secondary. A primary press returns what the widget claims of it (docs/sdk-v1.md §5.5), decided
+        // before it returns: bit0 horizontal drags, bit1 vertical ones, bit2 holds and the secondary button, which the
+        // renderer then turns into the widget's contextmenu. A touch in the leading edge strip claims nothing. Anything
+        // else returns -1.
+        Int32 Pointer(Int32 action, Double x, Double y, Int32 pointerId, Boolean primary, Boolean mouse, Int32 modifiers, Int32 button);
+        // A mouse with no button down: action 0 move, 1 left the view.
+        void Hover(Int32 action, Double x, Double y, Int32 modifiers);
+        // The text a mouse drag selected in the widget (docs/sdk-v1.md §5.10), empty without one: what the
+        // client's copy command takes. A press in the widget replaces it; ClearSelection drops it for a press
+        // anywhere else, and returns whether there was one.
+        String SelectedText { get; };
+        Boolean ClearSelection();
+
+        // The height, load state, death, error or WatchesPublicData changed.
+        event Windows.Foundation.TypedEventHandler<WidgetView, Object> Changed;
+        event Windows.Foundation.TypedEventHandler<WidgetView, WidgetAction> ActionRequested;
+        event Windows.Foundation.TypedEventHandler<WidgetView, WidgetStorageCommit> StorageCommitted;
+        // A request for the bot. A view without a handler refuses it (NOT_ALLOWED), so the handler must be added before Start().
+        event Windows.Foundation.TypedEventHandler<WidgetView, WidgetRequest> RequestReceived;
+        // TelegramWidget.copyText: copy the text and show a toast that says what was copied.
+        event Windows.Foundation.TypedEventHandler<WidgetView, String> CopyTextRequested;
+    }
+}
