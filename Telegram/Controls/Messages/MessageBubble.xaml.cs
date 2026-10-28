@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Telegram.Common;
+using Telegram.Common.Widgets;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
@@ -2120,6 +2121,7 @@ namespace Telegram.Controls.Messages
                 },
                 MessageAnimatedEmoji => new StickerContent(message),
                 MessageSponsored => new SponsoredContent(message),
+                MessageWidget => new WidgetContent(message),
                 _ => null
             };
 
@@ -3888,6 +3890,14 @@ namespace Telegram.Controls.Messages
                 width = paidMediaPreview.Width;
                 height = paidMediaPreview.Height;
             }
+            else if (constraint is MessageWidget widgetMessage)
+            {
+                // The widest the bubble gives media, or the bot's fixed width; the widget decides its height.
+                caption = widgetMessage.Caption?.Text.Length > 0;
+                width = WidgetSizing.Width(widgetMessage.Width, availableWidth);
+
+                goto Calculate;
+            }
 
             if (constraint is Animation animation)
             {
@@ -4020,6 +4030,7 @@ namespace Telegram.Controls.Messages
                 case MessageVideo:
                 case MessageAnimation:
                 case MessagePaidAlbum:
+                case MessageWidget:
                     return true;
                 case MessageAlbum album:
                     return album.IsMedia;

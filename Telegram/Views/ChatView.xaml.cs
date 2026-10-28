@@ -1611,8 +1611,14 @@ namespace Telegram.Views
                 }
                 else
                 {
+                    // Pressing a widget leaves the focus where it was, often in the composer: its selection wins unless
+                    // the focused box has one of its own.
                     var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-                    if (focused is MessageSelector selector && selector.Message != null && MessageCopy_Loaded(selector.Message))
+                    if (focused is not (RichEditBox { Document.Selection.Length: not 0 } or TextBox { SelectionLength: > 0 }) && WidgetContent.TryCopySelection(XamlRoot))
+                    {
+                        args.Handled = true;
+                    }
+                    else if (focused is MessageSelector selector && selector.Message != null && MessageCopy_Loaded(selector.Message))
                     {
                         if (selector.HasSelection)
                         {
@@ -3229,6 +3235,14 @@ namespace Telegram.Views
                 return;
             }
 
+            // The widget had the press as its own contextmenu.
+            var widget = (args.OriginalSource as DependencyObject)?.GetParentOrSelf<WidgetContent>();
+            if (widget?.TakesContextMenu is true)
+            {
+                args.Handled = true;
+                return;
+            }
+
             var selectionStart = -1;
             var selectionEnd = -1;
 
@@ -3847,7 +3861,11 @@ namespace Telegram.Views
                 flyout.CreateFlyoutSeparator();
 
                 // Copy
-                if (quote != null)
+                if (widget?.MenuSelection is string widgetSelection && widgetSelection.Length > 0)
+                {
+                    flyout.CreateFlyoutItem(() => MessageHelper.CopyText(XamlRoot, widgetSelection), Strings.Copy, Icons.Copy);
+                }
+                else if (quote != null)
                 {
                     // TODO: copy selection
                     flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.CopyMessage, quote, Strings.Copy, Icons.Copy);

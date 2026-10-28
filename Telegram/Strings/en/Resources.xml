@@ -14526,4 +14526,11 @@
   <string name="WelcomeMessageHint_other">New members will see these messages\nwhen they join</string>
 
   <string name="UseNavigationBar">Use Navigation Bar</string>
+  <!--NOT FINAL: widget messages. The badge over a widget that crashed (widget-sandbox's stoppedLabel default),
+      the media name for a widget without a caption, and the hint of the sign on a widget that may send data to
+      its bot. Replace with the final strings once they ship, and remove this block.-->
+  <string name="WidgetStopped">Widget stopped</string>
+  <string name="AttachWidget">Widget</string>
+  <string name="WidgetNetworkHint">A tap may send data to the bot's server.</string>
+
 </resources>

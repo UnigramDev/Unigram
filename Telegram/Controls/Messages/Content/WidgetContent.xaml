@@ -1,0 +1,53 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Telegram.Controls.Messages.Content">
+
+    <Style TargetType="local:WidgetContent">
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+        <Setter Property="VerticalAlignment"
+                Value="Top" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:WidgetContent">
+                    <Grid>
+                        <!-- Until the widget's first content, at the size the anchors or the cache give. -->
+                        <Border x:Name="Placeholder"
+                                Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                Opacity="0.2" />
+
+                        <!-- No widget: stopped after crashing twice in a row, or the payload would not open. -->
+                        <TextBlock x:Name="Stopped"
+                                   Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Visibility="Collapsed" />
+
+                        <!-- The widget's visual is this element's child visual, clipped to it. -->
+                        <Grid x:Name="Host"
+                              Background="Transparent" />
+
+                        <!-- The message may send queries: a tap may send data to the bot's server. -->
+                        <Border x:Name="NetworkMarker"
+                                Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                CornerRadius="10"
+                                Width="20"
+                                Height="20"
+                                Margin="0,4,4,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Visibility="Collapsed">
+                            <FontIcon Glyph="&#xE774;"
+                                      FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                      FontSize="12"
+                                      Foreground="{ThemeResource MessageMediaForegroundBrush}" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -1801,6 +1801,8 @@ namespace Telegram.Controls.Cells
                     return Text1(string.Empty, photo.Caption, photo.Video != null ? Strings.AttachLivePhoto : Strings.AttachPhoto);
                 case MessagePoll poll:
                     return Text1("\U0001F4CA ", poll.Poll.Question, Strings.Poll);
+                case MessageWidget widget:
+                    return Text1(string.Empty, widget.Caption, Strings.AttachWidget);
                 case MessageChecklist checklist:
                     return Text1("\u2611 ", checklist.List.Title, Strings.Todo);
                 case MessageCall call:

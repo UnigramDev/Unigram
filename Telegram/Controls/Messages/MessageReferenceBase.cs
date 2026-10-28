@@ -424,6 +424,9 @@ namespace Telegram.Controls.Messages
                 case MessagePhoto photo:
                     SetPhotoTemplate(message, sender, quote, manual, photo, title, outgoing, white, message.SelfDestructType is null);
                     break;
+                case MessageWidget:
+                    SetWidgetTemplate(message, sender, quote, manual, title, outgoing, white);
+                    break;
                 case MessagePoll poll:
                     SetPollTemplate(message, sender, poll, pollOptionId, title, outgoing, white);
                     break;
@@ -512,6 +515,9 @@ namespace Telegram.Controls.Messages
                     break;
                 case MessagePhoto photo:
                     SetPhotoTemplate(message, sender, quote, manual, photo, title, outgoing, white, true);
+                    break;
+                case MessageWidget:
+                    SetWidgetTemplate(message, sender, quote, manual, title, outgoing, white);
                     break;
                 case MessagePoll poll:
                     SetPollTemplate(message, sender, poll, replyToMessage.PollOptionId, title, outgoing, white);
@@ -665,6 +671,21 @@ namespace Telegram.Controls.Messages
             {
                 HideThumbnail();
             }
+        }
+
+        private void SetWidgetTemplate(MessageViewModel message, MessageSender sender, FormattedText quote, bool manual, string title, bool outgoing, bool white)
+        {
+            HideThumbnail();
+
+            SetText(message.ClientService,
+                message,
+                outgoing,
+                sender,
+                title,
+                quote != null ? null : Strings.AttachWidget,
+                quote,
+                manual,
+                white);
         }
 
         private void SetInvoiceTemplate(MessageViewModel message, MessageSender sender, MessageInvoice invoice, string title, bool outgoing, bool white)

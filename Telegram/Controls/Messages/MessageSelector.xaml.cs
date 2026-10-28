@@ -333,21 +333,31 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        // Swipe to reply, for a touch press; from PointerPressed only. Content that handles its presses calls it for the ones
+        // it lets the bubble swipe.
+        public void RedirectForManipulation(PointerRoutedEventArgs e)
+        {
+            EnsureTracker();
+
+            try
+            {
+                _interactionSource?.TryRedirectForManipulation(e.GetCurrentPoint(this));
+            }
+            catch (Exception)
+            {
+                // Ignoring the failed redirect to prevent app crashing
+            }
+        }
+
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
             if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
-                EnsureTracker();
-
-                try
-                {
-                    _interactionSource?.TryRedirectForManipulation(e.GetCurrentPoint(this));
-                }
-                catch (Exception)
-                {
-                    // Ignoring the failed redirect to prevent app crashing
-                }
+                RedirectForManipulation(e);
             }
+
+            // A press anywhere but in the widget that has a selection drops it (WidgetContent).
+            WidgetContent.ClearSelection(e.OriginalSource as DependencyObject);
 
             if (e.OriginalSource is Grid { Name: "RootGrid" } or TextBlock { Name: "Label" })
             {

@@ -1579,7 +1579,13 @@ namespace Telegram.Views
 
             var selector = sender as MessageSelector;
 
+            // A widget animates its own height, and keeps the edge it anchors still itself (WidgetContent.KeepAnchoredEdge).
             var message = selector?.Message;
+            if (message?.Content is MessageWidget { Height: 0 })
+            {
+                return;
+            }
+
             if (message == null || message.AnimationState != MessageAnimationState.Added)
             {
                 if (message != null && e.PreviousSize.Width > 0 && e.PreviousSize.Height > 0)

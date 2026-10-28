@@ -203,6 +203,7 @@ namespace Telegram.Td.Api
                 MessageAlbum album => album.ShowCaptionAboveMedia,
                 MessagePaidAlbum paidAlbum => paidAlbum.ShowCaptionAboveMedia,
                 MessagePaidMedia paidMedia => paidMedia.ShowCaptionAboveMedia,
+                MessageWidget widget => widget.ShowCaptionAboveMedia,
                 MessageRichMessage richMessage => richMessage.Message.Blocks[0] is not PageBlockAnimation and not PageBlockCollage and not PageBlockMap and not PageBlockPhoto and not PageBlockSlideshow and not PageBlockVideo,
                 _ => false
             };
@@ -2311,6 +2312,9 @@ namespace Telegram.Td.Api
                 case MessageSponsored:
                     // Videos are streamed
                     return true;
+                case MessageWidget:
+                    // Its payload is in the message
+                    return true;
                 case MessageInvoice invoice:
                     return invoice.PaidMedia is PaidMediaVideo;
                 default:
@@ -2559,6 +2563,7 @@ namespace Telegram.Td.Api
                 MessageInvoice invoice => invoice.PaidMediaCaption,
                 MessagePaidAlbum paidAlbum => paidAlbum.Caption,
                 MessagePaidMedia paidMedia => paidMedia.Caption,
+                MessageWidget widget => widget.Caption,
                 _ => null,
             };
         }
@@ -2922,6 +2927,7 @@ namespace Telegram.Td.Api
                 case MessageVideoNote:
                 case MessageVoiceNote:
                 case MessageSponsored:
+                case MessageWidget:
                     return false;
                 case MessageAsyncStory asyncStory:
                     return asyncStory.ViaMention;

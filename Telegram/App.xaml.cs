@@ -8,6 +8,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Common.Widgets;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -366,6 +367,7 @@ namespace Telegram
             Logger.Info("OnSuspendingAsync");
 
             LifetimeService.Current.Passcode.CloseTime = DateTime.UtcNow;
+            WidgetStore.FlushAll();
 
             //return Task.WhenAll(LifetimeService.Current.ResolveAll<IVoipService>().Select(x => x.DiscardAsync()));
             //await Task.WhenAll(LifetimeService.Current.ResolveAll<IClientService>().Select(x => x.CloseAsync()));

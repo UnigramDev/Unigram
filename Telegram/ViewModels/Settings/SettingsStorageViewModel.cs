@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Common.Widgets;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -270,6 +271,10 @@ namespace Telegram.ViewModels.Settings
             {
                 TotalBytes = totalBytes;
             }
+
+            // Widgets' Web Storage goes too (widget-sandbox docs/sdk-v1.md §5.4).
+            var store = WidgetStore.For(ClientService.SessionId);
+            await Task.Run(store.Clear);
 
             IsLoading = false;
             TaskCompleted = true;
