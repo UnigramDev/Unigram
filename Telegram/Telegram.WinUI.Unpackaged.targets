@@ -1,0 +1,27 @@
+<!--
+  Imported through CustomBeforeMicrosoftCommonTargets, right after the .csproj.user - see the comment
+  above the hook in Telegram.WinUI.csproj.
+-->
+<Project>
+
+  <!-- A -p:Unpackaged on the command line wins either way, so Build.WinUI.ps1 passes it for both
+       builds and a profile left selected in Visual Studio cannot change what the script makes. -->
+  <PropertyGroup Condition="'$(Unpackaged)' == '' and '$(ActiveDebugProfile)' == 'Telegram.WinUI (Unpackaged)'">
+    <Unpackaged>true</Unpackaged>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Unpackaged)' == 'true'">
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <AppxPackage>false</AppxPackage>
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Unpackaged)' != 'true'">
+    <AppxPackage>true</AppxPackage>
+  </PropertyGroup>
+
+  <!-- Last, so the MSIX props read the values above. -->
+  <Import Project="$(_WinUIChainedCustomBeforeMicrosoftCommonTargets)" Condition="'$(_WinUIChainedCustomBeforeMicrosoftCommonTargets)' != '' and Exists('$(_WinUIChainedCustomBeforeMicrosoftCommonTargets)')" />
+
+</Project>

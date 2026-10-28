@@ -219,6 +219,7 @@ Invoke-MSBuild -Description "Telegram.WinUI ($Configuration|$Platform, $Identity
       "-p:Platform=$Platform",
       "-p:PublishProfile=Properties\PublishProfiles\winui-$($Platform.ToLowerInvariant()).pubxml",
       "-p:WinUIIdentity=$Identity",
+      '-p:Unpackaged=false',
       '-p:GenerateAppxPackageOnBuild=true',
       '-p:AppxBundle=Always',
       "-p:AppxBundlePlatforms=$Platform",

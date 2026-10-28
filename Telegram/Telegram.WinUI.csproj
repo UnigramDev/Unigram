@@ -177,8 +177,9 @@
   </ItemGroup>
 
   <!--
-    Unpackaged (-p:Unpackaged=true): the same sources, run straight out of the output folder with
-    no identity. The binaries are not the same ones, and cannot be - see below.
+    Unpackaged (-p:Unpackaged=true, or the "Telegram.WinUI (Unpackaged)" launch profile): the same
+    sources, run straight out of the output folder with no identity. The binaries are not the same
+    ones, and cannot be - see below.
 
     Self-contained, because there is no package dependency to resolve the Windows App SDK runtime
     with, and a user's machine has no reason to have it installed: the runtime is copied beside
@@ -190,12 +191,15 @@
     a switch on one output. EnableMsixTooling stays on regardless: it is what brings in the PRI
     targets, and resources.pri is what every {CustomResource} in the app resolves through whether
     there is a package around it or not.
+
+    The properties themselves are set in Telegram.WinUI.Unpackaged.targets, because the launch
+    profile is only known from ActiveDebugProfile in the .csproj.user, which MSBuild imports after
+    this file. CustomBeforeMicrosoftCommonTargets is the first hook after it and before anything
+    reads them; the MSIX tooling owns it already, so that file chains to the value it replaces.
   -->
-  <PropertyGroup Condition="'$(Unpackaged)' == 'true'">
-    <WindowsPackageType>None</WindowsPackageType>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <AppxPackage>false</AppxPackage>
-    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+  <PropertyGroup>
+    <_WinUIChainedCustomBeforeMicrosoftCommonTargets>$(CustomBeforeMicrosoftCommonTargets)</_WinUIChainedCustomBeforeMicrosoftCommonTargets>
+    <CustomBeforeMicrosoftCommonTargets>$(MSBuildThisFileDirectory)Telegram.WinUI.Unpackaged.targets</CustomBeforeMicrosoftCommonTargets>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -214,7 +218,6 @@
     would drift the first time one of them changes.
   -->
   <PropertyGroup>
-    <AppxPackage Condition="'$(Unpackaged)' != 'true'">true</AppxPackage>
     <EnableMsixTooling>true</EnableMsixTooling>
 
     <!-- Layout is what Add-AppxPackage -Register installs during development; Bundle is the

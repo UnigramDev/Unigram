@@ -2,6 +2,12 @@
   "profiles": {
     "Telegram.Modern": {
       "commandName": "MsixPackage"
+    },
+    "Telegram.WinUI": {
+      "commandName": "MsixPackage"
+    },
+    "Telegram.WinUI (Unpackaged)": {
+      "commandName": "Project"
     }
   }
 }
