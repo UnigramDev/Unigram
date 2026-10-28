@@ -782,15 +782,6 @@ namespace Telegram.Controls.RichEditor
         {
             Normalize(Blocks);
 
-            // The document is never without a line to type on.
-            if (Blocks.Count == 0)
-            {
-                Blocks.Add(new RichParagraphBlock(RichBlockKind.Paragraph));
-            }
-
-            _blocks.Clear();
-            Stamp(Blocks, null);
-
             _stops.Clear();
             _leaves.Clear();
             _stopOfBlock.Clear();
@@ -799,6 +790,18 @@ namespace Telegram.Controls.RichEditor
             {
                 block.CollectStops(_stops);
             }
+
+            // The document is never without a line to type on. Having blocks is not enough: a
+            // collapsed quote with no credit, or media alone, holds no leaf for the caret.
+            if (!HasLeaf(_stops))
+            {
+                var line = new RichParagraphBlock(RichBlockKind.Paragraph);
+                Blocks.Add(line);
+                line.CollectStops(_stops);
+            }
+
+            _blocks.Clear();
+            Stamp(Blocks, null);
 
             foreach (var block in _blocks)
             {
@@ -913,6 +916,19 @@ namespace Telegram.Controls.RichEditor
                         break;
                 }
             }
+        }
+
+        private static bool HasLeaf(List<RichStop> stops)
+        {
+            for (int i = 0; i < stops.Count; i++)
+            {
+                if (stops[i].Leaf != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool IsNotMedia(RichBlock block) => block is not RichMediaBlock;
