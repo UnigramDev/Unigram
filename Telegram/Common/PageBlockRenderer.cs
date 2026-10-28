@@ -82,7 +82,12 @@ namespace Telegram.Common
         // Anchor blocks register here so in-page links can scroll to them.
         private readonly Dictionary<string, Border> _anchors = new();
 
-        private readonly double _padding = 12;
+        private double _padding = 12;
+        public double HorizontalPadding
+        {
+            get => _padding;
+            set => _padding = value;
+        }
 
         public PageBlockRenderer(IPageBlockContext context)
         {
@@ -356,7 +361,8 @@ namespace Telegram.Common
 
             var grid = new Grid
             {
-                HorizontalAlignment = HorizontalAlignment.Stretch
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(_padding, 0, _padding, 0)
             };
 
             var thickness = table.IsBordered ? 1 : 0;
@@ -2205,7 +2211,8 @@ namespace Telegram.Common
         {
             if (block is PageBlockCover or PageBlockMap or
                 PageBlockPhoto or PageBlockVideo or
-                PageBlockCollage or PageBlockSlideshow or PageBlockChatLink)
+                PageBlockCollage or PageBlockSlideshow or PageBlockChatLink or
+                PageBlockTable)
             {
                 return 0.0;
             }

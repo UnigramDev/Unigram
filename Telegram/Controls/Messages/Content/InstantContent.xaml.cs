@@ -35,14 +35,20 @@ namespace Telegram.Controls.Messages.Content
         public InstantContent(MessageViewModel message)
         {
             _message = message;
-            _renderer = new PageBlockRenderer(this);
+            _renderer = new PageBlockRenderer(this)
+            {
+                HorizontalPadding = 10
+            };
 
             DefaultStyleKey = typeof(InstantContent);
         }
 
         public InstantContent()
         {
-            _renderer = new PageBlockRenderer(this);
+            _renderer = new PageBlockRenderer(this)
+            {
+                HorizontalPadding = 10
+            };
 
             DefaultStyleKey = typeof(InstantContent);
         }
