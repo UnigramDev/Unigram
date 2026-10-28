@@ -4363,7 +4363,15 @@ namespace Telegram.Views
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetPivotSelectedIndex(Navigation.SelectedIndex);
+            var index = Navigation.SelectedIndex;
+            if (index != -1)
+            {
+                SetPivotSelectedIndex(index);
+            }
+            else if (e.RemovedItems?.Count > 0)
+            {
+                Navigation.SelectedItem = e.RemovedItems[0];
+            }
         }
 
         private int _advanced;
