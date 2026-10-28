@@ -64,11 +64,6 @@ namespace Telegram.Views.Popups
             TitleText.DataContext = _viewModel;
             TitleText.MaxLength = (int)clientService.Options.ChecklistTitleLengthMax;
 
-            if (title != null)
-            {
-                TitleText.SetText(title);
-            }
-
             AddTask.DataContext = _viewModel;
             AddTask.MaxLength = (int)clientService.Options.ChecklistTaskTextLengthMax;
 
@@ -95,6 +90,7 @@ namespace Telegram.Views.Popups
             Items = new ObservableCollection<ChecklistTaskViewModel>();
             Items.CollectionChanged += Items_CollectionChanged;
 
+            // After Items: SetText raises ContentChanged at once, and its handler reads them.
             if (checklist != null)
             {
                 TitleText.SetText(checklist.Title);
@@ -111,6 +107,11 @@ namespace Telegram.Views.Popups
             }
             else
             {
+                if (title != null)
+                {
+                    TitleText.SetText(title);
+                }
+
                 Items.Add(new ChecklistTaskViewModel(string.Empty, false, false));
             }
 

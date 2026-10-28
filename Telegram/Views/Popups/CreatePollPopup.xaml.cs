@@ -54,11 +54,6 @@ namespace Telegram.Views.Popups
             DescriptionText.DataContext = _viewModel;
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(clientService.Session);
 
-            if (question != null)
-            {
-                QuestionText.SetText(question);
-            }
-
             Title = Strings.NewPoll;
             PrimaryButtonText = Strings.OK;
             SecondaryButtonText = Strings.Cancel;
@@ -66,6 +61,12 @@ namespace Telegram.Views.Popups
             Items = new ObservableCollection<PollOptionViewModel>();
             Items.CollectionChanged += Items_CollectionChanged;
             Items.Add(new PollOptionViewModel(string.Empty, forceQuiz, false, Remove_Click));
+
+            // After Items: SetText raises ContentChanged at once, and its handler reads them.
+            if (question != null)
+            {
+                QuestionText.SetText(question);
+            }
 
             Duration.Badge = Locale.Declension(Strings.R.Hours, 24);
 
