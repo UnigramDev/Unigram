@@ -12,6 +12,11 @@
 
 #include "FatalError.h"
 
+#ifdef WINUI3
+#include "AppModelPaths.h"
+#include <psapi.h>
+#endif
+
 #include <atomic>
 #include <roerrorapi.h>
 #include <detours.h>
@@ -953,13 +958,36 @@ namespace winrt::Telegram::Native::implementation
             handles = count;
         }
 
-        // The query behind MemoryManager.AppMemoryUsage, which is TotalCommitUsage.
-        APP_MEMORY_INFORMATION info;
-
-        if (GetProcessInformation(GetCurrentProcess(), ProcessAppMemoryInfo, &info, sizeof(info)))
+#ifdef WINUI3
+        // ProcessAppMemoryInfo reports the job the process is in, which for a package is the
+        // package's own. Without one it is whatever job the launcher made - Visual Studio puts
+        // everything it starts in one - so the process is asked directly instead.
+        if (!AppModel::HasPackageIdentity())
         {
-            privateCommit = info.PrivateCommitUsage;
-            sharedCommit = info.TotalCommitUsage - info.PrivateCommitUsage;
+            PROCESS_MEMORY_COUNTERS_EX2 counters{};
+
+            if (GetProcessMemoryInfo(GetCurrentProcess(), reinterpret_cast<PROCESS_MEMORY_COUNTERS*>(&counters), sizeof(counters)))
+            {
+                privateCommit = counters.PrivateUsage;
+                sharedCommit = counters.SharedCommitUsage;
+            }
+            // Windows 10 builds older than the shared commit counter refuse the larger structure.
+            else if (GetProcessMemoryInfo(GetCurrentProcess(), reinterpret_cast<PROCESS_MEMORY_COUNTERS*>(&counters), sizeof(PROCESS_MEMORY_COUNTERS_EX)))
+            {
+                privateCommit = counters.PrivateUsage;
+            }
+        }
+        else
+#endif
+        {
+            // The query behind MemoryManager.AppMemoryUsage, which is TotalCommitUsage.
+            APP_MEMORY_INFORMATION info;
+
+            if (GetProcessInformation(GetCurrentProcess(), ProcessAppMemoryInfo, &info, sizeof(info)))
+            {
+                privateCommit = info.PrivateCommitUsage;
+                sharedCommit = info.TotalCommitUsage - info.PrivateCommitUsage;
+            }
         }
 
         // Every window's thread polls this, and a factory goes stale when an adapter is added,
