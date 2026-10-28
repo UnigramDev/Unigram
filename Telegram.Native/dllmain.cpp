@@ -9,8 +9,11 @@ namespace
     // User-mode GPU drivers, by file name prefix: Intel, NVIDIA, AMD.
     constexpr const wchar_t* c_graphicsDrivers[] = { L"igd", L"nvwgf2um", L"nvd3dum", L"amdxx", L"atidxx", L"aticfx" };
 
-    // What a handle passes through on its way to the kernel. None of them chose it.
-    constexpr const wchar_t* c_systemModules[] = { L"ntdll.dll", L"kernelbase.dll", L"kernel32.dll" };
+    // What a handle passes through on its way to the kernel. None of them chose it: a driver
+    // waits through kernelbase, and submits and presents through the D3D runtime's callbacks,
+    // which call the D3DKMT stubs in gdi32/win32u.
+    constexpr const wchar_t* c_systemModules[] = { L"ntdll.dll", L"kernelbase.dll", L"kernel32.dll",
+        L"win32u.dll", L"gdi32.dll", L"d3d11.dll", L"d3d12core.dll", L"dxgi.dll" };
 
     // A driver that keeps failing would go through exception dispatch on every frame it draws.
     constexpr int c_maxContinues = 16;
