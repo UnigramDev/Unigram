@@ -467,7 +467,7 @@ namespace Telegram.ViewModels.Settings
 
         public bool UseNavigationBar
         {
-            get => AppSettings.Appearance.DisableNavigationBar;
+            get => !AppSettings.Appearance.DisableNavigationBar;
             set
             {
                 if (AppSettings.Appearance.DisableNavigationBar == value)
