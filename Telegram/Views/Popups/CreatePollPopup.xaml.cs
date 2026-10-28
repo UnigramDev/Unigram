@@ -175,7 +175,7 @@ namespace Telegram.Views.Popups
             }
 
             IsPrimaryButtonEnabled = condition;
-            IsLightDismissEnabled = condition;
+            IsLightDismissEnabled = !condition;
         }
 
         public ObservableCollection<PollOptionViewModel> Items { get; private set; }

@@ -200,7 +200,7 @@ namespace Telegram.Views.Popups
             condition = condition && Items.Count(x => !string.IsNullOrEmpty(x.Text.Text)) >= 1;
 
             IsPrimaryButtonEnabled = condition;
-            IsLightDismissEnabled = condition;
+            IsLightDismissEnabled = !condition;
         }
 
         public ObservableCollection<ChecklistTaskViewModel> Items { get; private set; }
