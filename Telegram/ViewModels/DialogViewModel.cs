@@ -4655,7 +4655,7 @@ namespace Telegram.ViewModels
                 {
                     SetText(null, false);
 
-                    ClientService.Send(new SendBotStartMessage(_currentInlineBot.Id, chat.Id, startBot.Parameter));
+                    ClientService.Send(new SendBotStartMessage(currentInlineBot.Id, chat.Id, startBot.Parameter));
                     NavigationService.NavigateToChat(chat);
                 }
             }
