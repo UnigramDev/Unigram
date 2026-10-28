@@ -58,3 +58,57 @@ To regenerate, drop this in an empty folder outside the repository as `Win2D.Pro
 - Copy `bin\Release\net8.0-windows10.0.19041.0\Microsoft.Graphics.Canvas.Interop.dll` over the one here.
 
 `Microsoft.Graphics.Canvas.Interop.xml` beside it is the package's own documentation file, copied unchanged so IntelliSense keeps working; it does not need regenerating unless the Win2D version changes.
+
+#### WinUI 3
+
+`Win2D/WinUI/Microsoft.Graphics.Canvas.Interop.dll` is the same thing for `Telegram.WinUI.csproj`, regenerated from `Microsoft.Graphics.Win2D` 1.4.0 - the Windows App SDK build of Win2D, whose types take `Microsoft.UI.Composition` and `Microsoft.UI.Xaml` where the UWP one takes `Windows.UI`, so the dll above cannot serve both. The package's own projection references `WinRT.Runtime` 2.1.0; the rebuild has the same 364 public types and the same references, bar `WinRT.Runtime` 2.3.1 and the net8.0 framework. The package ships no documentation file, so there is none beside it.
+
+The project differs from the one above only where the framework does. In an empty folder outside the repository, as `Win2D.Projection.csproj`:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Platforms>AnyCPU</Platforms>
+    <Platform>AnyCPU</Platform>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Version>1.4.0</Version>
+    <InformationalVersion>1.4.0+cswinrt2.3.1</InformationalVersion>
+    <IsAotCompatible>true</IsAotCompatible>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <Deterministic>true</Deterministic>
+    <NoWarn>$(NoWarn);CS0108</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
+    <CSWinRTIncludes>Microsoft.Graphics.Canvas;</CSWinRTIncludes>
+    <CSWinRTWindowsMetadata>local</CSWinRTWindowsMetadata>
+    <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Base" Version="2.0.4" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <CSWinRTInputs Include="$(Win2DWinMD)" />
+    <CSWinRTInputs Include="$(PkgMicrosoft_WindowsAppSDK_WinUI)\metadata\*.winmd" />
+  </ItemGroup>
+
+</Project>
+```
+
+The Windows App SDK packages are the versions `Telegram.WinUI.csproj` names; keep them in step when it moves. Then:
+
+- `dotnet build -c Release -p:Win2DWinMD="%USERPROFILE%\.nuget\packages\microsoft.graphics.win2d\1.4.0\lib\uap10.0\Microsoft.Graphics.Canvas.winmd"`
+- Copy `bin\Release\net8.0-windows10.0.19041.0\Microsoft.Graphics.Canvas.Interop.dll` over `Win2D/WinUI/Microsoft.Graphics.Canvas.Interop.dll`.
