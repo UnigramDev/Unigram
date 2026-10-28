@@ -311,28 +311,54 @@ namespace Telegram.Controls.Messages.Content
                 UpdateView(message.ClientService, linkPreview.Blocks, !linkPreview.IsFull);
             }
 
+            ShowHideMore(!linkPreview.IsFull);
+        }
 
-            if (!linkPreview.IsFull)
+        private ButtonEx _showMore;
+
+        private void ShowHideMore(bool show)
+        {
+            if (_showMore != null == show)
             {
-                var load = new ButtonEx();
-                load.Style = BootStrapper.Current.Resources["InstantViewButtonStyle"] as Style;
-                load.Content = "Show more";
-                load.Margin = new Thickness(10, 8, 10, 4);
-                load.Click += async (s, args) =>
-                {
-                    load.ShowSkeleton();
-
-                    var response = await _message.ClientService.SendAsync(new GetFullRichMessage(message.ChatId, message.Id));
-                    if (response is RichMessage richMessage && /*instantView.IsFull &&*/ !token.IsCancellationRequested)
-                    {
-                        _message.Delegate.NavigationService.NavigateToInstant(new WebPageInstantView(richMessage.Blocks, 0, 2, richMessage.IsRtl, richMessage.IsFull, null), "tg://test");
-                    }
-
-                    load.HideSkeleton();
-                };
-
-                LayoutRoot.Children.Add(load);
+                return;
             }
+
+            if (_showMore == null)
+            {
+                _showMore = new ButtonEx();
+                _showMore.Style = BootStrapper.Current.Resources["InstantViewButtonStyle"] as Style;
+                _showMore.Content = Strings.ShowMore;
+                _showMore.Margin = new Thickness(10, 8, 10, 4);
+                _showMore.Click += ShowMore_Click;
+
+                LayoutRoot.Children.Add(_showMore);
+            }
+            else
+            {
+                LayoutRoot.Children.Remove(_showMore);
+            }
+        }
+
+        private async void ShowMore_Click(object sender, RoutedEventArgs e)
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            var showMore = _showMore;
+            var token = _instantViewToken.Token;
+
+            showMore?.ShowSkeleton();
+
+            var response = await message.ClientService.SendAsync(new GetFullRichMessage(message.ChatId, message.Id));
+            if (response is RichMessage richMessage && /*instantView.IsFull &&*/ !token.IsCancellationRequested)
+            {
+                message.Delegate.NavigationService.NavigateToInstant(new WebPageInstantView(richMessage.Blocks, 0, 2, richMessage.IsRtl, richMessage.IsFull, null), "tg://test");
+            }
+
+            showMore?.HideSkeleton();
         }
 
         private bool _skeletonCollapsed = true;
