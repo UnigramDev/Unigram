@@ -1458,9 +1458,9 @@ namespace Telegram.Views
 
             // After the collection, so the surfaces it finalized are released first. DComp keeps a
             // released surface's atlas region, and with it the page it sits in, until its graphics
-            // device is trimmed. Both devices, because animated images draw on one of their own.
+            // device is trimmed, and Direct3D what it released until its context is flushed.
             Direct2D.Current.Device.Trim();
-            AnimatedImageLoader.Trim(XamlRoot);
+            Direct2D.Current.Trim();
 
             Logger.Info(WindowContent.DebugCounters());
 
