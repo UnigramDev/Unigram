@@ -376,15 +376,19 @@ namespace Telegram.Controls
         {
             var sender = d as DirectTextBlock;
 
-            sender.Layout().Alignment = (TextAlignment)e.NewValue switch
+            sender.Layout().Alignment = ToAlignmentMode((TextAlignment)e.NewValue);
+            sender.Invalidate();
+        }
+
+        private static TextAlignmentMode ToAlignmentMode(TextAlignment alignment)
+        {
+            return alignment switch
             {
                 TextAlignment.Left => TextAlignmentMode.Left,
                 TextAlignment.Center => TextAlignmentMode.Center,
                 TextAlignment.Right => TextAlignmentMode.Right,
                 _ => TextAlignmentMode.Leading
             };
-
-            sender.Invalidate();
         }
 
         public static readonly DependencyProperty MaxLinesProperty =
@@ -451,10 +455,26 @@ namespace Telegram.Controls
                 _layout = Direct2D.Current.CreateLayout();
                 _layout.IsReadOnly = _isReadOnly;
                 _layout.UseAnalyzer = _useAnalyzer;
+
+                // Made again after Clear: the properties reached the layout it closed through
+                // their change callbacks, which do not run again for values that stay.
+                if (_layoutClosed)
+                {
+                    _layoutClosed = false;
+
+                    _layout.FontSize = _fontSize;
+                    _layout.FontFamily = FontFamily?.Source ?? string.Empty;
+                    _layout.FontWeight = FontWeight.Weight;
+                    _layout.Italic = FontStyle != FontStyle.Normal;
+                    _layout.Alignment = ToAlignmentMode(TextAlignment);
+                    _layout.MaxLines = MaxLines;
+                }
             }
 
             return _layout;
         }
+
+        private bool _layoutClosed;
 
         // Only consulted by the layout while the text is edited.
         private static readonly bool _useAnalyzer = AppSettings.Diagnostics.AnalyzerTextLayout;
@@ -3314,6 +3334,7 @@ namespace Telegram.Controls
             {
                 _layout.Dispose();
                 _layout = null;
+                _layoutClosed = true;
             }
 
             _surface = null;

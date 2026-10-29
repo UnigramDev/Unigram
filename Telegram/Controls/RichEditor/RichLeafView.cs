@@ -194,6 +194,19 @@ namespace Telegram.Controls.RichEditor
             Render();
         }
 
+        /// <summary>
+        /// Gives back the text block's layout and surface, for a view put in the editor's pool:
+        /// the surface is a region of the device's atlas, and a pooled one keeps the page it is
+        /// in allocated. The next <see cref="Bind"/> lays the text out and draws it again.
+        /// </summary>
+        public void Clear()
+        {
+            Text?.Clear();
+
+            _renderedVersion = -1;
+            _renderedLeaf = null;
+        }
+
         /// <summary>The hint shown while the leaf is empty; it follows the caret, so it changes on its own.</summary>
         public void SetPlaceholder(string placeholder)
         {
@@ -279,6 +292,12 @@ namespace Telegram.Controls.RichEditor
             }
             else
             {
+                // Collapsed by Clear, which leaves showing it again to whoever gives it text.
+                if (Text.Visibility != Visibility.Visible)
+                {
+                    Text.Visibility = Visibility.Visible;
+                }
+
                 var text = _leaf.Text;
                 Text.SetText(holder ? text + LineHolder : text, _parts.Count > 0 ? _parts : null, direction);
             }

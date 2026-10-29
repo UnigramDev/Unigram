@@ -72,6 +72,11 @@ namespace Telegram.Controls.RichEditor
         /// <summary>The element a selected block outlines; a captioned block's media, not its caption.</summary>
         internal virtual FrameworkElement NodeElement => this;
 
+        /// <summary>Gives back the layouts and surfaces of its own leaves, as it is pooled; nested blocks are pooled on their own.</summary>
+        internal virtual void Clear()
+        {
+        }
+
         /// <summary>Makes <paramref name="panel"/> hold the presenters of <paramref name="blocks"/>, in order, and realizes them.</summary>
         protected void Sync(Panel panel, IList<RichBlock> blocks)
         {
@@ -97,6 +102,11 @@ namespace Telegram.Controls.RichEditor
         public RichTextBlockPresenter()
         {
             DefaultStyleKey = typeof(RichTextBlockPresenter);
+        }
+
+        internal override void Clear()
+        {
+            Leaf?.Clear();
         }
 
         protected override void OnTemplate()
@@ -166,6 +176,11 @@ namespace Telegram.Controls.RichEditor
         public RichBlockQuotePresenter()
         {
             DefaultStyleKey = typeof(RichBlockQuotePresenter);
+        }
+
+        internal override void Clear()
+        {
+            Credit?.Clear();
         }
 
         // Collapsed, the text is what is selected whole; the credit under it is still a line.
@@ -296,6 +311,12 @@ namespace Telegram.Controls.RichEditor
         public RichTextQuotePresenter()
         {
             DefaultStyleKey = typeof(RichTextQuotePresenter);
+        }
+
+        internal override void Clear()
+        {
+            Text?.Clear();
+            Credit?.Clear();
         }
 
         protected override void OnTemplate()
@@ -512,6 +533,11 @@ namespace Telegram.Controls.RichEditor
             DefaultStyleKey = typeof(RichDetailsPresenter);
         }
 
+        internal override void Clear()
+        {
+            Header?.Clear();
+        }
+
         protected override void OnTemplate()
         {
             if (Toggle != null)
@@ -589,6 +615,11 @@ namespace Telegram.Controls.RichEditor
         public RichTablePresenter()
         {
             DefaultStyleKey = typeof(RichTablePresenter);
+        }
+
+        internal override void Clear()
+        {
+            Caption?.Clear();
         }
 
         protected override void OnTemplate()
@@ -814,6 +845,12 @@ namespace Telegram.Controls.RichEditor
         public RichTableCellPresenter()
         {
             DefaultStyleKey = typeof(RichTableCellPresenter);
+        }
+
+        /// <summary>Gives back the layout and surface of its leaf, as it is pooled.</summary>
+        internal void Clear()
+        {
+            Leaf?.Clear();
         }
 
         internal void Bind(RichEditorView owner, RichTableCell cell)

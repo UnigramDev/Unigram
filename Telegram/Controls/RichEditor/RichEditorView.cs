@@ -1084,10 +1084,12 @@ namespace Telegram.Controls.RichEditor
             IsRealizing = realizing;
         }
 
-        // Presenters scrolled out of the window, template, text blocks and surfaces kept, for the
-        // ones scrolling in: building them anew is most of what a window move costs. Every kind
-        // but media, whose players and uploads are their own, and atoms, which are cheap. Taken
-        // down empty: what was nested in one is pooled on its own.
+        // Presenters scrolled out of the window, template and text blocks kept, for the ones
+        // scrolling in: building them anew is most of what a window move costs. Their text is
+        // laid out and drawn again, as each leaf's surface is a region of the device's atlas,
+        // and a pooled one keeps the page it is in allocated however little else is left in it.
+        // Every kind but media, whose players and uploads are their own, and atoms, which are
+        // cheap. Taken down empty: what was nested in one is pooled on its own.
         // By kind and look: a kind is a visual state, and a presenter brought back into the tree
         // for another kind was seen drawing its text in the old one before it took the new.
         private readonly Dictionary<int, Stack<FrameworkElement>> _pool = new();
@@ -1115,6 +1117,18 @@ namespace Telegram.Controls.RichEditor
 
         private void Release(int key, FrameworkElement presenter)
         {
+            // Also when the pool is full: a dropped presenter's surface would otherwise wait for
+            // the collector.
+            switch (presenter)
+            {
+                case RichBlockPresenter block:
+                    block.Clear();
+                    break;
+                case RichTableCellPresenter cell:
+                    cell.Clear();
+                    break;
+            }
+
             if (_pooled >= MaxPooled)
             {
                 return;
