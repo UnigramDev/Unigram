@@ -14,6 +14,13 @@ namespace Telegram.Controls
 {
     // Name of the file is FrameworkElementEx.cs because supposedly this code should be
     // added to all classes inheriting FrameworkElement, but this isn't really possible in C#.
+    //
+    // Connected means in the live tree, and nothing less. Parent and VisualTreeHelper.GetParent
+    // return null on every element of a subtree whose ancestor has left the live tree, not only on
+    // the element that was removed: a template child of a pooled control, the content of a detached
+    // frame, anything nested in them. Each of them gets Unloaded, the probe reads null, OnUnloaded
+    // runs and IsConnected is false. Nothing under a detached ancestor is still connected because it
+    // has a parent of its own.
 
     public static class FrameworkElementEx2
     {
@@ -65,6 +72,7 @@ namespace Telegram.Controls
             // TODO: unfortunately FrameworkElement.Parent returns null
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            // Null as well under an ancestor that left the live tree: see the top of this file.
 
             var parent = this.GetParent();
             if (parent != null && !_loaded)
@@ -111,6 +119,7 @@ namespace Telegram.Controls
             // TODO: unfortunately FrameworkElement.Parent returns null
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            // Null as well under an ancestor that left the live tree: see the top of this file.
 
             var parent = this.GetParent();
             if (parent != null && !_loaded)
@@ -157,6 +166,7 @@ namespace Telegram.Controls
             // TODO: unfortunately FrameworkElement.Parent returns null
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            // Null as well under an ancestor that left the live tree: see the top of this file.
 
             var parent = this.GetParent();
             if (parent != null && !_loaded)
@@ -211,6 +221,7 @@ namespace Telegram.Controls
             // TODO: unfortunately FrameworkElement.Parent returns null
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            // Null as well under an ancestor that left the live tree: see the top of this file.
 
             var parent = this.GetParent();
             if (parent != null && !_loaded)
@@ -293,6 +304,7 @@ namespace Telegram.Controls
             // TODO: unfortunately FrameworkElement.Parent returns null
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            // Null as well under an ancestor that left the live tree: see the top of this file.
 
             var parent = this.GetParent();
             if (parent != null && !_loaded)
@@ -373,6 +385,7 @@ namespace Telegram.Controls
             // TODO: unfortunately FrameworkElement.Parent returns null
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            // Null as well under an ancestor that left the live tree: see the top of this file.
 
             var parent = this.GetParent();
             if (parent != null && !_loaded)
@@ -453,6 +466,7 @@ namespace Telegram.Controls
             // TODO: unfortunately FrameworkElement.Parent returns null
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            // Null as well under an ancestor that left the live tree: see the top of this file.
 
             var parent = this.GetParent();
             if (parent != null && !_loaded)
@@ -533,6 +547,7 @@ namespace Telegram.Controls
             // TODO: unfortunately FrameworkElement.Parent returns null
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            // Null as well under an ancestor that left the live tree: see the top of this file.
 
             var parent = this.GetParent();
             if (parent != null && !_loaded)

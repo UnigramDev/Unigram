@@ -16,6 +16,12 @@ struct FrameworkElementEx : TBase
         this->Unloaded({ this, &FrameworkElementEx::HandleChanged });
     }
 
+    // Connected means in the live tree, and nothing less. Parent and VisualTreeHelper.GetParent
+    // return null on every element of a subtree whose ancestor has left the live tree, not only on
+    // the element that was removed: a template child of a pooled control, the content of a detached
+    // frame, anything nested in them. Each of them gets Unloaded, the probe reads null, OnUnloaded
+    // runs and IsConnected is false. Nothing under a detached ancestor is still connected because it
+    // has a parent of its own.
     bool IsConnected() const noexcept { return m_loaded; }
     bool IsDisconnected() const noexcept { return m_unloaded; }
 
