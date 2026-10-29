@@ -29,7 +29,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views
 {
-    public sealed partial class SettingsPage : Page, ISettingsDelegate, IDisposable
+    public sealed partial class SettingsPage : UserControl, ISettingsDelegate, IDisposable
     {
         public SettingsViewModel ViewModel => DataContext as SettingsViewModel;
 

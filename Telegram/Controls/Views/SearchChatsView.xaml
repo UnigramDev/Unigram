@@ -74,7 +74,7 @@
                              FocusFollowsSingleSelection="True"
                              SingleSelectionFollowsFocus="False"
                              Height="32"
-                             Margin="24,6,16,2"
+                             Margin="16,6,16,2"
                              Padding="2,0"
                              Background="{ThemeResource TextControlBackground}"
                              BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
