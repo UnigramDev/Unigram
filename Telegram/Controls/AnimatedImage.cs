@@ -592,6 +592,13 @@ namespace Telegram.Controls
                         _presenter = AnimatedImageLoader.GetOrCreate(XamlRoot, presentation);
                     }
 
+                    // CleanOnSourceChanged keeps the frame only for a new presenter to replace.
+                    if (_presenter == null)
+                    {
+                        LayoutRoot.Background = null;
+                        Show(null);
+                    }
+
                     if (_presenter != null)
                     {
                         _presenter.LoopCompleted += OnLoopCompleted;
