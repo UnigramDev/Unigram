@@ -116,6 +116,11 @@ namespace Telegram.Controls
 
         #endregion
 
+        public void AnimateSelectionChanged()
+        {
+            AnimateSelectionChanged(SelectedItem, false);
+        }
+
         private void AnimateSelectionChanged(object nextItem, bool retry = true)
         {
             var prevIndicator = _activeIndicator;
@@ -240,16 +245,9 @@ namespace Telegram.Controls
             }
 
             var indicator = container.GetSelectionIndicator();
-            if (indicator == null && retry)
+            if (indicator == null)
             {
-                void handler(object sender, RoutedEventArgs e)
-                {
-                    container.Loaded -= handler;
-                    AnimateSelectionChanged(SelectedItem, false);
-                }
-
-                container.Loaded += handler;
-                return null;
+                container.IsSelectionAnimationPending = true;
             }
 
             return indicator;
@@ -379,6 +377,24 @@ namespace Telegram.Controls
         public TopNavViewItem()
         {
             DefaultStyleKey = typeof(TopNavViewItem);
+        }
+
+        public bool IsSelectionAnimationPending { get; set; }
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            if (IsSelected && IsSelectionAnimationPending)
+            {
+                IsSelectionAnimationPending = false;
+
+                var owner = ItemsControl.ItemsControlFromItemContainer(this);
+                if (owner is TopNavView control)
+                {
+                    control.AnimateSelectionChanged();
+                }
+            }
         }
 
         public UIElement GetSelectionIndicator(bool fromCache = false)

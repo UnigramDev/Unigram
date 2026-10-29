@@ -369,6 +369,9 @@ namespace Telegram.Views
                 MasterDetail.Dispose();
                 SettingsView?.Dispose();
 
+                Navigation.SelectionChanged -= Navigation_SelectionChanged;
+                Navigation.SelectedItem = null;
+
                 if (_memoryUsageTimer != null)
                 {
                     _memoryUsageTimer.Tick -= MemoryUsageTimer_Tick;
