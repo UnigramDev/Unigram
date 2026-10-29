@@ -23,6 +23,11 @@ namespace Telegram.Native
         UIComposition.CompositionGraphicsDevice CreateGraphicsDevice();
         void ReleaseGraphicsDevice(UIComposition.CompositionGraphicsDevice device);
 
+        // Direct3D destroys a released resource, and gives back the driver's own buffers, only when
+        // the context is next flushed, which a window with nothing left to draw never does. On an
+        // integrated GPU that memory is the process's own.
+        void Trim();
+
         static void WriteBytes(byte[] hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
         static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Int32 pixelWidth, out Int32 pixelHeight);
         static Boolean IsWebP(String fileName, out Int32 pixelWidth, out Int32 pixelHeight);

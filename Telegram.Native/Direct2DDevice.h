@@ -360,6 +360,8 @@ namespace winrt::Telegram::Native::implementation
         CompositionGraphicsDevice CreateGraphicsDevice();
         void ReleaseGraphicsDevice(CompositionGraphicsDevice const& device);
 
+        void Trim();
+
         //static winrt::Telegram::Native::Direct2DDevice Background()
         //{
         //    std::lock_guard const guard(s_criticalSection);

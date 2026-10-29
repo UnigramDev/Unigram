@@ -22,6 +22,7 @@
 
 #include <shcore.h>
 #include <propkey.h>
+#include <dxgi1_3.h>
 
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.Foundation.Collections.h>
@@ -457,6 +458,44 @@ namespace winrt::Telegram::Native::implementation
     {
         std::lock_guard const guard(m_criticalSection);
         std::erase(m_graphicsDevices, device);
+    }
+
+    void Direct2DDevice::Trim()
+    {
+        winrt::com_ptr<ID3D11Device> d3dDevice;
+
+        {
+            std::lock_guard const guard(m_criticalSection);
+            d3dDevice = m_d3dDevice;
+        }
+
+        if (d3dDevice == nullptr)
+        {
+            return;
+        }
+
+        winrt::com_ptr<ID3D11DeviceContext> context;
+        d3dDevice->GetImmediateContext(context.put());
+
+        // Direct2D uses the immediate context from other threads, under this lock. No ClearState,
+        // which the documentation asks for before Trim: the context is Direct2D's as much as ours.
+        auto multithread = m_d2dFactory.try_as<ID2D1Multithread>();
+        if (multithread)
+        {
+            multithread->Enter();
+        }
+
+        context->Flush();
+
+        if (auto dxgiDevice = d3dDevice.try_as<IDXGIDevice3>())
+        {
+            dxgiDevice->Trim();
+        }
+
+        if (multithread)
+        {
+            multithread->Leave();
+        }
     }
 
     void Direct2DDevice::WaitForCompositorClock()
