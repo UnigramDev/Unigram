@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Common.Widgets;
+using Telegram.Controls.Chats;
 using Telegram.Native.Widgets;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -60,6 +61,11 @@ namespace Telegram.Controls.Messages.Content
         private double _fixedHeight;
         private double _height = WidgetSizing.PlaceholderHeight;
         private bool _crashCounted;
+        // When the widget first showed content in this bubble. Its height settles over the first moments, and a load is
+        // placed by the list like any other message that grows: only a later resize keeps the anchored edge.
+        private bool _shown;
+        private int _shownAt;
+        private const int SettleTime = 500;
         // Set by the chat (ViewportChanged). A widget is built only once it is on screen: the list realizes
         // messages well beyond it, and each one booting costs a sandbox, a validator and their threads.
         private bool _visible;
@@ -71,12 +77,6 @@ namespace Telegram.Controls.Messages.Content
         // The last press's menu is the widget's contextmenu, not the message's; and what was selected before that press.
         private bool _menuTaken;
         private string _menuSelection;
-
-        // The last change of the auto height on screen, until its layout: the difference, the widget's top in the window
-        // before it, and the anchor.
-        private double _resizeDelta;
-        private double _resizeFrom;
-        private bool _resizeKeepsBottom;
 
         private WindowContext _window;
         // Not minimized or hidden; a widget in a window in the background is paused as one off screen (§5.8).
@@ -411,6 +411,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _session = session;
             _crashCounted = session.View.IsDead;
+            _shown = false;
 
             session.View.Changed += OnWidgetChanged;
             session.View.ActionRequested += OnActionRequested;
@@ -440,7 +441,6 @@ namespace Telegram.Controls.Messages.Content
             }
 
             _session = null;
-            _resizeDelta = 0;
             UpdatePolling();
 
             if (_selected == this)
@@ -516,34 +516,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (_resizeDelta != 0)
-            {
-                KeepAnchoredEdge();
-            }
-
             TryOpen();
-        }
-
-        // The edge the widget anchors stays where it was on screen (docs/sdk-v1.md §5.6). Whichever edge the list's own
-        // anchoring kept still, the list scrolls by how far the anchored one moved; a bubble off screen is left to it.
-        private void KeepAnchoredEdge()
-        {
-            var delta = _resizeDelta;
-            _resizeDelta = 0;
-
-            var scroll = this.GetParent<ScrollViewer>();
-            if (scroll == null)
-            {
-                return;
-            }
-
-            var top = TransformToVisual(null).TransformPoint(default).Y;
-            var shift = top - _resizeFrom + (_resizeKeepsBottom ? delta : 0);
-
-            if (Math.Abs(shift) >= 0.5)
-            {
-                scroll.ChangeView(null, scroll.VerticalOffset + shift, null, true);
-            }
         }
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
@@ -620,6 +593,12 @@ namespace Telegram.Controls.Messages.Content
 
             if (view.ContentHeight > 0 && view.IsLoaded)
             {
+                if (!_shown)
+                {
+                    _shown = true;
+                    _shownAt = Environment.TickCount;
+                }
+
                 Placeholder.Visibility = Visibility.Collapsed;
 
                 if (_fixedHeight == 0)
@@ -629,16 +608,10 @@ namespace Telegram.Controls.Messages.Content
 
                     if (height != _height)
                     {
-                        // Read before the layout that moves it; heights that come faster than layouts add up.
-                        if (_visible)
+                        // The edge the widget anchors (docs/sdk-v1.md §5.6), asked for before the layout that moves it.
+                        if (_visible && Environment.TickCount - _shownAt >= SettleTime)
                         {
-                            if (_resizeDelta == 0)
-                            {
-                                _resizeFrom = TransformToVisual(null).TransformPoint(default).Y;
-                            }
-
-                            _resizeDelta += height - _height;
-                            _resizeKeepsBottom = view.KeepsBottom;
+                            this.GetParent<ChatHistoryView>()?.HoldEdge(this, view.KeepsBottom);
                         }
 
                         _height = height;

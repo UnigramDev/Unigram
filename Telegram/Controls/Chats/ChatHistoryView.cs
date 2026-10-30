@@ -309,6 +309,115 @@ namespace Telegram.Controls.Chats
             return direction;
         }
 
+        // One element per layout pass: holding one still moves the others, so the first to ask keeps its place.
+        private FrameworkElement _heldElement;
+        private SelectorItem _heldContainer;
+        private object _heldItem;
+        private double _heldTop;
+        private double _heldHeight;
+        private bool _heldKeepsBottom;
+        private bool _heldEnd;
+        private bool _holdPending;
+
+        /// <summary>
+        /// Keeps the top or the bottom of an element about to change height where it is on screen, through the
+        /// layout pass that changes it.
+        /// </summary>
+        /// <remarks>
+        /// Only for an element entirely inside the viewport: one partly off screen is most often still loading,
+        /// and is left to the list like any other message that grows. A list following the end stays at the end
+        /// instead, whatever grew.
+        /// </remarks>
+        internal void HoldEdge(FrameworkElement element, bool keepsBottom)
+        {
+            var scroll = ScrollingHost;
+            if (scroll == null)
+            {
+                return;
+            }
+
+            // In the saved messages tab the end is at the top, where holding the top already keeps it. The flag is only
+            // sampled at rest, so it can still be set while a chat opens elsewhere in the history: the view must be there too.
+            if (IsFollowingEnd && !IsReversed && IsAtFollowingEdge)
+            {
+                _heldEnd = true;
+            }
+            else if (_heldElement == element)
+            {
+                _heldKeepsBottom = keepsBottom;
+                return;
+            }
+            else if (_heldElement == null && element.GetParent<SelectorItem>() is SelectorItem container && scroll.ViewportContains(container))
+            {
+                var top = element.TransformToVisual(scroll).TransformPoint(default).Y;
+
+                _heldElement = element;
+                _heldContainer = container;
+                _heldItem = ItemFromContainer(container);
+                _heldTop = top;
+                _heldHeight = element.ActualHeight;
+                _heldKeepsBottom = keepsBottom;
+            }
+            else
+            {
+                return;
+            }
+
+            if (!_holdPending)
+            {
+                _holdPending = true;
+                LayoutUpdated += OnHoldLayoutUpdated;
+            }
+        }
+
+        private void OnHoldLayoutUpdated(object sender, object e)
+        {
+            LayoutUpdated -= OnHoldLayoutUpdated;
+
+            var element = _heldElement;
+            var container = _heldContainer;
+            var item = _heldItem;
+            var end = _heldEnd;
+
+            _heldElement = null;
+            _heldContainer = null;
+            _heldItem = null;
+            _heldEnd = false;
+            _holdPending = false;
+
+            var scroll = ScrollingHost;
+            if (scroll == null)
+            {
+                return;
+            }
+
+            if (end)
+            {
+                scroll.ChangeView(null, scroll.ScrollableHeight, null, true);
+                return;
+            }
+
+            // A container recycled for another message in the meantime, or taken out of the list. A recycled
+            // container is parked far outside the viewport, so its position would scroll the list anywhere.
+            if (element == null || element.GetParent<SelectorItem>() != container || ItemFromContainer(container) != item)
+            {
+                return;
+            }
+
+            var top = element.TransformToVisual(scroll).TransformPoint(default).Y;
+            var height = element.ActualHeight;
+            var shift = _heldKeepsBottom
+                ? top + height - (_heldTop + _heldHeight)
+                : top - _heldTop;
+
+            // The element's own growth is all this undoes. Anything that moved it further in the same pass, a slice,
+            // a reset, the user's scrolling, is left alone rather than undone with it.
+            if (Math.Abs(shift) >= 0.5 && Math.Abs(shift) <= Math.Abs(height - _heldHeight) + 0.5)
+            {
+                scroll.ChangeView(null, scroll.VerticalOffset + shift, null, true);
+            }
+        }
+
         private readonly DispatcherTimer _scrollTracker = new();
 
         private TaskCompletionSource<bool> _waitItemsPanelRoot = new();
