@@ -76,6 +76,8 @@ namespace Telegram.Navigation
                 {
                     Main = this;
                     IsInMainView = true;
+
+                    WatchPopupCursor();
                 }
 
                 All.Add(this);
