@@ -14,13 +14,15 @@
 
 #include "StaticThreads.h"
 
+#include "../Telegram.Native/AppModelPaths.h"
+
 namespace winrt::Telegram::Native::Calls::implementation
 {
     VoipGroupManager::VoipGroupManager(VoipGroupDescriptor descriptor)
     {
         // Sharing a screen runs a second manager alongside the main one, and both would
         // otherwise interleave into the same file.
-        auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path()
+        auto logPath = AppModel::LocalPath()
             + (VoipVideoContentType::Screencast == descriptor.VideoContentType()
                 ? hstring(L"\\tgcalls_screencast.txt")
                 : hstring(L"\\tgcalls_group.txt"));

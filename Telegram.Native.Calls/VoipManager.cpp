@@ -7,6 +7,8 @@
 
 #include "VoipVideoOutputSink.h"
 
+#include "../Telegram.Native/AppModelPaths.h"
+
 #include "api/media_stream_interface.h"
 #include "api/create_peerconnection_factory.h"
 #include "api/peer_connection_interface.h"
@@ -48,8 +50,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             return;
         }
 
-        auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();
-        logPath = logPath + hstring(L"\\tgcalls.txt");
+        auto logPath = AppModel::LocalPath() + hstring(L"\\tgcalls.txt");
 
         tgcalls::Config config = tgcalls::Config
         {
