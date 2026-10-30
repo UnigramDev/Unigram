@@ -11,7 +11,7 @@ Two sources, merged in the order the app merges them:
 
 The README warns that reading the per-control files does not give what the app resolves,
 because the merged dictionary is assembled at build time. That is true of the *set* of files,
-which is why the variant rules below are written down; it is not true of the values. Every
+which is why `pages` reads it from the build; it is not true of the values. Every
 one of the 42 keys behind TextOnAccentFillColor{Primary,Secondary}Brush comes out of this
 byte-identical to the checked-in tables.
 
@@ -21,7 +21,6 @@ request, not here.
 """
 
 import collections
-import glob
 import os
 import re
 import xml.etree.ElementTree as ET
@@ -32,16 +31,16 @@ X = "{http://schemas.microsoft.com/winfx/2006/xaml}"
 # maps to have no value until the OS supplies one.
 THEMES = {"Default": "dark", "Light": "light"}
 
-# WinUI ships several dictionaries per control and picks between them at runtime, so the
-# suffix is a selection rule rather than a naming habit. `_v1` is ControlsResourcesVersion
-# .Version1, which the app never asks for. The rest layer over the base file in this order,
-# which is why the rank matters and alphabetical order is not enough to trust.
-VARIANTS = (
-    ("_themeresources.xaml", 0),
-    ("_themeresources_v2.5.xaml", 1),
-    ("_themeresources_any.xaml", 2),
-    ("_themeresources_21h1.xaml", 3),
-)
+MSBUILD = "{http://schemas.microsoft.com/developer/msbuild/2003}"
+
+# BatchMergeXaml builds each release's dictionary over the previous one, and
+# XamlControlsResources loads `21h1_` on every OS the app supports, so every release applies,
+# in this order.
+RELEASES = ("RS1", "RS2", "RS3", "RS4", "RS5", "19H1", "21H1")
+
+# Within a release CategorizeSharedPages orders pages by Priority, the unset ones last, and
+# keeps declaration order inside each.
+PRIORITIES = ("1", "2", "3", "4", "5", "6", "7", "8", "Undefined")
 
 # The accent is not a colour at this layer - it is whichever shade the theme asked for, and
 # Theme.Update resolves it against the user's accent at apply time.
@@ -91,15 +90,30 @@ def _shaded(argb, opacity):
     return "#%02X%s" % (max(0, min(255, alpha)), argb[3:])
 
 
-def rank(path):
-    """The merge rank of one muxc file, or None if the app never loads it."""
-    name = os.path.basename(path)
-    if name.endswith("_v1.xaml"):
-        return None
-    for suffix, order in VARIANTS:
-        if name.endswith(suffix):
-            return order
-    return None
+def pages(muxc):
+    """The muxc theme dictionaries the app loads, in the order the build merges them.
+
+    The file name is no guide: `AcrylicBrush_rs3_` and `_19h1_` both end in
+    `_themeresources.xaml`, and only the Version and Priority their .vcxitems give them say
+    the 19h1 one wins. Version1-only pages build the `_v1` dictionary the app never asks for.
+    """
+    project = os.path.join(muxc, "dll", "Microsoft.UI.Xaml.vcxproj")
+    found = []
+    for imported in ET.parse(project).getroot().iter(MSBUILD + "Import"):
+        include = imported.get("Project")
+        if not include.endswith(".vcxitems"):
+            continue
+        items = os.path.normpath(os.path.join(os.path.dirname(project), include))
+        for page in ET.parse(items).getroot().iter(MSBUILD + "Page"):
+            meta = {child.tag[len(MSBUILD):]: (child.text or "").strip() for child in page}
+            if meta.get("Type") != "ThemeResources" or \
+                    meta.get("ControlsResourcesVersion") == "Version1":
+                continue
+            path = page.get("Include").replace("$(MSBuildThisFileDirectory)", "")
+            found.append((RELEASES.index(meta.get("Version")),
+                          PRIORITIES.index(meta.get("Priority", "Undefined")),
+                          len(found), os.path.join(os.path.dirname(items), path)))
+    return [item[-1] for item in sorted(found)]
 
 
 def _parents(root):
@@ -179,8 +193,9 @@ def _entry(tag, node, source):
             Entry("other", (tag,), True, source)
 
     if tag == "AcrylicBrush":
+        # An unset TintOpacity is the brush's own default, 1.0, not an absent value.
         return Entry("acrylic", (node.get("TintColor"), node.get("FallbackColor"),
-                                 node.get("TintOpacity"), node.get("TintLuminosityOpacity")),
+                                 node.get("TintOpacity", "1.0"), node.get("TintLuminosityOpacity")),
                      True, source)
 
     if tag in BRUSHES:
@@ -190,19 +205,10 @@ def _entry(tag, node, source):
 
 
 def collect(system, muxc):
-    """The merged dictionaries: the OS file first, then every muxc file the app loads."""
+    """The merged dictionaries: the OS file first, then every muxc page the app loads."""
     into = {name: {} for name in THEMES.values()}
-    sources = [(-1, system)]
-
-    for path in glob.glob(os.path.join(muxc, "**", "*_themeresources*.xaml"), recursive=True):
-        order = rank(path)
-        if order is not None:
-            sources.append((order, path))
-
-    # Rank first, path second, so a rerun on a different machine merges in the same order.
-    for _, path in sorted(sources, key=lambda item: (item[0], item[1].lower())):
+    for path in [system] + pages(muxc):
         read(path, into)
-
     return into
 
 

@@ -98,10 +98,14 @@ not descended from the release tags, so a checkout sitting on main carries chang
 shipped: on 2024-09-12 it repointed `TextControlPlaceholderForegroundFocused` at a brush
 `v2.8.7` does not use. `--ref ""` reads the working tree anyway and says so.
 
-The `_v1` dictionaries are `ControlsResourcesVersion.Version1`, which the app never asks
-for, and are skipped; `_any`, `_v2.5` and `_21h1` layer over the base file in that order.
-That selection is the part worth reviewing, not the parsing - it is why the tables describe
-the pre-Win11 CalendarView, which came from a snapshot that excluded `_21h1`.
+Which files load, and in what order, comes from the build, not from their names: the pages
+`dll/Microsoft.UI.Xaml.vcxproj` imports through its `.vcxitems`, ordered by each page's
+`Version` (RS1 to 21H1, every release merged over the last, because `XamlControlsResources`
+loads `21h1_` on every OS the app supports), then `Priority`, then declaration order. Pages
+marked `ControlsResourcesVersion` `Version1` are skipped, because the app never asks for it.
+That selection is the part worth reviewing, not the parsing. Read by file name, `rs3` beat
+`19h1` for the acrylic brushes, and the tables describe the pre-Win11 CalendarView because
+they came from a snapshot that excluded the 21H1 pages.
 
 The section below says reading those files does not give what the app resolves. That is true
 of the *set* of files; it is not true of the values. The first run reproduced 1419 of 1593
