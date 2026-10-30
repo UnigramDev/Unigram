@@ -250,15 +250,22 @@ namespace Telegram.Navigation
             // the window would refuse to close and ask the root a second time.
             _window.Close();
 
-            // DispatcherShutdownMode is OnExplicitShutdown, so the framework will not end the
-            // process when the last window goes - which is the point while the notification area
-            // icon is up, and a process nobody can see or quit when it is not.
+            ExitIfIdle();
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// DispatcherShutdownMode is OnExplicitShutdown, so the framework will not end the process
+        /// when the last window goes - which is the point while the notification area icon is up,
+        /// and a process nobody can see or quit when it is not. Also called after Exit on the
+        /// icon's menu, which can find every window already closed and so none to call this.
+        /// </summary>
+        internal static void ExitIfIdle()
+        {
             if (All.Count == 0 && !SystemTray.IsShowing())
             {
                 Application.Current.Exit();
             }
-
-            return Task.CompletedTask;
         }
 
         public INavigationService GetNavigationService()

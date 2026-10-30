@@ -169,6 +169,17 @@ namespace Telegram.Common
         private static async void OnExit(object sender, EventArgs e)
         {
             await HideAsync();
+
+#if WINUI3
+            // Windows close for real on this host, so there may be none whose closing would end
+            // the process.
+            if (WindowContext.All.Count == 0)
+            {
+                WindowContext.ExitIfIdle();
+                return;
+            }
+#endif
+
             await BootStrapper.ConsolidateAsync();
         }
     }
