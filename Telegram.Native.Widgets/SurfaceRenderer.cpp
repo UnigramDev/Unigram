@@ -269,7 +269,35 @@ namespace Widgets
         }
     }
 
+    void SurfaceRenderer::settle()
+    {
+        {
+            std::lock_guard l(m_mutex);
+            if (m_destroyed || m_settleAsked) return;
+            m_settleAsked = true;
+            m_settling = true;
+        }
+
+        // Nothing may be dirty by now: the frame with the ops can already be up, and this one shows the same.
+        schedulePaint();
+    }
+
     void SurfaceRenderer::paint()
+    {
+        bool settling;
+        {
+            std::lock_guard l(m_mutex);
+            if (m_destroyed) return;
+            settling = std::exchange(m_settling, false);
+        }
+
+        draw();
+
+        // Also after a draw that failed or had no size: the frame on screen is the last there will be for these ops.
+        if (settling && onSettled) onSettled();
+    }
+
+    void SurfaceRenderer::draw()
     {
         std::unique_lock l(m_mutex);
         if (m_destroyed) return;

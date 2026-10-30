@@ -63,6 +63,11 @@ namespace Widgets
         std::function<void(double height, bool keepsBottom)> onPresented;
         // The widget's resize anchor, which the frames of the heights that follow carry; any thread.
         void setKeepsBottom(bool keepsBottom) { m_keepsBottom = keepsBottom; }
+        // The ops the widget loaded with are applied (WidgetDiagnostics::rendered); any thread, the first call counts.
+        // onSettled runs once the frame drawn after them is up: until then the frame on screen is the empty page's, whose
+        // height is not the widget's. On the clock thread, after that frame's onPresented.
+        void settle();
+        std::function<void()> onSettled;
 
         int paints() const { return m_paints; }
         double lastPaintMs() const { return m_lastPaintMs; }
@@ -112,6 +117,7 @@ namespace Widgets
         // From the last tick to the next one, or until destroy().
         void waitForTick();
         void paint();
+        void draw();
         // A frame drawn for a new height, waiting for the UI thread to show it.
         struct Presentation
         {
@@ -166,6 +172,9 @@ namespace Widgets
         std::chrono::steady_clock::duration m_refresh{};
         bool m_frozen = false;
         bool m_destroyed = false;
+        // Under m_mutex.
+        bool m_settleAsked = false;
+        bool m_settling = false;
 
         std::atomic<int> m_paints{ 0 };
         std::atomic<double> m_lastPaintMs{ 0 };

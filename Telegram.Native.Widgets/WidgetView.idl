@@ -136,7 +136,7 @@ namespace Telegram.Native.Widgets
         // Whether the frame on screen came with the widget's bottom edge as its resize anchor (TelegramWidget.setResizeAnchor,
         // docs/sdk-v1.md §2.12), rather than the top: the edge a host keeps still on screen when ContentHeight changes.
         Boolean KeepsBottom { get; };
-        // The widget's scripts ran.
+        // The widget's scripts ran and the frame with what they built is on screen, so ContentHeight is the content's.
         Boolean IsLoaded { get; };
         // The runtime is gone: the renderer keeps the last frame with the stopped badge.
         Boolean IsDead { get; };

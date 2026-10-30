@@ -124,6 +124,11 @@ namespace winrt::Telegram::Native::Widgets::implementation
                 m_height = height;
                 Raise(m_changed, *this, nullptr);
             };
+            renderer->onSettled = [this]
+            {
+                m_loaded = true;
+                Raise(m_changed, *this, nullptr);
+            };
             m_renderer = renderer.get();
             return renderer;
         };
@@ -167,6 +172,10 @@ namespace winrt::Telegram::Native::Widgets::implementation
         host->onChange = [this, renderer = m_renderer](const twidget::WidgetDiagnostics& diagnostics)
         {
             renderer->setKeepsBottom(diagnostics.resizeAnchor == "bottom");
+            if (diagnostics.rendered)
+            {
+                renderer->settle();
+            }
             OnHostChanged(diagnostics);
         };
         host->onAction = [this](const twidget::WidgetAction& action) { OnAction(action); };
@@ -251,9 +260,8 @@ namespace winrt::Telegram::Native::Widgets::implementation
     void WidgetView::OnHostChanged(const twidget::WidgetDiagnostics& d)
     {
         bool changed = false;
-        if (d.loaded != m_loaded || d.dead.has_value() != m_dead)
+        if (d.dead.has_value() != m_dead)
         {
-            m_loaded = d.loaded;
             m_dead = d.dead.has_value();
             changed = true;
         }
