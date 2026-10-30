@@ -366,6 +366,9 @@
       component it sees and fails the build on a mismatch, and WinUI's own transitive pins are
       older than what Runtime 2.5.1 expects (InteractiveExperiences 2.1.8 against 2.1.9). These
       are the metapackage's versions, so what resolves is exactly what it would have resolved.
+
+      Held at 2.5.1: 2.6.4 corrupts text on hybrid-GPU machines when the window is on a display
+      wired to the other GPU (microsoft-ui-xaml#12434). Check that issue before moving up.
     -->
     <PackageReference Include="Microsoft.WindowsAppSDK.Base" Version="2.0.4" />
     <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
