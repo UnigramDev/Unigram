@@ -92,6 +92,10 @@ namespace Telegram.Navigation
 
             _inputListener = new InputListener(this);
 
+            // IsActive used to read the CoreWindow live, so it must not start out wrong for a view
+            // that is already active by the time its context is made.
+            _activationMode = GetActivationMode(window.CoreWindow);
+
             window.Activated += OnActivated;
             window.VisibilityChanged += OnVisibilityChanged;
             window.SizeChanged += OnSizeChanged;
@@ -338,23 +342,23 @@ namespace Telegram.Navigation
             SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
         }
 
-        /// <summary>
-        /// The window is activated, foreground or not. Every caller of the old
-        /// <c>ActivationMode</c> but one was asking this.
-        /// </summary>
-        public bool IsActive => _window.CoreWindow.ActivationMode != CoreWindowActivationMode.Deactivated;
-
-        /// <summary>
-        /// The window is the foreground one. Distinct from <see cref="IsActive"/>: a window can be
-        /// activated without being in the foreground, and that middle state is deliberately
-        /// neither - see ChatView.Window_Activated, the only caller that needs the difference.
-        /// </summary>
-        public bool IsForeground => _window.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+        private static WindowActivationMode GetActivationMode(CoreWindow window) => window.ActivationMode switch
+        {
+            CoreWindowActivationMode.ActivatedInForeground => WindowActivationMode.ActivatedInForeground,
+            CoreWindowActivationMode.ActivatedNotForeground => WindowActivationMode.ActivatedNotForeground,
+            _ => WindowActivationMode.Deactivated
+        };
 
         // The UWP args stop here: everything downstream sees Telegram.Navigation's own.
         private void OnActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
         {
-            RaiseActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
+            // The event decides active or not, so that IsActive always agrees with the args it
+            // raises; ActivationMode only supplies the middle state, which the event cannot say.
+            RaiseActivated(e.WindowActivationState == CoreWindowActivationState.Deactivated
+                ? WindowActivationMode.Deactivated
+                : GetActivationMode(_window.CoreWindow) == WindowActivationMode.ActivatedNotForeground
+                    ? WindowActivationMode.ActivatedNotForeground
+                    : WindowActivationMode.ActivatedInForeground);
         }
 
         private void OnVisibilityChanged(object sender, VisibilityChangedEventArgs e)

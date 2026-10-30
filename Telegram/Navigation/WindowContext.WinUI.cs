@@ -172,36 +172,19 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// The static Active goes with it, exactly as the other two halves do: it is what
-        /// NotificationsService asks which window to show a toast over.
+        /// Window.Activated rather than InputActivationListener, which was measured missing the
+        /// first activation after launch. It has no middle state, so neither does this host.
         /// </summary>
         private void OnActivated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
         {
-            var active = args.WindowActivationState != WindowActivationState.Deactivated;
-
-            if (_content != null)
-            {
-                _content.IsActive = active;
-            }
-
-            Activated?.Invoke(this, new WindowActivatedEventArgs(active));
-
-            lock (_activeLock)
-            {
-                if (active)
-                {
-                    Active = this;
-                }
-                else if (Active == this)
-                {
-                    Active = null;
-                }
-            }
+            RaiseActivated(args.WindowActivationState == WindowActivationState.Deactivated
+                ? WindowActivationMode.Deactivated
+                : WindowActivationMode.ActivatedInForeground);
         }
 
         private void OnVisibilityChanged(object sender, Microsoft.UI.Xaml.WindowVisibilityChangedEventArgs args)
         {
-            VisibilityChanged?.Invoke(this, new WindowVisibilityEventArgs(args.Visible));
+            RaiseVisibilityChanged(args.Visible);
         }
 
         /// <summary>
@@ -269,10 +252,6 @@ namespace Telegram.Navigation
 
             return Task.CompletedTask;
         }
-
-        public bool IsActive => Win32.GetActiveWindow() == _handle;
-
-        public bool IsForeground => Win32.GetForegroundWindow() == _handle;
 
         public INavigationService GetNavigationService()
         {

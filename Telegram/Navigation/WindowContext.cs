@@ -63,6 +63,17 @@ namespace Telegram.Navigation
         }
     }
 
+    /// <summary>
+    /// The app's own <c>CoreWindowActivationMode</c>, without None. Only the UWP host can report
+    /// the middle state; the other two go straight between the outer ones.
+    /// </summary>
+    public enum WindowActivationMode
+    {
+        Deactivated,
+        ActivatedNotForeground,
+        ActivatedInForeground
+    }
+
     public class WindowSizeChangedEventArgs : EventArgs
     {
         public Size Size { get; }
@@ -1068,16 +1079,37 @@ namespace Telegram.Navigation
 
         public event EventHandler<WindowActivatedEventArgs> Activated;
 
+        // Written by RaiseActivated and nothing else, so neither property below can disagree with
+        // the event that announced the change. UWP seeds it from its constructor too.
+        private WindowActivationMode _activationMode;
+
         /// <summary>
-        /// Both hosts funnel through here, so the time the app spends in front of someone is
+        /// The window is activated, foreground or not. Every caller of the old
+        /// <c>ActivationMode</c> but one was asking this.
+        /// </summary>
+        public bool IsActive => _activationMode != WindowActivationMode.Deactivated;
+
+        /// <summary>
+        /// Distinct from <see cref="IsActive"/> only on UWP, where a window can be activated without
+        /// being in the foreground; that middle state is deliberately neither - see
+        /// ChatView.Window_Activated, the only caller that needs the difference.
+        /// </summary>
+        public bool IsForeground => _activationMode == WindowActivationMode.ActivatedInForeground;
+
+        /// <summary>
+        /// Every host funnels through here, so the time the app spends in front of someone is
         /// counted in one place. Idempotent on purpose: a host that raises the state it is already
         /// in must not unbalance the count.
         ///
         /// The static Active goes with it: it is what NotificationsService asks which window to
         /// show a toast over.
         /// </summary>
-        private void RaiseActivated(bool active)
+        private void RaiseActivated(WindowActivationMode mode)
         {
+            _activationMode = mode;
+
+            var active = mode != WindowActivationMode.Deactivated;
+
             if (_content != null)
             {
                 _content.IsActive = active;

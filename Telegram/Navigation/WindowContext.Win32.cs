@@ -114,9 +114,14 @@ namespace Telegram.Navigation
             return false;
         }
 
+        /// <summary>
+        /// Gate 1.7 established that the island swallows the caption, so activation comes from
+        /// the top-level HWND rather than from anything XAML knows. WM_ACTIVATE has no middle
+        /// state, so this host never reports one.
+        /// </summary>
         void IIslandOwner.ActivationChanged(bool active)
         {
-            RaiseActivated(active);
+            RaiseActivated(active ? WindowActivationMode.ActivatedInForeground : WindowActivationMode.Deactivated);
         }
 
         void IIslandOwner.VisibilityChanged(bool visible)
@@ -184,14 +189,6 @@ namespace Telegram.Navigation
 
             return Task.CompletedTask;
         }
-
-        /// <summary>
-        /// Gate 1.7 established that the island swallows the caption, so activation state comes
-        /// from the top-level HWND rather than from anything XAML knows.
-        /// </summary>
-        public bool IsActive => Win32.GetActiveWindow() == _island.Handle;
-
-        public bool IsForeground => Win32.GetForegroundWindow() == _island.Handle;
 
         public INavigationService GetNavigationService()
         {
