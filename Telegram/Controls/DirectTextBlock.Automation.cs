@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Windows.Foundation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
@@ -68,12 +69,53 @@ namespace Telegram.Controls
         {
             var children = base.GetChildrenCore() ?? new List<AutomationPeer>();
 
+            // The focus element answers for whichever link has focus, which is already a child.
+            for (int i = children.Count - 1; i >= 0; i--)
+            {
+                if (children[i] is DirectTextFocusAutomationPeer)
+                {
+                    children.RemoveAt(i);
+                }
+            }
+
             for (int i = 0; i < _owner.LinkCount; i++)
             {
-                children.Add(new DirectLinkAutomationPeer(this, _owner, i));
+                children.Add(GetLinkPeer(i));
             }
 
             return children;
+        }
+
+        // One peer per link for as long as the links stay: a reader follows focus by element, and
+        // a peer made again on every walk of the tree is a different element every time.
+        private IList<DirectTextBlock.TextRange> _linksFor;
+        private DirectLinkAutomationPeer[] _linkPeers;
+
+        internal DirectLinkAutomationPeer GetLinkPeer(int index)
+        {
+            var links = _owner.Links;
+
+            if (!ReferenceEquals(links, _linksFor))
+            {
+                _linksFor = links;
+                _linkPeers = links?.Count > 0 ? new DirectLinkAutomationPeer[links.Count] : null;
+            }
+
+            if (_linkPeers == null || index < 0 || index >= _linkPeers.Length)
+            {
+                return null;
+            }
+
+            if (_linkPeers[index] == null)
+            {
+                // A peer with no element finds its window only through its parent, which XAML
+                // sets when a client walks the children: one created for a focus move before any
+                // walk raises its event into no window, and the reader hears nothing.
+                _linkPeers[index] = new DirectLinkAutomationPeer(this, _owner, index);
+                _linkPeers[index].SetParent(this);
+            }
+
+            return _linkPeers[index];
         }
 
         public SupportedTextSelection SupportedTextSelection => SupportedTextSelection.Single;
@@ -97,18 +139,31 @@ namespace Telegram.Controls
             return new[] { DocumentRange };
         }
 
+        // A link is the one child with a range of its own: the reader puts its cursor there when
+        // focus lands on one.
         public ITextRangeProvider RangeFromChild(IRawElementProviderSimple childElement)
         {
+            var links = _owner.Links;
+
+            for (int i = 0; i < _linkPeers?.Length && ReferenceEquals(links, _linksFor); i++)
+            {
+                if (_linkPeers[i] != null && ReferenceEquals(ProviderFromPeer(_linkPeers[i]), childElement))
+                {
+                    return new DirectTextRangeProvider(this, _owner, links[i].Offset, links[i].Offset + links[i].Length);
+                }
+            }
+
             return DocumentRange;
         }
 
         public ITextRangeProvider RangeFromPoint(Point screenLocation)
         {
-            // Automation speaks in screen coordinates and the layout in the element's own. The
-            // peer's bounding rectangle is the element in screen coordinates, which is the
-            // whole conversion - there is no scale or rotation in between.
+            // Automation speaks in physical screen pixels and the layout in the element's own
+            // DIPs: the peer's bounding rectangle is the element on screen, and the root's scale
+            // is the rest of the conversion.
             var bounds = GetBoundingRectangle();
-            var point = new Point(screenLocation.X - bounds.X, screenLocation.Y - bounds.Y);
+            var scale = _owner.Scale;
+            var point = new Point((screenLocation.X - bounds.X) / scale, (screenLocation.Y - bounds.Y) / scale);
 
             var position = _owner.GetPositionFromPoint(point, out _);
 
@@ -242,24 +297,53 @@ namespace Telegram.Controls
 
         public object GetAttributeValue(int attributeId)
         {
-            return null;
+            return attributeId == (int)AutomationTextAttributesEnum.LinkAttribute
+                ? GetLink()
+                : null;
+        }
+
+        // The rich editor's contract, for the same reasons: XAML hands UIA a missing link as a
+        // null range, which Windows 10's GetAttributeValues dereferences inside the reader, so no
+        // link is NotSupportedException; and a range only partly in a link is mixed, as NVDA
+        // splits a line by run only on mixed, and would read one partly linked as having none.
+        private object GetLink()
+        {
+            var links = _owner.Links;
+
+            for (int i = 0; i < links?.Count; i++)
+            {
+                var start = links[i].Offset;
+                var end = start + links[i].Length;
+
+                if (_start >= start && _start < end && _end <= end)
+                {
+                    return new DirectTextRangeProvider(_peer, _owner, start, end);
+                }
+                else if (_start < end && _end > start)
+                {
+                    return DependencyProperty.UnsetValue;
+                }
+            }
+
+            throw new NotSupportedException();
         }
 
         public void GetBoundingRectangles(out double[] rectangles)
         {
             var rects = _owner.GetRangeRectangles(_start, _end);
             var bounds = _peer.GetBoundingRectangle();
+            var scale = _owner.Scale;
 
             rectangles = new double[(rects?.Length ?? 0) * 4];
 
             for (int i = 0; i < rects?.Length; i++)
             {
-                // The element in screen coordinates plus the rectangle in the element's: what
-                // automation asks for, without a conversion of our own.
-                rectangles[i * 4 + 0] = bounds.X + rects[i].X;
-                rectangles[i * 4 + 1] = bounds.Y + rects[i].Y;
-                rectangles[i * 4 + 2] = rects[i].Width;
-                rectangles[i * 4 + 3] = rects[i].Height;
+                // The element in physical screen pixels plus the rectangle in the element's DIPs,
+                // scaled to match.
+                rectangles[i * 4 + 0] = bounds.X + rects[i].X * scale;
+                rectangles[i * 4 + 1] = bounds.Y + rects[i].Y * scale;
+                rectangles[i * 4 + 2] = rects[i].Width * scale;
+                rectangles[i * 4 + 3] = rects[i].Height * scale;
             }
         }
 
@@ -426,33 +510,21 @@ namespace Telegram.Controls
             return patternInterface == PatternInterface.Invoke ? this : null;
         }
 
-        // The union of the rectangles the link covers - it can wrap across lines - offset by
-        // where the block itself is on screen.
+        // Offset by where the block itself is on screen.
         protected override Rect GetBoundingRectangleCore()
         {
-            var rects = _owner.GetLinkRectangles(_index);
+            var link = _owner.GetLinkBounds(_index);
 
-            if (rects == null || rects.Length == 0)
+            if (link.Width == 0 && link.Height == 0)
             {
                 return default;
             }
 
+            // The block in physical pixels, and the link in its DIPs.
             var bounds = _parent.GetBoundingRectangle();
+            var scale = _owner.Scale;
 
-            var left = double.MaxValue;
-            var top = double.MaxValue;
-            var right = double.MinValue;
-            var bottom = double.MinValue;
-
-            for (int i = 0; i < rects.Length; i++)
-            {
-                left = Math.Min(left, rects[i].Left);
-                top = Math.Min(top, rects[i].Top);
-                right = Math.Max(right, rects[i].Right);
-                bottom = Math.Max(bottom, rects[i].Bottom);
-            }
-
-            return new Rect(bounds.X + left, bounds.Y + top, right - left, bottom - top);
+            return new Rect(bounds.X + link.X * scale, bounds.Y + link.Y * scale, link.Width * scale, link.Height * scale);
         }
 
         protected override Point GetClickablePointCore()
@@ -471,14 +543,15 @@ namespace Telegram.Controls
 
         protected override bool IsOffscreenCore() => false;
 
-        // Not focusable: nothing in the tree can take focus, because a range cannot. Reaching
-        // a link by keyboard would mean the block owning focus itself and moving between them.
-        protected override bool IsKeyboardFocusableCore() => false;
+        // Through the block's focus element, which holds focus for every link and moves it
+        // between them.
+        protected override bool IsKeyboardFocusableCore() => _owner.CanFocusLink(_index);
 
-        protected override bool HasKeyboardFocusCore() => false;
+        protected override bool HasKeyboardFocusCore() => _owner.HasLinkFocus(_index);
 
         protected override void SetFocusCore()
         {
+            _owner.FocusLink(_index);
         }
 
         protected override string GetAutomationIdCore() => string.Empty;
@@ -506,6 +579,69 @@ namespace Telegram.Controls
         public void Invoke()
         {
             _owner.InvokeLink(_index);
+        }
+    }
+
+    /// <summary>
+    /// The peer of a block's focus element, which answers as the link that has focus. XAML raises
+    /// focus on the element that holds it, so this is what a reader hears as focus arrives, and
+    /// asked what has focus from there it hands over the link's own peer, which moves within the
+    /// block are raised on.
+    /// </summary>
+    public partial class DirectTextFocusAutomationPeer : FrameworkElementAutomationPeer, IInvokeProvider
+    {
+        private readonly DirectTextBlock _owner;
+
+        public DirectTextFocusAutomationPeer(DirectTextFocus focus, DirectTextBlock owner)
+            : base(focus)
+        {
+            _owner = owner;
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Hyperlink;
+        }
+
+        protected override string GetClassNameCore()
+        {
+            return "Hyperlink";
+        }
+
+        protected override string GetNameCore()
+        {
+            return _owner.GetLinkText(_owner.FocusedLink);
+        }
+
+        protected override string GetLocalizedControlTypeCore() => "link";
+
+        protected override object GetPatternCore(PatternInterface patternInterface)
+        {
+            return patternInterface == PatternInterface.Invoke ? this : base.GetPatternCore(patternInterface);
+        }
+
+        protected override object GetFocusedElementCore()
+        {
+            return FocusedPeer() ?? base.GetFocusedElementCore();
+        }
+
+        // The link's rather than the element's: focus arriving is announced before the element
+        // is arranged over the link, and until then it covers the whole block.
+        protected override Rect GetBoundingRectangleCore()
+        {
+            return FocusedPeer()?.GetBoundingRectangle() ?? base.GetBoundingRectangleCore();
+        }
+
+        // The block's peer is created if need be: a reader asking is a reader walking the tree.
+        private DirectLinkAutomationPeer FocusedPeer()
+        {
+            var peer = CreatePeerForElement(_owner) as DirectTextBlockAutomationPeer;
+            return peer?.GetLinkPeer(_owner.FocusedLink);
+        }
+
+        public void Invoke()
+        {
+            _owner.InvokeLink(_owner.FocusedLink);
         }
     }
 }

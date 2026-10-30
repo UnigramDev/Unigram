@@ -2461,9 +2461,12 @@ namespace Telegram.Common
             else if (text != null)
             {
                 // A keyboard request carries no position, so the menu comes from the selection or
-                // from the link that holds focus. DirectTextBlock has no counterpart: a link there
-                // is a range of a layout, and focus never reaches one.
+                // from the link that holds focus.
                 Hyperlink_ContextRequested(flyout, navigation, service, text, args, message);
+            }
+            else if (sender is DirectTextBlock direct && direct.GetFocusedEntity() is TextEntityClickEventArgs focused)
+            {
+                Hyperlink_ContextRequested(flyout, navigation, service, focused, message);
             }
 
             // Transient: we don't want to unfocus the text are when the context menu gets opened.

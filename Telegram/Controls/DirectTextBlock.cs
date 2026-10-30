@@ -5,11 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using LinqToVisualTree;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Composition;
@@ -22,6 +24,7 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -503,6 +506,8 @@ namespace Telegram.Controls
                 {
                     _isReadOnly = value;
                     _layout?.IsReadOnly = value;
+
+                    UpdateLinkFocus();
                 }
             }
         }
@@ -1094,6 +1099,9 @@ namespace Telegram.Controls
             _renderedSize = default;
             UpdateToolTip(-1);
 
+            // The links that were covered can be reached now.
+            UpdateLinkFocus();
+
             InvalidateArrange();
         }
 
@@ -1271,6 +1279,8 @@ namespace Telegram.Controls
                 _host.PointerPressed += OnPointerPressed;
                 _host.PointerReleased += OnPointerReleased;
             }
+
+            UpdateLinkFocus();
         }
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
@@ -2776,14 +2786,263 @@ namespace Telegram.Controls
         public TextEntityClickEventArgs GetEntityFromPoint(Point point)
         {
             var position = Layout().HitTestContent(ToLayout(point), out var inside);
-            var link = inside ? LinkAt(position) : -1;
+            return GetEntity(inside ? LinkAt(position) : -1);
+        }
 
+        /// <summary>
+        /// The link that has keyboard focus, as a click would report it, or null: what a context
+        /// menu asked for from the keyboard needs, as such a request carries no point.
+        /// </summary>
+        public TextEntityClickEventArgs GetFocusedEntity()
+        {
+            return _focus?.FocusState is FocusState.Unfocused or null ? null : GetEntity(FocusedLink);
+        }
+
+        private TextEntityClickEventArgs GetEntity(int link)
+        {
             if (link < 0 || _entities == null || link >= _entities.Count || CurrentText == null)
             {
                 return null;
             }
 
             return CreateEntityArgs(_entities[link]);
+        }
+
+        // Keyboard focus for the links. Only an element can hold focus and a link is a range of
+        // the layout, so one element holds it for all of them, and Tab moves it between them
+        // before it leaves the block. Made for the first text with a link that a key can reach,
+        // and kept: a recycled bubble shows links again soon enough.
+        private DirectTextFocus _focus;
+        private int _focusedLink = -1;
+
+        // The link SetFocus from automation asks for, while it moves focus here.
+        private int _pendingLink = -1;
+
+        // What IsTabStop should be, and what it was last set to. Applied on arrange rather than
+        // here: a recycled text clears its links and sets them again, and writing the property
+        // through on both would be two calls into XAML per message for a value that ends where
+        // it started. Focus is left alone either way, as IsTabStop only decides where Tab lands.
+        private bool _linksFocusable;
+        private bool _tabStop;
+
+        // Off until a client reads text through automation, which is a screen reader in
+        // practice: the element is a Control per block with a link, which nobody else should
+        // pay for. On for the rest of the session once on.
+        private static int _linkFocusEnabled;
+
+        private static void EnableLinkFocus()
+        {
+            if (Interlocked.Exchange(ref _linkFocusEnabled, 1) != 0)
+            {
+                return;
+            }
+
+            // The blocks already showing a link, on each window's own thread; any other block
+            // catches up with its next text. Posted first, as this runs inside the request that
+            // is creating a peer, and ForEach runs inline for the window on this thread.
+            DispatcherQueue.GetForCurrentThread()?.TryEnqueue(EnableLinkFocusEverywhere);
+        }
+
+        private static void EnableLinkFocusEverywhere()
+        {
+            WindowContext.ForEach(EnableLinkFocus);
+        }
+
+        private static void EnableLinkFocus(WindowContext window)
+        {
+            var blocks = new List<DirectTextBlock>();
+
+            // Collected first, as each block adds a child to the tree being walked.
+            if (window.Content != null)
+            {
+                blocks.AddRange(window.Content.Descendants<DirectTextBlock>());
+            }
+
+            if (window.XamlRoot != null)
+            {
+                foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(window.XamlRoot))
+                {
+                    if (popup.Child != null)
+                    {
+                        blocks.AddRange(popup.Child.Descendants<DirectTextBlock>());
+                    }
+                }
+            }
+
+            foreach (var block in blocks)
+            {
+                block.UpdateLinkFocus();
+            }
+        }
+
+        private void UpdateLinkFocus()
+        {
+            if (_linkFocusEnabled == 0)
+            {
+                return;
+            }
+
+            var focusable = _isReadOnly && NextLink(-1, true) >= 0;
+
+            if (focusable && _focus == null)
+            {
+                _focus = new DirectTextFocus(this);
+
+                // Tab follows the order of the children: after the host, so that the links come
+                // before the inline buttons.
+                Children.Insert(1, _focus);
+            }
+
+            if (_focus != null && focusable != _linksFocusable)
+            {
+                _linksFocusable = focusable;
+
+                if (focusable != _tabStop)
+                {
+                    InvalidateArrange();
+                }
+            }
+        }
+
+        // The link Tab reaches after the one given, or from an end for -1. Those under a spoiler
+        // are skipped: focus would read out what is not to be read yet.
+        private int NextLink(int from, bool forward)
+        {
+            var count = _links?.Count ?? 0;
+            var step = forward ? 1 : -1;
+
+            for (int i = from >= 0 ? from + step : forward ? 0 : count - 1; i >= 0 && i < count; i += step)
+            {
+                if (!IsSpoilered(_links[i].Offset))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        internal IList<TextRange> Links => _links;
+
+        internal double Scale => XamlRoot?.RasterizationScale ?? 1;
+
+        internal int FocusedLink => _focusedLink < (_links?.Count ?? 0) ? _focusedLink : -1;
+
+        internal bool CanFocusLink(int index)
+        {
+            return _focus != null
+                && _linksFocusable
+                && index >= 0
+                && index < (_links?.Count ?? 0)
+                && !IsSpoilered(_links[index].Offset);
+        }
+
+        internal bool HasLinkFocus(int index)
+        {
+            return index >= 0 && index == FocusedLink && _focus?.FocusState is not FocusState.Unfocused and not null;
+        }
+
+        internal void FocusLink(int index)
+        {
+            if (!CanFocusLink(index))
+            {
+                return;
+            }
+
+            if (_focus.FocusState != FocusState.Unfocused)
+            {
+                MoveLinkFocus(index);
+                return;
+            }
+
+            _pendingLink = index;
+            _focus.Focus(FocusState.Keyboard);
+            _pendingLink = -1;
+        }
+
+        // Before focus arrives, so that the focus event XAML raises reads as the right link.
+        internal void OnLinkGettingFocus(GettingFocusEventArgs args)
+        {
+            var link = _pendingLink >= 0
+                ? _pendingLink
+                : args.Direction == FocusNavigationDirection.Previous
+                ? NextLink(-1, false)
+                : args.Direction == FocusNavigationDirection.Next || FocusedLink < 0
+                ? NextLink(-1, true)
+                : FocusedLink;
+
+            if (link != _focusedLink)
+            {
+                _focusedLink = link;
+                InvalidateArrange();
+            }
+        }
+
+        internal void OnLinkKeyDown(KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Tab)
+            {
+                // Plain and with Shift only: Ctrl+Tab belongs to the window. Past the last link
+                // the key is left alone, and the framework moves focus on past the block.
+                var modifiers = WindowContext.KeyModifiers();
+                if (modifiers is VirtualKeyModifiers.None or VirtualKeyModifiers.Shift)
+                {
+                    var next = NextLink(FocusedLink, modifiers == VirtualKeyModifiers.None);
+                    if (next >= 0)
+                    {
+                        MoveLinkFocus(next);
+                        e.Handled = true;
+                    }
+                }
+            }
+            else if (e.Key == VirtualKey.Enter && FocusedLink >= 0)
+            {
+                InvokeLink(FocusedLink);
+                e.Handled = true;
+            }
+        }
+
+        // The element stays focused, so XAML says nothing: the move is told to automation here,
+        // as focus landing on the link's own peer. No peer means no client has asked for the
+        // block yet, and nobody to tell.
+        private void MoveLinkFocus(int index)
+        {
+            _focusedLink = index;
+
+            // The element follows on the next arrange, and the system focus visual with it.
+            InvalidateArrange();
+            StartBringIntoView(new BringIntoViewOptions { TargetRect = GetLinkBounds(index) });
+
+            if (FrameworkElementAutomationPeer.FromElement(this) is DirectTextBlockAutomationPeer peer)
+            {
+                peer.GetLinkPeer(index)?.RaiseAutomationEvent(AutomationEvents.AutomationFocusChanged);
+            }
+        }
+
+        // The union of the rectangles the link covers, as it can wrap across lines.
+        internal Rect GetLinkBounds(int index)
+        {
+            var rects = GetLinkRectangles(index);
+
+            if (rects == null || rects.Length == 0)
+            {
+                return default;
+            }
+
+            var left = double.MaxValue;
+            var top = double.MaxValue;
+            var right = double.MinValue;
+            var bottom = double.MinValue;
+
+            for (int i = 0; i < rects.Length; i++)
+            {
+                left = Math.Min(left, rects[i].Left);
+                top = Math.Min(top, rects[i].Top);
+                right = Math.Max(right, rects[i].Right);
+                bottom = Math.Max(bottom, rects[i].Bottom);
+            }
+
+            return new Rect(left, top, right - left, bottom - top);
         }
 
         // What the automation tree needs to know about the links: how many there are, what each
@@ -2873,6 +3132,7 @@ namespace Telegram.Controls
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
+            EnableLinkFocus();
             return new DirectTextBlockAutomationPeer(this);
         }
 
@@ -3008,6 +3268,7 @@ namespace Telegram.Controls
             }
 
             _host.Measure(size);
+            _focus?.Measure(size);
 
             // The spoilers cover boxes of the text, so their bounds are only known once it has
             // been laid out - and the presenter has to be measured here like everything else.
@@ -3041,6 +3302,20 @@ namespace Telegram.Controls
             Render(finalSize);
 
             _host?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+
+            // Over the link that has focus, which is what the system focus visual is drawn around
+            // and what focus arriving brings into view; over the whole block before any has.
+            if (_focus != null)
+            {
+                if (_tabStop != _linksFocusable)
+                {
+                    _tabStop = _linksFocusable;
+                    _focus.IsTabStop = _tabStop;
+                }
+
+                var link = FocusedLink;
+                _focus.Arrange(link >= 0 ? GetLinkBounds(link) : new Rect(0, 0, finalSize.Width, finalSize.Height));
+            }
 
             UpdateSpoilers();
             UpdateSkeleton(finalSize);
@@ -3384,6 +3659,8 @@ namespace Telegram.Controls
             Select(0, 0);
             UpdateToolTip(-1);
 
+            _focusedLink = -1;
+
             _renderedSize = default;
             _ranges = null;
             _buttonRanges = null;
@@ -3417,5 +3694,40 @@ namespace Telegram.Controls
         }
 
         public bool AdjustLineEnding { get; set; }
+    }
+
+    /// <summary>
+    /// What a <see cref="DirectTextBlock"/>'s links take keyboard focus through, arranged over the
+    /// one that has it. It draws nothing, so the pointer goes through it to the text.
+    /// </summary>
+    public partial class DirectTextFocus : Control
+    {
+        private readonly DirectTextBlock _owner;
+
+        public DirectTextFocus(DirectTextBlock owner)
+        {
+            _owner = owner;
+
+            IsTabStop = false;
+            UseSystemFocusVisuals = true;
+
+            // On itself, so never detached.
+            GettingFocus += OnGettingFocus;
+        }
+
+        private void OnGettingFocus(UIElement sender, GettingFocusEventArgs args)
+        {
+            _owner.OnLinkGettingFocus(args);
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            _owner.OnLinkKeyDown(e);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new DirectTextFocusAutomationPeer(this, _owner);
+        }
     }
 }
