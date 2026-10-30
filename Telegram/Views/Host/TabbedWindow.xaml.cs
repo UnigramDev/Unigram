@@ -37,6 +37,7 @@ namespace Telegram.Views.Host
 
     public sealed partial class TabbedWindow : WindowContent
     {
+        private readonly bool _forWebApps;
 
         public TabbedWindow(WindowContext context, TabViewItem newTab, bool forWebApps)
             : base(context)
@@ -61,9 +62,9 @@ namespace Telegram.Views.Host
             {
                 MenuButton.Visibility = Visibility.Collapsed;
                 CloseButton.Visibility = Visibility.Collapsed;
-
-                Window.TitleBarChanged += OnLayoutMetricsChanged;
             }
+
+            _forWebApps = forWebApps;
 
             if (newTab != null)
             {
@@ -71,14 +72,6 @@ namespace Telegram.Views.Host
 
                 //newTab.IsClosable = false;
                 //newTab.IsBackButtonVisibleChanged += OnIsBackButtonVisibleChanged;
-            }
-        }
-
-        protected override void OnUnloaded()
-        {
-            if (Window != null)
-            {
-                Window.TitleBarChanged -= OnLayoutMetricsChanged;
             }
         }
 
@@ -107,8 +100,14 @@ namespace Telegram.Views.Host
             Navigation.SelectedIndex++;
         }
 
-        private void OnLayoutMetricsChanged(object sender, object args)
+        protected override void OnWindowTitleBarChanged()
         {
+            // Web apps give Footer a fixed width for their own menu and close buttons.
+            if (_forWebApps)
+            {
+                return;
+            }
+
             var window = Window;
             // To ensure that the tabs in the titlebar are not occluded by shell
             // content, we must ensure that we account for left and right overlays.

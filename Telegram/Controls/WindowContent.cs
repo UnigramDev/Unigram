@@ -201,9 +201,15 @@ namespace Telegram.Controls
                 window.VisibleBoundsChanged += OnVisibleBoundsChangedCore;
                 window.CloseRequested += OnCloseRequestedCore;
                 window.Closed += OnClosedCore;
+                window.TitleBarChanged += OnTitleBarChangedCore;
             }
 
             OnLoaded();
+
+            if (Window != null)
+            {
+                OnWindowTitleBarChanged();
+            }
         }
 
         protected virtual void OnLoaded()
@@ -220,6 +226,7 @@ namespace Telegram.Controls
                 window.VisibleBoundsChanged -= OnVisibleBoundsChangedCore;
                 window.CloseRequested -= OnCloseRequestedCore;
                 window.Closed -= OnClosedCore;
+                window.TitleBarChanged -= OnTitleBarChangedCore;
             }
 
             OnUnloaded();
@@ -275,6 +282,11 @@ namespace Telegram.Controls
             OnWindowVisibleBoundsChanged();
         }
 
+        private void OnTitleBarChangedCore(object sender, object args)
+        {
+            OnWindowTitleBarChanged();
+        }
+
         protected virtual void OnWindowActivated(bool active)
         {
         }
@@ -292,6 +304,14 @@ namespace Telegram.Controls
         }
 
         protected virtual void OnWindowVisibleBoundsChanged()
+        {
+        }
+
+        /// <summary>
+        /// The caption buttons' insets, read off <see cref="Window"/>. Called once on load and then
+        /// on every change, and never after unload, when Window may already be gone.
+        /// </summary>
+        protected virtual void OnWindowTitleBarChanged()
         {
         }
 

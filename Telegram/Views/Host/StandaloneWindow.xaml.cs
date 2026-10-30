@@ -86,15 +86,12 @@ namespace Telegram.Views.Host
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            InitializeTitleBar();
-
             ShowHideBanner(LifetimeService.Current.Playback);
             LifetimeService.Current.Playback.SourceChanged += OnPlaybackSourceChanged;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnloadTitleBar();
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackSourceChanged;
         }
 
@@ -107,19 +104,7 @@ namespace Telegram.Views.Host
             base.OnWindowClosed();
         }
 
-        private void InitializeTitleBar()
-        {
-            Window.TitleBarChanged += OnLayoutMetricsChanged;
-
-            OnLayoutMetricsChanged(Window, null);
-        }
-
-        private void UnloadTitleBar()
-        {
-            Window.TitleBarChanged -= OnLayoutMetricsChanged;
-        }
-
-        private void OnLayoutMetricsChanged(object sender, object args)
+        protected override void OnWindowTitleBarChanged()
         {
             try
             {
