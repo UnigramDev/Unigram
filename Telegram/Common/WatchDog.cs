@@ -114,8 +114,11 @@ namespace Telegram
         {
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
             // Not a UWP-only event: combase raises it from RoReportUnhandledError in a desktop
-            // process too, CoreApplication.Run or not.
+            // process too, CoreApplication.Run or not. Hence the exception to the WinUI ban on
+            // CoreApplication, which is about the UWP app model.
+#pragma warning disable RS0030
             CoreApplication.UnhandledErrorDetected += OnUnhandledExceptionDetected;
+#pragma warning restore RS0030
 
             BootStrapper.Current.UnhandledException += OnUnhandledException;
 
