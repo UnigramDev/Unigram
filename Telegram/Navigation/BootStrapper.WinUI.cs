@@ -52,12 +52,6 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// The thread every window of this host runs on, kept for the life of the process, unlike
-        /// any one window's.
-        /// </summary>
-        public IDispatcherContext Dispatcher { get; private set; }
-
-        /// <summary>
         /// The one activation override this framework has. Its argument carries a command line and
         /// nothing else, so the real arguments are read from AppInstance - the same call the island
         /// host makes, returning the same <c>IActivatedEventArgs</c> everything downstream already
@@ -66,6 +60,7 @@ namespace Telegram.Navigation
         protected sealed override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
         {
             Dispatcher = DispatcherContext.Current;
+            HiddenWindow.Create();
 
             // The default, OnLastWindowClose, ends the process the moment the last window is
             // destroyed - DesktopWindowImpl::OnMessage posts WM_QUIT on WM_DESTROY when the window

@@ -6,6 +6,7 @@
 //
 
 using Microsoft.Web.WebView2.Core;
+using System;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -14,21 +15,24 @@ using Windows.System;
 namespace Telegram.Common
 {
     // The Win32 half: every window shares the main thread and there are no hidden views, so the
-    // carriers live on that thread, parented to the main window.
+    // carriers live on that thread, parented to HiddenWindow rather than to the main window, which
+    // WinUI destroys on closing to the notification area icon.
     public sealed partial class WebProxyCarrierHost
     {
         private async void StartThread()
         {
+            // TDLib restores an enabled proxy before the host has started, and with it the
+            // dispatcher and HiddenWindow.
             await ViewService.WaitForMainWindowAsync();
 
-            var window = WindowContext.Main;
-            if (window == null)
+            var dispatcher = BootStrapper.Current.Dispatcher;
+            if (dispatcher == null || HiddenWindow.Handle == IntPtr.Zero)
             {
                 OnThreadFailed(new WebProxyCarrierErrorPaused());
                 return;
             }
 
-            window.Dispatcher.Dispatch(OnMainThread);
+            dispatcher.Dispatch(OnMainThread);
         }
 
         private void OnMainThread()
@@ -38,7 +42,7 @@ namespace Telegram.Common
 
         private static CoreWebView2ControllerWindowReference CreateParentWindow()
         {
-            return CoreWebView2ControllerWindowReference.CreateFromWindowHandle((ulong)WindowContext.Main.Handle);
+            return CoreWebView2ControllerWindowReference.CreateFromWindowHandle((ulong)HiddenWindow.Handle);
         }
     }
 }

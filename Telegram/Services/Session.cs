@@ -106,7 +106,7 @@ namespace Telegram.Services
 
         public virtual void BeginOnUIThread(DispatcherQueueHandler action)
         {
-            var dispatcher = WindowContext.Main?.Dispatcher;
+            var dispatcher = BootStrapper.Current.Dispatcher;
             if (dispatcher != null)
             {
                 dispatcher.Dispatch(action);

@@ -34,6 +34,21 @@ namespace Telegram.Navigation
 
         public static new BootStrapper Current { get; private set; }
 
+        /// <summary>
+        /// The main window's thread, for the life of the process. On the desktop hosts every window
+        /// runs on it and the main one can be closed to the notification area icon, which leaves
+        /// WindowContext.Main null; UWP never closes its main view. Null until the host has
+        /// started, and on UWP until the main view exists.
+        ///
+        /// On UWP this is the MAIN view's dispatcher, not the calling thread's: every secondary
+        /// view has a thread of its own, and work dispatched here runs on the main one. That is
+        /// the opposite of <see cref="Compositor"/> next to it, which is per thread. Code that
+        /// touches a window's tree or composition goes through that window's own
+        /// WindowContext.Dispatcher instead; this is for process-wide state, and only the desktop
+        /// hosts can treat it as every window's.
+        /// </summary>
+        public IDispatcherContext Dispatcher { get; private set; }
+
         public IDictionary<string, object> SessionState { get; set; } = new Dictionary<string, object>();
 
         internal volatile bool IsMainWindowCreated;

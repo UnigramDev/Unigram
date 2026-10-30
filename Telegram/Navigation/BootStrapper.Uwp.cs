@@ -97,7 +97,14 @@ namespace Telegram.Navigation
             }
 
             Logger.Info("Creating the window context");
-            return new WindowContext(window);
+            context = new WindowContext(window);
+
+            if (context.IsInMainView)
+            {
+                Dispatcher = context.Dispatcher;
+            }
+
+            return context;
         }
 
         protected sealed override void OnLaunched(LaunchActivatedEventArgs e)

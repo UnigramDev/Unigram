@@ -32,6 +32,9 @@ namespace Telegram.Navigation
         /// </summary>
         internal void Start(IActivatedEventArgs args)
         {
+            Dispatcher = DispatcherContext.Current;
+            HiddenWindow.Create();
+
             if (args is LaunchActivatedEventArgs launch)
             {
                 // Straight to the internals rather than through OnLaunched, which is inert here.

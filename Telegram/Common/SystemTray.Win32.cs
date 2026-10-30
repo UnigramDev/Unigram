@@ -38,7 +38,7 @@ namespace Telegram.Common
             // pumps messages ever hears a click - so never a pool thread, which is where
             // App.OnStartSync runs. Created there, the icon ignores clicks until something happens
             // to pump that thread, and then activates the window from it and dies in the WndProc.
-            if (WindowContext.Main?.Dispatcher is IDispatcherContext dispatcher)
+            if (BootStrapper.Current.Dispatcher is IDispatcherContext dispatcher)
             {
                 return dispatcher.DispatchAsync(Show);
             }

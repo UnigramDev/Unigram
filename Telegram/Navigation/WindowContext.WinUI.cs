@@ -499,13 +499,13 @@ namespace Telegram.Navigation
 
         /// <summary>
         /// The media keys and the volume flyout's now-playing panel. They belong to a window here,
-        /// not to the thread every window shares, and go with it: the main window's, which
-        /// outlives the others.
+        /// not to the thread every window shares, and PlaybackService keeps them for the life of
+        /// the process: so HiddenWindow's, which is the only window that lives as long.
         /// </summary>
         public static Windows.Media.SystemMediaTransportControls GetSystemMediaTransportControls()
         {
-            var window = Main ?? _current;
-            return window == null ? null : WindowInterop.GetSystemMediaTransportControls(window._handle);
+            var handle = HiddenWindow.Handle;
+            return handle == IntPtr.Zero ? null : WindowInterop.GetSystemMediaTransportControls(handle);
         }
 
         private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
