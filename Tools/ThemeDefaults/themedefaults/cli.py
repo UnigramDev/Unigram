@@ -16,6 +16,7 @@ REPO = os.path.dirname(os.path.dirname(TOOL))
 DEFAULT_LIGHT = os.path.join(TOOL, "light.tsv")
 DEFAULT_DARK = os.path.join(TOOL, "dark.tsv")
 DEFAULT_OVERRIDES = os.path.join(TOOL, "overrides.tsv")
+DEFAULT_WINUI = os.path.join(TOOL, "winui.tsv")
 
 THEME_DIR = os.path.join(REPO, "Telegram", "Services", "Theme")
 DEFAULT_GENERATED = os.path.join(THEME_DIR, "ThemeDefaults.g.cs")
@@ -85,10 +86,10 @@ def _load(args):
 
 
 def cmd_pack(args):
-    from themedefaults import pack
+    from themedefaults import pack, table
 
     light, dark = _load(args)
-    text = pack.emit(light, dark)
+    text = pack.emit(light, dark, table.load_overrides(args.winui))
     name = os.path.basename(args.out)
 
     current = None
@@ -119,24 +120,28 @@ def cmd_verify(args):
     from themedefaults import table, verify
 
     light, dark = _load(args)
-    # The generated file has no edges in it, so the tables are compared as they pack.
-    light, dark = table.flatten(light), table.flatten(dark)
-    rebuilt_light, rebuilt_dark, custom = verify.read(args.generated, args.overlay)
+    winui_light, winui_dark = table.apply_flavour(light, dark, table.load_overrides(args.winui))
 
-    failures = []
-    ok = verify.compare(light, rebuilt_light, custom, "light", failures.append)
-    ok = verify.compare(dark, rebuilt_dark, custom, "dark", failures.append) and ok
+    failed = False
+    for flavour, light, dark, winui in (("without WINUI3", light, dark, False),
+                                         ("with WINUI3", winui_light, winui_dark, True)):
+        # The generated file has no edges in it, so the tables are compared as they pack.
+        light, dark = table.flatten(light), table.flatten(dark)
+        rebuilt_light, rebuilt_dark, custom = verify.read(args.generated, args.overlay, winui)
 
-    for failure in failures[:20]:
-        _say("  " + failure)
-    if len(failures) > 20:
-        _say("  ... and %d more." % (len(failures) - 20))
+        failures = []
+        ok = verify.compare(light, rebuilt_light, custom, "light", failures.append)
+        ok = verify.compare(dark, rebuilt_dark, custom, "dark", failures.append) and ok
 
-    if ok:
-        _say("%d light and %d dark rows come back identical, in order."
-             % (len(light), len(dark)))
-        return 0
-    return 1
+        _say("%s: %s" % (flavour, "%d light and %d dark rows come back identical, in order."
+                         % (len(light), len(dark)) if ok else "differs from the tables."))
+        for failure in failures[:20]:
+            _say("  " + failure)
+        if len(failures) > 20:
+            _say("  ... and %d more." % (len(failures) - 20))
+        failed = failed or not ok
+
+    return 1 if failed else 0
 
 
 def cmd_export(args):
@@ -279,6 +284,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="themedefaults", description=__doc__)
     parser.add_argument("--light", default=DEFAULT_LIGHT)
     parser.add_argument("--dark", default=DEFAULT_DARK)
+    parser.add_argument("--winui", default=DEFAULT_WINUI,
+                        help="the values the WinUI 3 flavour resolves differently")
     commands = parser.add_subparsers(dest="command", required=True)
 
     pack = commands.add_parser("pack", help="tables to ThemeDefaults.g.cs")

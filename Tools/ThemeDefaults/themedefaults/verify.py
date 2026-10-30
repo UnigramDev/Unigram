@@ -3,6 +3,7 @@
 The packed arrays are unreadable by design, so nothing about them can be reviewed by
 eye. This walks ThemeDefaults.g.cs the way the app does - slot map, packed values, per
 theme order, acrylic side tables - and reports any row that does not come back the same.
+It does so once per flavour, because the WinUI 3 values sit in the same arrays.
 """
 
 import re
@@ -13,6 +14,26 @@ from themedefaults.legacy import split_args
 _COLOR = re.compile(r"^Color\.FromArgb\(0x([0-9A-Fa-f]{2}), 0x([0-9A-Fa-f]{2}), "
                     r"0x([0-9A-Fa-f]{2}), 0x([0-9A-Fa-f]{2})\)$")
 _CUSTOM_ROW = re.compile(r"^\((.+)\),$")
+
+
+def _select(text, winui):
+    """The source as the compiler sees it, with WINUI3 defined or not."""
+    out, branch = [], None
+    for line in text.splitlines():
+        directive = line.strip()
+        if directive == "#if WINUI3" and branch is None:
+            branch = winui
+        elif directive == "#else" and branch is not None:
+            branch = not branch
+        elif directive == "#endif" and branch is not None:
+            branch = None
+        elif directive.startswith("#"):
+            raise ValueError("pack writes no such directive: " + directive)
+        elif branch is None or branch:
+            out.append(line)
+    if branch is not None:
+        raise ValueError("#if WINUI3 is never closed")
+    return "\n".join(out)
 
 
 def _block(text, declaration):
@@ -42,10 +63,10 @@ def _acrylics(body, colour):
     return rows
 
 
-def read(generated, overlay):
+def read(generated, overlay, winui=False):
     """Rebuilds (light, dark) as ordered [(key, value)] from the two C# files."""
     with open(generated, "r", encoding="utf-8") as fp:
-        source = fp.read()
+        source = _select(fp.read(), winui)
     with open(overlay, "r", encoding="utf-8") as fp:
         custom_source = fp.read()
 

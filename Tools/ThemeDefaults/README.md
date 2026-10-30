@@ -53,6 +53,19 @@ the root takes its new value and `flatten` carries it to the 41 rows aliasing it
 instead. Those 38 are Telegram's own and are the ones that still change, so they stay in
 readable C# and the packed arrays leave their slots empty for the overlay to fill.
 
+## WinUI 3
+
+`winui.tsv` holds what the WinUI 3 flavour resolves differently, in the syntax of
+`overrides.tsv`, applied over both tables for that build only. The tables stay the record of
+Microsoft.UI.Xaml 2.8, which every other flavour ships. Its rows today are the popups WinUI 3
+gives a `SystemBackdrop` and points at `DesktopAcrylicTransparentBrush`, where our
+`AcrylicBrush` would paint a second acrylic over the backdrop.
+
+`pack` writes those values into the same arrays, swapping each wrapped line that differs for
+`#if WINUI3 … #else … #endif`, so every flavour still gets a constant initializer. A key the
+tables do not hold is an error, not a row that is quietly dropped. `verify` reads the file once
+per flavour.
+
 Everything else is framework material, and **it is frozen** - Windows.UI.Xaml and
 Microsoft.UI.Xaml 2.8 are both done. That is why the output is checked in rather than
 generated during the build, and why running this at all is a one-off.
@@ -78,7 +91,7 @@ from this folder.
 | Command | What it does |
 | --- | --- |
 | `pack` | Tables to `ThemeDefaults.g.cs`. `--check` reports staleness without writing, `--force` rewrites regardless. |
-| `verify` | Reads the generated C# back the way the app does and diffs every row against the tables, values and order both. |
+| `verify` | Reads the generated C# back the way the app does and diffs every row against the tables, values and order both, with and without `WINUI3`. |
 | `export <source>` | The one-time import out of the old `Dictionary<string, object>` pair. Already run; kept to document how the tables got here. |
 | `resources <package>` | Pulls the compiled XBF theme resources out of a shipped Microsoft.UI.Xaml package, and reports the keys in each. |
 | `compare` | Reads the framework's own dictionaries and diffs them against the tables. `--key` lists what resolves to one key instead; `--write` takes the framework's values and adds the brushes it defines that the tables lack, and `--aliases` with it keeps the framework's edges. Reports only, unless `--write`. |

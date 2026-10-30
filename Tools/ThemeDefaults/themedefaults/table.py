@@ -156,6 +156,21 @@ def apply(rows, overrides, other):
     return out, applied
 
 
+def apply_flavour(light, dark, overrides):
+    """Both tables as a flavour resolves them, `overrides` in the shape `load_overrides` gives.
+
+    `apply` passes over a key the table lacks, which here would drop a flavour's row without
+    a word, so a key either table is missing is an error.
+    """
+    out = []
+    for name, rows, other in (("light", light, dark), ("dark", dark, light)):
+        missing = sorted(set(overrides[name]) - {key for key, _ in rows})
+        if missing:
+            raise ValueError("the %s table has no %s" % (name, ", ".join(missing)))
+        out.append(apply(rows, overrides[name], dict(flatten(other)))[0])
+    return out
+
+
 def save(path, rows, title):
     with open(path, "w", encoding="utf-8", newline="\r\n") as fp:
         fp.write("# %s\n" % title)

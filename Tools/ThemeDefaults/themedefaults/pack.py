@@ -19,7 +19,9 @@ namespace Telegram.Services
     //
     // One key table shared by both themes, and one packed value per slot. Everything here is a
     // constant array initializer so the compiler folds it into a single memcpy rather than
-    // several thousand stores in a static constructor.
+    // several thousand stores in a static constructor. That is why the values WinUI 3 resolves
+    // differently (winui.tsv) replace whole lines under #if WINUI3, instead of being patched
+    // in at startup.
     internal static partial class ThemeDefaults
     {
 """
@@ -37,28 +39,40 @@ def _wrap(items, per_line, indent):
     out = []
     for i in range(0, len(items), per_line):
         out.append(indent + " ".join(x + "," for x in items[i:i + per_line]))
-    return "\n".join(out)
+    return out
 
 
-def _array(declaration, items, per_line):
-    return "        %s =\n        {\n%s\n        };\n\n" % (
-        declaration, _wrap(items, per_line, "            "))
+def _array(declaration, items, per_line, winui=None):
+    lines = _wrap(items, per_line, "            ")
+    if winui is not None:
+        merged = []
+        for ours, theirs in zip(lines, _wrap(winui, per_line, "            ")):
+            if ours == theirs:
+                merged.append(ours)
+            else:
+                merged += ["#if WINUI3", theirs, "#else", ours, "#endif"]
+        lines = merged
+    return "        %s =\n        {\n%s\n        };\n\n" % (declaration, "\n".join(lines))
 
 
 def _color(argb):
     return "Color.FromArgb(0x%s, 0x%s, 0x%s, 0x%s)" % (argb[1:3], argb[3:5], argb[5:7], argb[7:9])
 
 
-def build(light, dark):
+def build(light, dark, winui):
     """Slots, packed values and per-theme order, from the two ordered tables.
 
     The key table is shared, so it runs in light's order with dark-only keys appended.
     The orders are kept per theme because the two disagree for about twenty keys, and
-    the theme editor lists them in that order.
+    the theme editor lists them in that order. `winui` is the overrides for that flavour,
+    whose values come back as "winui light" and "winui dark".
     """
+    winui_light, winui_dark = table.apply_flavour(light, dark, winui)
+
     # Edges are a property of the tables; the packed arrays hold one value per slot, so they
     # are resolved here rather than shipped. Keys and order are untouched by it.
     light, dark = table.flatten(light), table.flatten(dark)
+    winui_light, winui_dark = table.flatten(winui_light), table.flatten(winui_dark)
 
     light_keys = [k for k, _ in light]
     known = set(light_keys)
@@ -70,7 +84,9 @@ def build(light, dark):
 
     # Light first, then dark, both in declaration order: the acrylic side tables are built
     # by first sight, so this walk is what fixes the indices the packed values refer to.
-    for name, rows in (("light", light), ("dark", dark)):
+    # WinUI comes last so that an acrylic only it uses appends rather than shifting the rest.
+    for name, rows in (("light", light), ("dark", dark),
+                       ("winui light", winui_light), ("winui dark", winui_dark)):
         packed = [0] * len(keys)
         for key, value in rows:
             packed[slot[key]] = table.pack(value, acrylic_colors, acrylic_shades)
@@ -80,8 +96,8 @@ def build(light, dark):
     return keys, values, order, acrylic_colors, acrylic_shades
 
 
-def emit(light, dark):
-    keys, values, order, acrylic_colors, acrylic_shades = build(light, dark)
+def emit(light, dark, winui):
+    keys, values, order, acrylic_colors, acrylic_shades = build(light, dark, winui)
 
     out = [HEADER]
     out.append(_array("internal static readonly string[] Keys",
@@ -89,7 +105,8 @@ def emit(light, dark):
 
     for name in ("light", "dark"):
         out.append(_array("private static readonly ulong[] _%sValues" % name,
-                          ["0x%016X" % v for v in values[name]], 5))
+                          ["0x%016X" % v for v in values[name]], 5,
+                          ["0x%016X" % v for v in values["winui " + name]]))
 
     for name in ("light", "dark"):
         out.append(_array("private static readonly int[] _%sOrder" % name,

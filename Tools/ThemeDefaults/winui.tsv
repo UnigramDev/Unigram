@@ -1,0 +1,11 @@
+# What the WinUI 3 flavour resolves differently, applied over both tables for its build only.
+# key<TAB>light<TAB>dark, in the syntax of overrides.tsv. `pack` writes these values under
+# #if WINUI3, so the other flavours keep the tables as they are.
+#
+# Every row wants a reason above it, as in overrides.tsv.
+
+# WinUI 3 draws the material of these popups with a SystemBackdrop and points their
+# background at DesktopAcrylicTransparentBrush. An AcrylicBrush here paints a second acrylic
+# over the backdrop.
+MenuFlyoutPresenterBackground	#00000000	#00000000
+CommandBarFlyoutBackground	#00000000	#00000000
