@@ -99,6 +99,9 @@ namespace winrt::Telegram::Native::Widgets::implementation
         bool ViewerIsPremium() const { return m_viewerIsPremium; }
         void ViewerIsPremium(bool value) { m_viewerIsPremium = value; }
 
+        Telegram::Native::Widgets::WidgetContentSafeArea ContentSafeArea() const { return m_contentSafeArea; }
+        void ContentSafeArea(Telegram::Native::Widgets::WidgetContentSafeArea const& value) { m_contentSafeArea = value; }
+
         twidget::WidgetData ToData() const;
         twidget::WidgetContext ToContext() const;
 
@@ -120,6 +123,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
         hstring m_viewerLastName;
         hstring m_viewerUsername;
         bool m_viewerIsPremium = false;
+        Telegram::Native::Widgets::WidgetContentSafeArea m_contentSafeArea{};
     };
 
     struct WidgetStorageCommit : WidgetStorageCommitT<WidgetStorageCommit>
@@ -163,6 +167,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
 
     twidget::WidgetData ToData(hstring const& chatData, hstring const& publicData);
     twidget::StorageArea ToStorageArea(Windows::Foundation::Collections::IMap<hstring, hstring> const& map);
+    twidget::WidgetContentSafeArea ToContentSafeArea(Telegram::Native::Widgets::WidgetContentSafeArea const& area);
 }
 
 namespace winrt::Telegram::Native::Widgets::factory_implementation

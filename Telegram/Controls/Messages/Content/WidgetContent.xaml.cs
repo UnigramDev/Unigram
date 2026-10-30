@@ -82,6 +82,9 @@ namespace Telegram.Controls.Messages.Content
         // Not minimized or hidden; a widget in a window in the background is paused as one off screen (§5.8).
         private bool _windowVisible = true;
 
+        // The bubble's time, which the widget is told about when it is drawn over its bottom corner (§5.12).
+        private MessageFooter _footer;
+
         public WidgetContent(MessageViewModel message)
         {
             _message = message;
@@ -169,6 +172,7 @@ namespace Telegram.Controls.Messages.Content
             if (_session != null)
             {
                 _session.SetData(widget.ChatData, widget.PublicData);
+                _session.SetSafeArea(ContentSafeArea());
                 UpdateTheme(_session);
             }
 
@@ -308,6 +312,50 @@ namespace Telegram.Controls.Messages.Content
             return WidgetThemes.Create(brushes, ActualTheme != ElementTheme.Light);
         }
 
+        // With no caption below the widget the bubble draws the time over its bottom corner, as over a photo: the band it
+        // takes and the corner on its side, margins included. Nothing with the time on a line of its own.
+        private WidgetContentSafeArea ContentSafeArea()
+        {
+            if (this.GetParent<MessageBubble>() is not { IsFooterOverMedia: true } bubble)
+            {
+                return default;
+            }
+
+            var footer = bubble.MediaFooter;
+            var margin = footer.Margin;
+
+            // Before its first layout, from its measure, which includes the margins.
+            double width = footer.DesiredSize.Width, height = footer.DesiredSize.Height;
+            if (footer.ActualWidth > 0)
+            {
+                width = footer.ActualWidth + margin.Left + margin.Right;
+                height = footer.ActualHeight + margin.Top + margin.Bottom;
+            }
+
+            if (width <= 0)
+            {
+                return default;
+            }
+
+            // Past the contract's 64 and 200 the widget would get 0 instead.
+            var area = new WidgetContentSafeArea { Bottom = Math.Min(height, 64) };
+            if (footer.FlowDirection == FlowDirection.RightToLeft)
+            {
+                area.CornerLeft = Math.Min(width, 200);
+            }
+            else
+            {
+                area.CornerRight = Math.Min(width, 200);
+            }
+
+            return area;
+        }
+
+        private void OnFooterSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _session?.SetSafeArea(ContentSafeArea());
+        }
+
         private void UpdateTheme(WidgetSession session)
         {
             var key = WidgetThemes.Key(ActualTheme != ElementTheme.Light);
@@ -357,6 +405,7 @@ namespace Telegram.Controls.Messages.Content
 
                 UpdateTheme(parked);
                 parked.SetData(widget.ChatData, widget.PublicData);
+                parked.SetSafeArea(ContentSafeArea());
                 parked.View.SetVisible(_windowVisible);
                 UpdateFromWidget();
                 return;
@@ -378,6 +427,8 @@ namespace Telegram.Controls.Messages.Content
             options.BackgroundQuery = widget.CanSendBackgroundQueries && options.CanQuery;
             options.ChatType = ChatType(_message, widget);
             SetViewer(options, _message.ClientService);
+            // At creation, so the first height already has the band.
+            options.ContentSafeArea = ContentSafeArea();
 
             var themeKey = WidgetThemes.Key(ActualTheme != ElementTheme.Light);
 
@@ -401,6 +452,7 @@ namespace Telegram.Controls.Messages.Content
             session.Theme = themeKey;
             session.ChatData = widget.ChatData;
             session.PublicData = widget.PublicData;
+            session.SafeArea = options.ContentSafeArea;
 
             Attach(session);
             view.SetVisible(_windowVisible);
@@ -488,6 +540,13 @@ namespace Telegram.Controls.Messages.Content
                 _window.VisibilityChanged += OnWindowVisibilityChanged;
             }
 
+            // The footer changes size with the time's status, "edited" and the views, and with its place over or under the widget.
+            if (_footer == null && this.GetParent<MessageBubble>() is MessageBubble bubble)
+            {
+                _footer = bubble.MediaFooter;
+                _footer.SizeChanged += OnFooterSizeChanged;
+            }
+
             TryOpen();
         }
 
@@ -499,6 +558,12 @@ namespace Telegram.Controls.Messages.Content
                 _window.VisibilityChanged -= OnWindowVisibilityChanged;
                 _window = null;
                 _windowVisible = true;
+            }
+
+            if (_footer != null)
+            {
+                _footer.SizeChanged -= OnFooterSizeChanged;
+                _footer = null;
             }
 
             Close();
@@ -649,11 +714,12 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var url = args.Url;
+            var telegram = args.Kind == WidgetActionKind.OpenTelegramLink;
             this.BeginOnUIThread(() =>
             {
                 if (_session?.View == sender)
                 {
-                    OpenLink(url);
+                    OpenLink(url, telegram);
                 }
             });
         }
@@ -712,13 +778,19 @@ namespace Telegram.Controls.Messages.Content
             });
         }
 
-        // Both kinds ask first with the full URL (§5.2); OpenUrl then sends t.me links to the app's own
-        // handling and the rest to the browser. The framework has already checked which host each takes.
-        private async void OpenLink(string url)
+        // A t.me link goes where a tapped one in a message goes, with no confirmation of its own; any other asks first with
+        // the full URL (§5.2). The framework has already checked which host each takes.
+        private async void OpenLink(string url, bool telegram)
         {
             var message = _message;
             if (_dialogOpen || message?.Delegate == null)
             {
+                return;
+            }
+
+            if (telegram)
+            {
+                MessageHelper.OpenUrl(message.ClientService, message.Delegate.NavigationService, url);
                 return;
             }
 

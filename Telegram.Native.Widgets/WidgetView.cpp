@@ -94,6 +94,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
         if (!options.Locale().empty()) hostOptions.locale = to_string(options.Locale());
         hostOptions.storage.local = ToStorageArea(options.LocalStorage());
         hostOptions.storage.session = ToStorageArea(options.SessionStorage());
+        hostOptions.contentSafeArea = ToContentSafeArea(options.ContentSafeArea());
 
         auto self = get_self<WidgetOptions>(options);
         hostOptions.data = self->ToData();
@@ -218,6 +219,11 @@ namespace winrt::Telegram::Native::Widgets::implementation
         if (m_pendingData)
         {
             host->setData(*m_pendingData);
+        }
+
+        if (m_pendingSafeArea)
+        {
+            host->setContentSafeArea(*m_pendingSafeArea);
         }
 
         if (m_pendingWidth)
@@ -409,6 +415,15 @@ namespace winrt::Telegram::Native::Widgets::implementation
         std::lock_guard guard(m_lock);
         if (m_host) m_host->setData(data);
         else m_pendingData = std::move(data);
+    }
+
+    void WidgetView::SetContentSafeArea(Telegram::Native::Widgets::WidgetContentSafeArea const& area)
+    {
+        auto value = ToContentSafeArea(area);
+
+        std::lock_guard guard(m_lock);
+        if (m_host) m_host->setContentSafeArea(value);
+        else m_pendingSafeArea = value;
     }
 
     int32_t WidgetView::Pointer(int32_t action, double x, double y, int32_t pointerId, bool primary, bool mouse, int32_t modifiers, int32_t button)

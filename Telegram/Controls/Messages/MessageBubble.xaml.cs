@@ -242,6 +242,12 @@ namespace Telegram.Controls.Messages
             set => Media.Child = value;
         }
 
+        // The message time and status, and whether they are drawn over the media's bottom corner, as with no caption below
+        // a photo, rather than on a line of their own.
+        public MessageFooter MediaFooter => Footer;
+
+        public bool IsFooterOverMedia => _currentState == "MediaState";
+
         public void Recycle()
         {
             Message.Clear();

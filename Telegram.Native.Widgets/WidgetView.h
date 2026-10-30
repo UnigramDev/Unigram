@@ -29,6 +29,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
         void SetWidth(double width);
         void SetVisible(bool visible);
         void SetData(hstring const& chatData, hstring const& publicData);
+        void SetContentSafeArea(Telegram::Native::Widgets::WidgetContentSafeArea const& area);
         int32_t Pointer(int32_t action, double x, double y, int32_t pointerId, bool primary, bool mouse, int32_t modifiers, int32_t button);
         void Hover(int32_t action, double x, double y, int32_t modifiers);
         hstring SelectedText();
@@ -84,6 +85,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
         std::optional<double> m_pendingWidth;
         std::optional<twidget::WidgetTheme> m_pendingTheme;
         std::optional<twidget::WidgetData> m_pendingData;
+        std::optional<twidget::WidgetContentSafeArea> m_pendingSafeArea;
 
         std::atomic<double> m_height{ 0 };
         std::atomic<bool> m_keepsBottom{ false };

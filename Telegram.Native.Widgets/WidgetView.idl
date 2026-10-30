@@ -29,6 +29,20 @@ namespace Telegram.Native.Widgets
         String TextPadding;
     }
 
+    // What the client draws over the widget, in CSS px (docs/sdk-v1.md §2.17, §5.12): with no caption below the widget, the
+    // message time over its bottom corner. Bottom is the height of the time's band, CornerRight (CornerLeft in a right-to-left
+    // interface: a physical side) the width the time takes in it; all 0 with a caption below. Insets 0 to 64, corners 0 to 200,
+    // anything else is 0.
+    struct WidgetContentSafeArea
+    {
+        Double Top;
+        Double Right;
+        Double Bottom;
+        Double Left;
+        Double CornerLeft;
+        Double CornerRight;
+    };
+
     // Everything a host is created with besides the HTML and the theme.
     runtimeclass WidgetOptions
     {
@@ -62,6 +76,9 @@ namespace Telegram.Native.Widgets
         String ViewerLastName;
         String ViewerUsername;
         Boolean ViewerIsPremium;
+
+        // Passed at creation, so the first height already has the band; later changes go to SetContentSafeArea.
+        WidgetContentSafeArea ContentSafeArea;
     }
 
     enum WidgetActionKind
@@ -154,6 +171,9 @@ namespace Telegram.Native.Widgets
         void SetVisible(Boolean visible);
         // The bot's state changed: the full new state of both, empty for none. The widget is told what differs.
         void SetData(String chatData, String publicData);
+        // The bubble's layout changed what the client draws over the widget: a caption added, removed or moved by an edit,
+        // or a wider time. Never per frame.
+        void SetContentSafeArea(WidgetContentSafeArea area);
         // action: 0 down, 1 move, 2 up, 3 cancel. modifiers: bit0 alt, bit1 ctrl, bit2 meta, bit3 shift. button: 0 main,
         // 2 a mouse's secondary. A primary press returns what the widget claims of it (docs/sdk-v1.md §5.5), decided
         // before it returns: bit0 horizontal drags, bit1 vertical ones, bit2 holds and the secondary button, which the

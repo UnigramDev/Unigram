@@ -49,6 +49,8 @@ namespace Telegram.Common.Widgets
 
         public string PublicData { get; set; }
 
+        public WidgetContentSafeArea SafeArea { get; set; }
+
         public void SetData(string chatData, string publicData)
         {
             if (ChatData != chatData || PublicData != publicData)
@@ -56,6 +58,17 @@ namespace Telegram.Common.Widgets
                 ChatData = chatData;
                 PublicData = publicData;
                 View.SetData(chatData ?? string.Empty, publicData ?? string.Empty);
+            }
+        }
+
+        // The client only ever sets the band and one corner.
+        public void SetSafeArea(WidgetContentSafeArea area)
+        {
+            var current = SafeArea;
+            if (current.Bottom != area.Bottom || current.CornerLeft != area.CornerLeft || current.CornerRight != area.CornerRight)
+            {
+                SafeArea = area;
+                View.SetContentSafeArea(area);
             }
         }
 

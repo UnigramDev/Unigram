@@ -128,4 +128,9 @@ namespace winrt::Telegram::Native::Widgets::implementation
 
         return area;
     }
+
+    twidget::WidgetContentSafeArea ToContentSafeArea(Telegram::Native::Widgets::WidgetContentSafeArea const& area)
+    {
+        return { area.Top, area.Right, area.Bottom, area.Left, area.CornerLeft, area.CornerRight };
+    }
 }
