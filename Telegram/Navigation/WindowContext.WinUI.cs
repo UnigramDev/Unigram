@@ -102,6 +102,11 @@ namespace Telegram.Navigation
             _window.AppWindow.Changed += OnAppWindowChanged;
 
             _inputListener = new InputListener(this);
+
+            if (LifetimeService.Current.Passcode.IsLockscreenRequired)
+            {
+                Lock(true);
+            }
         }
 
         private static int _nextId;

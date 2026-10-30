@@ -13,6 +13,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Host;
 using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Views.Host;
 using Windows.Foundation;
@@ -71,6 +72,11 @@ namespace Telegram.Navigation
 
             _inputListener = new InputListener(this);
             _island.Filter = _inputListener;
+
+            if (LifetimeService.Current.Passcode.IsLockscreenRequired)
+            {
+                Lock(true);
+            }
         }
 
         private static int _nextId;
