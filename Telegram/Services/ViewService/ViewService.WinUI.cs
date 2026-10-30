@@ -33,7 +33,10 @@ namespace Telegram.Services
         {
             await _mainWindowCreated.Task;
 
-            return await OnUIThread(() =>
+            // Not the caller's thread: a call window is opened from a tgcalls or TDLib callback,
+            // and a Window constructed there lands on a thread with no DispatcherQueue. Nor Main's
+            // dispatcher, as there is no main window once it has closed to the notification icon.
+            return await BootStrapper.Current.Dispatcher.DispatchAsync(() =>
             {
                 var context = CreateWindow(options.Title, options.Width, options.Height, options.PersistedId, options.ViewMode);
                 context.PersistedId = options.PersistedId ?? string.Empty;
@@ -72,7 +75,7 @@ namespace Telegram.Services
 
             await _mainWindowCreated.Task;
 
-            return await OnUIThread(() =>
+            return await BootStrapper.Current.Dispatcher.DispatchAsync(() =>
             {
                 var context = CreateWindow(title, size.Width, size.Height, "Floating", ViewServiceMode.Default);
                 context.PersistedId = "Floating";
@@ -85,23 +88,6 @@ namespace Telegram.Services
 
                 return context;
             });
-        }
-
-        /// <summary>
-        /// Callers are not all on the UI thread. A chat window is opened from a click; a call
-        /// window is opened from a tgcalls or TDLib callback, on whatever thread that arrives on.
-        /// A Window constructed off the UI thread lands on a thread with no DispatcherQueue, which
-        /// is how joining a call took the island host down.
-        /// </summary>
-        private static Task<WindowContext> OnUIThread(Func<WindowContext> create)
-        {
-            var dispatcher = WindowContext.Main?.Dispatcher;
-            if (dispatcher != null && !dispatcher.HasThreadAccess)
-            {
-                return dispatcher.DispatchAsync(create);
-            }
-
-            return Task.FromResult(create());
         }
 
         /// <summary>
