@@ -673,6 +673,9 @@ namespace Telegram.Controls
 
         private PointerCursorType _textSelectionCursor = PointerCursorType.Arrow;
 
+        // Hidden is a cursor this block never sets, so whatever the next move wants differs from it.
+        public void InvalidatePointerCursor() => _textSelectionCursor = PointerCursorType.Hidden;
+
         // Whether the Hand above is a spoiler's, which also takes the text out of hit-testing.
         // Tracked apart from the cursor itself, as an inline button shows the Hand too.
         private bool _spoilerCursor;

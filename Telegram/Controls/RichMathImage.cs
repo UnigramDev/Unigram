@@ -264,6 +264,11 @@ namespace Telegram.Controls
                 : null;
         }
 
+        public void InvalidatePointerCursor()
+        {
+            // A formula sets no cursor.
+        }
+
         #endregion
 
         #region Source

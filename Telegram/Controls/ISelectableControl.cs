@@ -133,5 +133,12 @@ namespace Telegram.Controls
         /// control's own coordinates. Null when none of the range is here.
         /// </summary>
         IList<Rect> GetHighlightRectangles(int from, int to);
+
+        /// <summary>
+        /// Forget the cursor this control last set, so the next pointer move sets it again. The
+        /// manager holds the pointer for a whole gesture, and none of the moves and exits in
+        /// between reach the control: what it remembers setting is not what is showing.
+        /// </summary>
+        void InvalidatePointerCursor();
     }
 }

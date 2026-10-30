@@ -3125,6 +3125,9 @@ namespace Telegram.Controls
                 : null;
         }
 
+        // Hidden is a cursor this block never sets, so whatever the next move wants differs from it.
+        public void InvalidatePointerCursor() => _cursor = PointerCursorType.Hidden;
+
         public int[] GetLineLengths() => Layout().LineLengths();
 
         /// <summary>The lines the text took at the last measure.</summary>

@@ -411,6 +411,31 @@ namespace Telegram.Common
         /// </summary>
         [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "set_ProtectedCursor")]
         private static extern void SetProtectedCursor(UIElement element, Microsoft.UI.Input.InputCursor value);
+
+        [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "get_ProtectedCursor")]
+        private static extern Microsoft.UI.Input.InputCursor GetProtectedCursor(UIElement element);
+
+        /// <summary>
+        /// Gives <paramref name="element"/> the cursor the pointer shows over
+        /// <paramref name="source"/>, one of its descendants: the first one stated on the way up,
+        /// the walk the framework makes. For an element taking pointer capture - a captured
+        /// pointer shows the cursor of the element holding it, and that walk starts there.
+        /// </summary>
+        public static void TakePointerCursorFrom(this UIElement element, object source)
+        {
+            var node = source as DependencyObject;
+
+            while (node != null && node != element)
+            {
+                if (node is UIElement child && GetProtectedCursor(child) is { } cursor)
+                {
+                    SetProtectedCursor(element, cursor);
+                    return;
+                }
+
+                node = VisualTreeHelper.GetParent(node);
+            }
+        }
 #endif
 
         /// <summary>

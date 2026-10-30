@@ -79,6 +79,7 @@ namespace Telegram.Common
         private bool _candidate;       // pointer is down on a selectable, not yet a drag
         private bool _selecting;       // drag confirmed, selecting
         private bool _captured;        // the root captured the pointer
+        private bool _cursorHeld;      // the gesture owns the cursor, see HoldCursor
         private Pointer _pointer;
         private Point _pressPoint;     // in _root coordinates
 
@@ -212,6 +213,8 @@ namespace Telegram.Common
 
             // Same reason: it's a control of the content being left behind.
             _lastTapControl = null;
+
+            ReleaseCursor(null);
 
             _root.RemoveHandler(UIElement.PointerPressedEvent, _pointerPressed);
             _root.RemoveHandler(UIElement.PointerMovedEvent, _pointerMoved);
@@ -372,6 +375,11 @@ namespace Telegram.Common
             // tree) is delivered here and no child runs its own selection.
             _captured = _root.CapturePointer(e.Pointer);
 
+            if (_captured)
+            {
+                HoldCursor(e.OriginalSource);
+            }
+
             if (_granularity == TextSelectionGranularity.Character)
             {
                 _candidate = true;
@@ -382,6 +390,7 @@ namespace Telegram.Common
                 // drag then keeps extending by whole words/paragraphs.
                 _selecting = true;
                 _owner.Focus(FocusState.Pointer);
+                SelectingCursor();
 
                 var index = _items.IndexOf(_anchor);
                 ApplySelection(index, _anchorStart, index, _anchorEnd);
@@ -439,6 +448,7 @@ namespace Telegram.Common
                 _candidate = false;
                 _selecting = true;
                 _owner.Focus(FocusState.Pointer);
+                SelectingCursor();
             }
 
             UpdateSelection(e, rootPoint);
@@ -460,6 +470,8 @@ namespace Telegram.Common
                 _root.ReleasePointerCapture(e.Pointer);
             }
 
+            ReleaseCursor(e);
+
             _candidate = false;
             _selecting = false;
             _captured = false;
@@ -478,10 +490,65 @@ namespace Telegram.Common
 
         private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
+            ReleaseCursor(e);
+
             _candidate = false;
             _selecting = false;
             _captured = false;
             _pointer = null;
+        }
+
+        // --- cursor --------------------------------------------------------------
+        // While the root holds the pointer, no move or exit reaches the controls under it, so
+        // the cursor they set is not updated. The two flavours fail differently. WinUI gives each
+        // element its own cursor and a captured pointer takes the capturing element's, so the
+        // root, which states none, shows the arrow. UWP has one cursor per window, so whatever
+        // was set last stays after the release, wherever the pointer is by then.
+
+        // The cursor at the press stays until the drag starts, as the press may still be a tap
+        // on a link.
+        private void HoldCursor(object source)
+        {
+#if WINUI3
+            _root.TakePointerCursorFrom(source);
+#endif
+            _cursorHeld = true;
+        }
+
+        private void SelectingCursor()
+        {
+            if (_cursorHeld)
+            {
+                _root.SetPointerCursor(PointerCursorType.IBeam);
+            }
+        }
+
+        // Null when the root is being let go of, with no pointer to ask about.
+        private void ReleaseCursor(PointerRoutedEventArgs e)
+        {
+            if (!_cursorHeld)
+            {
+                return;
+            }
+
+            _cursorHeld = false;
+
+            foreach (var item in _items)
+            {
+                item.InvalidatePointerCursor();
+            }
+
+#if WINUI3
+            // Null: the root states no cursor, and the element under the pointer decides again.
+            _root.SetPointerCursor(PointerCursorType.Hidden);
+#else
+            // Over text the window still shows the cursor text asks for, and the next move fixes
+            // the shape. Anywhere else the arrow, as nothing else is going to restore it.
+            if (e != null && (!ResolvePosition(e.GetCurrentPoint(_root).Position, out _, out _, out _, out var exact) || !exact))
+            {
+                _root.SetPointerCursor(PointerCursorType.Arrow);
+            }
+#endif
         }
 
         // --- "lost focus" clearing ---------------------------------------------
