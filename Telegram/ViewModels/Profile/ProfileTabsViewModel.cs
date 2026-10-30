@@ -174,6 +174,8 @@ namespace Telegram.ViewModels.Profile
 
         public object Parameter { get; set; }
 
+        public int Order { get; set; }
+
         public string Subtitle => Locale.Declension(_locale, _items?.TotalCount ?? _totalCount);
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -336,7 +338,74 @@ namespace Telegram.ViewModels.Profile
             return 0;
         }
 
-        protected async Task UpdateSharedCountAsync(Chat chat, IList<ProfileTabItem> tabs)
+        // Tabs are ordered as they were added, spaced so that one whose count only arrives once
+        // the strip is shown can still take the slot it would have been added in.
+        private const int TabOrderSpacing = 16;
+
+        private sealed record PendingTab(Task<ProfileTabItem> Request, int Order);
+
+        private readonly List<PendingTab> _pendingTabs = new();
+
+        protected ProfileTab _mainTab;
+
+        protected static void SetTabOrder(IList<ProfileTabItem> tabs)
+        {
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                tabs[i].Order = i * TabOrderSpacing;
+            }
+        }
+
+        protected void AddPendingTab(Task<ProfileTabItem> request, int order)
+        {
+            _pendingTabs.Add(new PendingTab(request, order));
+        }
+
+        // Only once the strip is shown: until then, Items is about to be replaced.
+        protected async Task AddPendingTabsAsync()
+        {
+            if (_pendingTabs.Count == 0)
+            {
+                return;
+            }
+
+            var inserts = new Task[_pendingTabs.Count];
+
+            for (int i = 0; i < inserts.Length; i++)
+            {
+                inserts[i] = InsertTabAsync(_pendingTabs[i]);
+            }
+
+            _pendingTabs.Clear();
+
+            await Task.WhenAll(inserts);
+
+            // Selecting the first arrival would open on whichever tab the server answered first.
+            SelectedItem ??= Items.Count > 0 ? Items[0] : null;
+        }
+
+        private async Task InsertTabAsync(PendingTab pending)
+        {
+            if (await pending.Request is not ProfileTabItem tab)
+            {
+                return;
+            }
+
+            tab.Order = pending.Order;
+
+            // The main tab stays first, whatever its order.
+            var first = _mainTab != null && Items.Count > 0 && Items[0].Type.GetType() == _mainTab.GetType() ? 1 : 0;
+            var index = Items.Count;
+
+            while (index > first && Items[index - 1].Order > tab.Order)
+            {
+                index--;
+            }
+
+            Items.Insert(index, tab);
+        }
+
+        protected async Task UpdateSharedCountAsync(Chat chat, IList<ProfileTabItem> tabs, ProfileTab mainTab)
         {
             var filters = new SearchMessagesFilter[]
             {
@@ -358,29 +427,44 @@ namespace Telegram.ViewModels.Profile
                 savedMessagesTopicId = savedMessagesTopic.SavedMessagesTopicId;
             }
 
-            async Task<Count> GetMessageCountAsync(SearchMessagesFilter filter)
+            async Task<Count> GetMessageCountAsync(SearchMessagesFilter filter, bool returnLocal)
             {
-                var count = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, Topic, filter, false)) as Count;
+                var countTask = ClientService.SendAsync(new GetChatMessageCount(chat.Id, Topic, filter, returnLocal));
 
                 // Polls open in their own chat history, which does not merge.
-                if (count != null && _upgradedFromChatId != 0 && filter is not SearchMessagesFilterPoll)
+                if (_upgradedFromChatId == 0 || filter is SearchMessagesFilterPoll)
                 {
-                    if (await ClientService.SendAsync(new GetChatMessageCount(_upgradedFromChatId, null, filter, false)) is Count upgradedFrom)
+                    return await countTask as Count;
+                }
+
+                var upgradedFromTask = ClientService.SendAsync(new GetChatMessageCount(_upgradedFromChatId, null, filter, returnLocal));
+
+                var count = await countTask as Count;
+                if (count != null && await upgradedFromTask is Count upgradedFrom)
+                {
+                    if (count.CountValue < 0 || upgradedFrom.CountValue < 0)
                     {
-                        return new Count(count.CountValue + upgradedFrom.CountValue);
+                        return new Count(-1);
                     }
+
+                    return new Count(count.CountValue + upgradedFrom.CountValue);
                 }
 
                 return count;
             }
 
-            async Task<Count> GetCountAsync(SearchMessagesFilter filter)
+            // A local answer is -1 when TDLib does not know the count.
+            async Task<Count> GetCountAsync(SearchMessagesFilter filter, bool returnLocal)
             {
                 if (filter is SearchMessagesFilterEmpty)
                 {
                     if (IsSavedMessages || MyProfile)
                     {
                         return new Count(0);
+                    }
+                    else if (returnLocal)
+                    {
+                        return new Count(-1);
                     }
 
                     var response = await ClientService.SendAsync(new GetSavedMessagesTopicHistory(chat.Id, 0, 0, 1));
@@ -392,61 +476,128 @@ namespace Telegram.ViewModels.Profile
                     return new Count(0);
                 }
 
-                if (sparseMessagesAvailable && filter is SearchMessagesFilterPhotoAndVideo or SearchMessagesFilterDocument or SearchMessagesFilterAudio or SearchMessagesFilterPoll or SearchMessagesFilterVoiceAndVideoNote or SearchMessagesFilterAnimation)
-                {
-                    var source = await GetMessageCountAsync(filter);
-                    if (source?.CountValue > 50)
-                    {
-                        switch (filter)
-                        {
-                            case SearchMessagesFilterPhotoAndVideo:
-                            case SearchMessagesFilterPhoto:
-                            case SearchMessagesFilterVideo:
-                                Media.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
-                                break;
-                            case SearchMessagesFilterDocument:
-                                Files.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
-                                break;
-                            case SearchMessagesFilterAudio:
-                                Music.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
-                                break;
-                            case SearchMessagesFilterVoiceAndVideoNote:
-                                Voice.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
-                                break;
-                            case SearchMessagesFilterAnimation:
-                                Animations.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
-                                break;
-                        }
-                    }
+                return await GetMessageCountAsync(filter, returnLocal);
+            }
 
-                    return source;
+            void UpdateDataSource(SearchMessagesFilter filter, int count)
+            {
+                if (count <= 50 || !sparseMessagesAvailable)
+                {
+                    return;
                 }
 
-                return await GetMessageCountAsync(filter);
+                switch (filter)
+                {
+                    case SearchMessagesFilterPhotoAndVideo:
+                    case SearchMessagesFilterPhoto:
+                    case SearchMessagesFilterVideo:
+                        Media.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
+                        break;
+                    case SearchMessagesFilterDocument:
+                        Files.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
+                        break;
+                    case SearchMessagesFilterAudio:
+                        Music.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
+                        break;
+                    case SearchMessagesFilterVoiceAndVideoNote:
+                        Voice.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
+                        break;
+                    case SearchMessagesFilterAnimation:
+                        Animations.DataSource = new MediaDataSource(ClientService, chat.Id, savedMessagesTopicId, filter, _upgradedFromChatId);
+                        break;
+                }
+            }
+
+            ProfileTabItem CreateTab(SearchMessagesFilter filter, int count)
+            {
+                return filter switch
+                {
+                    SearchMessagesFilterPhotoAndVideo => new ProfileTabItem(new ProfileTabMedia(), null, count, Strings.R.Media),
+                    SearchMessagesFilterEmpty => new ProfileTabItem(new ProfileTabSavedMessages(), new ChatMessageTopic(ClientService.Options.MyId, new MessageTopicSavedMessages(chat.Id)), count, Strings.R.SavedMessagesCount),
+                    SearchMessagesFilterDocument => new ProfileTabItem(new ProfileTabFiles(), null, count, Strings.R.Files),
+                    SearchMessagesFilterUrl => new ProfileTabItem(new ProfileTabLinks(), null, count, Strings.R.Links),
+                    SearchMessagesFilterAudio => new ProfileTabItem(new ProfileTabMusic(), null, count, Strings.R.MusicFiles),
+                    SearchMessagesFilterPoll => new ProfileTabItem(new ProfileTabPolls(), new ChatMessageTopic(chat.Id, Topic), count, Strings.R.ProfilePollsCount),
+                    SearchMessagesFilterVoiceAndVideoNote => new ProfileTabItem(new ProfileTabVoice(), null, count, Strings.R.Voice),
+                    SearchMessagesFilterAnimation => new ProfileTabItem(new ProfileTabGifs(), null, count, Strings.R.GIFs),
+                    _ => null
+                };
+            }
+
+            async Task<ProfileTabItem> LoadTabAsync(SearchMessagesFilter filter)
+            {
+                if (await GetCountAsync(filter, false) is Count count)
+                {
+                    UpdateDataSource(filter, count.CountValue);
+
+                    if (count.CountValue > 0)
+                    {
+                        return CreateTab(filter, count.CountValue);
+                    }
+                }
+
+                return null;
+            }
+
+            bool IsMainTab(SearchMessagesFilter filter)
+            {
+                return mainTab switch
+                {
+                    ProfileTabMedia => filter is SearchMessagesFilterPhotoAndVideo,
+                    ProfileTabFiles => filter is SearchMessagesFilterDocument,
+                    ProfileTabLinks => filter is SearchMessagesFilterUrl,
+                    ProfileTabMusic => filter is SearchMessagesFilterAudio,
+                    ProfileTabGifs => filter is SearchMessagesFilterAnimation,
+                    _ => false
+                };
+            }
+
+            var local = new Task<Count>[filters.Length];
+
+            for (int i = 0; i < filters.Length; i++)
+            {
+                local[i] = GetCountAsync(filters[i], true);
+            }
+
+            var counts = await Task.WhenAll(local);
+
+            // Sent before anything waits on one, as each is a server round trip.
+            var requests = new Task<ProfileTabItem>[filters.Length];
+
+            for (int i = 0; i < filters.Length; i++)
+            {
+                if (counts[i]?.CountValue < 0)
+                {
+                    requests[i] = LoadTabAsync(filters[i]);
+                }
             }
 
             for (int i = 0; i < filters.Length; i++)
             {
-                var response = await GetCountAsync(filters[i]);
-                if (response is Count count)
+                if (requests[i] == null)
                 {
-                    if (count.CountValue > 0)
+                    if (counts[i] is Count count)
                     {
-                        var item = filters[i] switch
-                        {
-                            SearchMessagesFilterPhotoAndVideo => new ProfileTabItem(new ProfileTabMedia(), null, count.CountValue, Strings.R.Media),
-                            SearchMessagesFilterEmpty => new ProfileTabItem(new ProfileTabSavedMessages(), new ChatMessageTopic(ClientService.Options.MyId, new MessageTopicSavedMessages(chat.Id)), count.CountValue, Strings.R.SavedMessagesCount),
-                            SearchMessagesFilterDocument => new ProfileTabItem(new ProfileTabFiles(), null, count.CountValue, Strings.R.Files),
-                            SearchMessagesFilterUrl => new ProfileTabItem(new ProfileTabLinks(), null, count.CountValue, Strings.R.Links),
-                            SearchMessagesFilterAudio => new ProfileTabItem(new ProfileTabMusic(), null, count.CountValue, Strings.R.MusicFiles),
-                            SearchMessagesFilterPoll => new ProfileTabItem(new ProfileTabPolls(), new ChatMessageTopic(chat.Id, Topic), count.CountValue, Strings.R.ProfilePollsCount),
-                            SearchMessagesFilterVoiceAndVideoNote => new ProfileTabItem(new ProfileTabVoice(), null, count.CountValue, Strings.R.Voice),
-                            SearchMessagesFilterAnimation => new ProfileTabItem(new ProfileTabGifs(), null, count.CountValue, Strings.R.GIFs),
-                            _ => null
-                        };
+                        UpdateDataSource(filters[i], count.CountValue);
 
-                        tabs.Add(item);
+                        if (count.CountValue > 0)
+                        {
+                            tabs.Add(CreateTab(filters[i], count.CountValue));
+                        }
                     }
+                }
+                else if (IsMainTab(filters[i]))
+                {
+                    // The strip opens on the main tab, so it is not shown without it.
+                    if (await requests[i] is ProfileTabItem tab)
+                    {
+                        tabs.Add(tab);
+                    }
+                }
+                else
+                {
+                    // Between the tab added last and the one SetTabOrder will number next.
+                    AddPendingTab(requests[i], tabs.Count * TabOrderSpacing - filters.Length + i);
                 }
             }
         }

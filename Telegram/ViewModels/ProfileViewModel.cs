@@ -84,8 +84,6 @@ namespace Telegram.ViewModels
             set => Set(ref _members, value);
         }
 
-        private ProfileTab _mainTab;
-
         public long LinkedChatId { get; private set; }
 
         private DeleteMessageReactionsFromSender _deleteReactions;
@@ -240,7 +238,7 @@ namespace Telegram.ViewModels
 
             if (_savedMessagesTopic != null)
             {
-                await UpdateSharedCountAsync(chat, tabs);
+                await UpdateSharedCountAsync(chat, tabs, null);
             }
             else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
@@ -290,21 +288,17 @@ namespace Telegram.ViewModels
                         }
                     }
 
-                    await UpdateSharedCountAsync(chat, tabs);
+                    // Never the main tab and always last, so the strip is shown without it.
+                    if (user.Type is UserTypeBot)
+                    {
+                        AddPendingTab(LoadSimilarBotsTabAsync(), int.MaxValue);
+                    }
+
+                    await UpdateSharedCountAsync(chat, tabs, mainTab);
 
                     if (cached != null && cached.GroupInCommonCount > 0)
                     {
                         tabs.Add(new ProfileTabItem(new ProfileTabGroups(), null, cached.GroupInCommonCount, Strings.R.CommonGroups));
-                    }
-
-                    if (user.Type is UserTypeBot)
-                    {
-                        await _botsTabViewModel.Items.LoadMoreItemsAsync(0);
-
-                        if (_botsTabViewModel.Items.Count > 0)
-                        {
-                            tabs.Add(new ProfileTabItem(new ProfileTabSimilarBots(), null, _botsTabViewModel.TotalCount, Strings.R.Bots));
-                        }
                     }
                 }
             }
@@ -329,13 +323,8 @@ namespace Telegram.ViewModels
 
                 if (typeSupergroup.IsChannel)
                 {
-                    await UpdateSharedCountAsync(chat, tabs);
-                    await _channelsTabViewModel.Items.LoadMoreItemsAsync(0);
-
-                    if (_channelsTabViewModel.Items.Count > 0)
-                    {
-                        tabs.Add(new ProfileTabItem(new ProfileTabSimilarChannels(), null, _channelsTabViewModel.TotalCount, Strings.R.Channels));
-                    }
+                    AddPendingTab(LoadSimilarChannelsTabAsync(), int.MaxValue);
+                    await UpdateSharedCountAsync(chat, tabs, mainTab);
                 }
                 else
                 {
@@ -349,14 +338,16 @@ namespace Telegram.ViewModels
                         tabs.Add(new ProfileTabItem(new ProfileTabMembers(), null, ClientService.GetMembersCount(chat), Strings.R.Members));
                     }
 
-                    await UpdateSharedCountAsync(chat, tabs);
+                    await UpdateSharedCountAsync(chat, tabs, mainTab);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
                 tabs.Add(new ProfileTabItem(new ProfileTabMembers(), null, ClientService.GetMembersCount(chat), Strings.R.Members));
-                await UpdateSharedCountAsync(chat, tabs);
+                await UpdateSharedCountAsync(chat, tabs, mainTab);
             }
+
+            SetTabOrder(tabs);
 
             ProfileTabItem already = null;
             if (mainTab != null)
@@ -379,6 +370,32 @@ namespace Telegram.ViewModels
             {
                 _giftsTabViewModel.Preload();
             }
+
+            await AddPendingTabsAsync();
+        }
+
+        private async Task<ProfileTabItem> LoadSimilarBotsTabAsync()
+        {
+            await _botsTabViewModel.Items.LoadMoreItemsAsync(0);
+
+            if (_botsTabViewModel.Items.Count > 0)
+            {
+                return new ProfileTabItem(new ProfileTabSimilarBots(), null, _botsTabViewModel.TotalCount, Strings.R.Bots);
+            }
+
+            return null;
+        }
+
+        private async Task<ProfileTabItem> LoadSimilarChannelsTabAsync()
+        {
+            await _channelsTabViewModel.Items.LoadMoreItemsAsync(0);
+
+            if (_channelsTabViewModel.Items.Count > 0)
+            {
+                return new ProfileTabItem(new ProfileTabSimilarChannels(), null, _channelsTabViewModel.TotalCount, Strings.R.Channels);
+            }
+
+            return null;
         }
 
         private void UpdateMainTab(ProfileTab mainTab)
