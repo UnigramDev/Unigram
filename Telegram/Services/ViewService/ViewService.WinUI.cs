@@ -121,6 +121,10 @@ namespace Telegram.Services
             {
                 window.AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
             }
+            else
+            {
+                WindowLayout.Restore(handle, persistedId);
+            }
 
             var context = new WindowContext(window);
             BootStrapper.Current.WatchActivation(context);

@@ -121,9 +121,11 @@
 
     <!-- The XAML islands host. Interop.cs is the exception and is put back below: it is nothing
          but P/Invoke declarations, and NotifyIcon.Win32.cs - which this flavour does compile -
-         builds its message window out of them. -->
+         builds its message window out of them. WindowLayout.cs works on any HWND, and the
+         framework keeps no window placement of its own. -->
     <Compile Remove="Host\**" />
     <Compile Include="Host\Interop.cs" />
+    <Compile Include="Host\WindowLayout.cs" />
     <!-- The Win32 flavour's entry point. This one has its own, Program.WinUI.cs. -->
     <Compile Remove="Program.cs" />
 
