@@ -121,7 +121,7 @@ namespace Telegram.ViewModels.Settings
                 UpdateText = Strings.UpdateTelegram;
                 UpdateFooter = Strings.UpdateTelegramInfo;
             }
-            else if (file.Local.IsDownloadingActive)
+            else if (file.Local.IsDownloadingActive || update.IsStaging)
             {
                 // Update is being downloaded
                 IsUpdateEnabled = false;

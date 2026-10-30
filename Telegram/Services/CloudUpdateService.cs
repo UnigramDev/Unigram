@@ -293,10 +293,13 @@ namespace Telegram.Services
 
             if (cloud != null && cloud.Version > current)
             {
+#if UNPACKAGED
+                cloud.IsStaging = _staging == cloud.Version;
+#endif
                 _nextUpdate = cloud;
 
                 // There's a new version for the current font
-                if (cloud.Document.Local.IsDownloadingCompleted || cloud.File != null)
+                if (cloud.Document.Local.IsDownloadingCompleted || cloud.File != null || cloud.IsStaged)
                 {
                     _aggregator.Publish(new UpdateAppVersion(cloud));
                 }
@@ -307,17 +310,68 @@ namespace Telegram.Services
 
                     if (epoch.TotalDays >= 3 || !_networkService.IsMetered)
                     {
-                        Logger.Info($"Downloading {cloud.Version}");
-                        _clientService.DownloadFile(cloud.Document.Id, 16);
-
-                        _fileCloud = cloud;
-                        UpdateManager.Subscribe(cloud, _clientService, cloud.Document, ref _fileToken, UpdateFile, true);
+#if UNPACKAGED
+                        if (!ApiInfo.HasPackageIdentity)
+                        {
+                            DownloadChangedFiles(cloud);
+                        }
+                        else
+#endif
+                        {
+                            Download(cloud);
+                        }
                     }
                 }
             }
 
             _updateLock.Release();
         }
+
+        private void Download(CloudUpdate cloud)
+        {
+            Logger.Info($"Downloading {cloud.Version}");
+            _clientService.DownloadFile(cloud.Document.Id, 16);
+
+            _fileCloud = cloud;
+            UpdateManager.Subscribe(cloud, _clientService, cloud.Document, ref _fileToken, UpdateFile, true);
+        }
+
+#if UNPACKAGED
+        // Between two ranges nothing is downloading, so the document alone does not stop a check
+        // made then from starting the same work a second time.
+        private Version _staging;
+
+        private async void DownloadChangedFiles(CloudUpdate cloud)
+        {
+            if (_staging == cloud.Version)
+            {
+                return;
+            }
+
+            _staging = cloud.Version;
+            cloud.IsStaging = true;
+
+            Logger.Info($"Downloading the changed files of {cloud.Version}");
+
+            var staged = await UnpackagedUpdates.StageChangedFilesAsync(_clientService, cloud.Document, cloud.Version);
+
+            _staging = null;
+            cloud.IsStaging = false;
+
+            if (staged)
+            {
+                _nextUpdate = cloud;
+                _nextUpdate.IsStaged = true;
+
+                _aggregator.Publish(new UpdateAppVersion(cloud));
+            }
+            else
+            {
+                // The ranges already fetched are parts of this same download, so none is lost.
+                Download(cloud);
+            }
+        }
+#endif
 
         private async void UpdateFile(File file)
         {
@@ -455,6 +509,11 @@ namespace Telegram.Services
                 next.File = await PrepareAsync(await folder.TryGetItemAsync($"{next.Version}{Extension}") as StorageFile, next.Version);
             }
 
+#if UNPACKAGED
+            // Staged from its changed files, which leaves no package behind to prepare.
+            next.IsStaged = next.File == null && !ApiInfo.HasPackageIdentity && UnpackagedUpdates.IsStaged(next.Version);
+#endif
+
             return next;
         }
 
@@ -545,7 +604,15 @@ namespace Telegram.Services
         // null, so nothing may reach through it without checking this first.
         public bool IsStorePackage { get; set; }
 
-        public bool IsReady => File != null || IsStorePackage;
+        // Unpackaged, an update can be extracted with no package on disk: only the files that
+        // changed were downloaded.
+        public bool IsStaged { get; set; }
+
+        // While those files are fetched, a range at a time. Nothing else may start downloading the
+        // document then: a download of the whole of it would fetch what the ranges are there to skip.
+        public bool IsStaging { get; set; }
+
+        public bool IsReady => File != null || IsStorePackage || IsStaged;
 
         public int Date { get; set; }
 

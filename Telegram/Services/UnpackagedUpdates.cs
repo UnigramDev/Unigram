@@ -7,17 +7,24 @@
 
 #if UNPACKAGED
 using System;
+using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Win32.SafeHandles;
 using Telegram.Common;
+using Telegram.Streams;
+using Telegram.Td.Api;
 using Windows.Storage;
+using File = System.IO.File;
 
 namespace Telegram.Services
 {
@@ -33,7 +40,7 @@ namespace Telegram.Services
     ///     app.new\      the staged one, complete once app.new\.update holds its version
     ///     app.old\      the one replaced, deleted on the next start
     /// </summary>
-    public static class UnpackagedUpdates
+    public static partial class UnpackagedUpdates
     {
         // Held from the moment the updater is started, never released: the process is on its way
         // out, and a download finishing in the meantime must not replace the folder being swapped.
@@ -124,65 +131,20 @@ namespace Telegram.Services
                 using var manifest = ReadManifest(archive);
 
                 var root = manifest.RootElement;
-
-                if (!Version.TryParse(root.GetProperty("version").GetString(), out Version manifestVersion) || manifestVersion != version)
-                {
-                    throw new InvalidDataException($"{package} is not version {version}");
-                }
-
-                if (root.GetProperty("arch").GetString() != ArchitectureName)
-                {
-                    throw new InvalidDataException($"{package} is not for {ArchitectureName}");
-                }
+                CheckManifest(root, version, package);
 
                 using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
                 var buffer = new byte[81920];
-                var prefix = staged + Path.DirectorySeparatorChar;
 
                 foreach (var file in root.GetProperty("files").EnumerateArray())
                 {
                     var path = file.GetProperty("path").GetString();
 
-                    // A path that climbs out, or a rooted one, would write outside app.new.
-                    var target = Path.GetFullPath(Path.Combine(staged, path));
-                    if (!target.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-                    {
-                        throw new InvalidDataException($"{path} is outside the payload");
-                    }
-
-                    Directory.CreateDirectory(Path.GetDirectoryName(target));
-
-                    long size = 0;
-
-                    using (var input = Open(archive, "payload/" + path))
-                    using (var output = File.Create(target))
-                    {
-                        int read;
-                        while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            hash.AppendData(buffer, 0, read);
-                            output.Write(buffer, 0, read);
-                            size += read;
-                        }
-                    }
-
-                    var sha256 = Convert.ToHexString(hash.GetHashAndReset());
-
-                    if (size != file.GetProperty("size").GetInt64() || !string.Equals(sha256, file.GetProperty("sha256").GetString(), StringComparison.OrdinalIgnoreCase))
-                    {
-                        throw new InvalidDataException($"{path} does not match the manifest");
-                    }
+                    using var input = Open(archive, "payload/" + path);
+                    Extract(input, ResolveTarget(staged, path), file, hash, buffer);
                 }
 
-                // The updater launches one and is relaunched from the other, so a payload without
-                // either would leave nothing to start.
-                if (!File.Exists(Path.Combine(staged, "Telegram.exe")) || !File.Exists(Path.Combine(staged, "Updater.exe")))
-                {
-                    throw new InvalidDataException($"{package} has no Telegram.exe or Updater.exe");
-                }
-
-                // Last: its presence is what tells the updater the folder is complete.
-                File.WriteAllText(MarkerPath, version.ToString());
+                Complete(staged, version, package);
 
                 Logger.Info($"Staged {version}");
                 return true;
@@ -198,6 +160,477 @@ namespace Telegram.Services
                 catch { }
 
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Stages an update by downloading only what differs from the running version: the
+        /// package's central directory and manifest first, then each payload entry whose file is
+        /// not already installed as the manifest describes it, all of them ranges of the same
+        /// download. Unchanged files are hard links to the running version's, which app\ only
+        /// ever loses by being renamed and deleted whole.
+        ///
+        /// False when the package cannot be read this way; the caller then downloads it whole. A
+        /// partial result is never left behind: the same checks as a full extraction gate the marker.
+        /// </summary>
+        public static async Task<bool> StageChangedFilesAsync(IClientService clientService, Td.Api.File package, Version version)
+        {
+            if (package.Size <= 0)
+            {
+                return false;
+            }
+
+            await _stageLock.WaitAsync();
+
+            try
+            {
+                // Every read blocks until its range is in, so this needs a thread of its own.
+                return await Task.Run(() => StageChangedFiles(clientService, package, version));
+            }
+            finally
+            {
+                _stageLock.Release();
+            }
+        }
+
+        public static bool IsStaged(Version version)
+        {
+            return ReadStagedVersion() == version;
+        }
+
+        private static bool StageChangedFiles(IClientService clientService, Td.Api.File file, Version version)
+        {
+            if (ReadStagedVersion() == version)
+            {
+                return true;
+            }
+
+            var staged = StagedPath;
+            var source = $"the {version} package";
+
+            try
+            {
+                if (Directory.Exists(staged))
+                {
+                    Directory.Delete(staged, true);
+                }
+
+                using var package = new RemotePackage(clientService, file);
+
+                var entries = package.ReadDirectory();
+
+                using var manifest = JsonDocument.Parse(package.ReadAll(Find(entries, "manifest.json")));
+
+                var root = manifest.RootElement;
+                CheckManifest(root, version, source);
+
+                using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+                var buffer = new byte[81920];
+                var installed = AppPaths.InstalledPath;
+                var kept = 0;
+                var changed = 0;
+
+                foreach (var entry in root.GetProperty("files").EnumerateArray())
+                {
+                    var path = entry.GetProperty("path").GetString();
+                    var target = ResolveTarget(staged, path);
+                    var current = Path.Combine(installed, path.Replace('/', Path.DirectorySeparatorChar));
+
+                    if (IsUnchanged(current, entry, hash, buffer))
+                    {
+                        Keep(current, target);
+                        kept++;
+                        continue;
+                    }
+
+                    using var input = package.Open(Find(entries, "payload/" + path));
+                    Extract(input, target, entry, hash, buffer);
+                    changed++;
+                }
+
+                Complete(staged, version, source);
+
+                // The parts fetched are of no use once staged, and a download that never completes
+                // is otherwise left in TDLib's temporary folder.
+                clientService.Send(new DeleteFile(file.Id));
+
+                Logger.Info($"Staged {version}: {changed} files downloaded, {package.Downloaded} bytes, {kept} kept");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Staging the changed files of {version} failed", ex);
+
+                try
+                {
+                    Directory.Delete(staged, true);
+                }
+                catch { }
+
+                return false;
+            }
+        }
+
+        private static void CheckManifest(JsonElement root, Version version, string source)
+        {
+            if (!Version.TryParse(root.GetProperty("version").GetString(), out Version manifestVersion) || manifestVersion != version)
+            {
+                throw new InvalidDataException($"{source} is not version {version}");
+            }
+
+            if (root.GetProperty("arch").GetString() != ArchitectureName)
+            {
+                throw new InvalidDataException($"{source} is not for {ArchitectureName}");
+            }
+        }
+
+        private static string ResolveTarget(string staged, string path)
+        {
+            // A path that climbs out, or a rooted one, would write outside app.new.
+            var target = Path.GetFullPath(Path.Combine(staged, path));
+            if (!target.StartsWith(staged + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidDataException($"{path} is outside the payload");
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(target));
+            return target;
+        }
+
+        private static void Extract(Stream input, string target, JsonElement file, IncrementalHash hash, byte[] buffer)
+        {
+            var expected = file.GetProperty("size").GetInt64();
+            long size = 0;
+
+            using (var output = File.Create(target))
+            {
+                // Bounded by the manifest: a stored entry read in place in the package has the
+                // next entry after it, not the end of a stream.
+                int read;
+                while (size < expected && (read = input.Read(buffer, 0, (int)Math.Min(buffer.Length, expected - size))) > 0)
+                {
+                    hash.AppendData(buffer, 0, read);
+                    output.Write(buffer, 0, read);
+                    size += read;
+                }
+            }
+
+            if (!Matches(file, size, hash))
+            {
+                throw new InvalidDataException($"{file.GetProperty("path").GetString()} does not match the manifest");
+            }
+        }
+
+        private static bool IsUnchanged(string current, JsonElement file, IncrementalHash hash, byte[] buffer)
+        {
+            var info = new FileInfo(current);
+            if (!info.Exists || info.Length != file.GetProperty("size").GetInt64())
+            {
+                return false;
+            }
+
+            using (var input = File.OpenRead(current))
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    hash.AppendData(buffer, 0, read);
+                }
+            }
+
+            return Matches(file, info.Length, hash);
+        }
+
+        private static bool Matches(JsonElement file, long size, IncrementalHash hash)
+        {
+            var sha256 = Convert.ToHexString(hash.GetHashAndReset());
+            return size == file.GetProperty("size").GetInt64()
+                && string.Equals(sha256, file.GetProperty("sha256").GetString(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static void Keep(string current, string target)
+        {
+            // A copy where a link cannot be made, which is only another volume or file system.
+            if (!CreateHardLinkW(target, current, IntPtr.Zero))
+            {
+                File.Copy(current, target, true);
+            }
+        }
+
+        private static void Complete(string staged, Version version, string source)
+        {
+            // The updater launches one and is relaunched from the other, so a payload without
+            // either would leave nothing to start.
+            if (!File.Exists(Path.Combine(staged, "Telegram.exe")) || !File.Exists(Path.Combine(staged, "Updater.exe")))
+            {
+                throw new InvalidDataException($"{source} has no Telegram.exe or Updater.exe");
+            }
+
+            // Last: its presence is what tells the updater the folder is complete.
+            File.WriteAllText(MarkerPath, version.ToString());
+        }
+
+        private static ZipEntryRange Find(Dictionary<string, ZipEntryRange> entries, string name)
+        {
+            return entries.TryGetValue(name, out var entry) ? entry : throw new InvalidDataException($"{name} is missing");
+        }
+
+        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool CreateHardLinkW(string lpFileName, string lpExistingFileName, IntPtr lpSecurityAttributes);
+
+        private record ZipEntryRange(int Method, long CompressedSize, long Size, long LocalHeaderOffset);
+
+        /// <summary>
+        /// The update package read in place while TDLib downloads only the ranges asked for: the
+        /// central directory says where every entry is, so nothing but the entries that are wanted
+        /// is fetched. Only what Build.WinUI.ps1 writes is understood - stored or deflated entries,
+        /// no zip64.
+        ///
+        /// The waiting is RemoteFileSource's, the one media plays through, and so is the read lease
+        /// that keeps this from taking the download from anything else reading the same file.
+        /// </summary>
+        private sealed class RemotePackage : IDisposable
+        {
+            private const uint EndOfDirectorySignature = 0x06054b50;
+            private const uint DirectoryEntrySignature = 0x02014b50;
+            private const uint LocalHeaderSignature = 0x04034b50;
+
+            private const int EndOfDirectorySize = 22;
+            private const int DirectoryEntrySize = 46;
+            private const int LocalHeaderSize = 30;
+
+            private readonly RemoteFileSource _source;
+            private readonly long _size;
+
+            private SafeFileHandle _handle;
+            private string _path;
+
+            // What the source last reported as downloaded. Reads inside it are not asked for again,
+            // because every ask sends the download window again too.
+            private long _availableBegin;
+            private long _availableEnd;
+
+            public RemotePackage(IClientService clientService, Td.Api.File file)
+            {
+                _size = file.Size;
+
+                // A preload because it is one: it downloads behind everything the chat shows. Not
+                // streaming, so the window is the one each read asks for rather than a rate.
+                _source = new RemoteFileSource(clientService, file, 0, false, FileReadRank.Preload);
+                _source.Open();
+            }
+
+            public long Downloaded { get; private set; }
+
+            public Dictionary<string, ZipEntryRange> ReadDirectory()
+            {
+                // The end record is last, followed only by a comment of up to 64 KB.
+                var length = (int)Math.Min(_size, EndOfDirectorySize + ushort.MaxValue);
+                var tail = Read(_size - length, length);
+
+                var end = tail.Length - EndOfDirectorySize;
+                while (end >= 0 && BinaryPrimitives.ReadUInt32LittleEndian(tail.AsSpan(end)) != EndOfDirectorySignature)
+                {
+                    end--;
+                }
+
+                if (end < 0)
+                {
+                    throw new InvalidDataException("No end of central directory");
+                }
+
+                var count = BinaryPrimitives.ReadUInt16LittleEndian(tail.AsSpan(end + 10));
+                var directorySize = BinaryPrimitives.ReadUInt32LittleEndian(tail.AsSpan(end + 12));
+                var directoryOffset = BinaryPrimitives.ReadUInt32LittleEndian(tail.AsSpan(end + 16));
+
+                // Saturated fields are how zip64 says the real values are elsewhere.
+                if (count == ushort.MaxValue || directorySize == uint.MaxValue || directoryOffset == uint.MaxValue)
+                {
+                    throw new InvalidDataException("A zip64 package");
+                }
+
+                var directory = Read(directoryOffset, (int)directorySize);
+                var entries = new Dictionary<string, ZipEntryRange>(count, StringComparer.Ordinal);
+                var position = 0;
+
+                for (int i = 0; i < count; i++)
+                {
+                    var record = directory.AsSpan(position);
+                    if (BinaryPrimitives.ReadUInt32LittleEndian(record) != DirectoryEntrySignature)
+                    {
+                        throw new InvalidDataException("A broken central directory");
+                    }
+
+                    var method = BinaryPrimitives.ReadUInt16LittleEndian(record.Slice(10));
+                    var compressedSize = BinaryPrimitives.ReadUInt32LittleEndian(record.Slice(20));
+                    var size = BinaryPrimitives.ReadUInt32LittleEndian(record.Slice(24));
+                    var nameLength = BinaryPrimitives.ReadUInt16LittleEndian(record.Slice(28));
+                    var extraLength = BinaryPrimitives.ReadUInt16LittleEndian(record.Slice(30));
+                    var commentLength = BinaryPrimitives.ReadUInt16LittleEndian(record.Slice(32));
+                    var localHeaderOffset = BinaryPrimitives.ReadUInt32LittleEndian(record.Slice(42));
+
+                    var name = Encoding.UTF8.GetString(record.Slice(DirectoryEntrySize, nameLength));
+                    entries[name] = new ZipEntryRange(method, compressedSize, size, localHeaderOffset);
+
+                    position += DirectoryEntrySize + nameLength + extraLength + commentLength;
+                }
+
+                return entries;
+            }
+
+            /// <summary>
+            /// The entry's uncompressed bytes, read out of the partial download as they arrive.
+            /// </summary>
+            public Stream Open(ZipEntryRange entry)
+            {
+                if (entry.Method is not (0 or 8))
+                {
+                    throw new InvalidDataException($"Compression method {entry.Method}");
+                }
+
+                // The local header's name and extra field can differ from the directory's, so the
+                // data starts where it says.
+                var header = Read(entry.LocalHeaderOffset, LocalHeaderSize);
+                if (BinaryPrimitives.ReadUInt32LittleEndian(header) != LocalHeaderSignature)
+                {
+                    throw new InvalidDataException("A broken local header");
+                }
+
+                var start = entry.LocalHeaderOffset + LocalHeaderSize
+                    + BinaryPrimitives.ReadUInt16LittleEndian(header.AsSpan(26))
+                    + BinaryPrimitives.ReadUInt16LittleEndian(header.AsSpan(28));
+
+                Downloaded += entry.CompressedSize;
+
+                var stream = new RangeStream(this, start, start + entry.CompressedSize);
+                return entry.Method == 8 ? new DeflateStream(stream, CompressionMode.Decompress) : stream;
+            }
+
+            public byte[] ReadAll(ZipEntryRange entry)
+            {
+                using var input = Open(entry);
+
+                var bytes = new byte[entry.Size];
+                input.ReadExactly(bytes);
+                return bytes;
+            }
+
+            private byte[] Read(long offset, int count)
+            {
+                var bytes = new byte[count];
+
+                for (int done = 0; done < count;)
+                {
+                    var read = ReadAt(offset + done, bytes.AsSpan(done), offset + count);
+                    if (read <= 0)
+                    {
+                        throw new IOException($"{count} bytes at {offset} could not be read");
+                    }
+
+                    done += read;
+                }
+
+                return bytes;
+            }
+
+            /// <summary>
+            /// Up to as much as the buffer holds at the offset, once it has downloaded. The window
+            /// asked for runs to the end of the range being read, so a range downloads in one go
+            /// rather than a read at a time.
+            /// </summary>
+            private int ReadAt(long offset, Span<byte> buffer, long end)
+            {
+                if (offset < _availableBegin || offset >= _availableEnd)
+                {
+                    _source.SeekCallback(offset);
+                    _source.ReadCallback(Math.Min(buffer.Length, end - offset), end - offset, out long available);
+
+                    // -1 is the source giving up after its own timeout, and 0 the end of the file,
+                    // which no range here reaches past.
+                    if (available <= 0)
+                    {
+                        throw new IOException($"Nothing at {offset} downloaded");
+                    }
+
+                    _availableBegin = offset;
+                    _availableEnd = offset + available;
+                }
+
+                // Asked again rather than kept: TDLib moves the file out of its temporary folder
+                // once the last part is in, which a range can be.
+                var path = _source.FilePath;
+                if (_handle == null || _path != path)
+                {
+                    _handle?.Dispose();
+
+                    // Sharing delete is what lets TDLib still move the file while it is open
+                    // here; the handle keeps reading the same data from its new place.
+                    _handle = File.OpenHandle(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                    _path = path;
+                }
+
+                return RandomAccess.Read(_handle, buffer.Slice(0, (int)Math.Min(buffer.Length, _availableEnd - offset)), offset);
+            }
+
+            public void Dispose()
+            {
+                _handle?.Dispose();
+                _source.Close();
+            }
+
+            private sealed class RangeStream : Stream
+            {
+                private readonly RemotePackage _package;
+                private readonly long _end;
+
+                private long _position;
+
+                public RangeStream(RemotePackage package, long begin, long end)
+                {
+                    _package = package;
+                    _position = begin;
+                    _end = end;
+                }
+
+                public override int Read(Span<byte> buffer)
+                {
+                    if (_position >= _end || buffer.IsEmpty)
+                    {
+                        return 0;
+                    }
+
+                    var read = _package.ReadAt(_position, buffer.Slice(0, (int)Math.Min(buffer.Length, _end - _position)), _end);
+                    _position += read;
+                    return read;
+                }
+
+                public override int Read(byte[] buffer, int offset, int count)
+                {
+                    return Read(buffer.AsSpan(offset, count));
+                }
+
+                public override bool CanRead => true;
+                public override bool CanSeek => false;
+                public override bool CanWrite => false;
+
+                public override long Length => throw new NotSupportedException();
+
+                public override long Position
+                {
+                    get => throw new NotSupportedException();
+                    set => throw new NotSupportedException();
+                }
+
+                public override void Flush()
+                {
+                }
+
+                public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+
+                public override void SetLength(long value) => throw new NotSupportedException();
+
+                public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
             }
         }
 
