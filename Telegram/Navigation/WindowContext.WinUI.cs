@@ -20,6 +20,7 @@ using Telegram.Host;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
+using Telegram.Views.Host;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Security.Credentials.UI;
@@ -749,6 +750,13 @@ namespace Telegram.Navigation
         partial void SetHostContent(UIElement content)
         {
             _window.Content = content;
+
+            // What hands the root's TitleBarElement to SetTitleBar: nothing else does until a popup
+            // has opened and closed, so without it the window has no drag region.
+            if (content is IPopupHost host)
+            {
+                host.PopupClosed();
+            }
 
             // The root is where this host's pointer input has to be picked up, exactly as on the
             // island host: this is the only moment the root is known.
