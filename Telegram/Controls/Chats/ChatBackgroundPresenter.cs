@@ -283,7 +283,7 @@ namespace Telegram.Controls.Chats
                     Debug.Assert(XamlRoot != null);
                 }
 
-                UpdatePattern(typePattern, file, WindowContext.Current.RasterizationScale);
+                UpdatePattern(typePattern, file, XamlRoot.RasterizationScale);
 
                 if (clientService != null && !file.Local.IsDownloadingCompleted)
                 {
