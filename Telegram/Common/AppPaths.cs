@@ -117,11 +117,20 @@ namespace Telegram
             return source.Replace("ms-appx:///", _installedUri, StringComparison.OrdinalIgnoreCase);
         }
 
+        // A debug build keeps a profile of its own, so that it can run beside the installed app:
+        // two processes cannot share the TDLib databases. AppModelPaths.h switches on _DEBUG to the
+        // same name, which holds as long as the natives are built in the app's configuration.
+#if DEBUG
+        private const string RootName = "TelegramFZ-LLC.Windows.Debug";
+#else
+        private const string RootName = "TelegramFZ-LLC.Windows";
+#endif
+
         private static string EnsureFolder(string name)
         {
             var path = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "TelegramFZ-LLC.Windows",
+                RootName,
                 name);
 
             Directory.CreateDirectory(path);

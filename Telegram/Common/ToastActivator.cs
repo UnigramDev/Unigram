@@ -27,7 +27,12 @@ namespace Telegram.Common
     /// </summary>
     internal static partial class ToastActivator
     {
+        // The debug build's is its own for the same reason as its application id (Toast.cs).
+#if DEBUG
+        public static readonly Guid Clsid = new("B7E1C4A2-5D3F-4E8B-9A61-2C0F7D9E4B35");
+#else
         public static readonly Guid Clsid = new("3542F50C-8B9A-4A2B-A47D-9E5EAF762103");
+#endif
 
         // LocalServer32's. Nothing reads it: a cold start is an ordinary launch, and the click
         // arrives through the class object once Program has registered it.

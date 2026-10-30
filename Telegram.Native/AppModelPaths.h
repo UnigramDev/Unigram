@@ -14,14 +14,14 @@ namespace winrt::Telegram::Native
     /// Where the native layer lives, answered without package identity.
     ///
     /// Package::Current and ApplicationData::Current both throw APPMODEL_ERROR_NO_PACKAGE
-    /// (0x80073D54) in a process that was never registered, and the six call sites behind these
-    /// three functions are the only places this component asks. Their unpackaged answers have to
-    /// match Telegram\Common\AppPaths.cs exactly - the managed and the native halves read and
-    /// write the same folders.
+    /// (0x80073D54) in a process that was never registered, and the call sites behind these three
+    /// functions, here and in Telegram.Native.Calls, are the only places the native components
+    /// ask. Their unpackaged answers have to match Telegram\Common\AppPaths.cs exactly - the
+    /// managed and the native halves read and write the same folders.
     ///
-    /// Only the desktop build of this component has the fallbacks. The app container build cannot
-    /// load without its package anyway, since it links the Store CRT, and the shell functions the
-    /// fallbacks need are not in its API set.
+    /// Only the desktop builds have the fallbacks. The app container build cannot load without its
+    /// package anyway, since it links the Store CRT, and the shell functions the fallbacks need are
+    /// not in its API set.
     /// </summary>
     namespace AppModel
     {
@@ -66,7 +66,12 @@ namespace winrt::Telegram::Native
                 std::wstring path(local);
                 CoTaskMemFree(local);
 
+                // A debug build's own profile: see AppPaths.RootName.
+#ifdef _DEBUG
+                path.append(L"\\TelegramFZ-LLC.Windows.Debug\\").append(name);
+#else
                 path.append(L"\\TelegramFZ-LLC.Windows\\").append(name);
+#endif
 
                 // The managed half creates these on the way up and gets there first, but this
                 // must not depend on the order the two halves happen to start in.

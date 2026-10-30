@@ -26,8 +26,14 @@ namespace Telegram.Common
     public partial class Toast
     {
 #if UNPACKAGED
-        // Fixed: the installer puts it on the shortcuts and deletes the key below by this name.
+        // Fixed: the installer puts it on the shortcuts and deletes the key below by this name. A
+        // debug build registers its own, or running it would point the installed app's toasts and
+        // taskbar button at the debug executable.
+#if DEBUG
+        private const string UnpackagedApplicationId = "TelegramFZ-LLC.Windows.Debug";
+#else
         private const string UnpackagedApplicationId = "TelegramFZ-LLC.Windows";
+#endif
 
         /// <summary>
         /// The id toasts are shown and listed under: the manifest's application id when packaged,
