@@ -53,7 +53,7 @@
             <Style x:Key="QrSurfaceButtonStyle"
                    TargetType="Button">
                 <Setter Property="Background"
-                        Value="{ThemeResource MenuFlyoutPresenterBackground}" />
+                        Value="{ThemeResource MenuFlyoutPresenterInAppBackground}" />
                 <Setter Property="BorderBrush"
                         Value="{ThemeResource MenuFlyoutPresenterBorderBrush}" />
                 <Setter Property="BorderThickness"
@@ -140,7 +140,7 @@
             <Style x:Key="QrSurfaceStyle"
                    TargetType="Border">
                 <Setter Property="Background"
-                        Value="{ThemeResource MenuFlyoutPresenterBackground}" />
+                        Value="{ThemeResource MenuFlyoutPresenterInAppBackground}" />
                 <Setter Property="BorderBrush"
                         Value="{ThemeResource MenuFlyoutPresenterBorderBrush}" />
                 <Setter Property="BorderThickness"
@@ -375,7 +375,7 @@
                           x:DataType="x:String">
                 <Grid Width="16"
                       Height="16">
-                    <Ellipse Fill="{ThemeResource MenuFlyoutPresenterBackground}"
+                    <Ellipse Fill="{ThemeResource MenuFlyoutPresenterInAppBackground}"
                              Stroke="{ThemeResource MenuFlyoutPresenterBorderBrush}"
                              StrokeThickness="1" />
                     <TextBlock Text="{x:Bind}"
@@ -564,7 +564,7 @@
               HorizontalAlignment="Center"
               VerticalAlignment="Bottom">
             <Border x:Name="IslandSurface"
-                    Background="{ThemeResource MenuFlyoutPresenterBackground}"
+                    Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
                     BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
                     BorderThickness="{ThemeResource MenuFlyoutPresenterBorderThemeThickness}"
                     CornerRadius="20" />
@@ -582,7 +582,7 @@
               Visibility="Collapsed"
               Margin="8,0,8,8"
               VerticalAlignment="Bottom">
-            <Border Background="{ThemeResource MenuFlyoutPresenterBackground}"
+            <Border Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
                     CornerRadius="20" />
 
             <Grid x:Name="SheetContent">
@@ -700,7 +700,7 @@
                           HorizontalAlignment="Center"
                           VerticalAlignment="Bottom">
                         <Border x:Name="PicksSurface"
-                                Background="{ThemeResource MenuFlyoutPresenterBackground}"
+                                Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
                                 BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
                                 BorderThickness="{ThemeResource MenuFlyoutPresenterBorderThemeThickness}"
                                 CornerRadius="22">

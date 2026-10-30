@@ -105,7 +105,7 @@
                 Height="36" />
 
         <Path x:Name="Pill"
-              Fill="{ThemeResource MenuFlyoutPresenterBackground}"
+              Fill="{ThemeResource MenuFlyoutPresenterInAppBackground}"
               Stroke="{ThemeResource MenuFlyoutPresenterBorderBrush}"
               Width="272"
               Height="36"

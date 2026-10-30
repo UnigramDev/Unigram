@@ -34,7 +34,7 @@ namespace Telegram.WinUI.Rewriter
         [
             // AcrylicBrush has no BackgroundSource in WinUI 3 - there is one acrylic, and it is the
             // in-app one these four ask for by name.
-            (@"App.xaml", @"\s*BackgroundSource=""Backdrop""", "", 4),
+            (@"App.xaml", @"\s*BackgroundSource=""Backdrop""", "", 6),
 
             // The EdgeHTML WebView, and the presenter it templates. Both are #if'd out of
             // WebViewer.cs for this flavour; this is the markup half of the same removal.

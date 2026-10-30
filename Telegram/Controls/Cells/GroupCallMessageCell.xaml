@@ -9,7 +9,7 @@
              d:DesignHeight="300"
              d:DesignWidth="400">
 
-    <Grid Background="{ThemeResource MenuFlyoutPresenterBackground}"
+    <Grid Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
           Padding="4"
           CornerRadius="16">
         <Grid.ColumnDefinitions>

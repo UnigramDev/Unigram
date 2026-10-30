@@ -18,7 +18,7 @@
         <ColumnDefinition Width="Auto" />
     </Grid.ColumnDefinitions>
     <Border x:Name="Card"
-            Background="{ThemeResource MenuFlyoutPresenterBackground}"
+            Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
             BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
             BorderThickness="1"
             BackgroundSizing="InnerBorderEdge"

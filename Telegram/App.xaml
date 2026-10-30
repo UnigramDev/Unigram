@@ -47,6 +47,13 @@
                                         TintOpacity="0.5"
                                         BackgroundSource="Backdrop" />
 
+                    <media:AcrylicBrush x:Key="MenuFlyoutPresenterInAppBackground"
+                                        TintColor="#FF2C2C2C"
+                                        TintOpacity="0.15"
+                                        TintLuminosityOpacity="0.96"
+                                        FallbackColor="#FF2C2C2C"
+                                        BackgroundSource="Backdrop" />
+
                     <StaticResource x:Key="SplitMenuFlyoutItemButtonDividerBrush"
                                     ResourceKey="DividerStrokeColorDefaultBrush" />
 
@@ -92,6 +99,13 @@
                                         TintColor="#F3F3F3"
                                         TintLuminosityOpacity="0.9"
                                         TintOpacity="0"
+                                        BackgroundSource="Backdrop" />
+
+                    <media:AcrylicBrush x:Key="MenuFlyoutPresenterInAppBackground"
+                                        TintColor="#FFFCFCFC"
+                                        TintOpacity="0.0"
+                                        TintLuminosityOpacity="0.85"
+                                        FallbackColor="#FFF9F9F9"
                                         BackgroundSource="Backdrop" />
 
                     <StaticResource x:Key="SplitMenuFlyoutItemButtonDividerBrush"

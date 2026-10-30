@@ -10,7 +10,7 @@
             IsHitTestVisible="False"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Background="{ThemeResource MenuFlyoutPresenterBackground}"
+            Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
             BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
             BorderThickness="1"
             CornerRadius="4"

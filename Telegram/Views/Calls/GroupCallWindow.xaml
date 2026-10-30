@@ -542,7 +542,7 @@
                         <Canvas SizeChanged="MessagePill_SizeChanged"
                                 Grid.ColumnSpan="3">
                             <Path x:Name="MessagePill"
-                                  Fill="{ThemeResource MenuFlyoutPresenterBackground}" />
+                                  Fill="{ThemeResource MenuFlyoutPresenterInAppBackground}" />
                         </Canvas>
                         <controls:FormattedTextInputHost x:Name="MessageField"
                                                          Tier="Secondary"

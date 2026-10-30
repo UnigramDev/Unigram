@@ -12,7 +12,7 @@
         <Grid x:Name="ShadowReceiver" />
         <Grid x:Name="RootGrid"
               BackgroundSizing="OuterBorderEdge"
-              Background="{ThemeResource MenuFlyoutPresenterBackground}"
+              Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
               BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
               BorderThickness="{ThemeResource MenuFlyoutPresenterBorderThemeThickness}"
               HorizontalAlignment="Center"
