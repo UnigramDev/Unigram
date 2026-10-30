@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Windows.Storage;
 using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
+#if UNPACKAGED
+using System.IO;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+#endif
 
 namespace Telegram.Services
 {
@@ -59,6 +64,18 @@ namespace Telegram.Services
 
         Task<StorageFile> GetStagedAsync(string uniqueId);
 
+        /// <summary>
+        /// Gives a file created by <see cref="CreateAsync"/> or <see cref="StageAsync"/> the bytes
+        /// of the downloaded <paramref name="source"/>, replacing whatever it held.
+        /// </summary>
+        Task FillAsync(StorageFile source, StorageFile destination);
+
+        /// <summary>
+        /// Marks a file the app wrote outside its own folders as coming from the internet, so
+        /// that SmartScreen and Protected View treat it as a browser download.
+        /// </summary>
+        void MarkFromInternet(StorageFile file);
+
         bool IsStaged(string uniqueId);
 
         /// <summary>
@@ -89,6 +106,11 @@ namespace Telegram.Services
         // The token the user's chosen folder is held under. Anything else in the list is a file.
         private const string FolderToken = "FilesDirectory";
 
+#if UNPACKAGED
+        // Not the localized app name: a translation would move the folder.
+        private const string UnpackagedFolderName = "Telegram";
+#endif
+
         public bool IsSupported => ApiInfo.HasDownloadFolder;
 
         public bool HasCustomFolder => Contains(FolderToken);
@@ -111,8 +133,94 @@ namespace Telegram.Services
             return GetFileAsync(Staged(uniqueId));
         }
 
+        public async Task FillAsync(StorageFile source, StorageFile destination)
+        {
+#if UNPACKAGED
+            // Outside the app container both are plain paths, and the cache and the download
+            // folder are usually on one volume: a second name for the cache's file costs neither
+            // time nor space, and outlives TDLib deleting its own. Elsewhere it is a copy.
+            if (!TryLink(source.Path, destination.Path))
+            {
+                await Task.Run(() => File.Copy(source.Path, destination.Path, true));
+            }
+
+            MarkFromInternet(destination);
+#else
+            await source.CopyAndReplaceAsync(destination);
+#endif
+        }
+
+        public void MarkFromInternet(StorageFile file)
+        {
+#if UNPACKAGED
+            // The broker tags what a packaged app writes to Downloads; nothing does it for us.
+            try
+            {
+                using var stream = new FileStream(file.Path + ":Zone.Identifier", FileMode.Create, FileAccess.Write);
+
+                // Writing a stream moves the file's modification time, which TDLib reads as the
+                // file having been modified and forgets it - and a linked download shares its time
+                // with the cache. -1 keeps this handle's writes from moving it.
+                SetFileTime(stream.SafeFileHandle, IntPtr.Zero, IntPtr.Zero, -1L);
+
+                stream.Write("[ZoneTransfer]\r\nZoneId=3\r\n"u8);
+            }
+            catch
+            {
+                // FAT volumes and some shares have no alternate streams
+            }
+#endif
+        }
+
+#if UNPACKAGED
+        private static bool TryLink(string source, string destination)
+        {
+            // A link cannot be made over an existing name, so it is made beside the file it
+            // replaces and moved over it, which swaps the two in one step.
+            var link = Path.Combine(Path.GetDirectoryName(destination), $"Unconfirmed {Guid.NewGuid():N}.tdownload");
+
+            if (!CreateHardLinkW(link, source, IntPtr.Zero))
+            {
+                return false;
+            }
+
+            try
+            {
+                File.Move(link, destination, true);
+                return true;
+            }
+            catch
+            {
+                try
+                {
+                    File.Delete(link);
+                }
+                catch
+                {
+                    // All the file system calls must be wrapped in a try-catch block
+                }
+
+                return false;
+            }
+        }
+
+        // Fails across volumes, and on file systems without links such as FAT and exFAT.
+        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool CreateHardLinkW(string lpFileName, string lpExistingFileName, IntPtr lpSecurityAttributes);
+
+        [LibraryImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool SetFileTime(SafeFileHandle hFile, IntPtr lpCreationTime, IntPtr lpLastAccessTime, in long lpLastWriteTime);
+#endif
+
         public bool IsStaged(string uniqueId)
         {
+            if (string.IsNullOrEmpty(uniqueId))
+            {
+                return false;
+            }
+
             return Contains(Staged(uniqueId));
         }
 
@@ -260,7 +368,16 @@ namespace Telegram.Services
             {
                 try
                 {
-                    return await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+                    var downloads = await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+#if UNPACKAGED
+                    // A packaged app's downloads go to a folder of its own that Windows keeps
+                    // under Downloads; without package identity there is none, so this is it.
+                    if (!ApiInfo.HasPackageIdentity)
+                    {
+                        return await downloads.CreateFolderAsync(UnpackagedFolderName, CreationCollisionOption.OpenIfExists);
+                    }
+#endif
+                    return downloads;
                 }
                 catch
                 {
@@ -292,6 +409,17 @@ namespace Telegram.Services
                     Remove(FolderToken);
                 }
             }
+
+#if UNPACKAGED
+            // DownloadsFolder writes to Downloads itself without package identity.
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                var downloads = await GetDefaultFolderAsync();
+                return downloads == null
+                    ? null
+                    : await downloads.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+            }
+#endif
 
             return await DownloadsFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
         }

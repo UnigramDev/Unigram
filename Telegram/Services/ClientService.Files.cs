@@ -101,7 +101,7 @@ namespace Telegram.Services
          * - Whenever an UpdateFile event is received and the download is actually completed,
          * - we check with IDownloadFolderService whether anything was staged for it.
          * - if this is the case, we retrieve both the file from cache and the temporary file in the Downloads folder.
-         * - we then proceed by replacing the latter with a copy with the cache file, that is then renamed with the final name.
+         * - we then proceed by replacing the latter with a copy of the cache file (a hard link outside the app container), that is then renamed with the final name.
          * - finally we commit it, which drops the staged entry and records the saved one.
          * 
          * # Using the files
@@ -271,7 +271,7 @@ namespace Telegram.Services
 
                             var destination = await _downloadFolder.CreateAsync(sourceName);
 
-                            await source.CopyAndReplaceAsync(destination);
+                            await _downloadFolder.FillAsync(source, destination);
                             _downloadFolder.Commit(file.Remote.UniqueId, destination);
 
                             return destination;
@@ -341,7 +341,7 @@ namespace Telegram.Services
                         sourceName = text.TextValue;
                     }
 
-                    await source.CopyAndReplaceAsync(destination);
+                    await _downloadFolder.FillAsync(source, destination);
                     await destination.RenameAsync(sourceName, NameCollisionOption.GenerateUniqueName);
 
                     _downloadFolder.Commit(file.Remote.UniqueId, destination);

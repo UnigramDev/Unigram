@@ -125,6 +125,7 @@ namespace Telegram.Services
                 {
                     // Save as copy is never linked back 
                     await cached.CopyAndReplaceAsync(picked);
+                    _downloadFolder.MarkFromInternet(picked);
                 }
             }
             catch { }
@@ -220,6 +221,7 @@ namespace Telegram.Services
                     }
 
                     var destination = await cached.CopyAsync(folder, text.TextValue, NameCollisionOption.GenerateUniqueName);
+                    _downloadFolder.MarkFromInternet(destination);
                     options.ItemsToSelect.Add(destination);
                 }
 
