@@ -150,11 +150,25 @@ function config {
       # generators for the target and runs them, which an ARM64 build on an x64 host cannot do.
       if ($target -eq "uwp") {
         $system = @("-DCMAKE_SYSTEM_VERSION=10.0", "-DCMAKE_SYSTEM_NAME=WindowsStore")
+        $tuning = @()
       } else {
         $processor = if ($arch -eq "x64") { "AMD64" } else { "ARM64" }
         $system = @("-DCMAKE_SYSTEM_NAME=Windows", "-DCMAKE_SYSTEM_PROCESSOR=$processor")
+        # Beyond CMake's RelWithDebInfo, whose /Ob1 inlines only what is marked inline. TD_ENABLE_LTO
+        # is TDLib's own switch for /GL, but it adds /LTCG to executables only, so the DLL gets it below.
+        $tuning = @(
+          "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=/MD /Zi /O2 /Ob2 /DNDEBUG /Gw /Zc:inline",
+          "-DCMAKE_C_FLAGS_RELWITHDEBINFO=/MD /Zi /O2 /Ob2 /DNDEBUG /Gw",
+          "-DTD_ENABLE_LTO=ON")
       }
-      cmake -A $arch @system -DCMAKE_TOOLCHAIN_FILE="$vcpkg_cmake" -DVCPKG_MANIFEST_DIR="$manifest_root" -DVCPKG_INSTALLED_DIR="$installed_root" -DVCPKG_TARGET_TRIPLET="$($vcpkg.TelegramVcpkgTriplet)" -DTD_ENABLE_MULTI_PROCESSOR_COMPILATION=ON "$td_root"
+      # CMake's RelWithDebInfo links incrementally, without dropping unreferenced functions or
+      # folding identical ones. The app container props add both for uwp; without them the windows
+      # build came out 2.5 times the size.
+      $link = "-DCMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO=/DEBUG /INCREMENTAL:NO /OPT:REF /OPT:ICF"
+      if ($target -eq "windows") {
+        $link += " /LTCG"
+      }
+      cmake -A $arch @system @tuning $link -DCMAKE_TOOLCHAIN_FILE="$vcpkg_cmake" -DVCPKG_MANIFEST_DIR="$manifest_root" -DVCPKG_INSTALLED_DIR="$installed_root" -DVCPKG_TARGET_TRIPLET="$($vcpkg.TelegramVcpkgTriplet)" -DTD_ENABLE_MULTI_PROCESSOR_COMPILATION=ON -DTD_ENABLE_PCH=ON "$td_root"
       CheckLastExitCode
       cd ..
     }
