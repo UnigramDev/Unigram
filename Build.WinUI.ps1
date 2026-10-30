@@ -88,6 +88,120 @@ function Invoke-MSBuild {
     }
 }
 
+# The GUID in a binary's CodeView record and the PDB path its linker wrote; $null without one.
+function Get-CodeView {
+    param([string] $Path)
+
+    $stream = [System.IO.File]::OpenRead($Path)
+    try {
+        $reader = New-Object System.IO.BinaryReader($stream)
+
+        $stream.Position = 0x3C
+        $pe = $reader.ReadInt32()
+        $stream.Position = $pe + 6
+        $sections = $reader.ReadUInt16()
+        $stream.Position = $pe + 20
+        $optionalSize = $reader.ReadUInt16()
+
+        # The debug directory is the seventh data directory, which PE32+ puts 16 bytes later.
+        $optional = $pe + 24
+        $stream.Position = $optional
+        $stream.Position = $optional + $(if ($reader.ReadUInt16() -eq 0x20B) { 112 } else { 96 }) + 6 * 8
+        $rva = $reader.ReadUInt32()
+        $size = $reader.ReadUInt32()
+
+        $offset = $null
+        for ($i = 0; $i -lt $sections -and $rva -ne 0; $i++) {
+            $stream.Position = $optional + $optionalSize + 40 * $i + 8
+            $virtualSize = $reader.ReadUInt32()
+            $virtualAddress = $reader.ReadUInt32()
+            $stream.Position += 4
+            $rawAddress = $reader.ReadUInt32()
+
+            if ($rva -ge $virtualAddress -and $rva -lt $virtualAddress + $virtualSize) {
+                $offset = $rva - $virtualAddress + $rawAddress
+                break
+            }
+        }
+
+        if ($null -eq $offset) {
+            return $null
+        }
+
+        for ($entry = $offset; $entry -lt $offset + $size; $entry += 28) {
+            $stream.Position = $entry + 12
+            $type = $reader.ReadUInt32()
+            $stream.Position = $entry + 24
+            $stream.Position = $reader.ReadUInt32()
+
+            if ($type -ne 2 -or [System.Text.Encoding]::ASCII.GetString($reader.ReadBytes(4)) -ne 'RSDS') {
+                continue
+            }
+
+            $guid = New-Object Guid (, $reader.ReadBytes(16))
+            $stream.Position += 4
+
+            $name = New-Object System.Collections.Generic.List[byte]
+            while (($byte = $reader.ReadByte()) -ne 0) {
+                $name.Add($byte)
+            }
+
+            return [pscustomobject]@{ Guid = $guid; Path = [System.Text.Encoding]::UTF8.GetString($name.ToArray()) }
+        }
+
+        return $null
+    }
+    finally {
+        $stream.Dispose()
+    }
+}
+
+# The GUID in a PDB's info stream, the second stream of its MSF container; $null if it has none.
+function Get-PdbGuid {
+    param([string] $Path)
+
+    $stream = [System.IO.File]::OpenRead($Path)
+    try {
+        $reader = New-Object System.IO.BinaryReader($stream)
+
+        if ([System.Text.Encoding]::ASCII.GetString($reader.ReadBytes(24)) -ne 'Microsoft C/C++ MSF 7.00') {
+            return $null
+        }
+
+        $stream.Position = 32
+        $blockSize = $reader.ReadInt32()
+        $stream.Position = 44
+        $directorySize = $reader.ReadInt32()
+        $stream.Position = 52
+        $blockMap = $reader.ReadInt32()
+
+        # The stream directory is itself spread over blocks, which the block map lists.
+        $stream.Position = [long] $blockMap * $blockSize
+        $blocks = @(for ($i = 0; $i -lt [Math]::Ceiling($directorySize / $blockSize); $i++) { $reader.ReadInt32() })
+
+        $directory = New-Object System.IO.MemoryStream
+        foreach ($block in $blocks) {
+            $stream.Position = [long] $block * $blockSize
+            $directory.Write($reader.ReadBytes($blockSize), 0, $blockSize)
+        }
+
+        # Stream count, every stream's size, then each stream's blocks in order: stream 1's first
+        # block comes right after stream 0's.
+        $directory.Position = 0
+        $entries = New-Object System.IO.BinaryReader($directory)
+        $count = $entries.ReadInt32()
+        $first = $entries.ReadInt32()
+        $directory.Position = 4 + 4 * $count + 4 * [Math]::Ceiling([Math]::Max($first, 0) / $blockSize)
+
+        # Version, signature and age come before the GUID.
+        $stream.Position = [long] $entries.ReadInt32() * $blockSize + 12
+        return New-Object Guid (, $reader.ReadBytes(16))
+    }
+    finally {
+        $stream.Dispose()
+    }
+}
+
 if (-not $SkipNative) {
     # Node reuse off: a leftover node holds pch.pch open and the next build dies with MSB6003.
     Invoke-MSBuild -Description "Telegram.Native, Telegram.Native.Calls ($Configuration|$Platform)" -Arguments (
@@ -179,6 +293,48 @@ if ($Unpackaged) {
         foreach ($file in $files) {
             $name = 'payload/' + $file.FullName.Substring($publish.Length + 1).Replace('\', '/')
             [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $file.FullName, $name, 'Optimal') | Out-Null
+        }
+    }
+    finally {
+        $zip.Dispose()
+    }
+
+    # Every PDB of a binary built here, beside the package rather than in it. Publish only carries
+    # four; the rest - the updater's, vcpkg's - are where their linker wrote them. Each is matched
+    # to its binary by GUID: vcpkg's bin\ copy of a PDB is not always the build that shipped.
+    # Microsoft's binaries name build-agent paths, and their PDBs are on its symbol server.
+    $vcpkg = Join-Path $PSScriptRoot "vcpkg_installed\$arch-windows\$arch-windows\bin"
+    $symbols = New-Object System.Collections.Generic.List[System.IO.FileInfo]
+
+    foreach ($binary in $files | Where-Object Extension -in '.dll', '.exe') {
+        $codeView = Get-CodeView $binary.FullName
+        if (-not $codeView) {
+            continue
+        }
+
+        $name = Split-Path $codeView.Path -Leaf
+        $pdb = @((Join-Path $publish $name), $codeView.Path, (Join-Path $vcpkg $name)) |
+            Where-Object { [System.IO.Path]::IsPathRooted($_) -and (Test-Path -LiteralPath $_) -and (Get-PdbGuid $_) -eq $codeView.Guid } |
+            Select-Object -First 1
+
+        if ($pdb) {
+            $symbols.Add((Get-Item -LiteralPath $pdb))
+        }
+        elseif ($codeView.Path.StartsWith($PSScriptRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "No PDB matching $($binary.Name) was found, although it was built here as $($codeView.Path)."
+        }
+    }
+
+    $symbolsPackage = Join-Path $output "Telegram-$Version-$arch-symbols.zip"
+    if (Test-Path $symbolsPackage) {
+        Remove-Item $symbolsPackage -Force
+    }
+
+    Write-Host "==> $symbolsPackage ($($symbols.Count) PDBs)" -ForegroundColor Cyan
+    $zip = [System.IO.Compression.ZipFile]::Open($symbolsPackage, 'Create')
+    try {
+        foreach ($pdb in $symbols) {
+            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $pdb.FullName, $pdb.Name, 'Optimal') | Out-Null
         }
     }
     finally {
