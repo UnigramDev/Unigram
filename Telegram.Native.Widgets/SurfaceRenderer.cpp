@@ -15,6 +15,8 @@ namespace Widgets
     namespace
     {
         constexpr double kTickSeconds = 1.0 / 60;
+        // A compositor clock that stops ticking holds a tick no longer than the system timer's rounding would.
+        constexpr DWORD kClockTimeoutMs = 17;
         constexpr uint32_t kSurfaceStep = 128;  // physical px
         constexpr uint32_t kSurfaceSlack = 384;
         // How long a frame of a new height waits for the UI thread before it goes up from the clock thread.
@@ -242,6 +244,7 @@ namespace Widgets
             m_stopClock = true;
         }
 
+        SetEvent(m_stopEvent.get());
         m_clockCv.notify_all();
         if (m_clock.joinable()) m_clock.join();
 
@@ -660,7 +663,9 @@ namespace Widgets
                 if (m_stopClock) return;
 
                 // One tick: like rAF before the browser's paint, the callback first, the raster after.
-                m_clockCv.wait_for(l, std::chrono::duration<double>(kTickSeconds), [&] { return m_stopClock; });
+                l.unlock();
+                waitForTick();
+                l.lock();
                 if (m_stopClock) return;
 
                 frame = m_frameRequested;
@@ -700,5 +705,55 @@ namespace Widgets
             }
             if (paint) this->paint();
         }
+    }
+
+    // On the compositor's frames, so that ticks keep in step with the display: the first frame within half a
+    // refresh of the interval. A timed wait rounds up to the system timer's 15.6 ms, so 1/60 s took two.
+    void SurfaceRenderer::waitForTick()
+    {
+        using namespace std::chrono;
+        const auto interval = duration_cast<steady_clock::duration>(duration<double>(kTickSeconds));
+        HANDLE stop = m_stopEvent.get();
+
+        steady_clock::time_point previous;
+        for (;;)
+        {
+            DWORD result = GraphicsDevice::WaitForCompositorClock(stop, kClockTimeoutMs);
+            if (result == WAIT_FAILED) break;
+            if (result == WAIT_OBJECT_0) return;
+
+            auto now = steady_clock::now();
+            if (result == WAIT_OBJECT_0 + 1)
+            {
+                if (previous != steady_clock::time_point()) m_refresh = now - previous;
+                previous = now;
+            }
+
+            if (now - m_lastTick + m_refresh / 2 >= interval)
+            {
+                m_lastTick = now;
+                return;
+            }
+        }
+
+        if (!m_timer) m_timer.attach(CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS));
+
+        auto remaining = m_lastTick + interval - steady_clock::now();
+        if (remaining > steady_clock::duration::zero())
+        {
+            LARGE_INTEGER due;
+            due.QuadPart = -duration_cast<duration<LONGLONG, std::ratio<1, 10'000'000>>>(remaining).count();
+            HANDLE handles[] = { stop, m_timer.get() };
+            if (m_timer && SetWaitableTimer(m_timer.get(), &due, 0, nullptr, nullptr, FALSE))
+            {
+                WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+            }
+            else
+            {
+                WaitForSingleObject(stop, DWORD(duration_cast<milliseconds>(remaining).count()) + 1);
+            }
+        }
+
+        m_lastTick = steady_clock::now();
     }
 }

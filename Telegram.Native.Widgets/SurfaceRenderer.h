@@ -109,6 +109,8 @@ namespace Widgets
         void schedulePaint();
         void requestFrame();
         void clockLoop();
+        // From the last tick to the next one, or until destroy().
+        void waitForTick();
         void paint();
         // A frame drawn for a new height, waiting for the UI thread to show it.
         struct Presentation
@@ -145,7 +147,7 @@ namespace Widgets
         std::atomic<int> m_layerCount{ 0 };
         uint64_t m_editorGeneration = 0; // of the spec last handed to onEditor, 0 for none
 
-        // One tick per display refresh at most, like CADisplayLink / Choreographer in the demos.
+        // A tick every 1/60 s, on a display refresh like CADisplayLink / Choreographer in the demos.
         std::mutex m_clockMutex;
         std::condition_variable m_clockCv;
         std::thread m_clock;
@@ -156,6 +158,12 @@ namespace Widgets
         bool m_visible = true;
         bool m_paintScheduled = false;
         bool m_stopClock = false;
+        // Set with m_stopClock: waitForTick waits on it, not on m_clockCv.
+        winrt::handle m_stopEvent{ CreateEventW(nullptr, TRUE, FALSE, nullptr) };
+        // The clock thread's.
+        winrt::handle m_timer;
+        std::chrono::steady_clock::time_point m_lastTick;
+        std::chrono::steady_clock::duration m_refresh{};
         bool m_frozen = false;
         bool m_destroyed = false;
 

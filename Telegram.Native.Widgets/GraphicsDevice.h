@@ -23,6 +23,10 @@ namespace Widgets
         // Per compositor: a CoreWindow view has its own, and a surface only draws for the one it came from.
         winrt::UIComposition::CompositionGraphicsDevice CompositionDevice(winrt::UIComposition::Compositor const& compositor);
 
+        // The compositor's next frame or `cancel`: WAIT_OBJECT_0 + 1 for the frame, WAIT_OBJECT_0 for `cancel`, or WAIT_TIMEOUT.
+        // WAIT_FAILED before Windows 11, which has no compositor clock to wait on.
+        static DWORD WaitForCompositorClock(HANDLE cancel, DWORD timeoutMs);
+
     private:
         GraphicsDevice();
 

@@ -55,4 +55,18 @@ namespace Widgets
         m_devices.emplace_back(compositor, device);
         return device;
     }
+
+    DWORD GraphicsDevice::WaitForCompositorClock(HANDLE cancel, DWORD timeoutMs)
+    {
+        using PFN_DCompositionWaitForCompositorClock = DWORD(WINAPI*)(UINT, const HANDLE*, DWORD);
+
+        // dcomp.dll is loaded by the time a widget draws, since XAML renders through it.
+        static auto s_wait = []() -> PFN_DCompositionWaitForCompositorClock
+        {
+            HMODULE dcomp = GetModuleHandleW(L"dcomp.dll");
+            return dcomp ? reinterpret_cast<PFN_DCompositionWaitForCompositorClock>(GetProcAddress(dcomp, "DCompositionWaitForCompositorClock")) : nullptr;
+        }();
+
+        return s_wait ? s_wait(1, &cancel, timeoutMs) : WAIT_FAILED;
+    }
 }
