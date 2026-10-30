@@ -204,8 +204,8 @@ function Get-PdbGuid {
 
 if (-not $SkipNative) {
     # Node reuse off: a leftover node holds pch.pch open and the next build dies with MSB6003.
-    Invoke-MSBuild -Description "Telegram.Native, Telegram.Native.Calls ($Configuration|$Platform)" -Arguments (
-        @($solution, '-target:Telegram_Native;Telegram_Native_Calls', '-restore', "-p:Platform=$Platform", '-nodeReuse:false') + $common)
+    Invoke-MSBuild -Description "Telegram.Native, Telegram.Native.Calls, Telegram.Native.Widgets ($Configuration|$Platform)" -Arguments (
+        @($solution, '-target:Telegram_Native;Telegram_Native_Calls;Telegram_Native_Widgets', '-restore', "-p:Platform=$Platform", '-nodeReuse:false') + $common)
 }
 
 if ($Unpackaged) {

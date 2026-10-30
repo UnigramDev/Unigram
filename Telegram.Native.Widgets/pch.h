@@ -9,15 +9,13 @@
 #include <dwrite_1.h>
 #include <wincodec.h>
 #include <Windows.Graphics.DirectX.Direct3D11.interop.h>
-#include <Windows.ui.composition.interop.h>
 
 #include <winrt/base.h>
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.Numerics.h>
-#include <winrt/Windows.Graphics.DirectX.h>
-#include <winrt/Windows.System.h>
-#include <winrt/Windows.UI.Composition.h>
+
+#include "../Telegram.Native/UIFlavor.h"
 
 #include <algorithm>
 #include <atomic>

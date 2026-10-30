@@ -10,12 +10,12 @@ namespace winrt::Telegram::Native::Widgets::implementation
 {
     struct WidgetView : WidgetViewT<WidgetView>
     {
-        WidgetView(Windows::UI::Composition::Compositor const& compositor, array_view<uint8_t const> html, Telegram::Native::Widgets::WidgetTheme const& theme, Telegram::Native::Widgets::WidgetOptions const& options);
+        WidgetView(UIComposition::Compositor const& compositor, array_view<uint8_t const> html, Telegram::Native::Widgets::WidgetTheme const& theme, Telegram::Native::Widgets::WidgetOptions const& options);
         ~WidgetView();
 
         static void LoadResources(hstring const& directory);
 
-        Windows::UI::Composition::Visual Visual() const { return m_visual; }
+        UIComposition::Visual Visual() const { return m_visual; }
         double ContentHeight() const { return m_height; }
         bool KeepsBottom() const { return m_keepsBottom; }
         bool IsLoaded() const { return m_loaded; }
@@ -56,7 +56,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
             twidget::WidgetHostOptions options;
             std::shared_ptr<twidget::SandboxResources> resources;
             std::string stoppedLabel;
-            Windows::UI::Composition::CompositionSurfaceBrush brush{ nullptr };
+            UIComposition::CompositionSurfaceBrush brush{ nullptr };
         };
 
         // On m_creator: building a host loads the validator's runtime and bundle and starts its threads,
@@ -66,9 +66,9 @@ namespace winrt::Telegram::Native::Widgets::implementation
         void OnAction(const twidget::WidgetAction& action);
         void OnStorageCommit(const std::string& area, const std::map<std::string, std::string>& values);
 
-        Windows::UI::Composition::SpriteVisual m_visual{ nullptr };
+        UIComposition::SpriteVisual m_visual{ nullptr };
         // The thread that made the view, where frames of a new height go up.
-        Windows::System::DispatcherQueue m_ui{ nullptr };
+        UIDispatching::DispatcherQueue m_ui{ nullptr };
         double m_dpr;
         std::unique_ptr<HostArgs> m_args;
         std::thread m_creator;

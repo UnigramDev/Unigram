@@ -5,21 +5,29 @@
   composition surface. Everything third party is compiled straight from the submodules, unmodified.
 -->
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Which app this component is built for: see Telegram.Native.vcxproj. -->
+  <PropertyGroup>
+    <TelegramWinUI Condition="'$(TelegramWinUI)' == '' And '$(SolutionName)' == 'Telegram.WinUI'">true</TelegramWinUI>
+  </PropertyGroup>
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.props" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.props" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.props" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.props')" />
   <PropertyGroup Label="Globals">
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <CppWinRTUsePrefixes>false</CppWinRTUsePrefixes>
-    <MinimalCoreWin>true</MinimalCoreWin>
+    <MinimalCoreWin Condition="'$(TelegramWinUI)' != 'true'">true</MinimalCoreWin>
     <ProjectGuid>{6D1F3A90-2C4E-4B7A-9E15-83A0C5F2D7B1}</ProjectGuid>
     <ProjectName>Telegram.Native.Widgets</ProjectName>
     <RootNamespace>Telegram.Native.Widgets</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <AppContainerApplication>true</AppContainerApplication>
-    <ApplicationType>Windows Store</ApplicationType>
-    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <AppContainerApplication Condition="'$(TelegramWinUI)' != 'true'">true</AppContainerApplication>
+    <ApplicationType Condition="'$(TelegramWinUI)' != 'true'">Windows Store</ApplicationType>
+    <ApplicationTypeRevision Condition="'$(TelegramWinUI)' != 'true'">10.0</ApplicationTypeRevision>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
     <TwSandbox>$(MSBuildThisFileDirectory)..\Libraries\widget-sandbox\</TwSandbox>
@@ -27,6 +35,13 @@
     <TwDesktop>$(TwSandbox)packages\desktop\</TwDesktop>
     <TwCore>$(MSBuildThisFileDirectory)..\Libraries\twidget\Sources\TwidgetCore\</TwCore>
     <TwLitehtml>$(MSBuildThisFileDirectory)..\Libraries\twidget\Sources\LiteHTML\litehtml\</TwLitehtml>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TelegramWinUI)' == 'true'">
+    <IntDir>$(Platform)\$(Configuration)\WinUI\</IntDir>
+    <WindowsAppSDKVerifyTransitiveDependencies>false</WindowsAppSDKVerifyTransitiveDependencies>
+    <WindowsAppSDKMLVerifyTransitiveDependencies>false</WindowsAppSDKMLVerifyTransitiveDependencies>
+    <!-- See Telegram.Native.vcxproj: cppwinrt cannot resolve Microsoft.UI.Xaml without it. -->
+    <WebView2UseWinRT>true</WebView2UseWinRT>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ItemGroup Label="ProjectConfigurations">
@@ -86,6 +101,20 @@
       <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dwrite.lib;windowscodecs.lib;dxguid.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>Telegram.Native.Widgets.def</ModuleDefinitionFile>
     </Link>
+  </ItemDefinitionGroup>
+  <!-- What the IDL names as UIComposition, the counterpart of UIFlavor.h. -->
+  <ItemDefinitionGroup Condition="'$(TelegramWinUI)' != 'true'">
+    <Midl>
+      <PreprocessorDefinitions>UIComposition=Windows.UI.Composition;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(TelegramWinUI)' == 'true'">
+    <ClCompile>
+      <PreprocessorDefinitions>WINUI3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>WINUI3;UIComposition=Microsoft.UI.Composition;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
   </ItemDefinitionGroup>
   <!-- An -O0 quickjs-ng spends ~10 KB of C stack per JS call and is several times slower
        (packages/desktop/CMakeLists.txt), so the third-party code below is optimised in Debug too. -->
@@ -174,6 +203,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
+    <Import Project="..\packages\Microsoft.Web.WebView2.1.0.4129.50\build\native\Microsoft.Web.WebView2.targets" Condition="'$(TelegramWinUI)' == 'true' And Exists('..\packages\Microsoft.Web.WebView2.1.0.4129.50\build\native\Microsoft.Web.WebView2.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -181,6 +215,15 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.props'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Base.2.0.4\build\native\Microsoft.WindowsAppSDK.Base.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.2.1.9\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.props'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Foundation.2.3.12\build\native\Microsoft.WindowsAppSDK.Foundation.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.props'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.2.3.9\build\native\Microsoft.WindowsAppSDK.WinUI.targets'))" />
+    <Error Condition="'$(TelegramWinUI)' == 'true' And !Exists('..\packages\Microsoft.Web.WebView2.1.0.4129.50\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.4129.50\build\native\Microsoft.Web.WebView2.targets'))" />
   </Target>
   <!-- The profile's UA layer for TwidgetCore's master CSS, read from widget-sandbox as twidget's CMake reads it. -->
   <Target Name="TwUaStylesheet" BeforeTargets="ClCompile" Inputs="$(TwSandbox)packages\core\profile.json;$(MSBuildThisFileDirectory)ua_stylesheet.ps1" Outputs="$(IntDir)generated\tw_ua_stylesheet.h">

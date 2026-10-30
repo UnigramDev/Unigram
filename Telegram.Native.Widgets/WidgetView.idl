@@ -124,10 +124,10 @@ namespace Telegram.Native.Widgets
         static void LoadResources(String directory);
 
         // html: the widget's UTF-8 source, as the payload gunzips to.
-        WidgetView(Windows.UI.Composition.Compositor compositor, UInt8[] html, WidgetTheme theme, WidgetOptions options);
+        WidgetView(UIComposition.Compositor compositor, UInt8[] html, WidgetTheme theme, WidgetOptions options);
 
         // Sized by its parent visual; the renderer draws into it from its own thread.
-        Windows.UI.Composition.Visual Visual { get; };
+        UIComposition.Visual Visual { get; };
 
         // The height of the frame on screen, in [50, 600]; 0 before the first. It changes on the UI thread,
         // with Changed raised there, in the same frame as the new pixels: a host that resizes the bubble

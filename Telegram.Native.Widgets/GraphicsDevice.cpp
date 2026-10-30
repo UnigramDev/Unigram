@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "GraphicsDevice.h"
 
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace Widgets
 {
@@ -42,8 +42,15 @@ namespace Widgets
         }
 
         CompositionGraphicsDevice device{ nullptr };
+#ifdef WINUI3
+        // The Windows App SDK declares the interop with the projected type, not an ABI one.
+        ICompositionGraphicsDevice created{ nullptr };
+        winrt::check_hresult(compositor.as<winrt::UICompositionInterop::ICompositorInterop>()->CreateGraphicsDevice(m_d2dDevice.get(), &created));
+        device = created.as<CompositionGraphicsDevice>();
+#else
         winrt::check_hresult(compositor.as<ABI::Windows::UI::Composition::ICompositorInterop>()->CreateGraphicsDevice(
             m_d2dDevice.get(), reinterpret_cast<ABI::Windows::UI::Composition::ICompositionGraphicsDevice**>(winrt::put_abi(device))));
+#endif
 
         m_devices.emplace_back(compositor, device);
         return device;

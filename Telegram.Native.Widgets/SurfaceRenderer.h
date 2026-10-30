@@ -24,8 +24,8 @@ namespace Widgets
     public:
         // `root` shows `brush`, which holds a drawing surface; the core's compositor layers become its children. Null: the core
         // paints every frame into the surface instead.
-        SurfaceRenderer(const std::string& theme, double width, double dpr, winrt::Windows::UI::Composition::CompositionSurfaceBrush brush,
-            winrt::Windows::UI::Composition::ContainerVisual root);
+        SurfaceRenderer(const std::string& theme, double width, double dpr, winrt::UIComposition::CompositionSurfaceBrush brush,
+            winrt::UIComposition::ContainerVisual root);
         ~SurfaceRenderer() override;
 
         // Renderer (host thread)
@@ -85,13 +85,13 @@ namespace Widgets
             bool hasClip = false;
             twlite::Rect clip;
             twlite::Radii clipRadii;
-            winrt::Windows::UI::Composition::SpriteVisual visual{ nullptr };
-            winrt::Windows::UI::Composition::ContainerVisual clipVisual{ nullptr };
-            winrt::Windows::UI::Composition::CompositionDrawingSurface surface{ nullptr };
-            winrt::Windows::UI::Composition::CompositionSurfaceBrush brush{ nullptr };
+            winrt::UIComposition::SpriteVisual visual{ nullptr };
+            winrt::UIComposition::ContainerVisual clipVisual{ nullptr };
+            winrt::UIComposition::CompositionDrawingSurface surface{ nullptr };
+            winrt::UIComposition::CompositionSurfaceBrush brush{ nullptr };
             LONG surfaceWidth = 0;
             LONG surfaceHeight = 0;
-            winrt::Windows::UI::Composition::CompositionPropertySet props{ nullptr };
+            winrt::UIComposition::CompositionPropertySet props{ nullptr };
         };
         // Adds and updates layers; pruneLayers drops the ones `composition` no longer has.
         void applyComposition(const twlite::Composition& composition);
@@ -113,8 +113,8 @@ namespace Widgets
         // A frame drawn for a new height, waiting for the UI thread to show it.
         struct Presentation
         {
-            winrt::Windows::UI::Composition::CompositionDrawingSurface surface{ nullptr };
-            winrt::com_ptr<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop> interop;
+            winrt::UIComposition::CompositionDrawingSurface surface{ nullptr };
+            winrt::com_ptr<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop> interop;
             uint32_t width = 0, height = 0;  // the surface's, physical px
             double cssHeight = 0;
             bool keepsBottom = false;
@@ -126,20 +126,20 @@ namespace Widgets
         double m_dpr;
         twlite::D2DBackend m_backend;
         std::unique_ptr<twlite::Renderer> m_core;
-        winrt::Windows::UI::Composition::CompositionSurfaceBrush m_brush;
-        winrt::Windows::UI::Composition::CompositionDrawingSurface m_surface;
-        winrt::com_ptr<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop> m_interop;
+        winrt::UIComposition::CompositionSurfaceBrush m_brush;
+        winrt::UIComposition::CompositionDrawingSurface m_surface;
+        winrt::com_ptr<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop> m_interop;
         uint32_t m_surfaceWidth = 0;
         uint32_t m_surfaceHeight = 0;
         // The surface the brush showed before the last presentation: a new height is drawn into it, not
         // into the one on screen. The clock thread's, and the install's while the clock thread waits on it.
-        winrt::Windows::UI::Composition::CompositionDrawingSurface m_spare{ nullptr };
+        winrt::UIComposition::CompositionDrawingSurface m_spare{ nullptr };
         uint32_t m_spareWidth = 0;
         uint32_t m_spareHeight = 0;
         double m_presentedHeight = -1;
         std::atomic<bool> m_keepsBottom{ false };
         std::mutex m_mutex; // every call into m_core, the surfaces and the layer visuals
-        winrt::Windows::UI::Composition::ContainerVisual m_root{ nullptr };
+        winrt::UIComposition::ContainerVisual m_root{ nullptr };
         std::map<int64_t, LayerVisual> m_layers;
         uint64_t m_compositionVersion = 0;
         std::atomic<int> m_layerCount{ 0 };

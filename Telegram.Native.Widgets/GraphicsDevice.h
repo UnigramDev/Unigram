@@ -21,7 +21,7 @@ namespace Widgets
         std::mutex& DrawLock() { return m_drawLock; }
 
         // Per compositor: a CoreWindow view has its own, and a surface only draws for the one it came from.
-        winrt::Windows::UI::Composition::CompositionGraphicsDevice CompositionDevice(winrt::Windows::UI::Composition::Compositor const& compositor);
+        winrt::UIComposition::CompositionGraphicsDevice CompositionDevice(winrt::UIComposition::Compositor const& compositor);
 
     private:
         GraphicsDevice();
@@ -33,6 +33,6 @@ namespace Widgets
         winrt::com_ptr<IDWriteFactory> m_dwrite;
         winrt::com_ptr<IWICImagingFactory> m_wic;
         // A process has a compositor per view, so a handful at most; they are kept for its lifetime.
-        std::vector<std::pair<winrt::Windows::UI::Composition::Compositor, winrt::Windows::UI::Composition::CompositionGraphicsDevice>> m_devices;
+        std::vector<std::pair<winrt::UIComposition::Compositor, winrt::UIComposition::CompositionGraphicsDevice>> m_devices;
     };
 }

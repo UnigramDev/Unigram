@@ -12,8 +12,8 @@
 
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Foundation::Collections;
-using namespace winrt::Windows::Graphics::DirectX;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::GraphicsDirectX;
+using namespace winrt::UIComposition;
 
 namespace
 {
@@ -48,7 +48,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
     }
 
     WidgetView::WidgetView(Compositor const& compositor, array_view<uint8_t const> html, Telegram::Native::Widgets::WidgetTheme const& theme, Telegram::Native::Widgets::WidgetOptions const& options)
-        : m_ui(Windows::System::DispatcherQueue::GetForCurrentThread())
+        : m_ui(UIDispatching::DispatcherQueue::GetForCurrentThread())
         , m_dpr(options.DevicePixelRatio())
     {
         std::shared_ptr<twidget::SandboxResources> resources;
@@ -115,7 +115,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
             {
                 renderer->postToUi = [queue = m_ui](std::function<void()> install)
                 {
-                    return queue.TryEnqueue(Windows::System::DispatcherQueuePriority::High, [install = std::move(install)] { install(); });
+                    return queue.TryEnqueue(UIDispatching::DispatcherQueuePriority::High, [install = std::move(install)] { install(); });
                 };
             }
             renderer->onPresented = [this](double height, bool keepsBottom)

@@ -604,14 +604,7 @@ namespace Telegram.Controls.Messages.Content
         // reach the screen together (WidgetView.ContentHeight). The rest comes from the widget's threads.
         private void OnWidgetChanged(WidgetView sender, object args)
         {
-            if (Dispatcher.HasThreadAccess)
-            {
-                UpdateFromWidget();
-            }
-            else
-            {
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateFromWidget);
-            }
+            this.BeginOnUIThread(UpdateFromWidget);
         }
 
         private void UpdateFromWidget()
@@ -683,7 +676,7 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var url = args.Url;
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            this.BeginOnUIThread(() =>
             {
                 if (_session?.View == sender)
                 {
@@ -695,7 +688,7 @@ namespace Telegram.Controls.Messages.Content
         // The widget's host thread.
         private void OnCopyTextRequested(WidgetView sender, string args)
         {
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            this.BeginOnUIThread(() =>
             {
                 if (_session?.View == sender && XamlRoot != null)
                 {
@@ -735,7 +728,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void ApplyPublicData(long widgetId, string publicData)
         {
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            this.BeginOnUIThread(() =>
             {
                 // Stored with the message too, so that the widget opens with it next time.
                 if (_polledWidgetId == widgetId && _message?.Content is MessageWidget widget && widget.WidgetId == widgetId)
@@ -794,8 +787,8 @@ namespace Telegram.Controls.Messages.Content
         private int Send(int action, PointerRoutedEventArgs e, int button = 0)
         {
             var point = e.GetCurrentPoint(Host);
-            var touch = point.PointerDevice.PointerDeviceType == PointerDeviceType.Touch;
-            var mouse = point.PointerDevice.PointerDeviceType == PointerDeviceType.Mouse;
+            var touch = e.Pointer.PointerDeviceType == PointerDeviceType.Touch;
+            var mouse = e.Pointer.PointerDeviceType == PointerDeviceType.Mouse;
             e.Handled = true;
 
             return _session.View.Pointer(action, point.Position.X, point.Position.Y, (int)point.PointerId, point.Properties.IsPrimary || !touch, mouse, Modifiers(e.KeyModifiers), button);

@@ -8,7 +8,7 @@
 #include <set>
 
 using twidget::Json;
-using namespace winrt::Windows::UI::Composition;
+using namespace winrt::UIComposition;
 
 namespace Widgets
 {
@@ -33,7 +33,7 @@ namespace Widgets
         , m_surface(m_brush.Surface().as<CompositionDrawingSurface>())
         , m_root(std::move(root))
     {
-        m_interop = m_surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
+        m_interop = m_surface.as<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop>();
         m_core = std::make_unique<twlite::Renderer>(width, dpr, theme == "dark", m_backend);
         if (m_root)
         {
@@ -310,19 +310,19 @@ namespace Widgets
                 {
                     uint32_t height = (h + kSurfaceStep - 1) / kSurfaceStep * kSurfaceStep;
                     presentation->surface = GraphicsDevice::Current().CompositionDevice(m_brush.Compositor()).CreateDrawingSurface({ float(w), float(height) },
-                        winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, winrt::Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+                        winrt::GraphicsDirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, winrt::GraphicsDirectX::DirectXAlphaMode::Premultiplied);
                     presentation->width = w;
                     presentation->height = height;
                 }
-                presentation->interop = presentation->surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
+                presentation->interop = presentation->surface.as<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop>();
                 interop = presentation->interop;
             }
             else if (w != m_surfaceWidth || h > m_surfaceHeight || h + kSurfaceSlack < m_surfaceHeight)
             {
                 uint32_t height = (h + kSurfaceStep - 1) / kSurfaceStep * kSurfaceStep;
                 replacement = GraphicsDevice::Current().CompositionDevice(m_brush.Compositor()).CreateDrawingSurface({ float(w), float(height) },
-                    winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, winrt::Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
-                interop = replacement.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
+                    winrt::GraphicsDirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, winrt::GraphicsDirectX::DirectXAlphaMode::Premultiplied);
+                interop = replacement.as<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop>();
                 m_surfaceWidth = w;
                 m_surfaceHeight = height;
             }
@@ -493,7 +493,7 @@ namespace Widgets
         {
             auto it = m_layers.find(source.id);
             if (it == m_layers.end()) continue;
-            winrt::Windows::UI::Composition::Visual top = it->second.clipVisual ? winrt::Windows::UI::Composition::Visual(it->second.clipVisual) : it->second.visual;
+            winrt::UIComposition::Visual top = it->second.clipVisual ? winrt::UIComposition::Visual(it->second.clipVisual) : it->second.visual;
             if (top.Parent()) m_root.Children().Remove(top);
             m_root.Children().InsertAtTop(top);
         }
@@ -528,9 +528,9 @@ namespace Widgets
         if (!target || pw != layer.surfaceWidth || ph != layer.surfaceHeight)
         {
             target = GraphicsDevice::Current().CompositionDevice(m_root.Compositor()).CreateDrawingSurface({ float(pw), float(ph) },
-                winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, winrt::Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+                winrt::GraphicsDirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, winrt::GraphicsDirectX::DirectXAlphaMode::Premultiplied);
         }
-        auto interop = target.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
+        auto interop = target.as<winrt::UICompositionInterop::ICompositionDrawingSurfaceInterop>();
 
         winrt::com_ptr<ID2D1DeviceContext> ctx;
         POINT offset;
