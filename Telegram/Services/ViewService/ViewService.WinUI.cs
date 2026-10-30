@@ -29,6 +29,9 @@ namespace Telegram.Services
         private const int DefaultWidth = 384;
         private const int DefaultHeight = 640;
 
+        private const int ChromeWidth = 14;
+        private const int ChromeHeight = 40;
+
         public async Task<WindowContext> OpenAsync(ViewServiceOptions options)
         {
             await _mainWindowCreated.Task;
@@ -110,8 +113,8 @@ namespace Telegram.Services
             var scale = Win32.GetDpiForWindow(handle) / 96.0;
 
             window.AppWindow.Resize(new SizeInt32(
-                (int)((width > 0 ? width : DefaultWidth) * scale),
-                (int)((height > 0 ? height : DefaultHeight) * scale)));
+                (int)((width > 0 ? width + ChromeWidth : DefaultWidth) * scale),
+                (int)((height > 0 ? height + ChromeHeight : DefaultHeight) * scale)));
 
             if (mode == ViewServiceMode.CompactOverlay)
             {
