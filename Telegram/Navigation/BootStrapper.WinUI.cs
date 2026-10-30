@@ -235,12 +235,19 @@ namespace Telegram.Navigation
 
             var context = new WindowContext(window);
 
-            // What the UWP half gets from CoreWindow.Activated: the update check and the online
-            // status hang off it. Never removed, because the context is the one that goes away and
-            // this object outlives every window.
-            context.Activated += OnContextActivated;
-
+            WatchActivation(context);
             return context;
+        }
+
+        /// <summary>
+        /// For every window, wherever it was made: what the UWP half gets from CoreWindow.Activated
+        /// on each view. The update check and the online status hang off it, and a window that
+        /// never reports leaves the user offline while typing in it. Never removed, because the
+        /// context is the one that goes away and this object outlives every window.
+        /// </summary>
+        internal void WatchActivation(WindowContext context)
+        {
+            context.Activated += OnContextActivated;
         }
 
         private void OnContextActivated(object sender, WindowActivatedEventArgs e)
