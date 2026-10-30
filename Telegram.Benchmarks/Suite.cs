@@ -401,6 +401,30 @@ namespace Telegram.Benchmarks
                 return;
             }
 
+            // Every escape has to survive the round trip. Checked, not measured.
+            //
+            // Two rows because what gets escaped depends on the encoder. The shipping build writes
+            // non-ASCII as raw UTF-8 and escapes only the controls, so Cyrillic and CJK never reach
+            // TDLib's \uXXXX branch from a request we generate - only the legacy ARM64 encoder
+            // escapes everything above 0x7F. The second row writes the JSON by hand so that branch
+            // is covered anyway, since the decoder has to handle it whoever produced it.
+            var subject = "line\nbreak\ttab \"quote\" back\\slash \u041f\u0440\u0438\u0432\u0435\u0442 \u4e2d\u6587 \ud83d\ude00 end";
+
+            // Not what comes back: testCallString cleans its argument like every string a request
+            // carries, which turns the controls other than \n into spaces. The tab is still worth
+            // sending, because it is escaped on the way in.
+            var expected = subject.Replace('\t', ' ');
+
+            var echoed =(NativeTd.RoundTrip(new TestCallString(subject)) as TestString)?.Value;
+            harness.Note(echoed == expected
+                ? "escape round trip ok"
+                : $"escape round trip MISMATCH: {Mismatch(expected, echoed)}");
+
+            var escaped = NativeTd.RoundTripFullyEscaped(subject);
+            harness.Note(escaped == expected
+                ? "unicode escape round trip ok"
+                : $"unicode escape round trip MISMATCH: {Mismatch(expected, escaped)}");
+
             harness.Measure("Round trip (tdjson)", "testCallEmpty", () => NativeTd.RoundTrip(new TestCallEmpty()));
             harness.Measure("Round trip (tdjson)", "testSquareInt", () => NativeTd.RoundTrip(new TestSquareInt(7)));
 
@@ -434,6 +458,63 @@ namespace Telegram.Benchmarks
                 }
 
                 harness.Measure("Round trip (tdjson)", $"testCallVectorStringObject (x{count})", () => NativeTd.RoundTrip(new TestCallVectorStringObject(objects)));
+            }
+
+            SendCosts(harness);
+        }
+
+        /// <summary>
+        /// The half of a request that is paid by whichever thread issues it, which in the app is
+        /// the UI thread: our serialize, then TDLib parsing that JSON straight back. The answers
+        /// are drained afterwards and never parsed, so neither the scheduler hop nor the receive
+        /// half is in these rows - subtract one from the matching round trip to see those.
+        ///
+        /// The same test methods as the round trips, so the two groups line up row for row: a
+        /// client that has never been logged in parks a real request instead of answering it.
+        ///
+        /// The iteration count is fixed so that the responses left in TDLib's queue stay bounded.
+        /// </summary>
+        private static string Mismatch(string sent, string? got)
+        {
+            if (got == null)
+            {
+                return "got <null>";
+            }
+
+            var index = 0;
+            while (index < sent.Length && index < got.Length && sent[index] == got[index])
+            {
+                index++;
+            }
+
+            static string At(string value, int index) => index < value.Length ? $"U+{(int)value[index]:X4}" : "<end>";
+
+            return $"sent {sent.Length} chars, got {got.Length}, first difference at {index}: sent {At(sent, index)}, got {At(got, index)}";
+        }
+
+        private static void SendCosts(Harness harness)
+        {
+            var text = new string('x', 1024);
+
+            var numbers = new int[100];
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                numbers[i] = 1700000000 + i;
+            }
+
+            var requests = new (string Name, Function Request)[]
+            {
+                ("testCallEmpty", new TestCallEmpty()),
+                ("testSquareInt", new TestSquareInt(7)),
+                ("testCallString (1KB)", new TestCallString(text)),
+                ("testCallVectorInt (x100)", new TestCallVectorInt(numbers)),
+            };
+
+            foreach (var (name, request) in requests)
+            {
+                harness.Measure("Serialize only", name, () => NativeTd.Serialize(request), 1000);
+                harness.Measure("Serialize + td_send", name, () => NativeTd.Send(request), 1000);
+                NativeTd.DrainPending();
             }
         }
     }

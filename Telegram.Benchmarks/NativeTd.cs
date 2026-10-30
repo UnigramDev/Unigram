@@ -12,6 +12,7 @@ using System.IO.Compression;
 #endif
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 using System.Text.Json;
 using Telegram.Common;
 using Telegram.Td;
@@ -43,6 +44,10 @@ namespace Telegram.Benchmarks
         [DllImport(TdJson, CallingConvention = CallingConvention.Cdecl)]
         private static extern byte* td_receive(double timeout, out int client_id, out long request_id);
 
+        [SuppressUnmanagedCodeSecurity]
+        [DllImport(TdJson, CallingConvention = CallingConvention.Cdecl)]
+        private static extern byte* td_execute(byte* request);
+
 #if !UWP
         [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern IntPtr LoadLibraryExW(string path, IntPtr file, uint flags);
@@ -72,6 +77,13 @@ namespace Telegram.Benchmarks
             {
                 Load();
 
+                // At its default verbosity TDLib logs every request to stderr, synchronously, and
+                // that is what the round trips would measure.
+                fixed (byte* request = "{\"@type\":\"setLogVerbosityLevel\",\"new_verbosity_level\":1}\0"u8)
+                {
+                    td_execute(request);
+                }
+
                 _clientId = td_create_client_id();
 
                 // A fresh client emits updateOption/updateAuthorizationState before it goes quiet.
@@ -99,7 +111,10 @@ namespace Telegram.Benchmarks
             }
 
             var arch = RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "ARM64" : "x64";
-            var native = Path.Combine(RepositoryRoot(), "Libraries", "tdjson", arch);
+
+            // TDJSON_FOLDER names another build to load instead, a saved baseline say.
+            var native = Environment.GetEnvironmentVariable("TDJSON_FOLDER")
+                ?? Path.Combine(RepositoryRoot(), "Libraries", "tdjson", $"{arch.ToLowerInvariant()}-windows");
             var tdjson = Path.Combine(native, TdJson);
 
             if (!System.IO.File.Exists(tdjson))
@@ -198,6 +213,41 @@ namespace Telegram.Benchmarks
 
             _writer.Reset();
 
+            return Await(requestId);
+        }
+
+        /// <summary>
+        /// The same round trip with the request JSON written here rather than by ToJson, every
+        /// character as \uXXXX - the shape td_send has to unescape in place, and one the shipping
+        /// encoder never produces because it emits raw UTF-8 for anything non-ASCII.
+        /// </summary>
+        public static string? RoundTripFullyEscaped(string value)
+        {
+            var json = new StringBuilder("{\"@type\":\"testCallString\",\"x\":\"");
+            foreach (var c in value)
+            {
+                json.Append("\\u").Append(((int)c).ToString("x4"));
+            }
+
+            json.Append("\"}");
+
+            var requestId = ++_requestId;
+
+            // One past the text, left zero: td_send takes the length with strlen.
+            var text = json.ToString();
+            var bytes = new byte[Encoding.UTF8.GetByteCount(text) + 1];
+            Encoding.UTF8.GetBytes(text, 0, text.Length, bytes, 0);
+
+            fixed (byte* ptr = bytes)
+            {
+                td_send(_clientId, requestId, ptr);
+            }
+
+            return (Await(requestId) as TestString)?.Value;
+        }
+
+        private static Telegram.Td.Api.Object Await(long requestId)
+        {
             while (true)
             {
                 var ptr = td_receive(10.0, out _, out long received);
@@ -230,6 +280,77 @@ namespace Telegram.Benchmarks
 
                 return ClientJson.FromJson(new ReadOnlySpan<byte>(_buffer, 0, length), BenchmarkResultHandler.Instance);
             }
+        }
+
+        private static int _pending;
+
+        /// <summary>
+        /// What issuing a request costs the thread that issues it - the UI thread, in the app -
+        /// with the answer left in TDLib's queue to be collected later. <see cref="Serialize"/>
+        /// is the same path stopping short of td_send, so the gap between the two rows is TDLib
+        /// parsing back the JSON we just wrote.
+        /// </summary>
+        public static object? Send(Function function)
+        {
+            var requestId = ++_requestId;
+
+            if (_writer == null)
+            {
+                _writer = new ArrayPoolBufferWriter();
+            }
+            else
+            {
+                _writer.Rent();
+            }
+
+            var request = ClientJson.ToJson(_writer, function);
+            fixed (byte* bytes = request)
+            {
+                td_send(_clientId, requestId, bytes);
+            }
+
+            _writer.Reset();
+            _pending++;
+            return null;
+        }
+
+        public static object? Serialize(Function function)
+        {
+            if (_writer == null)
+            {
+                _writer = new ArrayPoolBufferWriter();
+            }
+            else
+            {
+                _writer.Rent();
+            }
+
+            ClientJson.ToJson(_writer, function);
+            _writer.Reset();
+            return null;
+        }
+
+        /// <summary>
+        /// Collects everything <see cref="Send"/> left behind, so the answers do not sit in
+        /// TDLib's queue for the rest of the run.
+        /// </summary>
+        public static void DrainPending()
+        {
+            while (_pending > 0)
+            {
+                var ptr = td_receive(10.0, out _, out long received);
+                if (ptr == null)
+                {
+                    break;
+                }
+
+                if (received != 0)
+                {
+                    _pending--;
+                }
+            }
+
+            _pending = 0;
         }
     }
 }
