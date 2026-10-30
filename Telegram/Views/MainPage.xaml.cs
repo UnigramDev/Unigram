@@ -356,6 +356,11 @@ namespace Telegram.Views
                     viewModel.Dispose();
                 }
 
+#if UNPACKAGED
+                // The next account's page reports its own downloads, which may be none.
+                TaskbarButton.SetProgress(0, 0);
+#endif
+
                 _drain.Dispose();
 
                 _archive?.Changed -= OnArchiveChanged;
@@ -459,6 +464,10 @@ namespace Telegram.Views
             }
 
             Downloads?.UpdateFileDownloads(update);
+
+#if UNPACKAGED
+            TaskbarButton.SetProgress(update.DownloadedSize, update.TotalSize);
+#endif
         }
 
         public void Handle(UpdateChatIsMarkedAsUnread update)

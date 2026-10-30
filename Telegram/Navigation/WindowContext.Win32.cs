@@ -70,6 +70,11 @@ namespace Telegram.Navigation
                 All.Add(this);
             }
 
+            if (IsInMainView)
+            {
+                TaskbarButton.OnMainWindowCreated(_island.Handle);
+            }
+
             _inputListener = new InputListener(this);
             _island.Filter = _inputListener;
 

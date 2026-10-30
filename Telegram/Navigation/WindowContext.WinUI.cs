@@ -84,6 +84,11 @@ namespace Telegram.Navigation
                 All.Add(this);
             }
 
+            if (IsInMainView)
+            {
+                TaskbarButton.OnMainWindowCreated(_handle);
+            }
+
             // The app draws its own chrome in every flavour. On this host that is one property
             // rather than a custom non-client area: the framework keeps the caption buttons and
             // hands the rest of the window to the content.

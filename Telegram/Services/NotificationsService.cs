@@ -114,7 +114,7 @@ namespace Telegram.Services
 #if UNPACKAGED
             if (!ApiInfo.HasPackageIdentity)
             {
-                TaskbarBadge.SetCount(count);
+                TaskbarButton.SetCount(count);
                 return;
             }
 #endif
