@@ -308,18 +308,6 @@ namespace Telegram.Navigation
 
             ClearTitleBar(sender);
 
-            // We forcefully close any ContentDialog still open.
-            if (_xamlRoot != null)
-            {
-                foreach (var popup in Windows.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(_xamlRoot))
-                {
-                    if (popup.Child is ContentDialog dialog)
-                    {
-                        dialog.Hide();
-                    }
-                }
-            }
-
             RaiseClosed();
 
             // Last, and from here rather than from a second Consolidated handler inside the

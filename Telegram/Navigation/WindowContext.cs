@@ -1223,8 +1223,24 @@ namespace Telegram.Navigation
 
         public event EventHandler Closed;
 
+        /// <summary>
+        /// Before Detach, while the tree is still loaded: roots hear this through a subscription
+        /// their Unloaded removes.
+        /// </summary>
         private void RaiseClosed()
         {
+            // We forcefully close any ContentDialog still open.
+            if (_xamlRoot != null)
+            {
+                foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(_xamlRoot))
+                {
+                    if (popup.Child is ContentDialog dialog)
+                    {
+                        dialog.Hide();
+                    }
+                }
+            }
+
             Closed?.Invoke(this, EventArgs.Empty);
         }
 

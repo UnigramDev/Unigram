@@ -220,6 +220,8 @@ namespace Telegram.Navigation
 
             _consolidated = true;
 
+            RaiseClosed();
+
             lock (_activeLock)
             {
                 if (Active == this)
