@@ -1577,27 +1577,34 @@ namespace Telegram.Navigation
         #endregion
         #region Static code
 
-        public static void ForEach(Action<WindowContext> action)
+        // The actions walk a copy. Dispatching to a window from its own thread runs the action
+        // inline, and on a host where every window shares one thread that is every window: an
+        // action that closes its window then removes it from All while All is being walked.
+        private static WindowContext[] Snapshot()
         {
             lock (_allLock)
             {
-                foreach (var window in All)
-                {
-                    window.Dispatcher.Dispatch(() => action(window));
-                }
+                return All.ToArray();
+            }
+        }
+
+        public static void ForEach(Action<WindowContext> action)
+        {
+            foreach (var window in Snapshot())
+            {
+                window.Dispatcher.Dispatch(() => action(window));
             }
         }
 
         public static Task ForEachAsync(Func<WindowContext, Task> action)
         {
-            var tasks = new List<Task>();
+            var windows = Snapshot();
+            var tasks = new Task[windows.Length];
 
-            lock (_allLock)
+            for (int i = 0; i < windows.Length; i++)
             {
-                foreach (var window in All)
-                {
-                    tasks.Add(window.Dispatcher.DispatchAsync(() => action(window)));
-                }
+                var window = windows[i];
+                tasks[i] = window.Dispatcher.DispatchAsync(() => action(window));
             }
 
             return Task.WhenAll(tasks);
@@ -1605,14 +1612,13 @@ namespace Telegram.Navigation
 
         public static Task ForEachAsync(Action<WindowContext> action)
         {
-            var tasks = new List<Task>();
+            var windows = Snapshot();
+            var tasks = new Task[windows.Length];
 
-            lock (_allLock)
+            for (int i = 0; i < windows.Length; i++)
             {
-                foreach (var window in All)
-                {
-                    tasks.Add(window.Dispatcher.DispatchAsync(() => action(window)));
-                }
+                var window = windows[i];
+                tasks[i] = window.Dispatcher.DispatchAsync(() => action(window));
             }
 
             return Task.WhenAll(tasks);
