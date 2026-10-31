@@ -97,16 +97,10 @@ namespace Telegram.Navigation
         /// LaunchActivatedEventArgs is sealed and cannot be built, so the activate path takes it
         /// instead; the only thing the launch path adds that matters here is the watchdog, called
         /// by hand.
-        ///
-        /// async void so that a failure surfaces as an unhandled exception rather than in a task
-        /// nobody observes. The continuation is back on this thread: Main installed the
-        /// synchronization context inside Application.Start, before App was constructed.
         /// </summary>
-        private async void StartUnpackaged()
+        private void StartUnpackaged()
         {
             Logger.Info("No identity; starting as a plain launch");
-
-            await AppPaths.InitializeAsync();
 
             WatchDog.Launch(ApplicationExecutionState.NotRunning);
             CallInternalActivated(new PlainActivatedEventArgs(ApplicationExecutionState.NotRunning));

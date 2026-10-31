@@ -226,7 +226,7 @@ namespace Telegram.Common.Recording
             RecordingFailed?.Invoke(this, EventArgs.Empty);
         }
 
-        private static Task<StorageFile> CreateFileAsync(ChatRecordMode mode, bool streaming)
+        private static async Task<StorageFile> CreateFileAsync(ChatRecordMode mode, bool streaming)
         {
             var fileName = string.Format(mode == ChatRecordMode.Video
                 ? "video_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.mp4"
@@ -236,7 +236,7 @@ namespace Telegram.Common.Recording
 
             // Unique rather than fail: the name is only second-accurate, and two recordings
             // within the same second is a tap away.
-            return AppPaths.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName).AsTask();
+            return await AppPaths.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
         }
 
         /// <summary>

@@ -457,7 +457,8 @@ namespace Telegram.ViewModels.Settings
 
             try
             {
-                var retrieveProperties = await AppPaths.LocalFolder.Properties.RetrievePropertiesAsync(new[] { c_freeSpace, c_capacity });
+                var folder = await AppPaths.GetLocalFolderAsync();
+                var retrieveProperties = await folder.Properties.RetrievePropertiesAsync(new[] { c_freeSpace, c_capacity });
                 var freeSpace = (ulong)retrieveProperties[c_freeSpace];
                 var capacity = (ulong)retrieveProperties[c_capacity];
 

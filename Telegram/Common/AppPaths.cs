@@ -7,10 +7,10 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
 #if UNPACKAGED
-using System.Threading.Tasks;
 using Telegram.Common;
 #endif
 
@@ -56,35 +56,17 @@ namespace Telegram
             ? ApplicationData.Current.LocalCacheFolder.Path
             : EnsureFolder("LocalCache");
 
-        private static StorageFolder _localFolder;
-        private static StorageFolder _temporaryFolder;
+        public static AppFolder LocalFolder { get; } = _packaged
+            ? new AppFolder(ApplicationData.Current.LocalFolder)
+            : new AppFolder(LocalPath);
 
-        public static StorageFolder LocalFolder => _packaged
-            ? ApplicationData.Current.LocalFolder
-            : _localFolder ?? throw new InvalidOperationException("AppPaths.InitializeAsync has not completed");
+        public static AppFolder TemporaryFolder { get; } = _packaged
+            ? new AppFolder(ApplicationData.Current.TemporaryFolder)
+            : new AppFolder(TemporaryPath);
 
-        public static StorageFolder TemporaryFolder => _packaged
-            ? ApplicationData.Current.TemporaryFolder
-            : _temporaryFolder ?? throw new InvalidOperationException("AppPaths.InitializeAsync has not completed");
+        public static Task<StorageFolder> GetLocalFolderAsync() => LocalFolder.GetAsync();
 
-        /// <summary>
-        /// Unpackaged, a <see cref="StorageFolder"/> can only be had from a path, and that is an
-        /// RPC. The host awaits this before it activates the app, so that the two properties above
-        /// stay plain reads rather than blocking on one.
-        /// </summary>
-        public static async Task InitializeAsync()
-        {
-            if (_packaged)
-            {
-                return;
-            }
-
-            var local = StorageFolder.GetFolderFromPathAsync(LocalPath).AsTask();
-            var temporary = StorageFolder.GetFolderFromPathAsync(TemporaryPath).AsTask();
-
-            _localFolder = await local;
-            _temporaryFolder = await temporary;
-        }
+        public static Task<StorageFolder> GetTemporaryFolderAsync() => TemporaryFolder.GetAsync();
 
         /// <summary>
         /// A URI naming a file under <see cref="LocalFolder"/>. <c>ms-appdata:</c> is resolved by
@@ -151,6 +133,10 @@ namespace Telegram
 
         public static StorageFolder TemporaryFolder => ApplicationData.Current.TemporaryFolder;
 
+        public static Task<StorageFolder> GetLocalFolderAsync() => Task.FromResult(ApplicationData.Current.LocalFolder);
+
+        public static Task<StorageFolder> GetTemporaryFolderAsync() => Task.FromResult(ApplicationData.Current.TemporaryFolder);
+
         public static Uri GetLocalUri(string relativePath) => new Uri("ms-appdata:///local/" + relativePath);
 #endif
 
@@ -163,4 +149,66 @@ namespace Telegram
             return Path.Combine(InstalledPath, path);
         }
     }
+#if UNPACKAGED
+
+    /// <summary>
+    /// A data root that may not be a <see cref="StorageFolder"/> yet. Unpackaged one can only be
+    /// had from a path, which is an RPC, and the first caller can come before activation does -
+    /// a TDLib update, say. So the folder is resolved on first use and every method waits for it.
+    /// The names mirror StorageFolder's so that call sites read the same on both flavours; one
+    /// that needs the folder itself, as an argument or for its properties, takes
+    /// <see cref="GetAsync"/>.
+    /// </summary>
+    public sealed class AppFolder
+    {
+        private readonly string _path;
+        private Task<StorageFolder> _folder;
+
+        internal AppFolder(StorageFolder folder)
+        {
+            _folder = Task.FromResult(folder);
+        }
+
+        internal AppFolder(string path)
+        {
+            _path = path;
+        }
+
+        // Two callers racing here both resolve the same folder, and either result will do.
+        public Task<StorageFolder> GetAsync()
+        {
+            return _folder ??= StorageFolder.GetFolderFromPathAsync(_path).AsTask();
+        }
+
+        public async Task<StorageFile> CreateFileAsync(string desiredName, CreationCollisionOption options)
+        {
+            var folder = await GetAsync().ConfigureAwait(false);
+            return await folder.CreateFileAsync(desiredName, options);
+        }
+
+        public async Task<StorageFolder> CreateFolderAsync(string desiredName, CreationCollisionOption options)
+        {
+            var folder = await GetAsync().ConfigureAwait(false);
+            return await folder.CreateFolderAsync(desiredName, options);
+        }
+
+        public async Task<StorageFile> GetFileAsync(string name)
+        {
+            var folder = await GetAsync().ConfigureAwait(false);
+            return await folder.GetFileAsync(name);
+        }
+
+        public async Task<StorageFolder> GetFolderAsync(string name)
+        {
+            var folder = await GetAsync().ConfigureAwait(false);
+            return await folder.GetFolderAsync(name);
+        }
+
+        public async Task<IStorageItem> TryGetItemAsync(string name)
+        {
+            var folder = await GetAsync().ConfigureAwait(false);
+            return await folder.TryGetItemAsync(name);
+        }
+    }
+#endif
 }
