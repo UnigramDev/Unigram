@@ -208,7 +208,7 @@
                             VerticalAlignment="Bottom"
                             Margin="0,0,0,-64">
                     <Button Click="{x:Bind ViewModel.LoginWithPasskey}"
-                            Content="{x:Bind ViewModel.S.LoginWithPasskey}"
+                            Content="{x:Bind ViewModel.S.LoginWithPasskey, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.CanUseLoginPasskey, Mode=OneWay}"
                             Style="{StaticResource AccentTextButtonStyle}"
                             HorizontalAlignment="Center" />
