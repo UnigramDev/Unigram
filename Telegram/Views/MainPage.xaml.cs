@@ -866,12 +866,6 @@ namespace Telegram.Views
 
             var peer = FrameworkElementAutomationPeer.FromElement(TitleText);
             peer?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
-
-            try
-            {
-                NavigationService.Window.Title = text;
-            }
-            catch { }
         }
 
         private void HideState()
@@ -880,12 +874,6 @@ namespace Telegram.Views
             StateLabel.Text = Constants.RELEASE
                 ? Strings.AppDisplayName
                 : Strings.AppName;
-
-            try
-            {
-                NavigationService.Window.Title = string.Empty;
-            }
-            catch { }
         }
 
         public void Handle(UpdateActiveCall update)

@@ -16,6 +16,7 @@ using Telegram.Controls.Chats;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Td.Api;
 using Telegram.Views;
 #if WINUI3
 using Microsoft.UI.Windowing;
@@ -64,6 +65,10 @@ namespace Telegram.Controls
 
         private HostedPage _titlePage;
 
+        // Apart from _titlePage, which follows only the pages that show the header.
+        private HostedPage _windowTitlePage;
+        private ISession _windowTitleSession;
+
         private ListViewBase _scrollingHostList;
         private ScrollViewer _scrollingHostViewer;
 
@@ -94,6 +99,15 @@ namespace Telegram.Controls
                 service.BackStackChanged += OnBackStackChanged;
                 service.Navigated += OnNavigated;
             }
+
+            // With or without a master: a standalone window has none, and its title is this too.
+            service.Navigated += OnWindowTitleNavigated;
+
+            _windowTitleSession = service.Session;
+            _windowTitleSession.PropertyChanged += OnWindowTitleSessionChanged;
+
+            // A standalone window has navigated before it gets here.
+            WatchWindowTitle(DetailFrame.Content as HostedPage);
         }
 
         public bool HasMaster { get; private set; }
@@ -107,7 +121,16 @@ namespace Telegram.Controls
                 NavigationService.FrameFacade.BackRequested -= OnBackRequested;
                 NavigationService.BackStackChanged -= OnBackStackChanged;
                 NavigationService.Navigated -= OnNavigated;
+                NavigationService.Navigated -= OnWindowTitleNavigated;
             }
+
+            if (_windowTitleSession != null)
+            {
+                _windowTitleSession.PropertyChanged -= OnWindowTitleSessionChanged;
+                _windowTitleSession = null;
+            }
+
+            WatchWindowTitle(null);
 
             if (AdaptivePanel != null)
             {
@@ -804,6 +827,69 @@ namespace Telegram.Controls
             {
                 DetailHeaderPresenter.Text = string.Empty;
             }
+        }
+
+        private void OnWindowTitleNavigated(object sender, NavigatedEventArgs e)
+        {
+            WatchWindowTitle(e.Content as HostedPage);
+        }
+
+        private void WatchWindowTitle(HostedPage hosted)
+        {
+            if (_windowTitlePage != hosted)
+            {
+                if (_windowTitlePage != null)
+                {
+                    _windowTitlePage.TitleChanged -= OnWindowTitlePageChanged;
+                }
+
+                _windowTitlePage = hosted;
+
+                if (hosted != null)
+                {
+                    hosted.TitleChanged += OnWindowTitlePageChanged;
+                }
+            }
+
+            UpdateWindowTitle();
+        }
+
+        private void OnWindowTitlePageChanged(object sender, EventArgs e)
+        {
+            UpdateWindowTitle();
+        }
+
+        private void OnWindowTitleSessionChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // Raised on the main thread, which on UWP is not this view's unless it is the main view.
+            if (e.PropertyName == nameof(ISession.UnreadCount))
+            {
+                this.BeginOnUIThread(UpdateWindowTitle);
+            }
+        }
+
+        private void UpdateWindowTitle()
+        {
+            // Null once disposed, and a dispatched update can still arrive after.
+            var session = _windowTitleSession;
+            if (session == null || !session.ClientService.TryGetUser(session.UserId, out User user))
+            {
+                return;
+            }
+
+            var title = user.FullName();
+
+            if (_windowTitlePage is IChatPage && !string.IsNullOrEmpty(_windowTitlePage.Title))
+            {
+                title = _windowTitlePage.Title + " @ " + title;
+            }
+
+            if (session.UnreadCount > 0)
+            {
+                title += " (" + session.UnreadCount + ")";
+            }
+
+            NavigationService.Window.Title = title;
         }
 
         private void OnBackStackChanged(object sender, EventArgs e)

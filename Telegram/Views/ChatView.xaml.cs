@@ -1299,6 +1299,7 @@ namespace Telegram.Views
 
             ViewModel.NavigationService.Window.CharacterReceived += OnCharacterReceived;
 
+            UpdatePageTitle();
             ViewVisibleMessages();
 
             TrySetFocusState(FocusState.Programmatic, true);
@@ -5858,6 +5859,8 @@ namespace Telegram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
+            string windowTitle = null;
+
             if (ViewModel.ForumTopic != null)
             {
                 ChatTitle = ViewModel.ForumTopic.Info.Name;
@@ -5925,7 +5928,9 @@ namespace Telegram.Views
             }
             else if (chat.Type is ChatTypeSecret)
             {
-                ChatTitle = Icons.LockClosedFilled14 + "\u00A0" + ViewModel.ClientService.GetTitle(chat);
+                // The system draws the window text, in a font that has no lock glyph.
+                windowTitle = ViewModel.ClientService.GetTitle(chat);
+                ChatTitle = Icons.LockClosedFilled14 + "\u00A0" + windowTitle;
             }
             else
             {
@@ -5934,14 +5939,25 @@ namespace Telegram.Views
 
             Title.Text = ChatTitle;
 
-            if (!ViewModel.Window.IsInMainView)
-            {
-                // Would be cool to do this in MasterDetailView
-                ViewModel.Window.Title = ChatTitle;
-            }
+            _pageTitle = windowTitle ?? ChatTitle;
+            UpdatePageTitle();
         }
 
         public string ChatTitle { get; private set; }
+
+        // For the window text, which MasterDetailView composes: GetTitle still answers ChatTitle,
+        // glyph included, for the back stack.
+        private string _pageTitle;
+
+        private void UpdatePageTitle()
+        {
+            // Parent stays null until the page is in the tree, after the first UpdateChatTitle,
+            // so OnLoaded applies it again.
+            if (Parent is HostedPage page)
+            {
+                page.Title = _pageTitle;
+            }
+        }
 
         public void UpdateChatPhoto(Chat chat)
         {
