@@ -1273,6 +1273,57 @@ namespace winrt::Telegram::Native::implementation
         return S_OK;
     }
 
+    static winrt::com_ptr<IDXGIAdapter1> GetHardwareAdapter(winrt::com_ptr<IDXGIFactory1> const& factory)
+    {
+        winrt::com_ptr<IDXGIAdapter1> adapter;
+        for (UINT i = 0; SUCCEEDED(factory->EnumAdapters1(i, adapter.put())); ++i)
+        {
+            DXGI_ADAPTER_DESC1 desc;
+            if (SUCCEEDED(adapter->GetDesc1(&desc)) && (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) == 0)
+            {
+                return adapter;
+            }
+
+            adapter = nullptr;
+        }
+
+        return nullptr;
+    }
+
+    bool Direct2DDevice::IsAdapterStale()
+    {
+        // Runs on every access: IsCurrent stays in user mode, at about 60 ns a call.
+        if (m_dxgiFactory == nullptr || m_dxgiFactory->IsCurrent())
+        {
+            return false;
+        }
+
+        m_dxgiFactory = nullptr;
+
+        winrt::com_ptr<IDXGIFactory1> factory;
+        if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(factory.put()))))
+        {
+            return false;
+        }
+
+        auto adapter = GetHardwareAdapter(factory);
+        DXGI_ADAPTER_DESC1 desc;
+        if (adapter == nullptr || FAILED(adapter->GetDesc1(&desc)))
+        {
+            m_dxgiFactory = factory;
+            return false;
+        }
+
+        if (desc.AdapterLuid.LowPart == m_adapterLuid.LowPart && desc.AdapterLuid.HighPart == m_adapterLuid.HighPart)
+        {
+            m_dxgiFactory = factory;
+            return false;
+        }
+
+        LOGGER_INFO(L"Moving to another adapter");
+        return true;
+    }
+
     HRESULT Direct2DDevice::CreateDeviceResources()
     {
         HRESULT result;
@@ -1282,10 +1333,20 @@ namespace winrt::Telegram::Native::implementation
         // pointer without releasing it, so recreating over a live device strands it and everything
         // the display driver holds behind it.
         m_d3dDevice = nullptr;
+        m_dxgiFactory = nullptr;
+
+        // The compositor moves to the first hardware adapter of a current factory when that
+        // changes, as when a display goes away on a hybrid laptop. Ours has to follow it, or every
+        // surface we draw is copied across adapters, through system memory.
+        winrt::com_ptr<IDXGIAdapter1> adapter;
+        if (SUCCEEDED(CreateDXGIFactory1(IID_PPV_ARGS(m_dxgiFactory.put()))))
+        {
+            adapter = GetHardwareAdapter(m_dxgiFactory);
+        }
 
         winrt::com_ptr<ID3D11DeviceContext> context;
-        if (FAILED(D3D11CreateDevice(nullptr,               // specify null to use the default adapter
-            D3D_DRIVER_TYPE_HARDWARE, 0,
+        if (FAILED(D3D11CreateDevice(adapter.get(),
+            adapter ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE, 0,
             creationFlags,									// optionally set debug and Direct2D compatibility flags
             NULL,											// list of feature levels this app can support
             0,												// number of possible feature levels
@@ -1314,17 +1375,33 @@ namespace winrt::Telegram::Native::implementation
         }
 
         winrt::com_ptr<IDXGIDevice> dxgiDevice = m_d3dDevice.as<IDXGIDevice>();
+
+        // Read back rather than taken from the adapter above, which WARP replaces when the
+        // hardware device fails.
+        winrt::com_ptr<IDXGIAdapter> deviceAdapter;
+        DXGI_ADAPTER_DESC deviceAdapterDesc;
+        if (SUCCEEDED(dxgiDevice->GetAdapter(deviceAdapter.put())) && SUCCEEDED(deviceAdapter->GetDesc(&deviceAdapterDesc)))
+        {
+            m_adapterLuid = deviceAdapterDesc.AdapterLuid;
+        }
+
+        // Released one at a time, just before each put(), for the same reason as m_d3dDevice: a
+        // stranded ID2D1Device keeps the device it was built on alive, and after an adapter switch
+        // that device has not been removed, so its memory stays on the other adapter.
+        m_d2dDevice = nullptr;
         ReturnIfFailed(result, m_d2dFactory->CreateDevice(dxgiDevice.get(), m_d2dDevice.put()));
 
         winrt::com_ptr<ID2D1DeviceContext> d2dContext;
         ReturnIfFailed(result, m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, d2dContext.put()));
         m_d2dContext = d2dContext.as<ID2D1DeviceContext2>();
 
+        m_gaussianBlurEffect = nullptr;
         ReturnIfFailed(result, m_d2dContext->CreateEffect(CLSID_D2D1GaussianBlur, m_gaussianBlurEffect.put()));
         ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD));
 
         m_d2dContext->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 
+        m_imageEncoder = nullptr;
         ReturnIfFailed(result, m_wicFactory->CreateImageEncoder(m_d2dDevice.get(), m_imageEncoder.put()));
 
         if (m_compositor)

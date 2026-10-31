@@ -344,7 +344,7 @@ namespace winrt::Telegram::Native::implementation
 
             // The device is null when a previous attempt to create one failed, which happens while
             // the display driver is still resetting.
-            if (m_d3dDevice == nullptr || FAILED(m_d3dDevice->GetDeviceRemovedReason()))
+            if (m_d3dDevice == nullptr || FAILED(m_d3dDevice->GetDeviceRemovedReason()) || IsAdapterStale())
             {
                 return CreateDeviceResources();
             }
@@ -434,6 +434,7 @@ namespace winrt::Telegram::Native::implementation
     private:
         HRESULT CreateDeviceIndependentResources();
         HRESULT CreateDeviceResources();
+        bool IsAdapterStale();
         HRESULT CreateTextFormat(double fontSize);
 
         void OnDirect3DDeviceLost(DeviceLostHelper const* /* sender */, DeviceLostEventArgs const& /* args */);
@@ -476,6 +477,8 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
         winrt::com_ptr<ID2D1Device> m_d2dDevice;
         winrt::com_ptr<ID3D11Device> m_d3dDevice;
+        winrt::com_ptr<IDXGIFactory1> m_dxgiFactory;
+        LUID m_adapterLuid{};
         winrt::com_ptr<ID2D1DeviceContext2> m_d2dContext;
         D3D_FEATURE_LEVEL m_featureLevel;
         winrt::com_ptr<IWICImagingFactory2> m_wicFactory;
