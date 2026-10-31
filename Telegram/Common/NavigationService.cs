@@ -83,11 +83,11 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToInstant(this INavigationService service, WebPageInstantView instantView, string url)
+        public static void NavigateToInstant(this INavigationService service, WebPageInstantView instantView, string url, string title = null)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToInstant(instantView, url);
+                serviceEx.NavigateToInstant(instantView, url, title);
             }
         }
 

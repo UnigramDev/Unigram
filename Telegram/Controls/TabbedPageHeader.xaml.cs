@@ -131,6 +131,19 @@ namespace Telegram.Controls
             }
         }
 
+        /// <summary>
+        /// In place of <see cref="Source"/>, for a page that has no address.
+        /// </summary>
+        public string FileName
+        {
+            set
+            {
+                SourceText.Text = value;
+                DomainText.Text = value;
+                PathText.Text = string.Empty;
+            }
+        }
+
         public object Options
         {
             get => OptionsPresenter.Content;

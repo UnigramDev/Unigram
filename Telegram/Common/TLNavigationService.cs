@@ -184,14 +184,14 @@ namespace Telegram.Common
             }
         }
 
-        public void NavigateToInstant(WebPageInstantView instantView, string url)
+        public void NavigateToInstant(WebPageInstantView instantView, string url, string title = null)
         {
             TabViewItem CreateTabViewItem(WindowContext window)
             {
                 var frame = new Frame();
                 var service = new TLNavigationService(Session, window, frame, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
 
-                service.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
+                service.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url, title));
 
                 var tabViewItem = new TabViewItem
                 {

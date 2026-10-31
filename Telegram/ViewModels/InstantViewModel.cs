@@ -41,7 +41,11 @@ namespace Telegram.ViewModels
         {
             if (parameter is InstantPageArgs args)
             {
-                if (args.Url != null)
+                if (args.Title != null)
+                {
+                    Title = args.Title;
+                }
+                else if (args.Url != null)
                 {
                     var response = await ClientService.SendAsync(new GetLinkPreview(args.Url.AsFormattedText(false), null));
                     if (response is LinkPreview linkPreview)

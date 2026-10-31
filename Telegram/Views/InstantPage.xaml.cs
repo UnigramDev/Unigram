@@ -24,19 +24,25 @@ namespace Telegram.Views
 {
     public partial class InstantPageArgs
     {
-        public InstantPageArgs(WebPageInstantView instantView, string url)
+        public InstantPageArgs(WebPageInstantView instantView, string url, string title = null)
         {
             InstantView = instantView;
             Url = url;
+            Title = title;
         }
 
         public WebPageInstantView InstantView { get; }
 
+        /// <summary>
+        /// Null for a page that has no address, such as a local Markdown file.
+        /// </summary>
         public string Url { get; set; }
+
+        public string Title { get; }
 
         public override string ToString()
         {
-            return Url;
+            return Url ?? Title;
         }
     }
 
@@ -130,13 +136,12 @@ namespace Telegram.Views
                 return;
             }
 
-            if (args.Url?.StartsWith("tg") is true)
+            if (args.Url == null)
             {
                 Feedback.Visibility = Visibility.Collapsed;
+                Header.FileName = args.Title;
             }
 
-            // A local .md file is opened as tg://<file name>, which is no valid Uri when the name
-            // has a space in it. The page renders regardless; it just has no link to share.
             Uri.TryCreate(args.Url, UriKind.Absolute, out Uri uri);
             ViewModel.ShareLink = uri;
             ViewModel.ShareTitle = args.Url;

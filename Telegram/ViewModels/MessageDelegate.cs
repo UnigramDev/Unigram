@@ -185,7 +185,7 @@ namespace Telegram.ViewModels
                 var instantView = await ParseMarkdown(file);
                 if (instantView != null)
                 {
-                    _viewModel.NavigationService.NavigateToInstant(instantView, "tg://" + System.IO.Path.GetFileName(file.Local.Path));
+                    _viewModel.NavigationService.NavigateToInstant(instantView, null, System.IO.Path.GetFileName(file.Local.Path));
                     return;
                 }
             }
