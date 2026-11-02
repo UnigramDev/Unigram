@@ -18,6 +18,7 @@ using Telegram.Common;
 using Telegram.Host;
 using Telegram.Navigation;
 using Telegram.Services;
+using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 
 namespace Telegram
@@ -83,10 +84,9 @@ namespace Telegram
         }
 
         /// <summary>
-        /// Another launch was handed to this process. It arrives on a background thread, and all
-        /// this flavour does with it is bring the window back - a redirected link or share target
-        /// would have to go through BootStrapper the way the first activation does, which the
-        /// renamed protocol claims make moot here.
+        /// Another launch was handed to this process. It arrives on a background thread. A link
+        /// goes through BootStrapper the way the first activation does; anything else only brings
+        /// the window back.
         ///
         /// Brought back the way a click on the notification area icon does it, because the window
         /// may be gone: closing to the icon destroys it, and then there is no Main to raise and
@@ -94,7 +94,14 @@ namespace Telegram
         /// </summary>
         private static void OnRedirected(object sender, AppActivationArguments args)
         {
-            _dispatcher?.TryEnqueue(BootStrapper.Current.ActivateFromNotifyIcon);
+            if (args.Data is IProtocolActivatedEventArgs link)
+            {
+                _dispatcher?.TryEnqueue(() => BootStrapper.Current.ActivateFromLink(link));
+            }
+            else
+            {
+                _dispatcher?.TryEnqueue(BootStrapper.Current.ActivateFromNotifyIcon);
+            }
         }
 
         /// <summary>

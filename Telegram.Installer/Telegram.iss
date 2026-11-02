@@ -22,6 +22,7 @@
 ; Toast.RegisterApplication's, which the app sets on its process: the shortcuts must carry the same
 ; one, or a pinned shortcut and the running window are two taskbar buttons.
 #define AppUserModelId "TelegramFZ-LLC.Windows"
+#define LinkProgId AppUserModelId + ".Link"
 
 [Setup]
 ; Never change it: Telegram.Updater writes the version into this entry's {AppId}_is1 key.
@@ -95,6 +96,34 @@ Name: "{userdesktop}\{#AppName}"; Filename: "{app}\app\Telegram.exe"; AppUserMod
 Root: HKCU; Subkey: "Software\Classes\AppUserModelId\{#AppUserModelId}"; Flags: uninsdeletekey
 ; ToastActivator.Clsid, the class the shell starts the app through when a toast is clicked.
 Root: HKCU; Subkey: "Software\Classes\CLSID\{{3542F50C-8B9A-4A2B-A47D-9E5EAF762103}"; Flags: uninsdeletekey
+
+; tg:, tonsite: and tc:, which the packaged flavours declare in their manifest. The command is the
+; form Windows App SDK's AppInstance decodes into a protocol activation, as
+; RegisterForProtocolActivation would write it.
+;
+; The scheme keys belong to every app that handles them, so they are only filled in where missing
+; and never removed, and their own command is set only where no app has one yet - see
+; IsSchemeUnclaimed. The ProgID and capabilities are what list the app in Default apps and in the
+; picker when another one already handles the scheme.
+Root: HKCU; Subkey: "Software\Classes\{#LinkProgId}"; ValueType: string; ValueName: ""; ValueData: "{#AppName}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\{#LinkProgId}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: """{app}\app\Telegram.exe"",0"
+Root: HKCU; Subkey: "Software\Classes\{#LinkProgId}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\app\Telegram.exe"" ""----ms-protocol:%1"""
+Root: HKCU; Subkey: "Software\{#AppUserModelId}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\{#AppUserModelId}\Capabilities"; ValueType: string; ValueName: "ApplicationName"; ValueData: "{#AppName}"
+Root: HKCU; Subkey: "Software\{#AppUserModelId}\Capabilities"; ValueType: string; ValueName: "ApplicationDescription"; ValueData: "{#AppName}"
+Root: HKCU; Subkey: "Software\{#AppUserModelId}\Capabilities\URLAssociations"; ValueType: string; ValueName: "tg"; ValueData: "{#LinkProgId}"
+Root: HKCU; Subkey: "Software\{#AppUserModelId}\Capabilities\URLAssociations"; ValueType: string; ValueName: "tonsite"; ValueData: "{#LinkProgId}"
+Root: HKCU; Subkey: "Software\{#AppUserModelId}\Capabilities\URLAssociations"; ValueType: string; ValueName: "tc"; ValueData: "{#LinkProgId}"
+Root: HKCU; Subkey: "Software\RegisteredApplications"; ValueType: string; ValueName: "{#AppName}"; ValueData: "Software\{#AppUserModelId}\Capabilities"; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Classes\tg"; ValueType: string; ValueName: ""; ValueData: "URL:tg"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\Classes\tg"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\Classes\tg\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\app\Telegram.exe"" ""----ms-protocol:%1"""; Check: IsSchemeUnclaimed('tg')
+Root: HKCU; Subkey: "Software\Classes\tonsite"; ValueType: string; ValueName: ""; ValueData: "URL:tonsite"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\Classes\tonsite"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\Classes\tonsite\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\app\Telegram.exe"" ""----ms-protocol:%1"""; Check: IsSchemeUnclaimed('tonsite')
+Root: HKCU; Subkey: "Software\Classes\tc"; ValueType: string; ValueName: ""; ValueData: "URL:tc"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\Classes\tc"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\Classes\tc\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\app\Telegram.exe"" ""----ms-protocol:%1"""; Check: IsSchemeUnclaimed('tc')
 
 [Run]
 Filename: "{app}\app\Telegram.exe"; Flags: nowait skipifsilent
@@ -217,5 +246,37 @@ begin
       // An error the install cannot go past, which only this page would have shown.
       TitleLabel.Caption := WizardForm.PreparingLabel.Caption;
     end;
+  end;
+end;
+
+// Through HKCR, so that a handler registered for the whole machine counts as well: the per-user
+// command would take precedence over it.
+function IsSchemeUnclaimed(Scheme: String): Boolean;
+var
+  Command: String;
+begin
+  Result := not RegQueryStringValue(HKCR, Scheme + '\shell\open\command', '', Command)
+    or (Pos(Lowercase(ExpandConstant('{app}\app\Telegram.exe')), Lowercase(Command)) > 0);
+end;
+
+// Only while it is still this app's: another one may have set its own since.
+procedure RemoveSchemeCommand(Scheme: String);
+var
+  Command: String;
+begin
+  if RegQueryStringValue(HKCU, 'Software\Classes\' + Scheme + '\shell\open\command', '', Command)
+    and (Pos(Lowercase(ExpandConstant('{app}\app\Telegram.exe')), Lowercase(Command)) > 0) then
+  begin
+    RegDeleteKeyIncludingSubkeys(HKCU, 'Software\Classes\' + Scheme + '\shell');
+  end;
+end;
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usUninstall then
+  begin
+    RemoveSchemeCommand('tg');
+    RemoveSchemeCommand('tonsite');
+    RemoveSchemeCommand('tc');
   end;
 end;

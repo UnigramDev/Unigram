@@ -14,6 +14,7 @@ using Telegram.Common;
 using Telegram.Host;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using AppLifecycle = Microsoft.Windows.AppLifecycle;
 
 namespace Telegram.Navigation
 {
@@ -91,21 +92,41 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// Unpackaged, so a plain start is all this can have been: a tg: link or a shared file
-        /// reaches the app through an extension the shell only dispatches to a package, and a toast
-        /// clicked while the app was closed is a plain start followed by ToastActivator's call.
+        /// Unpackaged, so the shell hands the app nothing but a command line. A link arrives as the
+        /// one the installer registers for tg:, tonsite: and tc:, which Windows App SDK decodes
+        /// into a protocol activation; anything else is a plain start, and a toast clicked while
+        /// the app was closed is a plain start followed by ToastActivator's call.
         /// LaunchActivatedEventArgs is sealed and cannot be built, so the activate path takes it
         /// instead; the only thing the launch path adds that matters here is the watchdog, called
         /// by hand.
         /// </summary>
         private void StartUnpackaged()
         {
-            Logger.Info("No identity; starting as a plain launch");
-
             WatchDog.Launch(ApplicationExecutionState.NotRunning);
-            CallInternalActivated(new PlainActivatedEventArgs(ApplicationExecutionState.NotRunning));
+
+            if (AppLifecycle.AppInstance.GetCurrent().GetActivatedEventArgs().Data is IProtocolActivatedEventArgs link)
+            {
+                Logger.Info("No identity; starting from a link");
+                CallInternalActivated(link);
+            }
+            else
+            {
+                Logger.Info("No identity; starting as a plain launch");
+                CallInternalActivated(new PlainActivatedEventArgs(ApplicationExecutionState.NotRunning));
+            }
 
             ToastActivator.Ready();
+        }
+
+        /// <summary>
+        /// A link opened while the app runs, redirected here by the process the shell started for
+        /// it. The same pipeline as a cold start, which copes with the window having been closed
+        /// to the notification area icon.
+        /// </summary>
+        public void ActivateFromLink(IProtocolActivatedEventArgs args)
+        {
+            Logger.Info();
+            CallInternalActivated(args);
         }
 
         /// <summary>

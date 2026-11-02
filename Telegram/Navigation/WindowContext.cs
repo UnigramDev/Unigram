@@ -1513,7 +1513,7 @@ namespace Telegram.Navigation
             if (args is ShareTargetActivatedEventArgs share)
             {
             }
-            else if (args is ProtocolActivatedEventArgs protocol)
+            else if (args is IProtocolActivatedEventArgs protocol)
             {
                 if (service?.Frame?.Content is MainPage page)
                 {
