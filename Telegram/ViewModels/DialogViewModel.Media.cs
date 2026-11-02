@@ -184,8 +184,7 @@ namespace Telegram.ViewModels
                             if (captionElements.Count > 0)
                             {
                                 var resultCaption = string.Join(Environment.NewLine, captionElements);
-                                caption = resultCaption.AsFormattedText()
-                                    .Substring(0, ClientService.Options.MessageCaptionLengthMax);
+                                caption = resultCaption.AsFormattedText();
                             }
 
                             SendFileExecute(new[] { photo }, caption);
@@ -366,8 +365,7 @@ namespace Telegram.ViewModels
             var items = new[] { storage };
             var popup = new SendFilesPopup(this, StorageMediaSource.FromMedia(items), null, mediaSelected, permissions, false, false, false, true);
             popup.ShowCaptionAboveMedia = header.Editing.Message.ShowCaptionAboveMedia();
-            popup.Caption = formattedText
-                .Substring(0, ClientService.Options.MessageCaptionLengthMax);
+            popup.Caption = formattedText;
 
             var confirm = await popup.OpenAsync(XamlRoot);
 

@@ -586,7 +586,7 @@ namespace Telegram.ViewModels
             if (caption == null)
             {
                 formattedText = GetFormattedText(true, false);
-                caption = formattedText.Substring(0, ClientService.Options.MessageCaptionLengthMax);
+                caption = formattedText;
             }
 
             var self = ClientService.IsSavedMessages(chat);

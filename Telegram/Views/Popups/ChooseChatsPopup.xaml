@@ -270,6 +270,7 @@
                                              Kind="Caption"
                                              Tier="Popups"
                                              Submitted="CaptionInput_Submitted"
+                                             ContentChanged="CaptionInput_ContentChanged"
                                              InputScope="Chat"
                                              ViewModel="{x:Bind ViewModel}"
                                              FontFamily="{ThemeResource EmojiThemeFontFamily}"
@@ -289,6 +290,25 @@
             <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                         IsHitTestVisible="False"
                                         Margin="22,11,0,0" />
+
+            <!-- What is left of the comment's length, once little is. -->
+            <Grid x:Name="CaptionCounter"
+                  Visibility="Collapsed"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Margin="0,4,16,0"
+                  Grid.Column="1"
+                  Grid.ColumnSpan="2">
+                <TextBlock x:Name="CaptionCounterLeft"
+                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           FontSize="12"
+                           FontWeight="SemiBold" />
+                <TextBlock x:Name="CaptionCounterOver"
+                           Visibility="Collapsed"
+                           Foreground="{ThemeResource DangerButtonBackground}"
+                           FontSize="12"
+                           FontWeight="SemiBold" />
+            </Grid>
 
             <controls:GlyphButton x:Name="EmojiButton"
                                   Click="Emoji_Click"

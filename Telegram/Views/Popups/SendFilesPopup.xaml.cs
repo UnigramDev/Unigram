@@ -95,6 +95,17 @@ namespace Telegram.Views.Popups
 
         private CaptionController _caption;
 
+        // The caption's counter shows once fewer than this many characters are left.
+        private const int CounterThreshold = 25;
+
+        // Zero while the files go out as more than one message: the caption is then sent as a
+        // message of its own, which is split rather than limited.
+        private int _captionLimit;
+        private int _captionLength;
+        private bool _captionLimitToast;
+
+        private bool IsCaptionTooLong => _captionLimit > 0 && _captionLength > _captionLimit;
+
         private IAutocompleteCollection _autocomplete;
         public IAutocompleteCollection Autocomplete
         {
@@ -408,6 +419,13 @@ namespace Telegram.Views.Popups
 
         private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
+            if (IsCaptionTooLong)
+            {
+                VisualUtilities.ShakeView(CaptionCounter);
+                args.Cancel = true;
+                return;
+            }
+
             SetResult(ContentDialogResult.Primary);
         }
 
@@ -745,6 +763,80 @@ namespace Telegram.Views.Popups
             Accept();
         }
 
+        // Counted in code points, as the server does.
+        private void CaptionInput_ContentChanged(object sender, EventArgs e)
+        {
+            var text = CaptionInput.GetFormattedText()?.Text ?? string.Empty;
+            var length = 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (!char.IsLowSurrogate(text[i]))
+                {
+                    length++;
+                }
+            }
+
+            var previous = _captionLength;
+            _captionLength = length;
+
+            UpdateCaptionCounter(previous);
+        }
+
+        private void UpdateCaptionCounter(int previous)
+        {
+            var left = _captionLimit - _captionLength;
+            var visible = _captionLimit > 0 && left < CounterThreshold;
+
+            CaptionCounter.Visibility = visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (visible)
+            {
+                var full = left <= 0;
+
+                CaptionCounterLeft.Text = CaptionCounterOver.Text = left.ToString();
+                CaptionCounterLeft.Visibility = full ? Visibility.Collapsed : Visibility.Visible;
+                CaptionCounterOver.Visibility = full ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            UpdateSendEnabled();
+
+            if (!IsCaptionTooLong)
+            {
+                _captionLimitToast = false;
+            }
+            else if (_captionLength > previous && !ViewModel.ClientService.IsPremium && ViewModel.ClientService.IsPremiumAvailable)
+            {
+                ShowCaptionLimit();
+            }
+        }
+
+        // Once each time the caption goes over, while it grows: Premium allows a longer one.
+        private async void ShowCaptionLimit()
+        {
+            VisualUtilities.ShakeView(CaptionCounter);
+
+            if (_captionLimitToast)
+            {
+                return;
+            }
+
+            _captionLimitToast = true;
+
+            var response = await ViewModel.ClientService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeCaptionLength()));
+            if (response is not PremiumLimit limit || limit.DefaultValue <= 0 || _captionLength >= limit.PremiumValue)
+            {
+                return;
+            }
+
+            var times = (int)Math.Round((double)limit.PremiumValue / limit.DefaultValue);
+            var text = $"**{Strings.CaptionPremiumTitle}**\n" + Locale.Declension(Strings.R.CaptionPremiumSubtitle, times, limit.PremiumValue);
+
+            ToastPopup.ShowPromo(ViewModel.NavigationService, text, Strings.PremiumMore, new PremiumSourceLimitExceeded(new PremiumLimitTypeCaptionLength()));
+        }
+
         // Files and pictures join the album; with text among them, the text is what is pasted.
         private async void CaptionInput_PasteRequested(object sender, FormattedTextPasteEventArgs e)
         {
@@ -961,11 +1053,18 @@ namespace Telegram.Views.Popups
 
         private void UpdateLoading()
         {
-            // Sending half a drop would silently drop the rest, so the button waits.
-            SendMessage.IsEnabled = !IsLoading;
-            PaidMessage.IsEnabled = !IsLoading;
+            UpdateSendEnabled();
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TitleText)));
+        }
+
+        private void UpdateSendEnabled()
+        {
+            // Sending half a drop would silently drop the rest, so the button waits.
+            var enabled = !IsLoading && !IsCaptionTooLong;
+
+            SendMessage.IsEnabled = enabled;
+            PaidMessage.IsEnabled = enabled;
         }
 
         public async Task HandlePackageAsync(DataPackageView package)
@@ -1103,6 +1202,13 @@ namespace Telegram.Views.Popups
             if (PaidMessageStarCount > 0)
             {
                 PaidMessage.Content = Icons.Premium16 + Icons.Spacing + Formatter.ShortNumber(PaidMessageStarCount * Items.Count);
+            }
+
+            var captionLimit = grouped.Count > 1 ? 0 : (int)ViewModel.ClientService.Options.MessageCaptionLengthMax;
+            if (_captionLimit != captionLimit)
+            {
+                _captionLimit = captionLimit;
+                UpdateCaptionCounter(_captionLength);
             }
         }
 

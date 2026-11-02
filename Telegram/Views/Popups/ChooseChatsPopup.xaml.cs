@@ -1104,6 +1104,12 @@ namespace Telegram.Views.Popups
     {
         public ChooseChatsViewModel ViewModel => DataContext as ChooseChatsViewModel;
 
+        // The comment's counter shows once fewer than this many characters are left.
+        private const int CounterThreshold = 25;
+
+        private int _commentLength;
+        private bool _commentTooLong;
+
         public ChooseChatsPopup()
         {
             InitializeComponent();
@@ -1878,14 +1884,18 @@ namespace Telegram.Views.Popups
 
         private bool _primaryButtonEnabled;
 
+        // Left enabled over the comment's limit, unlike Send, so that Enter reaches the check in
+        // OnPrimaryButtonClick and is answered with a shake rather than nothing.
         private bool ConvertButtonEnabled(bool allowEmpty, int count)
         {
+            _primaryButtonEnabled = allowEmpty || count > 0;
+
             if (Send != null)
             {
-                return Send.IsEnabled = _primaryButtonEnabled = allowEmpty || count > 0;
+                Send.IsEnabled = _primaryButtonEnabled && !_commentTooLong;
             }
 
-            return _primaryButtonEnabled = allowEmpty || count > 0;
+            return _primaryButtonEnabled;
         }
 
         #endregion
@@ -2198,6 +2208,13 @@ namespace Telegram.Views.Popups
 
         private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
+            if (_commentTooLong)
+            {
+                VisualUtilities.ShakeView(CaptionCounter);
+                args.Cancel = true;
+                return;
+            }
+
             ViewModel.Caption = CaptionInput.GetFormattedText();
 
             var deferral = args.GetDeferral();
@@ -2238,6 +2255,55 @@ namespace Telegram.Views.Popups
         private void CaptionInput_Submitted(object sender, EventArgs args)
         {
             Accept();
+        }
+
+        // The comment is sent as a text message of its own, so its limit is a message's, the same
+        // with Premium. Counted in code points, as the server does.
+        private void CaptionInput_ContentChanged(object sender, EventArgs e)
+        {
+            var clientService = ViewModel?.ClientService;
+            if (clientService == null)
+            {
+                return;
+            }
+
+            var text = CaptionInput.GetFormattedText()?.Text ?? string.Empty;
+            var length = 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (!char.IsLowSurrogate(text[i]))
+                {
+                    length++;
+                }
+            }
+
+            var previous = _commentLength;
+            _commentLength = length;
+
+            var left = (int)clientService.Options.MessageTextLengthMax - length;
+            var visible = left < CounterThreshold;
+
+            CaptionCounter.Visibility = visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (visible)
+            {
+                var full = left <= 0;
+
+                CaptionCounterLeft.Text = CaptionCounterOver.Text = left.ToString();
+                CaptionCounterLeft.Visibility = full ? Visibility.Collapsed : Visibility.Visible;
+                CaptionCounterOver.Visibility = full ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            _commentTooLong = left < 0;
+            Send.IsEnabled = _primaryButtonEnabled && !_commentTooLong;
+
+            if (_commentTooLong && length > previous)
+            {
+                VisualUtilities.ShakeView(CaptionCounter);
+            }
         }
 
         private void Send_Click(object sender, RoutedEventArgs e)
