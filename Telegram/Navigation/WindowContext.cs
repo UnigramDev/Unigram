@@ -382,20 +382,25 @@ namespace Telegram.Navigation
                 CloseButton.Click -= OnCloseButtonClick;
             }
 
+            DetachCaptionRegions();
+
             ContentHost = GetTemplateChild(nameof(ContentHost)) as ContentPresenter;
             CaptionPanel = GetTemplateChild(nameof(CaptionPanel)) as StackPanel;
             MinimizeButton = GetTemplateChild(nameof(MinimizeButton)) as Button;
             MaximizeButton = GetTemplateChild(nameof(MaximizeButton)) as Button;
             CloseButton = GetTemplateChild(nameof(CloseButton)) as Button;
 
-            // Only Close is wired: on UWP it is the only one that can be drawn at all, and on
-            // Win32 none of the three ever sees a click - the drag bar of gate 1.7 covers the
-            // strip and turns the hit test into a WM_SYSCOMMAND, which is what earns the snap
-            // layouts flyout. The buttons are what the user sees; the drag bar is what answers.
+            // Only Close is wired, and only UWP clicks it: there it is the only one that can be
+            // drawn at all, and on Win32 and WinUI none of the three ever sees a pointer - the drag
+            // bar of gate 1.7, or the regions reported to the framework, answer the hit test and
+            // turn it into a WM_SYSCOMMAND, which is what earns the snap layouts flyout. The
+            // buttons are what the user sees; the host is what answers.
             if (CloseButton != null)
             {
                 CloseButton.Click += OnCloseButtonClick;
             }
+
+            AttachCaptionRegions();
 
             if (CaptionPanel != null)
             {
@@ -484,7 +489,18 @@ namespace Telegram.Navigation
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
+
+            UpdateCaptionRegions();
         }
+
+        /// <summary>
+        /// Where the host has to be told where the buttons are, because it answers the hit test
+        /// for them rather than the buttons themselves. Called whenever their bounds may have
+        /// moved; the template's parts are attached and detached around a template change.
+        /// </summary>
+        partial void UpdateCaptionRegions();
+        partial void AttachCaptionRegions();
+        partial void DetachCaptionRegions();
 
         /// <summary>
         /// Through the window's close request rather than straight to WindowContext.Close: a

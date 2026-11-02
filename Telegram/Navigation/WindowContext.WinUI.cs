@@ -54,6 +54,16 @@ namespace Telegram.Navigation
         /// </summary>
         private readonly IntPtr _handle;
 
+        private readonly InputNonClientPointerSource _nonClient;
+
+        // The regions last reported, so that a layout pass that did not move a button does not
+        // reach the framework.
+        private RectInt32 _minimizeRegion;
+        private RectInt32 _maximizeRegion;
+        private RectInt32 _closeRegion;
+
+        private CaptionButtons _pressedButton;
+
         private bool _consolidated;
 
         internal WindowContext(Window window)
@@ -116,6 +126,13 @@ namespace Telegram.Navigation
             _window.SizeChanged += OnSizeChanged;
             _window.AppWindow.Closing += OnClosing;
             _window.AppWindow.Changed += OnAppWindowChanged;
+
+            _nonClient = InputNonClientPointerSource.GetForWindowId(_window.AppWindow.Id);
+            _nonClient.PointerEntered += OnNonClientPointerMoved;
+            _nonClient.PointerMoved += OnNonClientPointerMoved;
+            _nonClient.PointerPressed += OnNonClientPointerPressed;
+            _nonClient.PointerReleased += OnNonClientPointerReleased;
+            _nonClient.PointerExited += OnNonClientPointerExited;
 
             _inputListener = new InputListener(this);
 
@@ -201,6 +218,14 @@ namespace Telegram.Navigation
         /// </summary>
         private void OnActivated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
         {
+            // A button clicked away - minimize, or a window opening over this one - is left lit,
+            // since the pointer never left it as far as this window could see.
+            if (args.WindowActivationState == WindowActivationState.Deactivated)
+            {
+                _pressedButton = CaptionButtons.None;
+                _content?.SetCaptionButtonState(CaptionButtons.None, false);
+            }
+
             RaiseActivated(args.WindowActivationState == WindowActivationState.Deactivated
                 ? WindowActivationMode.Deactivated
                 : WindowActivationMode.ActivatedInForeground);
@@ -261,6 +286,12 @@ namespace Telegram.Navigation
             _window.SizeChanged -= OnSizeChanged;
             _window.AppWindow.Closing -= OnClosing;
             _window.AppWindow.Changed -= OnAppWindowChanged;
+
+            _nonClient.PointerEntered -= OnNonClientPointerMoved;
+            _nonClient.PointerMoved -= OnNonClientPointerMoved;
+            _nonClient.PointerPressed -= OnNonClientPointerPressed;
+            _nonClient.PointerReleased -= OnNonClientPointerReleased;
+            _nonClient.PointerExited -= OnNonClientPointerExited;
 
             _inputListener.Release();
 
@@ -528,6 +559,14 @@ namespace Telegram.Navigation
                 TitleBarChanged?.Invoke(this, args);
             }
 
+            // A size change is also a move to a monitor with another scale, where the buttons keep
+            // their place in the layout and change it in pixels.
+            if (args.DidSizeChange && _content != null)
+            {
+                _content.IsMaximized = sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Maximized };
+                _content.InvalidateCaptionRegions();
+            }
+
             // Every step of a drag rather than its end, which only WM_EXITSIZEMOVE would say: the
             // store only writes once it has gone quiet. Full screen and compact overlay are not
             // where the window lives, and their bounds would be restored as if they were.
@@ -598,6 +637,75 @@ namespace Telegram.Navigation
                 presenter.IsResizable = buttons.HasFlag(CaptionButtons.Maximize);
                 presenter.SetBorderAndTitleBar(true, buttons == CaptionButtons.All);
             }
+        }
+
+        /// <summary>
+        /// The app's caption buttons, reported as what they are rather than left as content: the
+        /// framework then answers the hit test with the button's own code, so a click is the
+        /// system command - Close through AppWindow.Closing like any other close - and hovering
+        /// Maximize opens the snap layouts flyout. In client pixels; an empty rect clears one.
+        /// </summary>
+        internal void SetCaptionButtonRegions(RectInt32 minimize, RectInt32 maximize, RectInt32 close)
+        {
+            SetCaptionButtonRegion(NonClientRegionKind.Minimize, ref _minimizeRegion, minimize);
+            SetCaptionButtonRegion(NonClientRegionKind.Maximize, ref _maximizeRegion, maximize);
+            SetCaptionButtonRegion(NonClientRegionKind.Close, ref _closeRegion, close);
+        }
+
+        private void SetCaptionButtonRegion(NonClientRegionKind kind, ref RectInt32 current, RectInt32 value)
+        {
+            if (current.X == value.X && current.Y == value.Y && current.Width == value.Width && current.Height == value.Height)
+            {
+                return;
+            }
+
+            current = value;
+
+            if (value.Width > 0 && value.Height > 0)
+            {
+                _nonClient.SetRegionRects(kind, new[] { value });
+            }
+            else
+            {
+                _nonClient.ClearRegionRects(kind);
+            }
+        }
+
+        private static CaptionButtons ToCaptionButton(NonClientRegionKind kind)
+        {
+            return kind switch
+            {
+                NonClientRegionKind.Minimize => CaptionButtons.Minimize,
+                NonClientRegionKind.Maximize => CaptionButtons.Maximize,
+                NonClientRegionKind.Close => CaptionButtons.Close,
+                _ => CaptionButtons.None
+            };
+        }
+
+        // The buttons never see the pointer once their regions are reported - the framework takes
+        // it before XAML does - so their states are pushed in from here, as the Win32 host does
+        // from its drag bar.
+        private void OnNonClientPointerMoved(InputNonClientPointerSource sender, NonClientPointerEventArgs args)
+        {
+            var button = ToCaptionButton(args.RegionKind);
+            _content?.SetCaptionButtonState(button, button != CaptionButtons.None && button == _pressedButton);
+        }
+
+        private void OnNonClientPointerPressed(InputNonClientPointerSource sender, NonClientPointerEventArgs args)
+        {
+            _pressedButton = ToCaptionButton(args.RegionKind);
+            _content?.SetCaptionButtonState(_pressedButton, _pressedButton != CaptionButtons.None);
+        }
+
+        private void OnNonClientPointerReleased(InputNonClientPointerSource sender, NonClientPointerEventArgs args)
+        {
+            _pressedButton = CaptionButtons.None;
+            _content?.SetCaptionButtonState(ToCaptionButton(args.RegionKind), false);
+        }
+
+        private void OnNonClientPointerExited(InputNonClientPointerSource sender, NonClientPointerEventArgs args)
+        {
+            _content?.SetCaptionButtonState(CaptionButtons.None, false);
         }
 
         /// <summary>
@@ -812,6 +920,82 @@ namespace Telegram.Navigation
             // What ApplicationView.IsScreenCaptureEnabled compiles down to anyway.
             Win32.SetWindowDisplayAffinity(_handle,
                 enabled ? Win32.WDA_NONE : Win32.WDA_EXCLUDEFROMCAPTURE);
+        }
+    }
+
+    public partial class WindowPresenter
+    {
+        internal void InvalidateCaptionRegions()
+        {
+            UpdateCaptionRegions();
+        }
+
+        partial void AttachCaptionRegions()
+        {
+            SizeChanged += OnCaptionRegionsSizeChanged;
+
+            if (CaptionPanel != null)
+            {
+                CaptionPanel.SizeChanged += OnCaptionRegionsSizeChanged;
+            }
+        }
+
+        partial void DetachCaptionRegions()
+        {
+            SizeChanged -= OnCaptionRegionsSizeChanged;
+
+            if (CaptionPanel != null)
+            {
+                CaptionPanel.SizeChanged -= OnCaptionRegionsSizeChanged;
+            }
+        }
+
+        // The window's width moves the strip, which is aligned right, and the strip's own width
+        // changes as buttons come and go.
+        private void OnCaptionRegionsSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateCaptionRegions();
+        }
+
+        partial void UpdateCaptionRegions()
+        {
+            var scale = XamlRoot?.RasterizationScale ?? 0;
+            if (scale <= 0)
+            {
+                return;
+            }
+
+            _context.SetCaptionButtonRegions(
+                GetCaptionRegion(MinimizeButton, scale),
+                GetCaptionRegion(MaximizeButton, scale),
+                GetCaptionRegion(CloseButton, scale));
+        }
+
+        /// <summary>
+        /// Empty for a button that is not on screen, which is what clears its region: a button
+        /// just made visible has no size until the next layout pass, and the strip's SizeChanged
+        /// comes back for it then.
+        /// </summary>
+        private RectInt32 GetCaptionRegion(Button button, double scale)
+        {
+            if (button == null || button.Visibility != Visibility.Visible || CaptionPanel?.Visibility != Visibility.Visible)
+            {
+                return default;
+            }
+
+            var size = button.ActualSize;
+            if (size.X <= 0 || size.Y <= 0)
+            {
+                return default;
+            }
+
+            var origin = button.TransformToVisual(null).TransformPoint(new Point(0, 0));
+
+            return new RectInt32(
+                (int)Math.Round(origin.X * scale),
+                (int)Math.Round(origin.Y * scale),
+                (int)Math.Round(size.X * scale),
+                (int)Math.Round(size.Y * scale));
         }
     }
 }
