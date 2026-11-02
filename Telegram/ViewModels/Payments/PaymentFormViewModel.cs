@@ -521,7 +521,7 @@ namespace Telegram.ViewModels.Payments
                 }
                 else
                 {
-                    await WindowContext.Main.SwitchToAsync();
+                    await WindowContext.SwitchToMainAsync();
                     await Window.ConsolidateAsync();
 
                     Aggregator.Publish(new UpdateConfetti());
@@ -539,7 +539,7 @@ namespace Telegram.ViewModels.Payments
             {
                 BeginOnUIThread(async () =>
                 {
-                    await WindowContext.Main.SwitchToAsync();
+                    await WindowContext.SwitchToMainAsync();
                     await Window.ConsolidateAsync();
 
                     Aggregator.Publish(new UpdateConfetti());

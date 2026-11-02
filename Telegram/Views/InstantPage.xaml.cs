@@ -478,8 +478,8 @@ namespace Telegram.Views
 
         private async void ByNavigation(Action<INavigationService> action)
         {
-            WindowContext.Main.Dispatcher.Dispatch(() => action(WindowContext.Main.GetNavigationService()));
-            await WindowContext.Main.SwitchToAsync();
+            var window = await WindowContext.SwitchToMainAsync();
+            window?.Dispatcher.Dispatch(() => action(window.GetNavigationService()));
         }
 
         private void Hyperlink_Click(RichTextPhoneNumber phoneNumber)

@@ -1342,6 +1342,27 @@ namespace Telegram.Navigation
             }
         }
 
+        /// <summary>
+        /// Brings the main window to the foreground, opening it again first where it was closed to
+        /// the notification area icon - which on the desktop hosts destroys it, leaving Main null.
+        /// </summary>
+        /// <returns>The main window, or null if it could not be opened.</returns>
+        public static async Task<WindowContext> SwitchToMainAsync()
+        {
+            if (Main == null)
+            {
+                BootStrapper.Current.ActivateFromNotifyIcon();
+            }
+
+            var window = Main;
+            if (window != null)
+            {
+                await window.SwitchToAsync();
+            }
+
+            return window;
+        }
+
         public static INavigationService GetNavigationService(UIElement element)
         {
             var context = ForXamlRoot(element);
