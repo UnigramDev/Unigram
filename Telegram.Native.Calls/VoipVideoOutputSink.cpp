@@ -34,6 +34,21 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_sink->m_mirrored = value;
     }
 
+    bool VoipVideoOutputSink::IsVisible()
+    {
+        return m_sink && m_sink->m_visible.load(std::memory_order_relaxed);
+    }
+
+    void VoipVideoOutputSink::IsVisible(bool value)
+    {
+        // A window can still report a visibility change after it has stopped its sinks
+        // on Closed, and before it is unloaded.
+        if (m_sink)
+        {
+            m_sink->m_visible.store(value, std::memory_order_relaxed);
+        }
+    }
+
     int32_t VoipVideoOutputSink::PixelWidth()
     {
         return m_sink->m_pixelWidth;

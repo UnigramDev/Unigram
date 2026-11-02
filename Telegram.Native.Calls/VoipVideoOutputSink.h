@@ -21,6 +21,9 @@ namespace winrt::Telegram::Native::Calls::implementation
         bool IsMirrored();
         void IsMirrored(bool value);
 
+        bool IsVisible();
+        void IsVisible(bool value);
+
         int32_t PixelWidth();
         int32_t PixelHeight();
 

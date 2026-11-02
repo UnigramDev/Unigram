@@ -160,6 +160,8 @@ namespace Telegram.Navigation
             }
         }
 
+        public bool IsVisible => _window.Visible;
+
         public void Activate()
         {
             _window.Activate();

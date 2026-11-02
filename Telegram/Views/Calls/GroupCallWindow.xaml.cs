@@ -57,6 +57,7 @@ namespace Telegram.Views.Calls
         private readonly VoipGroupCall _call;
 
         private readonly Dictionary<string, VoipVideoOutputReference> _sinks = new();
+        private bool _sinksVisible = true;
 
         private readonly Dictionary<string, GroupCallParticipantGridCell> _gridCells = new();
         private readonly Dictionary<string, GroupCallParticipantGridCell> _listCells = new();
@@ -291,6 +292,20 @@ namespace Telegram.Views.Calls
             base.OnLoaded();
 
             _displayRequest.TryRequestActive();
+
+            // Changes only reach this window between Loaded and Unloaded, so whatever it missed
+            // before then is read here.
+            OnWindowVisibilityChanged(Window.IsVisible);
+        }
+
+        protected override void OnWindowVisibilityChanged(bool visible)
+        {
+            _sinksVisible = visible;
+
+            foreach (var reference in _sinks.Values)
+            {
+                reference.Sink.IsVisible = visible;
+            }
         }
 
         protected override void OnUnloaded()
@@ -2148,7 +2163,11 @@ namespace Telegram.Views.Calls
             }
             else
             {
-                var sink = new VoipVideoOutputSink(Direct2D.VideoDevice, cell.Visual, mirrored, false);
+                var sink = new VoipVideoOutputSink(Direct2D.VideoDevice, cell.Visual, mirrored, false)
+                {
+                    IsVisible = _sinksVisible
+                };
+
                 reference = new VoipVideoOutputReference(sink, cell.Visual.Brush as CompositionSurfaceBrush);
 
                 _sinks[endpointId] = reference;

@@ -11,6 +11,9 @@ namespace Telegram.Native.Calls
 
         Boolean IsMirrored;
 
+        // False stops drawing until it is set back: frames that arrive meanwhile are dropped.
+        Boolean IsVisible;
+
         Int32 PixelWidth{ get; };
         Int32 PixelHeight{ get; };
 

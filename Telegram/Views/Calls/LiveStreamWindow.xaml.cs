@@ -236,6 +236,15 @@ namespace Telegram.Views.Calls
             base.OnLoaded();
 
             _displayRequest.TryRequestActive();
+
+            // Changes only reach this window between Loaded and Unloaded, so whatever it missed
+            // before then is read here.
+            OnWindowVisibilityChanged(Window.IsVisible);
+        }
+
+        protected override void OnWindowVisibilityChanged(bool visible)
+        {
+            _unifiedVideo.IsVisible = visible;
         }
 
         protected override void OnUnloaded()

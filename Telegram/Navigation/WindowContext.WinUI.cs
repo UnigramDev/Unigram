@@ -144,6 +144,9 @@ namespace Telegram.Navigation
 
         public long Handle => _handle.ToInt64();
 
+        // False while minimized as well as hidden, the same as the UWP CoreWindow.
+        public bool IsVisible => _window.Visible;
+
         // A desktop process has no window of its own for the consent dialog to parent on, so it
         // shows nothing until it is given one. The HWND overload is what puts it over our window.
         public IAsyncOperation<UserConsentVerificationResult> RequestUserConsentAsync(string message)
