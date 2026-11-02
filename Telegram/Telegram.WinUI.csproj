@@ -335,6 +335,8 @@
     <Content Include="$(TelegramRoot)Libraries\wallet-engine\$(Platform)\wallet_engine.dll" Link="wallet_engine.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The widget sandbox's bundles, which WidgetView.LoadResources reads. -->
+    <Content Include="..\Libraries\widget-sandbox\packages\desktop\WidgetJS\**\*.*" Link="WidgetJS\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="Assets\i420.hlsl" />
   </ItemGroup>
 
