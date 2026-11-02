@@ -426,6 +426,7 @@ namespace Telegram.Controls.Messages.Content
             options.CanQuery = CanQuery(_message, widget);
             options.BackgroundQuery = widget.CanSendBackgroundQueries && options.CanQuery;
             options.ChatType = ChatType(_message, widget);
+            options.Wallet = _message.ClientService.Options.CanUseTonWallet;
             SetViewer(options, _message.ClientService);
             // At creation, so the first height already has the band.
             options.ContentSafeArea = ContentSafeArea();

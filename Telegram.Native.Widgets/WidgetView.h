@@ -44,6 +44,8 @@ namespace winrt::Telegram::Native::Widgets::implementation
         void StorageCommitted(event_token const& token) noexcept;
         event_token RequestReceived(Windows::Foundation::TypedEventHandler<Telegram::Native::Widgets::WidgetView, Telegram::Native::Widgets::WidgetRequest> const& handler);
         void RequestReceived(event_token const& token) noexcept;
+        event_token WalletRequested(Windows::Foundation::TypedEventHandler<Telegram::Native::Widgets::WidgetView, Telegram::Native::Widgets::WidgetWalletCall> const& handler);
+        void WalletRequested(event_token const& token) noexcept;
         event_token CopyTextRequested(Windows::Foundation::TypedEventHandler<Telegram::Native::Widgets::WidgetView, hstring> const& handler);
         void CopyTextRequested(event_token const& token) noexcept;
 
@@ -99,6 +101,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
         event<Windows::Foundation::TypedEventHandler<Telegram::Native::Widgets::WidgetView, Telegram::Native::Widgets::WidgetAction>> m_actionRequested;
         event<Windows::Foundation::TypedEventHandler<Telegram::Native::Widgets::WidgetView, Telegram::Native::Widgets::WidgetStorageCommit>> m_storageCommitted;
         event<Windows::Foundation::TypedEventHandler<Telegram::Native::Widgets::WidgetView, Telegram::Native::Widgets::WidgetRequest>> m_requestReceived;
+        event<Windows::Foundation::TypedEventHandler<Telegram::Native::Widgets::WidgetView, Telegram::Native::Widgets::WidgetWalletCall>> m_walletRequested;
         event<Windows::Foundation::TypedEventHandler<Telegram::Native::Widgets::WidgetView, hstring>> m_copyTextRequested;
     };
 }

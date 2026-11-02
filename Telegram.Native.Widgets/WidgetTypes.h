@@ -4,6 +4,7 @@
 #include "WidgetOptions.g.h"
 #include "WidgetStorageCommit.g.h"
 #include "WidgetRequest.g.h"
+#include "WidgetWalletCall.g.h"
 
 #include "twidget/widget_host.h"
 
@@ -101,6 +102,8 @@ namespace winrt::Telegram::Native::Widgets::implementation
 
         Telegram::Native::Widgets::WidgetContentSafeArea ContentSafeArea() const { return m_contentSafeArea; }
         void ContentSafeArea(Telegram::Native::Widgets::WidgetContentSafeArea const& value) { m_contentSafeArea = value; }
+        bool Wallet() const { return m_wallet; }
+        void Wallet(bool value) { m_wallet = value; }
 
         twidget::WidgetData ToData() const;
         twidget::WidgetContext ToContext() const;
@@ -124,6 +127,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
         hstring m_viewerUsername;
         bool m_viewerIsPremium = false;
         Telegram::Native::Widgets::WidgetContentSafeArea m_contentSafeArea{};
+        bool m_wallet = false;
     };
 
     struct WidgetStorageCommit : WidgetStorageCommitT<WidgetStorageCommit>
@@ -141,28 +145,62 @@ namespace winrt::Telegram::Native::Widgets::implementation
         Windows::Foundation::Collections::IMapView<hstring, hstring> m_values;
     };
 
-    struct WidgetRequest : WidgetRequestT<WidgetRequest>
+    // The outcome of a request or a wallet call, delivered once.
+    struct WidgetResponder
     {
         using Respond = std::function<void(const twidget::WidgetRequestOutcome&)>;
 
-        WidgetRequest(hstring data, Respond respond)
-            : m_data(std::move(data)), m_respond(std::move(respond))
+        explicit WidgetResponder(Respond respond)
+            : m_respond(std::move(respond))
         {
         }
 
-        // A request dropped without an outcome would leave the widget busy for good.
-        ~WidgetRequest() { Settle({ twidget::WidgetRequestFailure::Failed, {} }); }
+        // A call dropped without an outcome would leave the widget busy for good.
+        ~WidgetResponder() { Settle({ twidget::WidgetRequestFailure::Failed, {} }); }
 
-        hstring Data() const { return m_data; }
         void Complete(hstring const& result);
         void Fail(Telegram::Native::Widgets::WidgetRequestFailure failure);
 
     private:
         void Settle(const twidget::WidgetRequestOutcome& outcome);
 
-        hstring m_data;
         std::mutex m_lock;
         Respond m_respond;
+    };
+
+    struct WidgetRequest : WidgetRequestT<WidgetRequest>
+    {
+        WidgetRequest(hstring data, bool wallet, WidgetResponder::Respond respond)
+            : m_data(std::move(data)), m_wallet(wallet), m_responder(std::move(respond))
+        {
+        }
+
+        hstring Data() const { return m_data; }
+        bool Wallet() const { return m_wallet; }
+        void Complete(hstring const& result) { m_responder.Complete(result); }
+        void Fail(Telegram::Native::Widgets::WidgetRequestFailure failure) { m_responder.Fail(failure); }
+
+    private:
+        hstring m_data;
+        bool m_wallet;
+        WidgetResponder m_responder;
+    };
+
+    struct WidgetWalletCall : WidgetWalletCallT<WidgetWalletCall>
+    {
+        WidgetWalletCall(twidget::WalletCall const& call, WidgetResponder::Respond respond);
+
+        Telegram::Native::Widgets::WidgetWalletMethod Method() const { return m_method; }
+        hstring Json() const { return m_json; }
+        hstring Data() const { return m_data; }
+        void Complete(hstring const& result) { m_responder.Complete(result); }
+        void Fail(Telegram::Native::Widgets::WidgetRequestFailure failure) { m_responder.Fail(failure); }
+
+    private:
+        Telegram::Native::Widgets::WidgetWalletMethod m_method;
+        hstring m_json;
+        hstring m_data;
+        WidgetResponder m_responder;
     };
 
     twidget::WidgetData ToData(hstring const& chatData, hstring const& publicData);

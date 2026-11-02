@@ -79,6 +79,10 @@ namespace Telegram.Native.Widgets
 
         // Passed at creation, so the first height already has the band; later changes go to SetContentSafeArea.
         WidgetContentSafeArea ContentSafeArea;
+
+        // The client has Gram Wallet for this user (docs/sdk-v1.md §2.18): the widget gets TelegramWidget.wallet where it
+        // may query the bot. Whether the user already has a wallet does not matter.
+        Boolean Wallet;
     }
 
     enum WidgetActionKind
@@ -106,6 +110,9 @@ namespace Telegram.Native.Widgets
         Timeout = 1,
         RateLimited = 2,
         Failed = 3,
+        // A wallet call only: the user declined, or the wallet refused the transaction or the payload.
+        Rejected = 4,
+        BadRequest = 5,
     };
 
     // A request the widget sends to the bot (TelegramWidget.request), already checked. Complete it exactly once,
@@ -114,8 +121,32 @@ namespace Telegram.Native.Widgets
     {
         // 1 to 64 bytes, as the widget passed them: the query's data.
         String Data { get; };
+        // The widget asked, on a tap, for the bot to get the user's wallet card with the query (with_wallet).
+        Boolean Wallet { get; };
 
         // The bot's answer; empty for none.
+        void Complete(String result);
+        void Fail(WidgetRequestFailure failure);
+    }
+
+    enum WidgetWalletMethod
+    {
+        SendTransaction = 0,
+        SignData = 1,
+    };
+
+    // A wallet call (TelegramWidget.wallet, docs/sdk-v1.md §2.18), already checked: the transaction or the payload, a tap or
+    // the grant, one call in flight with the requests. Complete it exactly once, from any thread, with the bot's answer to
+    // the outcome; until then the widget's next request is refused as busy.
+    runtimeclass WidgetWalletCall
+    {
+        WidgetWalletMethod Method { get; };
+        // TON Connect's own JSON in its field names: the sendTransaction request ({valid_until?, network?, from?, messages}),
+        // or the signData payload ({type, text | bytes | schema and cell, network?, from?}).
+        String Json { get; };
+        // 1 to 64 bytes: the query's data the outcome goes to the bot with.
+        String Data { get; };
+
         void Complete(String result);
         void Fail(WidgetRequestFailure failure);
     }
@@ -194,6 +225,8 @@ namespace Telegram.Native.Widgets
         event Windows.Foundation.TypedEventHandler<WidgetView, WidgetStorageCommit> StorageCommitted;
         // A request for the bot. A view without a handler refuses it (NOT_ALLOWED), so the handler must be added before Start().
         event Windows.Foundation.TypedEventHandler<WidgetView, WidgetRequest> RequestReceived;
+        // A wallet call: show the wallet window with the bot of the message. As RequestReceived, add it before Start().
+        event Windows.Foundation.TypedEventHandler<WidgetView, WidgetWalletCall> WalletRequested;
         // TelegramWidget.copyText: copy the text and show a toast that says what was copied.
         event Windows.Foundation.TypedEventHandler<WidgetView, String> CopyTextRequested;
     }

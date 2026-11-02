@@ -12,6 +12,9 @@
 #if __has_include("WidgetRequest.g.cpp")
 #include "WidgetRequest.g.cpp"
 #endif
+#if __has_include("WidgetWalletCall.g.cpp")
+#include "WidgetWalletCall.g.cpp"
+#endif
 
 #include <cmath>
 
@@ -58,6 +61,7 @@ namespace winrt::Telegram::Native::Widgets::implementation
         context.canQuery = m_canQuery;
         context.backgroundQuery = m_backgroundQuery;
         context.chatType = to_string(m_chatType);
+        context.wallet = m_wallet;
 
         if (m_viewerId > 0)
         {
@@ -73,7 +77,15 @@ namespace winrt::Telegram::Native::Widgets::implementation
         return context;
     }
 
-    void WidgetRequest::Complete(hstring const& result)
+    WidgetWalletCall::WidgetWalletCall(twidget::WalletCall const& call, WidgetResponder::Respond respond)
+        : m_method(call.method == twidget::WalletCall::Method::SignData ? Telegram::Native::Widgets::WidgetWalletMethod::SignData : Telegram::Native::Widgets::WidgetWalletMethod::SendTransaction)
+        , m_json(to_hstring(call.method == twidget::WalletCall::Method::SignData ? call.payload.toJson().dump() : call.transaction.toJson().dump()))
+        , m_data(to_hstring(call.data))
+        , m_responder(std::move(respond))
+    {
+    }
+
+    void WidgetResponder::Complete(hstring const& result)
     {
         twidget::WidgetRequestOutcome outcome;
         if (!result.empty())
@@ -84,17 +96,20 @@ namespace winrt::Telegram::Native::Widgets::implementation
         Settle(outcome);
     }
 
-    void WidgetRequest::Fail(Telegram::Native::Widgets::WidgetRequestFailure failure)
+    void WidgetResponder::Fail(Telegram::Native::Widgets::WidgetRequestFailure failure)
     {
+        // The glue turns Rejected and BadRequest into FAILED for a plain request.
         switch (failure)
         {
         case Telegram::Native::Widgets::WidgetRequestFailure::Timeout: Settle({ twidget::WidgetRequestFailure::Timeout, {} }); break;
         case Telegram::Native::Widgets::WidgetRequestFailure::RateLimited: Settle({ twidget::WidgetRequestFailure::RateLimited, {} }); break;
+        case Telegram::Native::Widgets::WidgetRequestFailure::Rejected: Settle({ twidget::WidgetRequestFailure::Rejected, {} }); break;
+        case Telegram::Native::Widgets::WidgetRequestFailure::BadRequest: Settle({ twidget::WidgetRequestFailure::BadRequest, {} }); break;
         default: Settle({ twidget::WidgetRequestFailure::Failed, {} }); break;
         }
     }
 
-    void WidgetRequest::Settle(const twidget::WidgetRequestOutcome& outcome)
+    void WidgetResponder::Settle(const twidget::WidgetRequestOutcome& outcome)
     {
         Respond respond;
         {

@@ -109,27 +109,32 @@ namespace Telegram.Common.Widgets
         // bot changes the state with its own edits (widget-sandbox docs/integration.md, "The widget's state and requests").
         private void OnRequestReceived(WidgetView sender, WidgetRequest args)
         {
-            _clientService.Send(new GetWidgetQueryAnswer(Key.ChatId, Key.MessageId, Encoding.UTF8.GetBytes(args.Data)), response =>
+            // With the wallet, the server attaches the user's wallet card to the bot's update, and creates the wallet if there is none.
+            _clientService.Send(new GetWidgetQueryAnswer(Key.ChatId, Key.MessageId, new WidgetQueryTypeData(args.Wallet), Encoding.UTF8.GetBytes(args.Data)), response =>
             {
                 if (response is WidgetQueryAnswer answer)
                 {
                     args.Complete(answer.Data ?? string.Empty);
                 }
-                else if (response is Error error)
-                {
-                    // 502: the bot did not answer before the query timed out.
-                    args.Fail(error.Code switch
-                    {
-                        502 => WidgetRequestFailure.Timeout,
-                        429 => WidgetRequestFailure.RateLimited,
-                        _ => WidgetRequestFailure.Failed
-                    });
-                }
                 else
                 {
-                    args.Fail(WidgetRequestFailure.Failed);
+                    args.Fail(Failure(response));
                 }
             });
+        }
+
+        // What a query that got no answer fails the widget's call with.
+        public static WidgetRequestFailure Failure(object response)
+        {
+            // 502: the bot did not answer before the query timed out.
+            return response is Error error
+                ? error.Code switch
+                {
+                    502 => WidgetRequestFailure.Timeout,
+                    429 => WidgetRequestFailure.RateLimited,
+                    _ => WidgetRequestFailure.Failed
+                }
+                : WidgetRequestFailure.Failed;
         }
     }
 }

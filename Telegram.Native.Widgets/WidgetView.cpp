@@ -193,7 +193,15 @@ namespace winrt::Telegram::Native::Widgets::implementation
         {
             host->onRequest = [this](const twidget::WidgetRequest& request, std::function<void(const twidget::WidgetRequestOutcome&)> respond)
             {
-                Raise(m_requestReceived, *this, make<WidgetRequest>(to_hstring(request.data), std::move(respond)));
+                Raise(m_requestReceived, *this, make<WidgetRequest>(to_hstring(request.data), request.wallet, std::move(respond)));
+            };
+        }
+
+        if (m_walletRequested)
+        {
+            host->onWallet = [this](const twidget::WalletCall& call, std::function<void(const twidget::WidgetRequestOutcome&)> respond)
+            {
+                Raise(m_walletRequested, *this, make<WidgetWalletCall>(call, std::move(respond)));
             };
         }
 
@@ -489,6 +497,16 @@ namespace winrt::Telegram::Native::Widgets::implementation
     void WidgetView::RequestReceived(event_token const& token) noexcept
     {
         m_requestReceived.remove(token);
+    }
+
+    event_token WidgetView::WalletRequested(TypedEventHandler<Telegram::Native::Widgets::WidgetView, Telegram::Native::Widgets::WidgetWalletCall> const& handler)
+    {
+        return m_walletRequested.add(handler);
+    }
+
+    void WidgetView::WalletRequested(event_token const& token) noexcept
+    {
+        m_walletRequested.remove(token);
     }
 
     event_token WidgetView::CopyTextRequested(TypedEventHandler<Telegram::Native::Widgets::WidgetView, hstring> const& handler)
