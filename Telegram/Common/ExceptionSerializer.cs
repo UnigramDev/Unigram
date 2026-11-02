@@ -76,11 +76,18 @@ namespace Telegram.Common
                 // so every CR has to come off before the report goes up - the same normalisation
                 // ProcessException already does to the message and the stack trace.
                 LogTail = logs?.Replace("\r\n", "\n"),
+#if WINUI3
+                Flags = ErrorReportFlags.WinUI,
+#endif
                 Time = MonotonicUnixTime.Now,
                 LaunchTime = WatchDog.LaunchTime
             };
 
             hashBuilder.Append(report.ApplicationVersion);
+#if WINUI3
+            // The two flavours share build numbers, so without it one group would hold both.
+            hashBuilder.Append("winui");
+#endif
             hashBuilder.Append(report.Type.ToLowerInvariant());
 
             var lineBreak = report.Message.IndexOf('\n');
@@ -1185,13 +1192,28 @@ namespace Telegram.Common
         public string UserId { get; set; }
 
         [JsonPropertyName("flags")]
-        public int Flags { get; set; }
+        public ErrorReportFlags Flags { get; set; }
 
         [JsonPropertyName("cl_time")]
         public long Time { get; set; }
 
         [JsonPropertyName("cl_launch_time")]
         public long LaunchTime { get; set; }
+    }
+
+    /// <summary>
+    /// A bit mask on the backend: it filters on these through flags_mask and flags_value, or on
+    /// an exact value through flags.
+    /// </summary>
+    [Flags]
+    public enum ErrorReportFlags
+    {
+        None = 0,
+
+        // Added on upload to the report of the crash that ended the previous session.
+        Fatal = 1 << 0,
+
+        WinUI = 1 << 1
     }
 
     public partial class ErrorExceptionAndBinaries

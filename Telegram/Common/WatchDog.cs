@@ -462,7 +462,7 @@ namespace Telegram
                 if (reportId == _lastSessionErrorReportId)
                 {
                     var model = JsonSerializer.Deserialize(report, ErrorJsonContext.Default.ErrorReport);
-                    model.Flags = 1 << 0;
+                    model.Flags |= ErrorReportFlags.Fatal;
                     report = JsonSerializer.Serialize(model, ErrorJsonContext.Default.ErrorReport);
                 }
 
