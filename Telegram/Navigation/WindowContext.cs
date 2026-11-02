@@ -847,9 +847,10 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// What the host has to do about it: take the shell's own caption away on UWP, drop the
-        /// resize border on Win32. Only called when a window asks for something other than the
-        /// default, so an ordinary window touches neither.
+        /// What the host has to do about it: take the shell's own caption away on UWP, the
+        /// framework's caption and the resize border on WinUI, the resize border on Win32. Only
+        /// called when a window asks for something other than the default, so an ordinary window
+        /// touches none of them.
         /// </summary>
         partial void SetHostCaptionButtons(CaptionButtons buttons);
 

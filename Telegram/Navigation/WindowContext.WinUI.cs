@@ -578,20 +578,25 @@ namespace Telegram.Navigation
 
         /// <summary>
         /// The framework keeps drawing them, exactly as the shell does on UWP - only their layout
-        /// is ours. <see cref="SetHostCaptionButtons"/> is what takes individual buttons away.
+        /// is ours. <see cref="SetHostCaptionButtons"/> is what takes them away for a subset.
         /// </summary>
         public static bool HasSystemCaptionButtons => true;
 
         public static bool HasSystemTabNavigation => false;
 
+        /// <summary>
+        /// A subset is drawn by WindowPresenter, as on UWP, so the framework's caption goes
+        /// entirely: it has no way to show Close alone, and kept beside the app's own it is a
+        /// second close button. Without Maximize the window is not resizable either, as on Win32.
+        /// </summary>
         partial void SetHostCaptionButtons(CaptionButtons buttons)
         {
-            // Close has no switch of its own: a window that cannot be closed is not a state this
-            // presenter has, and every caller that hides buttons keeps Close anyway.
             if (_window.AppWindow.Presenter is OverlappedPresenter presenter)
             {
                 presenter.IsMinimizable = buttons.HasFlag(CaptionButtons.Minimize);
                 presenter.IsMaximizable = buttons.HasFlag(CaptionButtons.Maximize);
+                presenter.IsResizable = buttons.HasFlag(CaptionButtons.Maximize);
+                presenter.SetBorderAndTitleBar(true, buttons == CaptionButtons.All);
             }
         }
 
