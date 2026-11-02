@@ -34,9 +34,9 @@ namespace Telegram.Navigation
 {
     /// <summary>
     /// The UWP half of <see cref="WindowContext"/>: everything that names a <c>Window</c>,
-    /// a <c>CoreWindow</c> or an <c>ApplicationView</c>. A Win32 host supplies the same
-    /// members from an HWND and a <c>DesktopWindowXamlSource</c> instead, so the two never
-    /// meet in one build and nothing here needs an interface or a preprocessor branch.
+    /// a <c>CoreWindow</c> or an <c>ApplicationView</c>. WindowContext.WinUI.cs supplies the
+    /// same members from a WinUI 3 <c>Window</c> instead, so the two never meet in one build and
+    /// nothing here needs an interface or a preprocessor branch.
     /// </summary>
     public partial class WindowContext
     {
@@ -871,9 +871,8 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// The one member of this class with no Win32 counterpart. A thread-static "the window on
-        /// this thread" answers something only while a thread hosts exactly one window, which is a
-        /// UWP guarantee and not an islands one - see item 0.10 of the notes.
+        /// A thread-static "the window on this thread" answers something only while a thread hosts
+        /// exactly one window, which is a UWP guarantee.
         /// </summary>
         [ThreadStatic]
         private static WindowContext _current;

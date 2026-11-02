@@ -51,8 +51,8 @@ namespace Telegram.Services
 
     /// <summary>
     /// The host-agnostic half: what a view service is, and the one piece of state both hosts keep.
-    /// Opening a window is entirely per host - UWP asks CoreApplication for a view, Win32 makes an
-    /// HWND with an island in it - so those live in ViewService.Uwp.cs and ViewService.Win32.cs.
+    /// Opening a window is entirely per host - UWP asks CoreApplication for a view, WinUI makes a
+    /// Window - so those live in ViewService.Uwp.cs and ViewService.WinUI.cs.
     /// </summary>
     public sealed partial class ViewService : IViewService
     {

@@ -29,8 +29,8 @@ namespace Telegram.Controls.Messages
         // because opening a chat realizes panels that never had a message with reactions: a pool per
         // panel left those building every button from its template.
         //
-        // Keyed on the window and not on the thread: a XAML island host puts more than one window on
-        // a thread, and an element cannot move between them.
+        // Keyed on the window and not on the thread: on WinUI every window shares one thread, and an
+        // element cannot move between them.
         private static readonly ConditionalWeakTable<XamlRoot, List<ReactionButton>> _spare = new();
         private static readonly ConditionalWeakTable<XamlRoot, List<ReactionButton>>.CreateValueCallback _createSpare = _ => new List<ReactionButton>();
 

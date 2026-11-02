@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The parts of Package.appxmanifest that the Win32 flavour cannot keep, removed rather than
+  The parts of Package.appxmanifest that the WinUI flavour cannot keep, removed rather than
   patched: XmlPoke can only set values, so the csproj does the renames and this does the deletions.
   One manifest stays the source of truth either way - a second copy would drift, which is the
   reason Telegram.Modern.csproj patches rather than duplicates.

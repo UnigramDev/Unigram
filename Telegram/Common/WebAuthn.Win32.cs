@@ -6,7 +6,7 @@
 //
 
 // Shared with Telegram.Stub, which links this file. UWP cannot call webauthn.dll from inside the
-// container, so the stub makes the call for it; the Win32 flavour has no stub and calls it here.
+// container, so the stub makes the call for it; the WinUI flavour has no stub and calls it here.
 // One implementation either way - see Passkeys.cs for the seam the app actually talks to.
 //
 // Nullable is off because the two projects disagree about it.

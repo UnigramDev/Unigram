@@ -19,8 +19,7 @@ namespace Telegram.Services
     /// <summary>
     /// The UWP half: a secondary window is a CoreApplication view, on its own thread, switched
     /// to through ApplicationViewSwitcher and kept alive by ViewLifetimeControl. None of that
-    /// exists on the Win32 host, which just makes another island - see gate 1.8a, which is what
-    /// established that many islands can share one thread.
+    /// exists on WinUI, which just makes another window on the same thread.
     /// </summary>
     public sealed partial class ViewService
     {

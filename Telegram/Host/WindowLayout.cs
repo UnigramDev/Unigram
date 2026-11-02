@@ -14,8 +14,8 @@ namespace Telegram.Host
 {
     /// <summary>
     /// Where a window was, per <c>PersistedId</c>. UWP gets this from the shell for nothing -
-    /// <c>ApplicationView.PersistedStateId</c> - so this exists only to bring the Win32 flavour
-    /// back to parity.
+    /// <c>ApplicationView.PersistedStateId</c> - so this exists only to bring the WinUI flavour
+    /// back to parity: the framework keeps no window placement of its own.
     ///
     /// Position and size only, deliberately: a window that was closed maximized opens restored.
     /// That is why the placement is read rather than the window rect - <c>rcNormalPosition</c> is
@@ -68,9 +68,9 @@ namespace Telegram.Host
                 Clamp(ref rect, info.rcWork);
             }
 
-            // SW_HIDE, not SW_SHOWNORMAL: this runs before the island is attached, and asking for
-            // a normal show here would put an empty window on screen a moment early. The restored
-            // bounds are recorded either way, and the caller's ShowWindow uses them.
+            // SW_HIDE, not SW_SHOWNORMAL: this runs before the window is first shown, and asking
+            // for a normal show here would put it on screen before its caller does. The restored
+            // bounds are recorded either way, and the caller's show uses them.
             var placement = new WINDOWPLACEMENT
             {
                 length = Marshal.SizeOf<WINDOWPLACEMENT>(),

@@ -61,8 +61,8 @@ namespace Telegram.Navigation
         // This is just a wrapper around current window's compositor.
         // This is done to simplify the porting to WinUI 3 (as there's no concept of current window)
         // Per thread rather than per window - the compositor XAML composes this thread's content
-        // with - so it needs neither WindowContext.Current nor a fork. Window.Current is a stub
-        // inside an island rather than a real window, and this is one of the things it answers.
+        // with - so it needs neither WindowContext.Current nor a fork. WinUI 3 has no
+        // Window.Current to ask.
         [ThreadStatic]
         private static Compositor _compositor;
 
@@ -170,9 +170,8 @@ namespace Telegram.Navigation
 
         /// <summary>
         /// The app theme, which on UWP is Application.RequestedTheme and has to be assigned before
-        /// InitializeComponent - it cannot be changed afterwards. An island host never runs the
-        /// app model startup that makes it settable at all, so it takes the theme per island
-        /// instead, through the content root WindowContext already sets.
+        /// InitializeComponent - it cannot be changed afterwards. WinUI allows it until the first
+        /// window has content.
         /// </summary>
         protected partial void SetApplicationTheme(ApplicationTheme theme);
 
@@ -187,7 +186,7 @@ namespace Telegram.Navigation
         /// <summary>
         /// Which window this activation belongs to - not "is the app up?". UWP answers with the
         /// view the system activated into, which for a share target is one it made for the
-        /// purpose. A Win32 host has to decide, because nothing makes views for it.
+        /// purpose. WinUI has to decide, because nothing makes windows for it.
         ///
         /// Resolved once, at the top of the waterfall, and passed down from there: nothing below
         /// reaches for WindowContext.Current, which is thread-static and answers for whichever

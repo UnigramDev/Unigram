@@ -454,7 +454,7 @@
                 <ControlTemplate TargetType="host:WindowPresenter">
                     <Grid>
                         <!-- TabFocusNavigation is set from OnApplyTemplate, not here: Cycle is
-                             the Win32 host's alone, and on UWP it made the whole window content
+                             WinUI's alone, and on UWP it made the whole window content
                              one navigation region. -->
                         <ContentPresenter x:Name="ContentHost"
                                           Content="{TemplateBinding Content}"

@@ -121,8 +121,8 @@ namespace Telegram.Common
                 SetWindowSubclass(handle, (IntPtr)(delegate* unmanaged[Stdcall]<IntPtr, uint, IntPtr, IntPtr, UIntPtr, UIntPtr, IntPtr>)&OnMainWindowMessage, UIntPtr.Zero, UIntPtr.Zero);
             }
 
-            // The island host shows its window before the context exists, so the taskbar may
-            // have made the button, and announced it, already.
+            // A window already on screen has had its button made and announced, and
+            // TaskbarButtonCreated does not come again.
             if (Win32.IsWindowVisible(handle))
             {
                 UpdateThumbBar(handle);

@@ -108,7 +108,7 @@ namespace Telegram.Services
         /// <see cref="WindowContext.Content"/> - the same path the main window takes, and the one
         /// that builds the WindowPresenter, merges the chat theme and publishes the XamlRoot.
         ///
-        /// CompactOverlay is honoured here, where the island host has to ignore it: it is an
+        /// CompactOverlay is honoured here: it is an
         /// AppWindow presenter rather than a UWP app model feature, so the gallery's
         /// picture-in-picture window is one call instead of a topmost window the app positions.
         /// </summary>

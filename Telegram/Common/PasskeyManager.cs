@@ -16,7 +16,7 @@ namespace Telegram.Common
     ///
     /// The work itself is <see cref="WebAuthn"/> in both cases. What differs is who runs it: UWP
     /// cannot call webauthn.dll from inside the container, so the request goes over the app service
-    /// to Telegram.Stub and the answer comes back; the Win32 flavour has no stub and calls it here.
+    /// to Telegram.Stub and the answer comes back; the WinUI flavour has no stub and calls it here.
     ///
     /// Either way the shape is the same - ask TDLib for the parameters, hand them to WebAuthn, give
     /// TDLib what comes back - which is why the seam is here and not at the call sites.

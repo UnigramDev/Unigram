@@ -50,7 +50,7 @@ namespace Telegram.Navigation
     /// <summary>
     /// Raised by <see cref="WindowContext.Activated"/>. Deliberately not the UWP
     /// <c>Windows.UI.Core.WindowActivatedEventArgs</c>: that one carries a
-    /// <c>CoreWindowActivationState</c>, and an island host has no CoreWindow. Every consumer
+    /// <c>CoreWindowActivationState</c>, and WinUI has no CoreWindow. Every consumer
     /// only ever asked whether the state was Deactivated, so the args carry the answer.
     /// </summary>
     public class WindowActivatedEventArgs : EventArgs
@@ -97,7 +97,7 @@ namespace Telegram.Navigation
     /// <summary>
     /// Raised by <see cref="WindowContext.CloseRequested"/>. Wraps the UWP args rather than
     /// exposing them, so a handler only ever sees Handled and a deferral - the two things every
-    /// caller actually used, and the two an island host can supply by other means.
+    /// caller actually used, and the two WinUI can supply by other means.
     /// </summary>
     public class WindowCloseRequestedEventArgs : EventArgs
     {
@@ -595,12 +595,6 @@ namespace Telegram.Navigation
         private static readonly CoreCursor[] _cursors = new CoreCursor[(int)PointerCursorType.Hidden];
 
         /// <summary>
-        /// Shared, and it took a fork and back to establish that it could be. A Win32 host cannot
-        /// do this with SetCursor: the island is the window under the pointer and answers
-        /// WM_SETCURSOR itself, so a cursor set on the top-level window never survives a mouse
-        /// move. What it can do is exactly what UWP does - a thread hosting islands still gets a
-        /// CoreWindow, and that stub is what XAML's input site reads.
-        ///
         /// GetForCurrentThread rather than Window.Current.CoreWindow, which is the same object on
         /// UWP and one fewer Window.Current.
         /// </summary>
@@ -825,7 +819,7 @@ namespace Telegram.Navigation
         /// <summary>
         /// Characters typed into this window that nothing in the tree consumed. Raised from the
         /// window's root element, so it replaces <c>CoreWindow.CharacterReceived</c> without
-        /// needing a CoreWindow - which a XAML island does not have.
+        /// needing a CoreWindow - which WinUI does not have.
         /// </summary>
         public event TypedEventHandler<WindowContext, CharacterReceivedRoutedEventArgs> CharacterReceived;
 
@@ -917,9 +911,8 @@ namespace Telegram.Navigation
         partial void SetScreenCaptureEnabled(bool enabled);
 
         /// <summary>
-        /// The window's own backdrop. WinUI 2's BackdropMaterial on UWP; the Win32 host asks DWM
-        /// for it against the HWND instead - see gate 1.10 - so the two are alternatives rather
-        /// than layers.
+        /// The window's own backdrop. WinUI 2's BackdropMaterial on UWP; the window's
+        /// SystemBackdrop on WinUI.
         /// </summary>
         partial void SetBackdropMaterial(WindowPresenter content);
 
@@ -1179,8 +1172,8 @@ namespace Telegram.Navigation
         private EventHandler<WindowCloseRequestedEventArgs> _closeRequested;
 
         /// <summary>
-        /// Where a close request arrives, whoever asked: the system on UWP, an island's
-        /// WM_CLOSE, the app's own caption button.
+        /// Where a close request arrives, whoever asked: the system, the app's own caption
+        /// button.
         ///
         /// The system half is attached only while someone is listening. Registering with
         /// SystemNavigationManagerPreview is what makes the shell ask this view before closing it,
@@ -1208,9 +1201,7 @@ namespace Telegram.Navigation
             }
         }
 
-        // Implemented by whichever host has a system-level request to forward. The island host
-        // raises CloseRequested itself, so it leaves these unimplemented and the compiler drops
-        // the calls.
+        // Implemented by whichever host has a system-level request to forward.
         partial void AttachCloseRequested();
 
         partial void DetachCloseRequested();
@@ -1221,7 +1212,7 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// The app asking to close this window - the caption button, an island's WM_CLOSE - routed
+        /// The app asking to close this window - the caption button - routed
         /// into the same event the system's own request raises, so a handler has one place to
         /// intercept a close whatever asked for it. Returns false when a handler refused.
         ///
@@ -1686,7 +1677,7 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// The window handle behind a XamlRoot - a CoreWindow's on UWP, the island's HWND on Win32.
+        /// The window handle behind a XamlRoot - a CoreWindow's on UWP, the window's HWND on WinUI.
         /// <c>IntPtr.Zero</c> if the root belongs to no window this app knows about.
         /// </summary>
         public static IntPtr GetWindowHandle(XamlRoot xamlRoot)

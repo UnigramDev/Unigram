@@ -19,8 +19,8 @@ using AppLifecycle = Microsoft.Windows.AppLifecycle;
 namespace Telegram.Navigation
 {
     /// <summary>
-    /// The WinUI 3 half of <see cref="BootStrapper"/>. Between its two twins: the framework does
-    /// start the app here, unlike on the island host, but it announces only a launch - every other
+    /// The WinUI 3 half of <see cref="BootStrapper"/>. The framework starts the app here, as on
+    /// UWP, but it announces only a launch - every other
     /// activation kind reaches a WinUI 3 app through <c>AppInstance</c> rather than through an
     /// override, and there is no <c>OnWindowCreated</c>, so the windows are still ours to make.
     /// </summary>
@@ -33,8 +33,7 @@ namespace Telegram.Navigation
         /// <summary>
         /// Before <c>App</c>'s constructor, which is what the XAML compiler's generated entry point
         /// calls first and where the app already touches TDLib and its own settings. A module
-        /// initializer is the only hook earlier than that when the entry point is generated - the
-        /// island host does both of these at the top of its own Main.
+        /// initializer is the only hook earlier than that when the entry point is generated.
         /// </summary>
         [ModuleInitializer]
         internal static void InitializeProcess()
@@ -46,17 +45,15 @@ namespace Telegram.Navigation
             // "res", so its fonts are looked up as res\fonts\... under system32.
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
-            // Explicit rather than through an application manifest, so that it is set the same way
-            // and at the same point as on the island host. A no-op if the framework's own startup
-            // got there first - the call fails and the process keeps the awareness it has.
+            // Explicit rather than through an application manifest. A no-op if the framework's own
+            // startup got there first - the call fails and the process keeps the awareness it has.
             Win32.SetProcessDpiAwarenessContext(Win32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
         }
 
         /// <summary>
         /// The one activation override this framework has. Its argument carries a command line and
-        /// nothing else, so the real arguments are read from AppInstance - the same call the island
-        /// host makes, returning the same <c>IActivatedEventArgs</c> everything downstream already
-        /// knows how to read.
+        /// nothing else, so the real arguments are read from AppInstance, which returns the same
+        /// <c>IActivatedEventArgs</c> everything downstream already knows how to read.
         /// </summary>
         protected sealed override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
         {
@@ -184,7 +181,7 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// Settable here, as on UWP and unlike on the island host - but only until the first window
+        /// Settable here, as on UWP - but only until the first window
         /// has content, which is why the caller assigns it before InitializeFrame rather than
         /// whenever the theme changes.
         /// </summary>

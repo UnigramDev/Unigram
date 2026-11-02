@@ -43,17 +43,16 @@
     <Platforms>x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
 
-    <!-- Defaulted from the platform rather than left to the caller, for the reason
-         Telegram.Win32.csproj gives: a RID-less build resolves no package assets at all - the
-         projections vanish and the compiler reports thousands of errors that look like a broken
-         projection rather than a missing property. Telegram.Modern.csproj gets its RID from the
+    <!-- Defaulted from the platform rather than left to the caller: a RID-less build resolves
+         no package assets at all - the projections vanish and the compiler reports thousands of
+         errors that look like a broken projection rather than a missing property. Telegram.Modern.csproj gets its RID from the
          packaging project that references it; this one has no packaging project. -->
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$(Platform.ToLowerInvariant())</RuntimeIdentifier>
     <SelfContained Condition="'$(SelfContained)' == ''">true</SelfContained>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>preview</LangVersion>
 
-    <!-- Release only, as in the other two SDK-style flavours. WinAppSDK claims NativeAOT support
+    <!-- Release only, as in Telegram.Modern.csproj. WinAppSDK claims NativeAOT support
          from 1.6, but nothing here has exercised it - this flavour has never linked - so treat the
          Release path as unproven rather than as a supported configuration. -->
     <PublishAot Condition="'$(Configuration)' != 'Debug'">true</PublishAot>
@@ -85,8 +84,8 @@
     <Copyright>Copyright ©  2015</Copyright>
 
     <!-- WINUI3 is the constant the shared sources switch on for the UI framework, and UNPACKAGED
-         the one for running without a package identity, which the Win32 flavour shares.
-         NETFX_CORE and WINDOWS_UWP are deliberately absent where the other three define
+         the one for running without a package identity.
+         NETFX_CORE and WINDOWS_UWP are deliberately absent where the other two define
          them: nothing in the tree reads either today, and both name an app model this flavour is
          not - so a file that grows an `#if WINDOWS_UWP` later gets the answer it expects. -->
     <DefineConstants>$(DefineConstants);WINUI3;UNPACKAGED;CODE_ANALYSIS</DefineConstants>
@@ -103,14 +102,11 @@
   </PropertyGroup>
 
   <!--
-    The file fork. Three flavours share these sources, so each host-specific member lives in a
-    *.Uwp.cs / *.Win32.cs / *.WinUI.cs partial beside its shared half and only one is ever
-    compiled - which is what makes the contract a compile error rather than an interface.
-
-    What this flavour takes from the Win32 half is everything that is about being a desktop
-    process rather than about hosting XAML: the notification area icon, the passkey and WebAuthn
-    interop, the tray. What it does not take is the island host itself - WinUI 3 is a desktop
-    process that hosts its own XAML, so Window, AppWindow and the backdrops replace all of it.
+    The file fork. Each host-specific member lives in a *.Uwp.cs / *.WinUI.cs partial beside its
+    shared half and only one is ever compiled - which is what makes the contract a compile error
+    rather than an interface. The *.Win32.cs files are this flavour's too: they are about being a
+    desktop process rather than about the UI framework - the notification area icon, the passkey
+    and WebAuthn interop, the tray.
   -->
   <ItemGroup>
     <Compile Remove="Common\HttpServer.cs" />
@@ -123,29 +119,8 @@
     <!-- The UWP app model: CoreApplication views, ApplicationView, CoreWindow. -->
     <Compile Remove="**\*.Uwp.cs" />
 
-    <!-- The XAML islands host. Interop.cs is the exception and is put back below: it is nothing
-         but P/Invoke declarations, and NotifyIcon.Win32.cs - which this flavour does compile -
-         builds its message window out of them. WindowLayout.cs works on any HWND, and the
-         framework keeps no window placement of its own. -->
-    <Compile Remove="Host\**" />
-    <Compile Include="Host\Interop.cs" />
-    <Compile Include="Host\WindowLayout.cs" />
-    <!-- The Win32 flavour's entry point. This one has its own, Program.WinUI.cs. -->
+    <!-- The UWP entry point. This one has its own, Program.WinUI.cs. -->
     <Compile Remove="Program.cs" />
-
-    <!-- The four host halves that are about hosting XAML rather than about Win32, each with a
-         *.WinUI.cs twin beside it. -->
-    <Compile Remove="Navigation\WindowContext.Win32.cs" />
-    <Compile Remove="Navigation\BootStrapper.Win32.cs" />
-    <Compile Remove="Navigation\InputListener.Win32.cs" />
-    <Compile Remove="Services\ViewService\ViewService.Win32.cs" />
-    <!-- No twin, and none needed: it puts Handled back on a key the framework marked handled,
-         because a ContentDialog inside an island stops delivering characters to the focused text
-         box. A WinUI 3 window is not an island and the framework's own flag holds, so the partial
-         is simply not implemented here - which is legal, and elides the call. -->
-    <Compile Remove="Controls\ContentPopup.Win32.cs" />
-    <!-- Turns connected animations off because an island cannot run them. A WinUI 3 window can. -->
-    <Compile Remove="Common\ConnectedAnimationServiceEx.Win32.cs" />
   </ItemGroup>
 
   <!--

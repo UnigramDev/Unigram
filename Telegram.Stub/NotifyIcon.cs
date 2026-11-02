@@ -36,7 +36,7 @@ namespace Telegram.Common
 {
     // The half of the notification icon that only the stub has: it owns the process, so it owns the
     // message loop, the synchronization context that marshals onto it, and the app service bridge
-    // that tells the icon what to show. The Win32 flavour has all three already.
+    // that tells the icon what to show. The WinUI flavour has all three already.
     public partial class NotifyIcon
     {
         private BridgeApplicationContext _context;

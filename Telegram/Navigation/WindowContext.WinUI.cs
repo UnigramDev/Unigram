@@ -38,11 +38,9 @@ namespace Telegram.Navigation
     /// site has to know which is compiled. What is here is what the framework answers outright;
     /// nothing is invented past that.
     ///
-    /// It is much the shorter of the two desktop halves, and that is the point of the flavour: full
-    /// screen, the backdrop, the drag region and the caption buttons are framework properties here,
-    /// where the island host has to build each of them out of an HWND. What still goes through Win32
-    /// is only what has no XAML surface at all - the cursor, the client rect, screen capture
-    /// affinity - and it goes through the same declarations the island host uses.
+    /// Full screen, the backdrop, the drag region and the caption buttons are framework properties
+    /// here. What still goes through Win32 is only what has no XAML surface at all - the cursor,
+    /// the client rect, screen capture affinity - through the declarations in Host\Interop.cs.
     /// </summary>
     public partial class WindowContext
     {
@@ -596,9 +594,8 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// The framework's own drag region, which is what this host has instead of the island's
-        /// hand-computed one: the element is tracked by XAML, so it needs neither a size handler
-        /// nor a transform of its own.
+        /// The framework's own drag region: the element is tracked by XAML, so it needs neither a
+        /// size handler nor a transform of its own.
         ///
         /// It must not throw: pages call this while they are being constructed, and an exception
         /// there is swallowed by the navigation and shows up only as a Frame with nothing in it.
@@ -683,8 +680,7 @@ namespace Telegram.Navigation
         }
 
         // The buttons never see the pointer once their regions are reported - the framework takes
-        // it before XAML does - so their states are pushed in from here, as the Win32 host does
-        // from its drag bar.
+        // it before XAML does - so their states are pushed in from here.
         private void OnNonClientPointerMoved(InputNonClientPointerSource sender, NonClientPointerEventArgs args)
         {
             var button = ToCaptionButton(args.RegionKind);
@@ -880,9 +876,8 @@ namespace Telegram.Navigation
         #endregion
 
         /// <summary>
-        /// One property, where the island host has to ask DWM against the HWND and keep the
-        /// fallback rules itself: the framework picks the backdrop it can actually draw and falls
-        /// back on its own when the machine cannot.
+        /// One property: the framework picks the backdrop it can actually draw and falls back on its
+        /// own when the machine cannot.
         /// </summary>
         partial void SetBackdropMaterial(WindowPresenter content)
         {
@@ -910,8 +905,8 @@ namespace Telegram.Navigation
                 host.PopupClosed();
             }
 
-            // The root is where this host's pointer input has to be picked up, exactly as on the
-            // island host: this is the only moment the root is known.
+            // The root is where this host's pointer input has to be picked up: this is the only
+            // moment the root is known.
             _inputListener.Attach(content);
         }
 

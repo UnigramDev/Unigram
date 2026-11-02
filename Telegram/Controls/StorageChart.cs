@@ -911,10 +911,6 @@ namespace Telegram.Controls
         // its depth: MicaController::sc_lightThemeColor and sc_darkThemeColor. High contrast wins
         // over the theme - the system's background colour is the only one that respects the user's
         // scheme.
-        //
-        // Telegram.Host.WindowBackdrop says the same thing for the window itself, and is the place
-        // to check if these ever move. It cannot be shared from here: Host is compiled only by the
-        // Win32 flavour, and this control ships in all of them.
         private Color Behind()
         {
             if (new AccessibilitySettings().HighContrast)

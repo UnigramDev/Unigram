@@ -182,7 +182,7 @@ namespace Telegram.Controls
 
         /// <summary>
         /// Wired once, here, rather than in each root: what raises these is the part that differs
-        /// between a CoreWindow and an island host, and no root should have to know.
+        /// between a CoreWindow and a WinUI window, and no root should have to know.
         ///
         /// OnLoaded rather than the constructor or the raw Loaded event: roots used to subscribe
         /// from their constructors and never unsubscribe, keeping themselves reachable from the
@@ -260,7 +260,7 @@ namespace Telegram.Controls
         // Neither carries a payload worth forwarding: the one caller of Consolidated ignored its
         // args, and the one caller of VisibleBoundsChanged wanted IsFullScreenMode, which the
         // WindowContext already exposes. So ApplicationViewConsolidatedEventArgs - another type
-        // an island host could not construct - stops here.
+        // WinUI could not construct - stops here.
         private void OnClosedCore(object sender, EventArgs args)
         {
             _closed = true;

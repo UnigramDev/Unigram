@@ -6,7 +6,7 @@
 //
 
 // Shared verbatim with Telegram.Stub, which links this file: the stub draws the notification icon
-// for the UWP flavour, and the Win32 flavour draws the same one in process. Two copies of a tray
+// for the UWP flavour, and the WinUI flavour draws the same one in process. Two copies of a tray
 // icon would drift, and the behaviour has to be identical either way.
 //
 // Nullable is off because the two projects disagree about it.

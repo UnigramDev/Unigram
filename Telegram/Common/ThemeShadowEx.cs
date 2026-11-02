@@ -198,7 +198,7 @@ namespace Telegram.Common
         #region Brush cache
 
         // Keyed on the window because a composition object belongs to one view's compositor, and
-        // not on the thread: a XAML island host puts more than one window on a thread.
+        // not on the thread: on WinUI every window shares one thread.
         private static readonly ConditionalWeakTable<XamlRoot, Dictionary<RecipeKey, CompositionBrush>> _brushes = new();
         private static readonly ConditionalWeakTable<XamlRoot, Dictionary<RecipeKey, CompositionBrush>>.CreateValueCallback _create = _ => new Dictionary<RecipeKey, CompositionBrush>();
 

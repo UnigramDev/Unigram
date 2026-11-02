@@ -85,8 +85,7 @@ namespace Telegram
         /// <summary>
         /// A XAML font family in the form Win2D can load. Win2D opens an <c>ms-appx:</c> font with
         /// GetFileFromApplicationUriAsync, which fails E_INVALIDARG without package identity. The
-        /// Windows App SDK build takes a <c>file:</c> URI to the same file instead; Win2D.uwp, which
-        /// the Win32 flavour runs, takes neither.
+        /// Windows App SDK build takes a <c>file:</c> URI to the same file instead.
         /// </summary>
         public static string GetCanvasFontFamily(string source)
         {
