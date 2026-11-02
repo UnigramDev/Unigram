@@ -10,9 +10,15 @@
 #include <CoreWindow.h>
 #include <winrt/Windows.UI.Core.h>
 
+#ifdef WINUI3
+// The desktop toolset has the partition already, and clearing it here would hide desktop APIs
+// from every header included after this one.
+#include <shellscalingapi.h>
+#else
 #define WINAPI_PARTITION_DESKTOP TRUE
 #include <shellscalingapi.h>
 #define WINAPI_PARTITION_DESKTOP FALSE
+#endif
 
 #include <wrl.h>
 

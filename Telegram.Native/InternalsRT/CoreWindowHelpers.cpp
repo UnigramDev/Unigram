@@ -44,6 +44,30 @@ public:
 	__declspec(property(put = put_MessageHandled)) boolean MessageHandled;
 };
 
+#ifdef WINUI3
+namespace
+{
+	// The bridge that hosts a window's XAML asks GetDpiForWindow for its scale again only when told
+	// the DPI changed. The top-level WM_DPICHANGED is not sent: it carries a rectangle the window
+	// would be resized to. Sent, not posted: PostMessage refuses this message with
+	// ERROR_MESSAGE_SYNC_ONLY.
+	BOOL CALLBACK NotifySiteBridge(HWND hwnd, LPARAM)
+	{
+		WCHAR name[64];
+		if (GetClassNameW(hwnd, name, ARRAYSIZE(name)) && wcscmp(name, L"Microsoft.UI.Content.DesktopChildSiteBridge") == 0)
+			SendMessageW(hwnd, WM_DPICHANGED_BEFOREPARENT, 0, 0);
+
+		return TRUE;
+	}
+
+	BOOL CALLBACK NotifyWindow(HWND hwnd, LPARAM)
+	{
+		EnumChildWindows(hwnd, NotifySiteBridge, 0);
+		return TRUE;
+	}
+}
+#endif
+
 uint64_t CoreWindowHelpers::GetHwnd(CoreWindow window)
 {
 	return (uint64_t)window.as<ICoreWindowInteropLocal>()->WindowHandle;
@@ -105,6 +129,9 @@ void CoreWindowHelpers::OverrideDpiForCurrentThread(float dpi)
 		GetWindowThreadProcessId = (GetWindowThreadProcessId_t)GetProcAddress(user32, "GetWindowThreadProcessId");
 	}
 
+#ifdef WINUI3
+	EnumThreadWindows(GetCurrentThreadId(), NotifyWindow, 0);
+#else
 	PostMessage((HWND)GetHwndForCurrentThread(), CoreWindowHelpersClassics::WM_COREWINDOW_SCALECHANGED, NULL, NULL);
 
 	if (!CoreWindowHelpersClassics::XamlMessageWindow && !CoreWindowHelpersClassics::ThreadHasNoXamlMsgWindow)
@@ -132,14 +159,23 @@ void CoreWindowHelpers::OverrideDpiForCurrentThread(float dpi)
 
 	if (CoreWindowHelpersClassics::XamlMessageWindow)
 		PostMessage(CoreWindowHelpersClassics::XamlMessageWindow, CoreWindowHelpersClassics::WM_XAML_SCALECHANGED, NULL, NULL);
+#endif
 }
 
 float CoreWindowHelpers::GetDpiForCurrentThread()
 {
+#ifdef WINUI3
+	// Every window of a desktop process runs on this thread, so the active one stands for them.
+	if (const auto hwnd = GetActiveWindow())
+		return GetDpiForWindowOriginal ? GetDpiForWindowOriginal(hwnd) : ::GetDpiForWindow(hwnd);
+
+	return GetDpiForSystemOriginal ? GetDpiForSystemOriginal() : ::GetDpiForSystem();
+#else
 	if (GetDpiForWindowOriginal)
 		return GetDpiForWindowOriginal((HWND)GetHwndForCurrentThread());
 
 	return winrt::Windows::Graphics::Display::DisplayInformation::GetForCurrentView().RawPixelsPerViewPixel() * 100 * 96.0f / 100.0f;
+#endif
 }
 
 DEVICE_SCALE_FACTOR CoreWindowHelpers::GetScaleFactorForDeviceHook(DISPLAY_DEVICE_TYPE deviceType)

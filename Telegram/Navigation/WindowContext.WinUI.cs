@@ -17,6 +17,7 @@ using Microsoft.UI.Xaml.Media;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Host;
+using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
@@ -87,6 +88,13 @@ namespace Telegram.Navigation
             if (IsInMainView)
             {
                 TaskbarButton.OnMainWindowCreated(_handle);
+
+                // Once is enough: the override holds for the thread, and every window runs on this one.
+                var scaling = AppSettings.Appearance.Scaling;
+                if (scaling is >= 100 and <= 250 && !AppSettings.Appearance.UseDefaultScaling)
+                {
+                    NativeUtils.OverrideScaleForCurrentView(scaling);
+                }
             }
 
             // The app draws its own chrome in every flavour. On this host that is one property

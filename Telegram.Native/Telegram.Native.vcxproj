@@ -439,7 +439,7 @@
       <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="InternalsRT\CoreWindowHelpers.h" Condition="'$(AppContainerApplication)' == 'true'" />
+    <ClInclude Include="InternalsRT\CoreWindowHelpers.h" />
     <ClInclude Include="LanguageIdentification.h">
       <DependentUpon>LanguageIdentification.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1395,7 +1395,7 @@
     <ClCompile Include="Highlight\SyntaxLanguage.cpp" />
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
-    <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp" Condition="'$(AppContainerApplication)' == 'true'" />
+    <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp" />
     <ClCompile Include="LokiRng.cpp">
       <DependentUpon>LokiRng.idl</DependentUpon>
       <SubType>Code</SubType>

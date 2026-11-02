@@ -6,9 +6,7 @@
 
 #include "Helpers/COMHelper.h"
 #include "Helpers/LibraryHelper.h"
-#ifndef WINUI3
 #include "InternalsRT/CoreWindowHelpers.h"
-#endif
 
 #include "FatalError.h"
 
@@ -1339,23 +1337,15 @@ namespace winrt::Telegram::Native::implementation
         return result != E_NOTIMPL;
     }
 
-    // The scale override is a Detours patch of CoreWindow's DPI, and there is no CoreWindow in a
-    // desktop process to patch. The two entry points stay so that no call site has to change; on
-    // this host the app simply runs at the window's own scale.
+    // The override holds for the calling thread. That is one view on UWP and every window on WinUI.
     void NativeUtils::OverrideScaleForCurrentView(int32_t value)
     {
-#ifndef WINUI3
         InternalsRT::Core::Windowing::CoreWindowHelpers::OverrideDpiForCurrentThread(value * 96.0f / 100.0f);
-#endif
     }
 
     int32_t NativeUtils::GetScaleForCurrentView()
     {
-#ifdef WINUI3
-        return 100;
-#else
         return InternalsRT::Core::Windowing::CoreWindowHelpers::GetDpiForCurrentThread() / 96.0f * 100.0f;
-#endif
     }
 
     // The CoreWindow procedure passes a message on to DefWindowProc only if XAML's subclass, which
