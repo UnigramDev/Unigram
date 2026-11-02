@@ -26,9 +26,11 @@ namespace winrt::Telegram::Native::Media::implementation
             explicit ContextLock(HANDLE mutex) noexcept
                 : m_mutex(mutex)
             {
-                if (m_mutex != nullptr)
+                // WAIT_ABANDONED still hands the mutex over; only a failed wait leaves it unowned.
+                if (m_mutex != nullptr && WaitForSingleObjectEx(m_mutex, INFINITE, FALSE) == WAIT_FAILED)
                 {
-                    WaitForSingleObjectEx(m_mutex, INFINITE, FALSE);
+                    m_mutex = nullptr;
+                    m_failed = true;
                 }
             }
 
@@ -43,8 +45,14 @@ namespace winrt::Telegram::Native::Media::implementation
             ContextLock(const ContextLock&) = delete;
             ContextLock& operator=(const ContextLock&) = delete;
 
+            bool Failed() const noexcept
+            {
+                return m_failed;
+            }
+
         private:
             HANDLE m_mutex;
+            bool m_failed = false;
         };
 
         // A second loss within this long turns decoding on the GPU off for the player.
@@ -346,6 +354,11 @@ namespace winrt::Telegram::Native::Media::implementation
             // Not held across the Present below: the decoders take the same lock to submit their
             // work, and a Present can wait for a vblank.
             ContextLock lock(m_contextMutex);
+
+            if (lock.Failed())
+            {
+                return false;
+            }
 
             m_resized = false;
             UpdateSize();

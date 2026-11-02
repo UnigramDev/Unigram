@@ -20,9 +20,11 @@ namespace winrt::Telegram::Native::Media::implementation
             explicit ContextLock(HANDLE mutex) noexcept
                 : m_mutex(mutex)
             {
-                if (m_mutex != nullptr)
+                // WAIT_ABANDONED still hands the mutex over; only a failed wait leaves it unowned.
+                if (m_mutex != nullptr && WaitForSingleObjectEx(m_mutex, INFINITE, FALSE) == WAIT_FAILED)
                 {
-                    WaitForSingleObjectEx(m_mutex, INFINITE, FALSE);
+                    m_mutex = nullptr;
+                    m_failed = true;
                 }
             }
 
@@ -37,8 +39,14 @@ namespace winrt::Telegram::Native::Media::implementation
             ContextLock(const ContextLock&) = delete;
             ContextLock& operator=(const ContextLock&) = delete;
 
+            bool Failed() const noexcept
+            {
+                return m_failed;
+            }
+
         private:
             HANDLE m_mutex;
+            bool m_failed = false;
         };
     }
 
@@ -76,6 +84,11 @@ namespace winrt::Telegram::Native::Media::implementation
         try
         {
             ContextLock lock(m_contextMutex);
+
+            if (lock.Failed())
+            {
+                return;
+            }
 
             winrt::com_ptr<ID3D11Texture2D> backBuffer;
             winrt::check_hresult(m_swapChain->GetBuffer(0, IID_PPV_ARGS(backBuffer.put())));
