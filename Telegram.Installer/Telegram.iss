@@ -58,6 +58,9 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 #endif
 
+; Windows 10 1809, the Windows App SDK's floor and Telegram.WinUI.csproj's TargetPlatformMinVersion.
+MinVersion=10.0.17763
+
 CloseApplications=force
 RestartApplications=no
 
