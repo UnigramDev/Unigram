@@ -15,8 +15,10 @@ using Telegram.Controls.Chats;
 using Telegram.Native.Widgets;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Wallet;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.Views.Wallet.Popups;
 using Windows.ApplicationModel;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -469,6 +471,7 @@ namespace Telegram.Controls.Messages.Content
             session.View.Changed += OnWidgetChanged;
             session.View.ActionRequested += OnActionRequested;
             session.View.CopyTextRequested += OnCopyTextRequested;
+            session.View.WalletRequested += OnWalletRequested;
             ElementCompositionPreview.SetElementChildVisual(Host, session.View.Visual);
 
             Stopped.Visibility = Visibility.Collapsed;
@@ -505,6 +508,7 @@ namespace Telegram.Controls.Messages.Content
             view.Changed -= OnWidgetChanged;
             view.ActionRequested -= OnActionRequested;
             view.CopyTextRequested -= OnCopyTextRequested;
+            view.WalletRequested -= OnWalletRequested;
             ElementCompositionPreview.SetElementChildVisual(Host, null);
 
             // A widget that ran and was put away normally breaks a row of crashes.
@@ -735,6 +739,47 @@ namespace Telegram.Controls.Messages.Content
                     MessageHelper.CopyText(XamlRoot, args);
                 }
             });
+        }
+
+        // The widget's host thread. A call that is dropped instead of completed fails, so the widget is never left busy.
+        private void OnWalletRequested(WidgetView sender, WidgetWalletCall args)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                var message = _message;
+                if (_session?.View != sender || message?.Delegate == null || !message.ClientService.TryGetUser(BotUserId(message), out User bot) || bot.Type is not UserTypeBot)
+                {
+                    args.Fail(WidgetRequestFailure.Failed);
+                    return;
+                }
+
+                var wallet = message.ClientService.Session.Resolve<IWalletService>();
+                var navigation = message.Delegate.NavigationService;
+
+                try
+                {
+                    navigation.ShowPopup(new WalletRequestPopup(message.ClientService, wallet, navigation, _session.Key, bot, args));
+                }
+                catch (WalletCallRefusedException)
+                {
+                    args.Fail(WidgetRequestFailure.BadRequest);
+                }
+            });
+        }
+
+        // The bot that sent the widget, which the wallet window names and signs for: a forward keeps the bot it came via.
+        private static long BotUserId(MessageViewModel message)
+        {
+            if (message.ViaBotUserId != 0)
+            {
+                return message.ViaBotUserId;
+            }
+            else if (message.ForwardInfo?.Origin is MessageOriginUser origin)
+            {
+                return origin.SenderUserId;
+            }
+
+            return message.SenderId is MessageSenderUser user ? user.UserId : 0;
         }
 
         // Only a shared widget that watches its state, on screen, is polled.

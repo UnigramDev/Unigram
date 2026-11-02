@@ -6,9 +6,13 @@
 //
 
 using System;
+using System.Numerics;
+using System.Text;
 using Telegram.Common;
+using Telegram.Common.Widgets;
 using Telegram.Controls;
 using Telegram.Converters;
+using Telegram.Native.Widgets;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Wallet;
@@ -26,8 +30,9 @@ namespace Telegram.Views.Wallet.Popups
     /// what the request literally says, and under it the emulation - what the chain would actually
     /// do - because the dApp's description of its own request is a claim rather than a fact.
     ///
-    /// Only <c>sendTransaction</c> reaches here. <c>signData</c> and <c>signMessage</c> are
-    /// answered with an error without a sheet.
+    /// From a TON Connect session only <c>sendTransaction</c> reaches here; <c>signData</c> and
+    /// <c>signMessage</c> are answered with an error without a sheet. A widget's call
+    /// (TelegramWidget.wallet) brings either, and the bot that sent the widget is who asks.
     /// </remarks>
     public sealed partial class WalletRequestPopup : WalletPopup
     {
@@ -46,6 +51,24 @@ namespace Telegram.Views.Wallet.Popups
 
         // The manifest's, not the message's. See UpdateSession.
         private string _domain;
+
+        // The second tap of a double tap on the widget lands where the sheet opens: Confirm must not take it.
+        private const int TapGuard = 700;
+
+        // A widget's call, set instead of _message: answered exactly once, a dismissed sheet declining it.
+        private readonly WidgetWalletCall _call;
+        private readonly WidgetKey _key;
+        private readonly User _bot;
+        private readonly WalletSignRequest _sign;
+        private readonly int _openedAt;
+
+        private bool _signReady;
+        private bool _loading;
+        private bool _loaded;
+        private bool _answered;
+
+        // What the balance was when an unfunded request was priced: a top-up prices it again.
+        private BigInteger _previewBalance;
 
         public WalletRequestPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, long messageId, MessageTonConnectRequest message)
             : base(wallet, navigationService)
@@ -73,6 +96,40 @@ namespace Telegram.Views.Wallet.Popups
         }
 
         /// <summary>
+        /// A widget asking to pay or to sign. Throws <see cref="WalletCallRefusedException"/> for a
+        /// payload the wallet cannot sign.
+        /// </summary>
+        /// <remarks>
+        /// The header is the bot of the message, never anything the widget says about itself. No key
+        /// is needed to show the transaction, so a device that can sign skips Review.
+        /// </remarks>
+        public WalletRequestPopup(IClientService clientService, IWalletService wallet, INavigationService navigationService, WidgetKey key, User bot, WidgetWalletCall call)
+            : base(wallet, navigationService)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
+            _key = key;
+            _bot = bot;
+            _call = call;
+            _openedAt = Environment.TickCount;
+
+            if (call.Method == WidgetWalletMethod.SignData)
+            {
+                _sign = WalletSignRequest.FromJson(call.Json);
+                TitleLabel.Text = Strings.WalletSignData;
+            }
+
+            SecondaryButtonText = Strings.WalletCancel;
+
+            Photo.Source = ProfilePictureSource.User(clientService, bot);
+            ReviewLabel.Text = string.Format(_sign != null ? Strings.WalletAppRequestsSignature : Strings.WalletAppRequestsTransfer, bot.FullName());
+
+            UpdateDetails();
+        }
+
+        /// <summary>
         /// Everything that needs the wallet key, which is everything past the dApp's name.
         /// </summary>
         /// <remarks>
@@ -82,6 +139,12 @@ namespace Telegram.Views.Wallet.Popups
         /// </remarks>
         private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
+            if (_call != null)
+            {
+                OnWidgetPrimaryButtonClick(args);
+                return;
+            }
+
             if (_request != null)
             {
                 AnswerAsync(args, true);
@@ -135,7 +198,214 @@ namespace Telegram.Views.Wallet.Popups
         {
             base.OnLoaded();
 
-            UpdateSession();
+            if (_call == null)
+            {
+                UpdateSession();
+            }
+        }
+
+        private bool IsTapGuarded => Environment.TickCount - _openedAt < TapGuard;
+
+        private void OnWidgetPrimaryButtonClick(ModalPopupButtonClickEventArgs args)
+        {
+            args.Cancel = true;
+
+            if (IsTapGuarded || _loading)
+            {
+                return;
+            }
+
+            if (_request == null && !_signReady)
+            {
+                LoadWidgetAsync(true);
+            }
+            else if (_request is { IsUnfunded: true })
+            {
+                _navigationService.ShowPopup(new WalletSharePopup(_clientService, _wallet, _navigationService));
+            }
+            else
+            {
+                ConfirmWidgetAsync(args);
+            }
+        }
+
+        /// <summary>
+        /// Binds the wallet if asked to, then prices the transaction, or readies the data to sign.
+        /// </summary>
+        private async void LoadWidgetAsync(bool bind)
+        {
+            _loading = true;
+            _loaded = true;
+            IsPrimaryButtonPending = true;
+
+            WidgetRequestFailure? failure = null;
+
+            try
+            {
+                var bound = true;
+
+                if (bind)
+                {
+                    _lease ??= _wallet.CreateLease(_navigationService);
+                    bound = await WalletHelper.EnsureBoundAsync(_clientService, _wallet, _navigationService, _lease);
+
+                    // A wallet the user would not unlock leaves the choice open. No wallet at all leaves nothing to pay with,
+                    // which the bot's own request with the wallet prevents by creating one.
+                    if (!bound && !State.HasWallet)
+                    {
+                        failure = WidgetRequestFailure.Failed;
+                    }
+                }
+
+                if (bound && _sign != null)
+                {
+                    _signReady = true;
+                }
+                else if (bound)
+                {
+                    _previewBalance = State.BalanceNanograms;
+                    _request = await _wallet.PreviewWidgetTransactionAsync(_call.Json);
+                }
+            }
+            catch (WalletNotBoundException)
+            {
+                // Review binds it.
+            }
+            catch (WalletCallRefusedException ex)
+            {
+                Logger.Error("widget wallet call refused: " + ex.Message);
+                failure = WidgetRequestFailure.BadRequest;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("widget transaction could not be priced: " + ex.Message);
+                failure = WidgetRequestFailure.Failed;
+            }
+            finally
+            {
+                _loading = false;
+                IsPrimaryButtonPending = false;
+            }
+
+            if (failure is WidgetRequestFailure value)
+            {
+                Finish(value);
+                Hide();
+                return;
+            }
+
+            if (_request != null)
+            {
+                MessagesPanel.ItemsSource = _request.Messages;
+                UpdatePreview();
+            }
+            else if (_signReady)
+            {
+                UpdateSign();
+            }
+
+            UpdateDetails();
+            UpdateWalletState(State);
+        }
+
+        private async void ConfirmWidgetAsync(ModalPopupButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+            IsPrimaryButtonPending = true;
+
+            WidgetQueryType outcome = null;
+            WidgetRequestFailure? failure = null;
+            string refusal = null;
+
+            try
+            {
+                _lease ??= _wallet.CreateLease(_navigationService);
+
+                outcome = _sign != null
+                    ? await _wallet.SignWidgetDataAsync(_sign, _bot.Id, _lease)
+                    : await _wallet.SendWidgetTransactionAsync(_request, _lease);
+            }
+            catch (WalletAccessDeniedException)
+            {
+                // The prompt was dismissed: nothing was signed, and the sheet still asks.
+            }
+            catch (WalletRotationPendingException)
+            {
+                refusal = Strings.WalletSecretPhraseUpdating;
+            }
+            catch (WalletTransferInProgressException)
+            {
+                refusal = Strings.WalletTransferInProgress;
+            }
+            catch (WalletCallRefusedException ex)
+            {
+                Logger.Error("widget wallet call refused: " + ex.Message);
+                failure = WidgetRequestFailure.BadRequest;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("widget wallet call failed: " + ex.Message);
+                failure = WidgetRequestFailure.Failed;
+            }
+            finally
+            {
+                IsPrimaryButtonPending = false;
+                deferral.Complete();
+            }
+
+            if (refusal != null)
+            {
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, refusal, primary: Strings.OK);
+            }
+            else if (outcome != null)
+            {
+                _answered = true;
+                Hide();
+
+                SendOutcomeAsync(_clientService, _key, _call, outcome);
+            }
+            else if (failure is WidgetRequestFailure value)
+            {
+                Finish(value);
+                Hide();
+            }
+        }
+
+        // After the sheet: the bot gets the outcome with the call's data, and the widget gets its answer. No second tap, the call had one.
+        private static async void SendOutcomeAsync(IClientService clientService, WidgetKey key, WidgetWalletCall call, WidgetQueryType outcome)
+        {
+            var response = await clientService.SendAsync(new GetWidgetQueryAnswer(key.ChatId, key.MessageId, outcome, Encoding.UTF8.GetBytes(call.Data)));
+            if (response is WidgetQueryAnswer answer)
+            {
+                call.Complete(answer.Data ?? string.Empty);
+            }
+            else
+            {
+                call.Fail(WidgetSession.Failure(response));
+            }
+        }
+
+        private void Finish(WidgetRequestFailure failure)
+        {
+            if (_call != null && !_answered)
+            {
+                _answered = true;
+                _call.Fail(failure);
+            }
+        }
+
+        private void UpdateSign()
+        {
+            var text = _sign.Text;
+
+            SignHeader.Text = text != null ? Strings.WalletSigningData : Strings.WalletBinaryData;
+            SignText.Text = text ?? string.Empty;
+            SignText.Visibility = text != null ? Visibility.Visible : Visibility.Collapsed;
+            SignBytes.Text = _sign.Data ?? string.Empty;
+            SignBytes.Visibility = text != null ? Visibility.Collapsed : Visibility.Visible;
+
+            // Bytes and cells cannot be shown for what they mean, so what is signed is taken on trust.
+            SignInfo.Text = text != null ? Strings.WalletReviewSigningData : Strings.WalletBinaryDataWarning;
         }
 
         /// <summary>
@@ -172,6 +442,13 @@ namespace Telegram.Views.Wallet.Popups
 
         protected override void UpdateWalletState(WalletState state)
         {
+            // Once on its own, as soon as the device can sign; then again only for a top-up.
+            if (_call != null && !_answered && !_loading && state.CanSign && (!_loaded || _request is { IsUnfunded: true } && state.BalanceNanograms != _previewBalance))
+            {
+                LoadWidgetAsync(false);
+                return;
+            }
+
             if (_request == null)
             {
                 // Nothing loaded, so nothing to draw it with. The card is not even up yet.
@@ -195,6 +472,12 @@ namespace Telegram.Views.Wallet.Popups
         /// </remarks>
         private void UpdateFee(WalletState state)
         {
+            if (_request.IsUnfunded)
+            {
+                FeeLabel.Text = Strings.WalletInsufficientFunds;
+                return;
+            }
+
             var grams = Formatter.GramExact(_request.FeeNanograms).Join();
 
             FeeLabel.Text = WalletHelper.TryToCurrency(_clientService, state, _request.FeeNanograms, out var converted)
@@ -209,22 +492,35 @@ namespace Telegram.Views.Wallet.Popups
         {
             var loaded = _request != null;
 
-            ReviewLabel.Visibility = loaded ? Visibility.Collapsed : Visibility.Visible;
+            ReviewLabel.Visibility = loaded || _signReady ? Visibility.Collapsed : Visibility.Visible;
             FeeLabel.Visibility = loaded ? Visibility.Visible : Visibility.Collapsed;
 
             SummaryPage.Visibility = loaded && !_details ? Visibility.Visible : Visibility.Collapsed;
             DetailsPage.Visibility = loaded && _details ? Visibility.Visible : Visibility.Collapsed;
+            SignPage.Visibility = _signReady ? Visibility.Visible : Visibility.Collapsed;
 
             // Review until there is something to confirm. The same button, because it is the same
             // question asked twice: first whether to look, then whether to agree.
-            PrimaryButtonText = loaded ? Strings.WalletConfirm : Strings.WalletReview;
+            PrimaryButtonText = _signReady
+                ? Strings.WalletSign
+                : loaded
+                ? _request.IsUnfunded ? Strings.WalletDepositFunds : Strings.WalletConfirm
+                : Strings.WalletReview;
 
             // The identity shrinks out of the way on the second page: it has said what it has to
             // say, and what matters there is the list under it.
             Photo.Size = _details ? 36 : 96;
             Photo.Margin = new Thickness(0, _details ? 0 : 4, 0, _details ? 0 : 12);
 
-            Domain.Text = loaded ? _request.Domain : _domain ?? string.Empty;
+            if (_call != null)
+            {
+                var username = _bot.ActiveUsername();
+                Domain.Text = string.IsNullOrEmpty(username) ? string.Empty : "@" + username;
+            }
+            else
+            {
+                Domain.Text = loaded ? _request.Domain : _domain ?? string.Empty;
+            }
 
             // Back on the second page, dismiss on the first. The same button, because they are the
             // same gesture: undo the last thing that happened.
@@ -255,6 +551,12 @@ namespace Telegram.Views.Wallet.Popups
         /// </remarks>
         private void OnSecondaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
+            if (_call != null)
+            {
+                args.Cancel = IsTapGuarded;
+                return;
+            }
+
             if (_request != null)
             {
                 AnswerAsync(args, false);
@@ -332,6 +634,9 @@ namespace Telegram.Views.Wallet.Popups
         {
             _lease?.Dispose();
             _lease = null;
+
+            // Closed without an answer, by Cancel or otherwise: the user declined.
+            Finish(WidgetRequestFailure.Rejected);
 
             base.OnUnloaded();
         }

@@ -290,6 +290,37 @@
                 </Border>
             </StackPanel>
 
+            <!-- A widget's signData: the text to sign, or the bytes or cell it cannot show for what they mean. -->
+            <StackPanel x:Name="SignPage"
+                        Visibility="Collapsed"
+                        Padding="24,8,24,0">
+                <TextBlock x:Name="SignHeader"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           Margin="12,0,0,4" />
+
+                <Border Background="{ThemeResource ContentDialogBackground}"
+                        CornerRadius="10"
+                        Padding="12,8">
+                    <ScrollViewer MaxHeight="240"
+                                  VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <TextBlock x:Name="SignText"
+                                       TextWrapping="Wrap"
+                                       IsTextSelectionEnabled="True" />
+                            <TextBlock x:Name="SignBytes"
+                                       FontFamily="Consolas"
+                                       TextWrapping="Wrap"
+                                       IsTextSelectionEnabled="True" />
+                        </Grid>
+                    </ScrollViewer>
+                </Border>
+
+                <TextBlock x:Name="SignInfo"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextWrapping="Wrap"
+                           Margin="12,8,12,8" />
+            </StackPanel>
+
             <TextBlock x:Name="FeeLabel"
                        Style="{StaticResource InfoBodyTextBlockStyle}"
                        TextAlignment="Center"

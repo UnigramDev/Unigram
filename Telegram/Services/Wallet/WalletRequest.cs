@@ -7,7 +7,9 @@
 
 using System.Collections.Generic;
 using System.Numerics;
+using System.Text.Json;
 using Telegram.Converters;
+using WalletEngine;
 
 namespace Telegram.Services.Wallet
 {
@@ -91,9 +93,10 @@ namespace Telegram.Services.Wallet
     /// agrees to it.
     /// </summary>
     /// <remarks>
-    /// Only <c>sendTransaction</c>. The protocol also carries <c>signData</c> and
-    /// <c>signMessage</c>; neither is supported, and a request for one is answered with an error
-    /// rather than shown.
+    /// Only <c>sendTransaction</c> from a TON Connect session. The protocol also carries
+    /// <c>signData</c> and <c>signMessage</c>; neither is supported there, and a request for one is
+    /// answered with an error rather than shown. A widget's <c>signData</c> is a
+    /// <see cref="WalletSignRequest"/>.
     ///
     /// Everything here is already validated: the request decrypted, its validity window is still
     /// open, its network and sender are ours, and the emulation came back. What the user is being
@@ -151,6 +154,18 @@ namespace Telegram.Services.Wallet
         /// </summary>
         public int ExpirationDate { get; init; }
 
+        /// <summary>
+        /// The balance cannot cover it, so it went unpriced and unemulated: a widget's request is
+        /// shown anyway, with the offer to top up.
+        /// </summary>
+        public bool IsUnfunded { get; init; }
+
+        /// <summary>
+        /// What a widget's request is sent as. A TON Connect request is read again from its session
+        /// instead, so this is null for one.
+        /// </summary>
+        internal SendIntent Intent { get; init; }
+
         public string ShortRecipient => Shorten(Recipient);
 
         /// <summary>
@@ -165,5 +180,61 @@ namespace Telegram.Services.Wallet
 
             return address.Substring(0, 4) + "\u2026" + address.Substring(address.Length - 4);
         }
+    }
+
+    /// <summary>
+    /// Data a widget asks the wallet to sign: TON Connect's <c>signData</c>, for the bot that sent
+    /// the widget rather than any domain the widget names.
+    /// </summary>
+    public sealed class WalletSignRequest
+    {
+        private WalletSignRequest(TonConnectSignDataRequest request, string json)
+        {
+            Request = request;
+            Json = json;
+        }
+
+        /// <summary>
+        /// The payload as the framework checked it: <c>{type, text | bytes | schema and cell,
+        /// network?, from?}</c>.
+        /// </summary>
+        public static WalletSignRequest FromJson(string json)
+        {
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+
+            TonConnectSignDataPayload payload = Read(root, "type") switch
+            {
+                "text" => new TonConnectSignDataPayload.Text(Read(root, "text")),
+                "binary" => new TonConnectSignDataPayload.Binary(Read(root, "bytes")),
+                "cell" => new TonConnectSignDataPayload.Cell(Read(root, "schema"), Read(root, "cell")),
+                _ => throw new WalletCallRefusedException("signData type")
+            };
+
+            return new WalletSignRequest(new TonConnectSignDataRequest(payload, Read(root, "network"), Read(root, "from")), json);
+        }
+
+        private static string Read(JsonElement root, string name)
+        {
+            return root.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String
+                ? value.GetString()
+                : null;
+        }
+
+        internal TonConnectSignDataRequest Request { get; }
+
+        /// <summary>The payload as the widget wrote it, which the bot gets back with the signature.</summary>
+        internal string Json { get; }
+
+        /// <summary>The text to sign, or null for bytes and cells, which cannot be shown for what they are.</summary>
+        public string Text => (Request.Payload as TonConnectSignDataPayload.Text)?.TextValue;
+
+        /// <summary>Bytes or a cell, as base64: shown so they can be compared, with a warning that they cannot be read.</summary>
+        public string Data => Request.Payload switch
+        {
+            TonConnectSignDataPayload.Binary binary => binary.Bytes,
+            TonConnectSignDataPayload.Cell cell => cell.CellValue,
+            _ => null
+        };
     }
 }

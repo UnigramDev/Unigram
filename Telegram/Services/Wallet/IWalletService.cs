@@ -276,6 +276,28 @@ namespace Telegram.Services.Wallet
         /// </remarks>
         Task<bool> AnswerRequestAsync(WalletRequest request, bool accept, WalletVault.WalletVaultLease lease);
 
+        /// <summary>
+        /// A widget's <c>sendTransaction</c> (TON Connect's JSON), checked against this wallet and
+        /// priced. Throws <see cref="WalletCallRefusedException"/> for one the wallet refuses.
+        /// </summary>
+        /// <remarks>
+        /// Needs no key: the bot of the message is who asks, and the sheet names it before anything
+        /// is unlocked.
+        /// </remarks>
+        Task<WalletRequest> PreviewWidgetTransactionAsync(string json);
+
+        /// <summary>
+        /// Sends a widget's transaction, and returns what the bot is told about it: the message
+        /// hash and this device's wallet.
+        /// </summary>
+        Task<WidgetQueryType> SendWidgetTransactionAsync(WalletRequest request, WalletVault.WalletVaultLease lease);
+
+        /// <summary>
+        /// Signs a widget's <c>signData</c> for the domain <c>bot&lt;id&gt;</c>, and returns what
+        /// the bot is told about it: TON Connect's result and this device's wallet.
+        /// </summary>
+        Task<WidgetQueryType> SignWidgetDataAsync(WalletSignRequest request, long botUserId, WalletVault.WalletVaultLease lease);
+
         Task<WalletConnectResult> ConnectAsync(TonConnectSession session, TonConnectConnectRequest request, string domain, string traceId, WalletVault.WalletVaultLease lease);
 
         /// <summary>

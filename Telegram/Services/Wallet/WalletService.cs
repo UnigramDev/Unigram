@@ -1580,10 +1580,27 @@ namespace Telegram.Services.Wallet
                 return null;
             }
 
-            var messages = new List<WalletRequestMessage>(preview.Messages.Length);
-            var total = BigInteger.Zero;
+            var messages = Messages(preview.Messages, out var total);
 
-            foreach (var item in preview.Messages)
+            return new WalletRequest(message.SessionId, messageId, send.Id, message.TraceId)
+            {
+                Name = message.DappName,
+                Domain = Domain(pending.Session),
+                Recipient = message0.Destination,
+                Nanograms = total,
+                Messages = messages,
+                FeeNanograms = BigInteger.Parse(preview.Emulation.WalletFeesNanograms),
+                Actions = Actions(preview.Emulation, descriptor.Address),
+                ExpirationDate = request.ExpirationDate
+            };
+        }
+
+        private static List<WalletRequestMessage> Messages(EngineSendMessage[] items, out BigInteger total)
+        {
+            var messages = new List<WalletRequestMessage>(items.Length);
+            total = BigInteger.Zero;
+
+            foreach (var item in items)
             {
                 var amount = Amount(item.Amount);
                 total += amount;
@@ -1598,17 +1615,7 @@ namespace Telegram.Services.Wallet
                 messages.Add(new WalletRequestMessage(item.Destination, amount, comment, comment == null ? raw : null, item.StateInit != null));
             }
 
-            return new WalletRequest(message.SessionId, messageId, send.Id, message.TraceId)
-            {
-                Name = message.DappName,
-                Domain = Domain(pending.Session),
-                Recipient = message0.Destination,
-                Nanograms = total,
-                Messages = messages,
-                FeeNanograms = BigInteger.Parse(preview.Emulation.WalletFeesNanograms),
-                Actions = Actions(preview.Emulation, descriptor.Address),
-                ExpirationDate = request.ExpirationDate
-            };
+            return messages;
         }
 
         // The opcode of a contract handing back what a message left over.
@@ -1899,6 +1906,225 @@ namespace Telegram.Services.Wallet
             // rather than nothing having happened.
             await SendAnswerAsync(request.SessionId, request.MessageId, request.TraceId, body);
             return true;
+        }
+
+        public async Task<WalletRequest> PreviewWidgetTransactionAsync(string json)
+        {
+            await RestoreAsync();
+
+            var client = _client;
+            var descriptor = _descriptor;
+
+            if (client == null || descriptor == null)
+            {
+                throw new WalletNotBoundException();
+            }
+
+            var intent = WidgetIntent(json, descriptor, out var validUntil);
+
+            SendPreview preview = null;
+
+            try
+            {
+                preview = await client.PreviewTonConnect(new SendRequest(NewRecordId(), false, intent));
+            }
+            catch (WalletClientException ex) when (ex is WalletClientException.InsufficientBalance or WalletClientException.InsufficientBalanceForFees)
+            {
+                // Still shown, unpriced: the sheet offers to top up, and previews again once the balance changes.
+            }
+            catch (WalletClientException ex) when (ex is WalletClientException.InvalidSendRequest or WalletClientException.EmulationRejected)
+            {
+                throw new WalletCallRefusedException(ex.Message);
+            }
+
+            // The framework lets no transaction without a message through.
+            var messages = Messages(preview?.Messages ?? intent.Messages, out var total);
+
+            return new WalletRequest(0, 0, null, null)
+            {
+                Recipient = messages[0].Address,
+                Nanograms = total,
+                Messages = messages,
+                FeeNanograms = preview != null ? BigInteger.Parse(preview.Emulation.WalletFeesNanograms) : BigInteger.Zero,
+                Actions = preview != null ? Actions(preview.Emulation, descriptor.Address) : new List<WalletRequestAction>(),
+                ExpirationDate = validUntil,
+                IsUnfunded = preview == null,
+                Intent = intent
+            };
+        }
+
+        public async Task<WidgetQueryType> SendWidgetTransactionAsync(WalletRequest request, WalletVault.WalletVaultLease lease)
+        {
+            var client = _client;
+            var lifecycle = _lifecycle;
+            var descriptor = _descriptor;
+
+            if (client == null || lifecycle == null || descriptor == null)
+            {
+                throw new WalletNotBoundException();
+            }
+
+            await EnsureLeaseAsync(lease);
+
+            if (_rotation != null)
+            {
+                throw new WalletRotationPendingException();
+            }
+
+            if (HasUnsettledTransfer())
+            {
+                throw new WalletTransferInProgressException();
+            }
+
+            // Again at the tap: the sheet can stay open past it.
+            if (request.ExpirationDate != 0 && request.ExpirationDate <= DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+            {
+                throw new WalletCallRefusedException("valid_until has passed");
+            }
+
+            PreparedTransfer prepared;
+
+            try
+            {
+                prepared = await client.PrepareTransfer(new PrepareTransferRequest(NewRecordId(), request.Intent));
+            }
+            catch (WalletClientException ex) when (ex is WalletClientException.InvalidSendRequest or WalletClientException.EmulationRejected
+                or WalletClientException.InsufficientBalance or WalletClientException.InsufficientBalanceForFees)
+            {
+                throw new WalletCallRefusedException(ex.Message);
+            }
+
+            // A submission that may or may not have landed is thrown on: without its hash there is nothing to tell the bot.
+            var sent = await client.SendBoc(new SendBocRequest(prepared.OperationId, false, prepared.ExternalBoc, prepared.Seqno, prepared.ValidUntil));
+
+            // TEP-467's normalised hash, as the 64 lowercase hex digits toncenter and tonapi find the transaction by.
+            var hash = BitConverter.ToString(Convert.FromBase64String(sent.MessageHash)).Replace("-", string.Empty).ToLowerInvariant();
+
+            return new WidgetQueryTypeSentTransaction(WidgetWallet(lifecycle, descriptor, null), hash);
+        }
+
+        public async Task<WidgetQueryType> SignWidgetDataAsync(WalletSignRequest request, long botUserId, WalletVault.WalletVaultLease lease)
+        {
+            var lifecycle = _lifecycle;
+            var descriptor = _descriptor;
+
+            if (lifecycle == null || descriptor == null)
+            {
+                throw new WalletNotBoundException();
+            }
+
+            CheckAccount(request.Request.Network, request.Request.From, descriptor);
+
+            await EnsureLeaseAsync(lease);
+
+            // The bot is the dApp: a widget never names the domain it signs for.
+            var domain = "bot" + botUserId.ToString(CultureInfo.InvariantCulture);
+            var timestamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+            var signed = await lifecycle.SignTonConnectData(new TonConnectSignDataSignRequest(descriptor, request.Request, domain, timestamp));
+
+            // TON Connect's signData result, with the payload as the widget sent it.
+            using var stream = new MemoryStream();
+            using (var writer = new Utf8JsonWriter(stream))
+            {
+                writer.WriteStartObject();
+                writer.WriteString("signature", Convert.ToBase64String(signed.Signature));
+                writer.WriteString("address", WalletEngineMethods.ParseTonAddress(descriptor.Address).Raw);
+                writer.WriteNumber("timestamp", timestamp);
+                writer.WriteString("domain", domain);
+                writer.WritePropertyName("payload");
+
+                using (var payload = JsonDocument.Parse(request.Json))
+                {
+                    payload.RootElement.WriteTo(writer);
+                }
+
+                writer.WriteEndObject();
+            }
+
+            // The key that signed, which after a rotation is not the one in the StateInit: the bot then ties it to the address on chain.
+            return new WidgetQueryTypeSignData(WidgetWallet(lifecycle, descriptor, signed.PublicKey), Encoding.UTF8.GetString(stream.ToArray()));
+        }
+
+        /// <summary>
+        /// The wallet a widget's outcome goes to the bot with: this device's, which can differ from
+        /// the profile's card when the backup is off.
+        /// </summary>
+        /// <remarks>
+        /// The key and the StateInit it was built from, so a bot can tie the key to the address
+        /// before the wallet's first transfer puts it on chain. The balance is for display only.
+        /// </remarks>
+        private WidgetQueryWallet WidgetWallet(WalletLifecycle lifecycle, WalletDescriptor descriptor, byte[] signingKey)
+        {
+            var account = lifecycle.TonConnectAccount(descriptor);
+            var balance = State.BalanceNanograms;
+
+            return new WidgetQueryWallet(
+                descriptor.Address,
+                balance > long.MaxValue ? long.MaxValue : (long)balance,
+                signingKey ?? account.PublicKey,
+                Convert.FromBase64String(account.WalletStateInit));
+        }
+
+        /// <summary>
+        /// A widget's transaction, which the framework already held to TON Connect's fields: 1 to
+        /// 255 messages to user-friendly destinations, amounts in nanograms, bodies and StateInits
+        /// as base64.
+        /// </summary>
+        private static SendIntent WidgetIntent(string json, WalletDescriptor descriptor, out int validUntil)
+        {
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+
+            CheckAccount(Text(root, "network"), Text(root, "from"), descriptor);
+
+            validUntil = 0;
+            SendExpiration expiration = new SendExpiration.EngineDefault();
+
+            if (root.TryGetProperty("valid_until", out var until) && until.TryGetInt64(out var seconds))
+            {
+                if (seconds <= DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+                {
+                    throw new WalletCallRefusedException("valid_until has passed");
+                }
+
+                expiration = new SendExpiration.Exact((ulong)seconds);
+                validUntil = (int)Math.Min(seconds, int.MaxValue);
+            }
+
+            var items = root.GetProperty("messages");
+            var messages = new EngineSendMessage[items.GetArrayLength()];
+            var index = 0;
+
+            foreach (var item in items.EnumerateArray())
+            {
+                var address = Text(item, "address");
+                var payload = Text(item, "payload");
+
+                // The bounce flag is the destination's own, as for any TON Connect request.
+                messages[index++] = new EngineSendMessage(
+                    address,
+                    new SendAmount.Exact(Text(item, "amount")),
+                    payload != null ? new SendMessageBody.RawPayload(payload) : new SendMessageBody.Empty(),
+                    Bounceable(address),
+                    Text(item, "stateInit"));
+            }
+
+            return new SendIntent(expiration, messages);
+        }
+
+        // TON Connect leaves it to the wallet to refuse a request for another network or another sender.
+        private static void CheckAccount(string network, string from, WalletDescriptor descriptor)
+        {
+            if (network != null && network != (descriptor.Network == Network.Testnet ? "-3" : "-239"))
+            {
+                throw new WalletCallRefusedException("network " + network);
+            }
+
+            if (from != null && !IsSameAddress(from, descriptor.Address))
+            {
+                throw new WalletCallRefusedException("from " + from);
+            }
         }
 
         private async Task<bool> ClaimAsync(long sessionId, long messageId, string dappRequestId, bool rejected)
@@ -4597,6 +4823,18 @@ namespace Telegram.Services.Wallet
         public bool IsInvalidPassword => Error != null && Error.MessageEquals(ErrorType.PASSWORD_HASH_INVALID);
 
         public bool IsPasswordMissing => Error != null && Error.MessageEquals(ErrorType.PASSWORD_MISSING);
+    }
+
+    /// <summary>
+    /// The wallet refuses what a widget asked of it: another network or sender, an expired
+    /// transaction, or one the engine will not build or the chain would reject.
+    /// </summary>
+    public sealed class WalletCallRefusedException : Exception
+    {
+        public WalletCallRefusedException(string message)
+            : base(message)
+        {
+        }
     }
 
     /// <summary>

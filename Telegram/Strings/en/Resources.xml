@@ -14379,6 +14379,13 @@
     <string name="WalletSecretPhraseExpired">The new secret phrase expired. Nothing was changed.</string>
     <string name="WalletSecretPhraseUpdatePartial">The backup was disabled, but your secret phrase could not be updated. Your previous phrase still works.</string>
     <string name="WalletAppRequestsTransfer">{0} requests a transfer</string>
+    <string name="WalletAppRequestsSignature">{0} requests your signature</string>
+    <string name="WalletBinaryData">Binary Data</string>
+    <string name="WalletBinaryDataWarning">You are signing blindly. Sign only from trusted sources.</string>
+    <string name="WalletReviewSigningData">Carefully review the message, and if you agree, sign data.</string>
+    <string name="WalletSign">Sign</string>
+    <string name="WalletSignData">Sign Data</string>
+    <string name="WalletSigningData">Data</string>
     <string name="WalletImported">Wallet Imported</string>
     <string name="WalletImportedInfo">Your wallet was restored from your secret phrase.</string>
     <string name="WalletInvalidRecoveryPhrase">Invalid Secret Phrase</string>
