@@ -308,7 +308,7 @@ namespace Telegram.Navigation
         private static IntPtr _smallIcon;
         private static IntPtr _bigIcon;
 
-        private static void SetIcon(IntPtr handle)
+        internal static void SetIcon(IntPtr handle)
         {
             const uint WM_SETICON = 0x0080;
 
@@ -470,8 +470,7 @@ namespace Telegram.Navigation
             return Task.FromResult(true);
         }
 
-        // Not until the gallery's overlay moves from a UWP AppWindow to this window's CompactOverlay presenter.
-        public bool IsCompactOverlaySupported => false;
+        public bool IsCompactOverlaySupported => true;
 
         public bool IsCompactOverlay => _window.AppWindow.Presenter.Kind == AppWindowPresenterKind.CompactOverlay;
 

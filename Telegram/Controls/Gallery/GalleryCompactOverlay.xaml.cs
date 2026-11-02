@@ -9,19 +9,28 @@ using System;
 using Telegram.Common;
 using Telegram.ViewModels.Gallery;
 using Windows.UI;
-using Windows.UI.Core.Preview;
-using Windows.UI.ViewManagement;
-using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+#if WINUI3
+using Microsoft.UI.Windowing;
+using Telegram.Host;
+using Telegram.Navigation;
+using Windows.Graphics;
+using CompactWindow = Microsoft.UI.Xaml.Window;
+#else
+using Windows.UI.Core.Preview;
+using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
+using CompactWindow = Windows.UI.WindowManagement.AppWindow;
+#endif
 
 namespace Telegram.Controls.Gallery
 {
     public sealed partial class GalleryCompactOverlay : UserControlEx
     {
-        private AppWindow _window;
+        private CompactWindow _window;
         private bool _disposed;
 
         private GalleryViewModelBase _viewModel;
@@ -39,7 +48,7 @@ namespace Telegram.Controls.Gallery
         }
 #endif
 
-        public GalleryCompactOverlay(AppWindow window, GalleryViewModelBase viewModel, GalleryMedia media, VideoPlayerBase player)
+        public GalleryCompactOverlay(CompactWindow window, GalleryViewModelBase viewModel, GalleryMedia media, VideoPlayerBase player)
         {
             InitializeComponent();
 
@@ -71,7 +80,11 @@ namespace Telegram.Controls.Gallery
             visual.Opacity = 0;
         }
 
+#if WINUI3
+        private void OnWindowClosed(object sender, WindowEventArgs args)
+#else
         private void OnWindowClosed(AppWindow sender, AppWindowClosedEventArgs args)
+#endif
         {
             Logger.Info("Window closed externally");
             CleanupWindow();
@@ -186,7 +199,7 @@ namespace Telegram.Controls.Gallery
         {
             Logger.Info();
 
-            AppWindow window;
+            CompactWindow window;
             lock (_lock)
             {
                 window = _window;
@@ -205,16 +218,18 @@ namespace Telegram.Controls.Gallery
             _player.IsUnloadedExpected = true;
             Presenter.Children.RemoveAt(0);
 
+#if WINUI3
+            // The gallery opens again over the window it came from, which may be minimized or behind.
+            WindowContext.ForXamlRoot(_viewModel.XamlRoot)?.Activate();
+#else
             if (FeatureTokenGenerator.TryUnlockFeature("com.microsoft.windows.applicationwindow"))
             {
                 try
                 {
-#if !WINUI3
                     var prevId = CoreAppWindowPreview.GetIdFromWindow(window);
                     var nextId = ApplicationView.GetForCurrentView().Id;
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(nextId);
                     await ApplicationViewSwitcher.SwitchAsync(nextId, prevId);
-#endif
                 }
                 catch (Exception ex)
                 {
@@ -222,13 +237,18 @@ namespace Telegram.Controls.Gallery
                     // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
+#endif
 
             _ = GalleryWindow.ShowAsync(_viewModel.XamlRoot, _viewModel, null, 0, _player);
 
             // Close the window with proper error handling
             try
             {
+#if WINUI3
+                window.Close();
+#else
                 _ = window.CloseAsync();
+#endif
             }
             catch (ObjectDisposedException)
             {
@@ -268,7 +288,7 @@ namespace Telegram.Controls.Gallery
         {
             Logger.Info("Closing");
 
-            AppWindow window;
+            CompactWindow window;
             lock (_lock)
             {
                 window = _window;
@@ -285,7 +305,11 @@ namespace Telegram.Controls.Gallery
 
             try
             {
+#if WINUI3
+                window.Close();
+#else
                 _ = window.CloseAsync();
+#endif
             }
             catch (ObjectDisposedException)
             {
@@ -321,6 +345,31 @@ namespace Telegram.Controls.Gallery
                 }
             }
         }
+
+#if WINUI3
+        // Effective pixels, from the edges of the work area.
+        private const int CompactMargin = 16;
+
+        /// <summary>
+        /// The top right corner of the work area the gallery was shown on, at the size the presenter chose.
+        /// </summary>
+        private static void PlaceInCorner(CompactWindow window, GalleryViewModelBase viewModel)
+        {
+            var source = WindowContext.ForXamlRoot(viewModel.XamlRoot);
+            var handle = source != null
+                ? new IntPtr(source.Handle)
+                : WinRT.Interop.WindowNative.GetWindowHandle(window);
+
+            var display = DisplayArea.GetFromWindowId(Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle), DisplayAreaFallback.Primary);
+            var scale = Win32.GetDpiForWindow(handle) / 96.0;
+
+            var margin = (int)(CompactMargin * scale);
+            var area = display.WorkArea;
+            var size = window.AppWindow.Size;
+
+            window.AppWindow.Move(new PointInt32(area.X + area.Width - size.Width - margin, area.Y + margin));
+        }
+#endif
 
         public static async void CreateOrUpdate(GalleryViewModelBase viewModel, GalleryMedia item, VideoPlayerBase player)
         {
@@ -383,6 +432,35 @@ namespace Telegram.Controls.Gallery
 
             try
             {
+#if WINUI3
+                // A bare Window, as the AppWindow is on UWP: not a WindowContext, so it is not one of
+                // All, and closing it is not closing a window of the app's.
+                var window = new CompactWindow
+                {
+                    Title = Strings.AppDisplayName,
+                    ExtendsContentIntoTitleBar = true
+                };
+
+                var titleBar = window.AppWindow.TitleBar;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonForegroundColor = Colors.White;
+
+                if (!ApiInfo.HasPackageIdentity)
+                {
+                    WindowContext.SetIcon(WinRT.Interop.WindowNative.GetWindowHandle(window));
+                }
+
+                var presenter = CompactOverlayPresenter.Create();
+                presenter.InitialSize = CompactOverlaySize.Small;
+
+                window.Content = new GalleryCompactOverlay(window, viewModel, item, player);
+                window.AppWindow.SetPresenter(presenter);
+
+                // After the presenter, whose size the position is worked out from.
+                PlaceInCorner(window, viewModel);
+                window.Activate();
+#else
                 // TODO: there is a problem when creating the overlay from a secondary window
                 // as the AppWindow will be destroyed as soon as the secondary window gets closed.
 
@@ -411,9 +489,8 @@ namespace Telegram.Controls.Gallery
                     // Navigate the frame to the CompactOverlay page inside it.
                     //appWindowFrame.Navigate(typeof(SecondaryAppWindowPage));
                     // Attach the frame to the window
-#if !WINUI3
                     ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowContent);
-#endif
+
                     // Let's set the title so that we can tell the windows apart
 
                     var switched = appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
@@ -449,6 +526,7 @@ namespace Telegram.Controls.Gallery
                         Logger.Error("Error closing window after unsupported presentation", closeEx);
                     }
                 }
+#endif
             }
             catch (Exception ex)
             {
