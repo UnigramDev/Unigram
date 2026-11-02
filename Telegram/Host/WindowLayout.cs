@@ -33,13 +33,25 @@ namespace Telegram.Host
 
         /// <summary>
         /// Call between creating the window and showing it, so it opens where it belongs rather
-        /// than moving once it is on screen.
+        /// than moving once it is on screen - and after its content has said which caption buttons
+        /// it wants, since that decides whether it is resizable.
         /// </summary>
         public static void Restore(IntPtr hwnd, string persistedId)
         {
             if (string.IsNullOrEmpty(persistedId) || !TryReadRect(persistedId, out var rect))
             {
                 return;
+            }
+
+            // Only where it was, for a window that cannot be resized: the size saved may be one it
+            // was dragged to before it stopped being resizable, and it could never leave it again.
+            var current = new WINDOWPLACEMENT { length = Marshal.SizeOf<WINDOWPLACEMENT>() };
+            var style = (long)Win32.GetWindowLongPtrW(hwnd, Win32.GWL_STYLE);
+
+            if ((style & Win32.WS_THICKFRAME) == 0 && Win32.GetWindowPlacement(hwnd, ref current))
+            {
+                rect.right = rect.left + current.rcNormalPosition.right - current.rcNormalPosition.left;
+                rect.bottom = rect.top + current.rcNormalPosition.bottom - current.rcNormalPosition.top;
             }
 
             // The monitor it was on may be gone, and a window restored onto no monitor at all is

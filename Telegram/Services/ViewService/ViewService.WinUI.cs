@@ -41,9 +41,17 @@ namespace Telegram.Services
             // dispatcher, as there is no main window once it has closed to the notification icon.
             return await BootStrapper.Current.Dispatcher.DispatchAsync(() =>
             {
-                var context = CreateWindow(options.Title, options.Width, options.Height, options.PersistedId, options.ViewMode);
+                var context = CreateWindow(options.Title, options.Width, options.Height, options.ViewMode);
                 context.PersistedId = options.PersistedId ?? string.Empty;
                 context.Content = options.Content(context);
+
+                // After the content, which decides whether the window is resizable when it asks
+                // for its caption buttons.
+                if (options.ViewMode == ViewServiceMode.Default)
+                {
+                    WindowLayout.Restore((IntPtr)context.Handle, context.PersistedId);
+                }
+
                 context.Activate();
 
                 return context;
@@ -80,13 +88,15 @@ namespace Telegram.Services
 
             return await BootStrapper.Current.Dispatcher.DispatchAsync(() =>
             {
-                var context = CreateWindow(title, size.Width, size.Height, "Floating", ViewServiceMode.Default);
+                var context = CreateWindow(title, size.Width, size.Height, ViewServiceMode.Default);
                 context.PersistedId = "Floating";
 
                 var nav = BootStrapper.Current.NavigationServiceFactory(session, context, BootStrapper.BackButton.Ignore, id, false);
                 nav.Navigate(page, parameter);
 
                 context.Content = BootStrapper.Current.CreateRootElement(nav);
+
+                WindowLayout.Restore((IntPtr)context.Handle, context.PersistedId);
                 context.Activate();
 
                 return context;
@@ -102,7 +112,7 @@ namespace Telegram.Services
         /// AppWindow presenter rather than a UWP app model feature, so the gallery's
         /// picture-in-picture window is one call instead of a topmost window the app positions.
         /// </summary>
-        private static WindowContext CreateWindow(string title, double width, double height, string persistedId, ViewServiceMode mode)
+        private static WindowContext CreateWindow(string title, double width, double height, ViewServiceMode mode)
         {
             var window = new Window
             {
@@ -123,10 +133,6 @@ namespace Telegram.Services
             else if (mode == ViewServiceMode.FullScreen)
             {
                 window.AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
-            }
-            else
-            {
-                WindowLayout.Restore(handle, persistedId);
             }
 
             var context = new WindowContext(window);
