@@ -173,9 +173,9 @@ namespace Telegram.Services
         /// False when the package cannot be read this way; the caller then downloads it whole. A
         /// partial result is never left behind: the same checks as a full extraction gate the marker.
         /// </summary>
-        public static async Task<bool> StageChangedFilesAsync(IClientService clientService, Td.Api.File package, Version version)
+        public static async Task<bool> StageChangedFilesAsync(IClientService clientService, CloudUpdate update)
         {
-            if (package.Size <= 0)
+            if (update.Document.Size <= 0)
             {
                 return false;
             }
@@ -185,7 +185,7 @@ namespace Telegram.Services
             try
             {
                 // Every read blocks until its range is in, so this needs a thread of its own.
-                return await Task.Run(() => StageChangedFiles(clientService, package, version));
+                return await Task.Run(() => StageChangedFiles(clientService, update));
             }
             finally
             {
@@ -198,8 +198,11 @@ namespace Telegram.Services
             return ReadStagedVersion() == version;
         }
 
-        private static bool StageChangedFiles(IClientService clientService, Td.Api.File file, Version version)
+        private static bool StageChangedFiles(IClientService clientService, CloudUpdate update)
         {
+            var file = update.Document;
+            var version = update.Version;
+
             if (ReadStagedVersion() == version)
             {
                 return true;
@@ -228,24 +231,35 @@ namespace Telegram.Services
                 var buffer = new byte[81920];
                 var installed = AppPaths.InstalledPath;
                 var kept = 0;
-                var changed = 0;
+                var changed = new List<JsonElement>();
+                long expected = 0;
 
                 foreach (var entry in root.GetProperty("files").EnumerateArray())
                 {
                     var path = entry.GetProperty("path").GetString();
-                    var target = ResolveTarget(staged, path);
                     var current = Path.Combine(installed, path.Replace('/', Path.DirectorySeparatorChar));
 
                     if (IsUnchanged(current, entry, hash, buffer))
                     {
-                        Keep(current, target);
+                        Keep(current, ResolveTarget(staged, path));
                         kept++;
-                        continue;
                     }
+                    else
+                    {
+                        changed.Add(entry);
+                        expected += Find(entries, "payload/" + path).CompressedSize;
+                    }
+                }
+
+                // Against what has to be fetched, which the package's own size says nothing about.
+                package.Track(update, expected);
+
+                foreach (var entry in changed)
+                {
+                    var path = entry.GetProperty("path").GetString();
 
                     using var input = package.Open(Find(entries, "payload/" + path));
-                    Extract(input, target, entry, hash, buffer);
-                    changed++;
+                    Extract(input, ResolveTarget(staged, path), entry, hash, buffer);
                 }
 
                 Complete(staged, version, source);
@@ -254,7 +268,7 @@ namespace Telegram.Services
                 // is otherwise left in TDLib's temporary folder.
                 clientService.Send(new DeleteFile(file.Id));
 
-                Logger.Info($"Staged {version}: {changed} files downloaded, {package.Downloaded} bytes, {kept} kept");
+                Logger.Info($"Staged {version}: {changed.Count} files downloaded, {package.Downloaded} bytes, {kept} kept");
                 return true;
             }
             catch (Exception ex)
@@ -422,6 +436,33 @@ namespace Telegram.Services
             }
 
             public long Downloaded { get; private set; }
+
+            private CloudUpdate _update;
+            private long _expected;
+            private long _consumed;
+
+            /// <summary>
+            /// Reports the entry data read from here on, out of expected bytes, as the update's
+            /// staging progress. Reads block until their range is in, so it follows the download.
+            /// </summary>
+            public void Track(CloudUpdate update, long expected)
+            {
+                _update = update;
+                _expected = expected;
+                _consumed = 0;
+
+                update.StagingProgress = 0;
+            }
+
+            private void OnConsumed(int count)
+            {
+                _consumed += count;
+
+                if (_update != null && _expected > 0)
+                {
+                    _update.StagingProgress = (int)Math.Min(100, _consumed * 100 / _expected);
+                }
+            }
 
             public Dictionary<string, ZipEntryRange> ReadDirectory()
             {
@@ -602,6 +643,7 @@ namespace Telegram.Services
 
                     var read = _package.ReadAt(_position, buffer.Slice(0, (int)Math.Min(buffer.Length, _end - _position)), _end);
                     _position += read;
+                    _package.OnConsumed(read);
                     return read;
                 }
 

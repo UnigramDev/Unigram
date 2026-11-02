@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
-using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -127,7 +126,11 @@ namespace Telegram.ViewModels.Settings
                 IsUpdateEnabled = false;
 
                 UpdateGlyph = Icons.ArrowSync;
-                UpdateText = string.Format("{0}... {1} / {2}", Strings.Downloading, FileSizeConverter.Convert(update.Document.Local.DownloadedSize, update.Document.Size), FileSizeConverter.Convert(update.Document.Size));
+                var progress = update.IsStaging
+                    ? update.StagingProgress
+                    : update.Document.Size > 0 ? (int)(update.Document.Local.DownloadedSize * 100 / update.Document.Size) : 0;
+
+                UpdateText = string.Format("{0}... {1}%", Strings.Downloading, progress);
                 UpdateFooter = Strings.UpdateTelegramInfo;
             }
             else if (file.Local.CanBeDownloaded)

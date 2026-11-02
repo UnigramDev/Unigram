@@ -353,7 +353,7 @@ namespace Telegram.Services
 
             Logger.Info($"Downloading the changed files of {cloud.Version}");
 
-            var staged = await UnpackagedUpdates.StageChangedFilesAsync(_clientService, cloud.Document, cloud.Version);
+            var staged = await UnpackagedUpdates.StageChangedFilesAsync(_clientService, cloud);
 
             _staging = null;
             cloud.IsStaging = false;
@@ -611,6 +611,9 @@ namespace Telegram.Services
         // While those files are fetched, a range at a time. Nothing else may start downloading the
         // document then: a download of the whole of it would fetch what the ranges are there to skip.
         public bool IsStaging { get; set; }
+
+        // Percent of the changed files fetched, written from the staging thread.
+        public int StagingProgress { get; set; }
 
         public bool IsReady => File != null || IsStorePackage || IsStaged;
 
