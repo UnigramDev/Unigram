@@ -24,6 +24,9 @@ using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+#if UNPACKAGED
+using System.Security;
+#endif
 
 namespace Telegram.Services
 {
@@ -908,6 +911,15 @@ namespace Telegram.Services
                 var photo = chat.Photo;
                 if (photo != null && photo.Small.Local.IsDownloadingCompleted)
                 {
+#if UNPACKAGED
+                    // ms-appdata resolves only for a package. Escaped because it goes into an
+                    // attribute as is, and a path can hold an apostrophe or an ampersand.
+                    if (!ApiInfo.HasPackageIdentity)
+                    {
+                        return SecurityElement.Escape(new Uri(photo.Small.Local.Path).AbsoluteUri);
+                    }
+#endif
+
                     var relative = Path.GetRelativePath(AppPaths.LocalPath, photo.Small.Local.Path);
                     return "ms-appdata:///local/" + relative.Replace('\\', '/');
                 }
