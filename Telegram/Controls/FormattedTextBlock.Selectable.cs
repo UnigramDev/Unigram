@@ -14,6 +14,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
+#if WINUI3
+using TextRange = Microsoft.UI.Xaml.Documents.TextRange;
+#else
+using TextRange = Windows.UI.Xaml.Documents.TextRange;
+#endif
 
 namespace Telegram.Controls
 {

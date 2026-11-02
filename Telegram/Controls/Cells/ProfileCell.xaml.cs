@@ -28,6 +28,11 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+#if WINUI3
+using TextRange = Microsoft.UI.Xaml.Documents.TextRange;
+#else
+using TextRange = Windows.UI.Xaml.Documents.TextRange;
+#endif
 
 namespace Telegram.Controls.Cells
 {

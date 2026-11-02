@@ -37,6 +37,11 @@ using Windows.UI.Xaml.Media.Imaging;
 #if NET9_0_OR_GREATER
 using System.Diagnostics;
 #endif
+#if WINUI3
+using TextRange = Microsoft.UI.Xaml.Documents.TextRange;
+#else
+using TextRange = Windows.UI.Xaml.Documents.TextRange;
+#endif
 
 namespace Telegram.Controls
 {
