@@ -32,6 +32,10 @@
          this minimum resolves. The three other flavours say 18362 because that is what UWP XAML
          supports. -->
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <!-- The projection the SDK picks by default, .57, casts the result of the *Interop window
+         helpers (UserConsentVerifierInterop and others) to a generic interface, which NativeAOT
+         cannot do. This one is built against the CsWinRT referenced below; move the two together. -->
+    <WindowsSdkPackageVersion>10.0.26100.87</WindowsSdkPackageVersion>
     <RootNamespace>Telegram</RootNamespace>
     <AssemblyName>Telegram</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
