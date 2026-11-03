@@ -424,6 +424,13 @@ namespace Telegram.Host
         [LibraryImport("user32.dll")]
         public static partial uint GetDpiForSystem();
 
+        public const int MDT_EFFECTIVE_DPI = 0;
+
+        // The monitor's own scale. GetDpiForWindow is hooked by the interface scale override and
+        // answers with that instead; this one is not.
+        [LibraryImport("shcore.dll")]
+        public static partial int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
+
         [LibraryImport("user32.dll")]
         public static partial int GetSystemMetricsForDpi(int nIndex, uint dpi);
 

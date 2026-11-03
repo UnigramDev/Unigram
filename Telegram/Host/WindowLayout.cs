@@ -17,9 +17,10 @@ namespace Telegram.Host
     /// <c>ApplicationView.PersistedStateId</c> - so this exists only to bring the WinUI flavour
     /// back to parity: the framework keeps no window placement of its own.
     ///
-    /// The restored bounds plus whether it was maximized. That is why the placement is read rather
-    /// than the window rect - <c>rcNormalPosition</c> is the restored bounds whatever state the
-    /// window is in, so a window reopened maximized still has its own size to restore down to.
+    /// The restored bounds, the DPI of the monitor they were measured on, and whether it was
+    /// maximized. The placement is read rather than the window rect because
+    /// <c>rcNormalPosition</c> is the restored bounds whatever state the window is in, so a window
+    /// reopened maximized still has its own size to restore down to.
     ///
     /// Windows sharing an id share a slot and the last one closed wins - Fela, 2026-08-24. Two web
     /// app windows are both "WebApp", and that is fine: they are the same window to the user.
@@ -41,7 +42,7 @@ namespace Telegram.Host
         /// </summary>
         public static bool Restore(IntPtr hwnd, string persistedId)
         {
-            if (string.IsNullOrEmpty(persistedId) || !TryRead(persistedId, out var rect, out var maximized))
+            if (string.IsNullOrEmpty(persistedId) || !TryRead(persistedId, out var rect, out var maximized, out var savedDpi))
             {
                 return false;
             }
@@ -51,8 +52,9 @@ namespace Telegram.Host
             // Nor maximized, which it would then have no way out of.
             var current = new WINDOWPLACEMENT { length = Marshal.SizeOf<WINDOWPLACEMENT>() };
             var style = (long)Win32.GetWindowLongPtrW(hwnd, Win32.GWL_STYLE);
+            var resizable = (style & Win32.WS_THICKFRAME) != 0;
 
-            if ((style & Win32.WS_THICKFRAME) == 0)
+            if (!resizable)
             {
                 maximized = false;
 
@@ -70,6 +72,23 @@ namespace Telegram.Host
             if (monitor == IntPtr.Zero)
             {
                 return maximized;
+            }
+
+            // The size is in the pixels of the monitor it was saved on. The same desktop position
+            // can be a different monitor at a different scale - a laptop moved between a 150%
+            // screen at work and a 100% one at home - and the window should keep its size in
+            // effective pixels, not in physical ones.
+            if (resizable && savedDpi != 0)
+            {
+                var dpi = GetMonitorDpi(monitor);
+                if (dpi != 0 && dpi != savedDpi)
+                {
+                    var width = (int)Math.Round((rect.right - rect.left) * (double)dpi / savedDpi);
+                    var height = (int)Math.Round((rect.bottom - rect.top) * (double)dpi / savedDpi);
+
+                    rect.right = rect.left + width;
+                    rect.bottom = rect.top + height;
+                }
             }
 
             var info = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
@@ -93,7 +112,26 @@ namespace Telegram.Host
             // from screen ones when the taskbar is docked left or top. Symmetry avoids the
             // conversion entirely - and with it the window that creeps a little on every restart.
             Win32.SetWindowPlacement(hwnd, ref placement);
+
+            // A window created on a monitor at one scale and placed on one at another is sent
+            // WM_DPICHANGED, and the framework's handler scales the size it was just given a second
+            // time. Placed again, it is already on that monitor, so the second one sticks.
+            if (Win32.GetWindowPlacement(hwnd, ref current) && !SameRect(current.rcNormalPosition, rect))
+            {
+                Win32.SetWindowPlacement(hwnd, ref placement);
+            }
+
             return maximized;
+        }
+
+        private static uint GetMonitorDpi(IntPtr monitor)
+        {
+            return Win32.GetDpiForMonitor(monitor, Win32.MDT_EFFECTIVE_DPI, out var dpi, out _) == 0 ? dpi : 0;
+        }
+
+        private static bool SameRect(RECT x, RECT y)
+        {
+            return x.left == y.left && x.top == y.top && x.right == y.right && x.bottom == y.bottom;
         }
 
         public static void Save(IntPtr hwnd, string persistedId)
@@ -123,23 +161,27 @@ namespace Telegram.Host
             var maximized = placement.showCmd == Win32.SW_SHOWMAXIMIZED
                 || placement.showCmd == Win32.SW_SHOWMINIMIZED && (placement.flags & Win32.WPF_RESTORETOMAXIMIZED) != 0;
 
-            Store.SetValue(persistedId, string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4}",
-                rect.left, rect.top, width, height, maximized ? 1 : 0));
+            var dpi = GetMonitorDpi(Win32.MonitorFromRect(ref rect, Win32.MONITOR_DEFAULTTONEAREST));
+
+            Store.SetValue(persistedId, string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5}",
+                rect.left, rect.top, width, height, maximized ? 1 : 0, dpi));
         }
 
-        private static bool TryRead(string persistedId, out RECT rect, out bool maximized)
+        private static bool TryRead(string persistedId, out RECT rect, out bool maximized, out uint dpi)
         {
             rect = default;
             maximized = false;
+            dpi = 0;
 
             if (!Store.TryGetValue(persistedId, out var value) || value is not string text)
             {
                 return false;
             }
 
-            // Four fields from before the maximized state was kept.
+            // Four fields from before the maximized state was kept, five from before the DPI was.
+            // Without a DPI the size is restored as it was saved.
             var parts = text.Split(',');
-            if (parts.Length is not (4 or 5)
+            if (parts.Length is not (4 or 5 or 6)
                 || !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var x)
                 || !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var y)
                 || !int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var width)
@@ -150,7 +192,13 @@ namespace Telegram.Host
             }
 
             rect = new RECT { left = x, top = y, right = x + width, bottom = y + height };
-            maximized = parts.Length == 5 && parts[4] == "1";
+            maximized = parts.Length >= 5 && parts[4] == "1";
+
+            if (parts.Length == 6)
+            {
+                uint.TryParse(parts[5], NumberStyles.Integer, CultureInfo.InvariantCulture, out dpi);
+            }
+
             return true;
         }
 
