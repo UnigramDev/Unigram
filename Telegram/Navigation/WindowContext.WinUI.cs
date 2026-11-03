@@ -161,6 +161,12 @@ namespace Telegram.Navigation
             set => _persistedId = value;
         }
 
+        /// <summary>
+        /// Set from <see cref="WindowLayout.Restore"/> before the window is first shown, and used
+        /// by that show alone.
+        /// </summary>
+        internal bool OpenMaximized { get; set; }
+
         public void Activate()
         {
             // Show as well as raise: the main window is hidden rather than closed while the
@@ -169,7 +175,14 @@ namespace Telegram.Navigation
             // is not a minimized one, and neither is the same as one that is simply behind.
             var appWindow = _window.AppWindow;
 
-            if (!appWindow.IsVisible)
+            if (!appWindow.IsVisible && OpenMaximized)
+            {
+                // One call that shows and maximizes: showing first would put the window on screen
+                // at its restored bounds, and maximizing then animates from there.
+                OpenMaximized = false;
+                Win32.ShowWindow(_handle, Win32.SW_SHOWMAXIMIZED);
+            }
+            else if (!appWindow.IsVisible)
             {
                 appWindow.Show(true);
             }

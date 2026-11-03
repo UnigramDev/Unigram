@@ -249,10 +249,11 @@ namespace Telegram.Navigation
                 (int)(DefaultWidth * scale),
                 (int)(DefaultHeight * scale)));
 
-            WindowLayout.Restore(handle, persistedId);
+            var maximized = WindowLayout.Restore(handle, persistedId);
 
             var context = new WindowContext(window);
             context.PersistedId = persistedId;
+            context.OpenMaximized = maximized;
 
             WatchActivation(context);
             return context;

@@ -49,7 +49,7 @@ namespace Telegram.Services
                 // for its caption buttons.
                 if (options.ViewMode == ViewServiceMode.Default)
                 {
-                    WindowLayout.Restore((IntPtr)context.Handle, context.PersistedId);
+                    context.OpenMaximized = WindowLayout.Restore((IntPtr)context.Handle, context.PersistedId);
                 }
 
                 context.Activate();
@@ -96,7 +96,7 @@ namespace Telegram.Services
 
                 context.Content = BootStrapper.Current.CreateRootElement(nav);
 
-                WindowLayout.Restore((IntPtr)context.Handle, context.PersistedId);
+                context.OpenMaximized = WindowLayout.Restore((IntPtr)context.Handle, context.PersistedId);
                 context.Activate();
 
                 return context;

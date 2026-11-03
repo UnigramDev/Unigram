@@ -17,9 +17,9 @@ namespace Telegram.Host
     /// <c>ApplicationView.PersistedStateId</c> - so this exists only to bring the WinUI flavour
     /// back to parity: the framework keeps no window placement of its own.
     ///
-    /// Position and size only, deliberately: a window that was closed maximized opens restored.
-    /// That is why the placement is read rather than the window rect - <c>rcNormalPosition</c> is
-    /// the restored bounds whatever state the window is in, so there is nothing to special-case.
+    /// The restored bounds plus whether it was maximized. That is why the placement is read rather
+    /// than the window rect - <c>rcNormalPosition</c> is the restored bounds whatever state the
+    /// window is in, so a window reopened maximized still has its own size to restore down to.
     ///
     /// Windows sharing an id share a slot and the last one closed wins - Fela, 2026-08-24. Two web
     /// app windows are both "WebApp", and that is fine: they are the same window to the user.
@@ -35,31 +35,41 @@ namespace Telegram.Host
         /// Call between creating the window and showing it, so it opens where it belongs rather
         /// than moving once it is on screen - and after its content has said which caption buttons
         /// it wants, since that decides whether it is resizable.
+        ///
+        /// Returns whether it should open maximized, which is left to the caller's first show: a
+        /// placement that maximized it here would also show it.
         /// </summary>
-        public static void Restore(IntPtr hwnd, string persistedId)
+        public static bool Restore(IntPtr hwnd, string persistedId)
         {
-            if (string.IsNullOrEmpty(persistedId) || !TryReadRect(persistedId, out var rect))
+            if (string.IsNullOrEmpty(persistedId) || !TryRead(persistedId, out var rect, out var maximized))
             {
-                return;
+                return false;
             }
 
             // Only where it was, for a window that cannot be resized: the size saved may be one it
             // was dragged to before it stopped being resizable, and it could never leave it again.
+            // Nor maximized, which it would then have no way out of.
             var current = new WINDOWPLACEMENT { length = Marshal.SizeOf<WINDOWPLACEMENT>() };
             var style = (long)Win32.GetWindowLongPtrW(hwnd, Win32.GWL_STYLE);
 
-            if ((style & Win32.WS_THICKFRAME) == 0 && Win32.GetWindowPlacement(hwnd, ref current))
+            if ((style & Win32.WS_THICKFRAME) == 0)
             {
-                rect.right = rect.left + current.rcNormalPosition.right - current.rcNormalPosition.left;
-                rect.bottom = rect.top + current.rcNormalPosition.bottom - current.rcNormalPosition.top;
+                maximized = false;
+
+                if (Win32.GetWindowPlacement(hwnd, ref current))
+                {
+                    rect.right = rect.left + current.rcNormalPosition.right - current.rcNormalPosition.left;
+                    rect.bottom = rect.top + current.rcNormalPosition.bottom - current.rcNormalPosition.top;
+                }
             }
 
             // The monitor it was on may be gone, and a window restored onto no monitor at all is
             // unreachable. MONITOR_DEFAULTTONULL is what says so rather than guessing a nearest.
+            // Still maximized if it was: on whichever monitor the default bounds land.
             var monitor = Win32.MonitorFromRect(ref rect, Win32.MONITOR_DEFAULTTONULL);
             if (monitor == IntPtr.Zero)
             {
-                return;
+                return maximized;
             }
 
             var info = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
@@ -83,6 +93,7 @@ namespace Telegram.Host
             // from screen ones when the taskbar is docked left or top. Symmetry avoids the
             // conversion entirely - and with it the window that creeps a little on every restart.
             Win32.SetWindowPlacement(hwnd, ref placement);
+            return maximized;
         }
 
         public static void Save(IntPtr hwnd, string persistedId)
@@ -107,21 +118,28 @@ namespace Telegram.Host
                 return;
             }
 
-            Store.SetValue(persistedId, string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}",
-                rect.left, rect.top, width, height));
+            // Minimized from maximized is still maximized: closed from the taskbar, it should come
+            // back the way it would have been restored.
+            var maximized = placement.showCmd == Win32.SW_SHOWMAXIMIZED
+                || placement.showCmd == Win32.SW_SHOWMINIMIZED && (placement.flags & Win32.WPF_RESTORETOMAXIMIZED) != 0;
+
+            Store.SetValue(persistedId, string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4}",
+                rect.left, rect.top, width, height, maximized ? 1 : 0));
         }
 
-        private static bool TryReadRect(string persistedId, out RECT rect)
+        private static bool TryRead(string persistedId, out RECT rect, out bool maximized)
         {
             rect = default;
+            maximized = false;
 
             if (!Store.TryGetValue(persistedId, out var value) || value is not string text)
             {
                 return false;
             }
 
+            // Four fields from before the maximized state was kept.
             var parts = text.Split(',');
-            if (parts.Length != 4
+            if (parts.Length is not (4 or 5)
                 || !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var x)
                 || !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var y)
                 || !int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var width)
@@ -132,6 +150,7 @@ namespace Telegram.Host
             }
 
             rect = new RECT { left = x, top = y, right = x + width, bottom = y + height };
+            maximized = parts.Length == 5 && parts[4] == "1";
             return true;
         }
 

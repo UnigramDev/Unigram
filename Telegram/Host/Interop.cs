@@ -244,7 +244,10 @@ namespace Telegram.Host
         public const int GWL_STYLE = -16;
 
         public const int SW_HIDE = 0;
+        public const int SW_SHOWMINIMIZED = 2;
         public const int SW_SHOWMAXIMIZED = 3;
+
+        public const int WPF_RESTORETOMAXIMIZED = 0x0002;
 
         // Null rather than a nearest monitor: a window restored onto a monitor that is gone should
         // fall back to the default placement, not be dragged to whatever is closest.
