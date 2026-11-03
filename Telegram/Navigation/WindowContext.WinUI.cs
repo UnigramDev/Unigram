@@ -916,8 +916,6 @@ namespace Telegram.Navigation
                 host.PopupClosed();
             }
 
-            // The root is where this host's pointer input has to be picked up: this is the only
-            // moment the root is known.
             _inputListener.Attach(content);
         }
 

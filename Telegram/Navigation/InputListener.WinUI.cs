@@ -7,7 +7,6 @@
 
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Input;
 using Telegram.Navigation;
 using Windows.System;
 
@@ -15,78 +14,120 @@ namespace Telegram.Services.Keyboard
 {
     /// <summary>
     /// The WinUI 3 half of <see cref="InputListener"/>. Its UWP twin listens to
-    /// <c>CoreDispatcher.AcceleratorKeyActivated</c> and its Win32 twin to the message loop; this
-    /// one has neither, so both keys and pointer buttons come off the root as routed events with
-    /// handledEventsToo.
+    /// <c>CoreDispatcher.AcceleratorKeyActivated</c>, which covers the whole window; this one
+    /// listens to the keyboard and pointer sources of the window's content island, which is the
+    /// nearest thing. Routed events on the root are not: popups live under the popup root, so a
+    /// key or a click inside a ContentDialog or a ModalPopup never bubbles up to it.
     ///
-    /// That is weaker than the other two and it is worth saying where: a routed KeyDown does not
-    /// fire while focus is inside a WebView2, which is not part of the XAML tree, and a control
-    /// that marks a key handled is only reached because of handledEventsToo. The framework's
-    /// equivalent of the message filter is <c>InputPreTranslateKeyboardSource</c>, whose handler
-    /// interface is not projected to C# - it takes a COM implementation - so it is not reached
-    /// for here.
+    /// Where it still falls short: a WebView2 and a windowed popup - a menu let out of the window's
+    /// bounds - each have an island of their own, so nothing typed into them arrives here. The
+    /// framework's real equivalent of the message filter is <c>InputPreTranslateKeyboardSource</c>,
+    /// whose handler interface is not projected to C#, and which takes a single handler.
     ///
-    /// The decision logic below is deliberately a copy of the other two halves rather than a
-    /// shared base: they differ only in where the key comes from, and the UWP file ships to users,
-    /// so it is left exactly as it is.
+    /// The decision logic below is deliberately a copy of the UWP half rather than a shared base:
+    /// they differ only in where the key comes from, and the UWP file ships to users, so it is left
+    /// exactly as it is.
     /// </summary>
     public partial class InputListener
     {
         private readonly WindowContext _window;
 
-        // Held in fields so RemoveHandler is given the same delegates AddHandler took, and because
-        // a handler that cannot be removed leaks the window it belongs to.
-        private readonly PointerEventHandler _pointerPressed;
-        private readonly KeyEventHandler _keyDown;
+        private FrameworkElement _root;
 
-        private UIElement _root;
+        private InputKeyboardSource _keyboard;
+        private InputPointerSource _pointer;
 
         public InputListener(WindowContext window)
         {
             _window = window;
-
-            _pointerPressed = OnPointerPressed;
-            _keyDown = OnKeyDown;
         }
 
         /// <summary>
-        /// Called from WindowContext.SetHostContent, the seam where the root arrives.
+        /// Called from WindowContext.SetHostContent. The island is the window's for its whole
+        /// life, but WinUI creates it after the content is first set, so until the root loads
+        /// there is no XamlRoot to take it from.
         /// </summary>
-        internal void Attach(UIElement root)
+        internal void Attach(UIElement content)
         {
-            Detach();
-
-            _root = root;
-
-            if (_root != null)
+            if (_keyboard != null || content is not FrameworkElement root)
             {
-                _root.AddHandler(UIElement.PointerPressedEvent, _pointerPressed, true);
-                _root.AddHandler(UIElement.KeyDownEvent, _keyDown, true);
+                return;
+            }
+
+            DetachRoot();
+
+            if (root.XamlRoot != null)
+            {
+                Subscribe(root.XamlRoot);
+            }
+            else
+            {
+                _root = root;
+                _root.Loaded += OnRootLoaded;
             }
         }
 
-        private void Detach()
+        private void OnRootLoaded(object sender, RoutedEventArgs e)
+        {
+            var root = _root;
+            DetachRoot();
+
+            if (root.XamlRoot != null)
+            {
+                Subscribe(root.XamlRoot);
+            }
+        }
+
+        private void Subscribe(XamlRoot xamlRoot)
+        {
+            var island = xamlRoot.ContentIsland;
+            if (island == null)
+            {
+                return;
+            }
+
+            _keyboard = InputKeyboardSource.GetForIsland(island);
+            _keyboard.KeyDown += OnKeyDown;
+            _keyboard.SystemKeyDown += OnKeyDown;
+
+            _pointer = InputPointerSource.GetForIsland(island);
+            _pointer.PointerPressed += OnPointerPressed;
+        }
+
+        private void DetachRoot()
         {
             if (_root != null)
             {
-                _root.RemoveHandler(UIElement.PointerPressedEvent, _pointerPressed);
-                _root.RemoveHandler(UIElement.KeyDownEvent, _keyDown);
+                _root.Loaded -= OnRootLoaded;
                 _root = null;
             }
         }
 
         public void Release()
         {
-            Detach();
+            DetachRoot();
+
+            if (_keyboard != null)
+            {
+                _keyboard.KeyDown -= OnKeyDown;
+                _keyboard.SystemKeyDown -= OnKeyDown;
+                _keyboard = null;
+            }
+
+            if (_pointer != null)
+            {
+                _pointer.PointerPressed -= OnPointerPressed;
+                _pointer = null;
+            }
         }
 
-        private void OnKeyDown(object sender, KeyRoutedEventArgs e)
+        private void OnKeyDown(InputKeyboardSource sender, KeyEventArgs args)
         {
-            // Only ever set, never cleared: handledEventsToo means this runs on keys something
-            // else has already marked handled, and assigning the result would take that back.
-            if (OnAcceleratorKeyActivated(e.Key))
+            // Only ever set, never cleared: the framework handles the island's keys too, and
+            // assigning the result would take back a key it has already marked handled.
+            if (OnAcceleratorKeyActivated(args.VirtualKey))
             {
-                e.Handled = true;
+                args.Handled = true;
             }
         }
 
@@ -146,12 +187,11 @@ namespace Telegram.Services.Keyboard
         }
 
         /// <summary>
-        /// Browser-style back and forward mouse buttons. The tree handles neither XButton1 nor
-        /// XButton2, so handledEventsToo still sees them.
+        /// Browser-style back and forward mouse buttons.
         /// </summary>
-        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        private void OnPointerPressed(InputPointerSource sender, PointerEventArgs args)
         {
-            var properties = e.GetCurrentPoint(null).Properties;
+            var properties = args.CurrentPoint.Properties;
 
             // Ignore button chords with the left, right, and middle buttons
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
@@ -165,7 +205,7 @@ namespace Telegram.Services.Keyboard
             bool forwardPressed = properties.IsXButton2Pressed;
             if (backPressed ^ forwardPressed)
             {
-                e.Handled = true;
+                args.Handled = true;
 
                 if (backPressed)
                 {
