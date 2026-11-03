@@ -577,8 +577,6 @@ namespace Telegram.Services
 
             Unshare(names);
             UnshareRecentEmoji(names);
-
-            _local.Flush();
         }
 
         // Recent emoji live in a container rather than at the root, so they do not fit Unshare.

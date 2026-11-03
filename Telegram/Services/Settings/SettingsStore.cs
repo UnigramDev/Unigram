@@ -8,11 +8,12 @@
 using System.Collections.Generic;
 using Windows.Storage;
 #if UNPACKAGED
-using System;
 using System.IO;
 using System.Text;
-using System.Threading;
 using Telegram.Common;
+using UnpackagedApplicationData = Microsoft.Windows.Storage.ApplicationData;
+using UnpackagedApplicationDataContainer = Microsoft.Windows.Storage.ApplicationDataContainer;
+using UnpackagedCreateDisposition = Microsoft.Windows.Storage.ApplicationDataCreateDisposition;
 #endif
 
 namespace Telegram.Services.Settings
@@ -26,7 +27,7 @@ namespace Telegram.Services.Settings
         private static ISettingsStore _local;
         public static ISettingsStore Local => _local ??= ApiInfo.HasPackageIdentity
             ? ApplicationDataSettingsStore.Local
-            : FileSettingsStore.Open(Path.Combine(AppPaths.LocalPath, "settings.bin"));
+            : UnpackagedSettingsStore.Open(Path.Combine(AppPaths.LocalPath, "settings.bin"));
 #else
         public static ISettingsStore Local => ApplicationDataSettingsStore.Local;
 #endif
@@ -48,10 +49,6 @@ namespace Telegram.Services.Settings
         ISettingsStore GetContainer(string name);
         bool TryGetContainer(string name, out ISettingsStore container);
         void DeleteContainer(string name);
-
-        // ApplicationData persists as it goes. A file-backed store will not, and needs a save
-        // point that does not depend on guessing when the last write happened.
-        void Flush();
     }
 
     public static class SettingsStoreExtensions
@@ -144,25 +141,105 @@ namespace Telegram.Services.Settings
         {
             _container.DeleteContainer(name);
         }
-
-        public void Flush()
-        {
-        }
     }
 
 #if UNPACKAGED
     /// <summary>
-    /// The unpackaged half: the same container tree, held in memory and written to one file.
-    /// <see cref="ApplicationData"/> persists as it goes and this cannot, so the write is
-    /// debounced rather than deferred to <see cref="Flush"/> alone - a setting the user changed
-    /// and a crash two seconds later must not add up to a setting never changed. The host flushes
-    /// on the way out, because it ends the process without waiting for the timer.
-    ///
-    /// Each save is complete or absent: written to a temporary file, forced to disk, then swapped
-    /// in with <see cref="File.Replace(string, string, string, bool)"/>, which keeps the previous
-    /// file as a backup that <see cref="Load"/> falls back to.
+    /// The unpackaged half, over the Windows App SDK's <see cref="UnpackagedApplicationData"/>:
+    /// a registry key per container and a value per setting, under
+    /// <c>HKCU\Software\Classes\Local Settings\Software\TelegramFZ-LLC\Windows</c>. That path is a
+    /// servicing fix behind a feature switch: with the switch off, the same key sits under
+    /// <c>HKCU\Software</c> and the settings read as reset. Each value is written with a type of
+    /// its own, so it reads back as what was stored, as it does packaged, and each write reaches
+    /// the registry before it returns: there is nothing to flush.
     /// </summary>
-    public partial class FileSettingsStore : ISettingsStore
+    public partial class UnpackagedSettingsStore : ISettingsStore
+    {
+        private const string Publisher = "TelegramFZ-LLC";
+
+        // AppPaths keeps a profile of its own for debug builds, and the settings go with it.
+#if DEBUG
+        private const string Product = "Windows.Debug";
+#else
+        private const string Product = "Windows";
+#endif
+
+        private readonly UnpackagedApplicationDataContainer _container;
+
+        // Values builds a new map over the key on every read.
+        private readonly IDictionary<string, object> _values;
+
+        public static ISettingsStore Open(string legacyPath)
+        {
+            var store = new UnpackagedSettingsStore(UnpackagedApplicationData.GetForUnpackaged(Publisher, Product).LocalSettings);
+            SettingsFileImport.Import(legacyPath, store);
+            return store;
+        }
+
+        private UnpackagedSettingsStore(UnpackagedApplicationDataContainer container)
+        {
+            _container = container;
+            _values = container.Values;
+        }
+
+        public bool TryGetValue(string key, out object value)
+        {
+            return _values.TryGetValue(key, out value);
+        }
+
+        public void SetValue(string key, object value)
+        {
+            _values[key] = value;
+        }
+
+        public bool ContainsKey(string key)
+        {
+            return _values.ContainsKey(key);
+        }
+
+        public void Remove(string key)
+        {
+            _values.Remove(key);
+        }
+
+        public void Clear()
+        {
+            _values.Clear();
+        }
+
+        public IEnumerable<string> Keys => _values.Keys;
+
+        public IEnumerable<string> ContainerNames => _container.Containers.Keys;
+
+        public ISettingsStore GetContainer(string name)
+        {
+            return new UnpackagedSettingsStore(_container.CreateContainer(name, UnpackagedCreateDisposition.Always));
+        }
+
+        public bool TryGetContainer(string name, out ISettingsStore container)
+        {
+            if (_container.Containers.TryGetValue(name, out var existing))
+            {
+                container = new UnpackagedSettingsStore(existing);
+                return true;
+            }
+
+            container = null;
+            return false;
+        }
+
+        public void DeleteContainer(string name)
+        {
+            _container.DeleteContainer(name);
+        }
+    }
+
+    /// <summary>
+    /// Reads the file the unpackaged settings were kept in before they moved to the registry,
+    /// copies it in and moves it aside. Nothing writes the file any more, so it can go once every
+    /// install has started on a build that has this.
+    /// </summary>
+    internal static class SettingsFileImport
     {
         private const uint Magic = 0x54535447;  // "GTST"
         private const byte Format = 1;
@@ -178,345 +255,111 @@ namespace Telegram.Services.Settings
         private const byte TagString = 8;
         private const byte TagBytes = 9;
 
-        private static readonly TimeSpan _debounce = TimeSpan.FromSeconds(2);
-
-        private readonly Dictionary<string, object> _values = new();
-        private readonly Dictionary<string, FileSettingsStore> _containers = new();
-
-        // Containers are handed out as separate instances but are one tree and one file, so every
-        // node takes the root's lock rather than its own.
-        private readonly FileSettingsStore _root;
-        private readonly object _lock;
-
-        // Root only, and always taken before _lock: the tree is held only while a save serializes
-        // it, never while the save waits on the disk. Saves queue on it, so an older snapshot can
-        // never be written over a newer one.
-        private readonly object _saveLock;
-
-        private readonly string _path;
-        private Timer _timer;
-        private bool _dirty;
-
-        public static ISettingsStore Open(string path)
+        private sealed class Node
         {
-            var store = new FileSettingsStore(path);
-            store.Load();
-            return store;
-        }
-
-        private FileSettingsStore(string path)
-        {
-            _root = this;
-            _lock = new object();
-            _saveLock = new object();
-            _path = path;
-        }
-
-        private FileSettingsStore(FileSettingsStore root)
-        {
-            _root = root;
-            _lock = root._lock;
-        }
-
-        public bool TryGetValue(string key, out object value)
-        {
-            lock (_lock)
-            {
-                return _values.TryGetValue(key, out value);
-            }
-        }
-
-        public void SetValue(string key, object value)
-        {
-            // Refused here, as ApplicationData refuses it, rather than when the file is next
-            // written: one value that cannot be written would fail every save after it.
-            if (!CanWrite(value))
-            {
-                throw new NotSupportedException($"{value.GetType()} cannot be stored in the settings file");
-            }
-
-            lock (_lock)
-            {
-                _values[key] = value;
-                Invalidate();
-            }
-        }
-
-        public bool ContainsKey(string key)
-        {
-            lock (_lock)
-            {
-                return _values.ContainsKey(key);
-            }
-        }
-
-        public void Remove(string key)
-        {
-            lock (_lock)
-            {
-                if (_values.Remove(key))
-                {
-                    Invalidate();
-                }
-            }
-        }
-
-        public void Clear()
-        {
-            lock (_lock)
-            {
-                if (_values.Count > 0)
-                {
-                    _values.Clear();
-                    Invalidate();
-                }
-            }
-        }
-
-        public IEnumerable<string> Keys
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    return new List<string>(_values.Keys);
-                }
-            }
-        }
-
-        public IEnumerable<string> ContainerNames
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    // A copy: the caller enumerates outside the lock, and one of them deletes the
-                    // sessions it walks.
-                    return new List<string>(_containers.Keys);
-                }
-            }
-        }
-
-        public ISettingsStore GetContainer(string name)
-        {
-            lock (_lock)
-            {
-                if (!_containers.TryGetValue(name, out var container))
-                {
-                    _containers[name] = container = new FileSettingsStore(_root);
-                    Invalidate();
-                }
-
-                return container;
-            }
-        }
-
-        public bool TryGetContainer(string name, out ISettingsStore container)
-        {
-            lock (_lock)
-            {
-                if (_containers.TryGetValue(name, out var existing))
-                {
-                    container = existing;
-                    return true;
-                }
-
-                container = null;
-                return false;
-            }
-        }
-
-        public void DeleteContainer(string name)
-        {
-            lock (_lock)
-            {
-                if (_containers.Remove(name))
-                {
-                    Invalidate();
-                }
-            }
-        }
-
-        public void Flush()
-        {
-            var root = _root;
-
-            lock (root._saveLock)
-            {
-                byte[] data;
-
-                lock (_lock)
-                {
-                    if (!root._dirty)
-                    {
-                        return;
-                    }
-
-                    data = root.Serialize();
-                    root._dirty = false;
-                }
-
-                try
-                {
-                    root.Save(data);
-                }
-                catch (Exception ex)
-                {
-                    lock (_lock)
-                    {
-                        // Rescheduled as well as marked: without a change after this one, nothing
-                        // else would ever try again.
-                        root.Invalidate();
-                    }
-
-                    Logger.Error("Settings could not be saved", ex);
-                }
-            }
-        }
-
-        // The caller holds the lock.
-        private void Invalidate()
-        {
-            _root._dirty = true;
-            _root._timer ??= new Timer(static state => ((FileSettingsStore)state).Flush(), _root, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            _root._timer.Change(_debounce, Timeout.InfiniteTimeSpan);
-        }
-
-        // The caller holds the lock.
-        private byte[] Serialize()
-        {
-            using var stream = new MemoryStream();
-
-            using (var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
-            {
-                writer.Write(Magic);
-                writer.Write(Format);
-                Write(writer, this);
-            }
-
-            return stream.ToArray();
-        }
-
-        // The caller holds the save lock.
-        private void Save(byte[] data)
-        {
-            var temp = _path + ".tmp";
-
-            using (var stream = new FileStream(temp, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                stream.Write(data, 0, data.Length);
-
-                // On the disk before the swap, not just in the cache: NTFS journals the rename but
-                // not the data, so after a power cut the new name could point at zeros.
-                stream.Flush(flushToDisk: true);
-            }
-
-            if (File.Exists(_path))
-            {
-                File.Replace(temp, _path, _path + ".bak", ignoreMetadataErrors: true);
-            }
-            else
-            {
-                File.Move(temp, _path);
-            }
+            public readonly Dictionary<string, object> Values = new();
+            public readonly Dictionary<string, Node> Containers = new();
         }
 
         // No logging in here: this runs from AppSettings' static initializer, and the logger reads
-        // AppSettings. A file that could not be read is left beside the others as .bad instead.
-        private void Load()
+        // AppSettings.
+        public static void Import(string path, ISettingsStore target)
         {
-            lock (_lock)
+            var backup = path + ".bak";
+
+            if (!File.Exists(path) && !File.Exists(backup))
             {
-                if (TryLoad(_path))
+                return;
+            }
+
+            // The backup is one save older. It is also the only copy when a save failed after
+            // moving the old file aside but before moving the new one in.
+            var source = TryRead(path, out var tree) ? path : TryRead(backup, out tree) ? backup : null;
+
+            if (source != null)
+            {
+                // Replaced rather than merged: a file that is still here was written after the
+                // registry was, by an older build.
+                foreach (var name in target.ContainerNames)
                 {
-                    return;
+                    target.DeleteContainer(name);
                 }
 
-                // There but unreadable, as opposed to absent: moved aside, so that the next save
-                // cannot overwrite what may still be recoverable by hand.
-                if (File.Exists(_path))
-                {
-                    try
-                    {
-                        File.Move(_path, _path + ".bad", overwrite: true);
-                    }
-                    catch
-                    {
-                        // Left where it is, and the next save replaces it.
-                    }
-                }
+                target.Clear();
+                Copy(tree, target);
+            }
 
-                // One save older. It is also the only copy when Replace failed after moving the
-                // old file aside but before moving the new one in.
-                if (TryLoad(_path + ".bak"))
-                {
-                    Invalidate();
-                }
+            // Only after the copy, so that a start that dies halfway through it imports again.
+            Retire(path, path == source ? ".imported" : ".bad");
+            Retire(backup, backup == source ? ".imported" : ".bad");
+        }
+
+        private static void Copy(Node node, ISettingsStore target)
+        {
+            foreach (var value in node.Values)
+            {
+                target.SetValue(value.Key, value.Value);
+            }
+
+            foreach (var child in node.Containers)
+            {
+                Copy(child.Value, target.GetContainer(child.Key));
             }
         }
 
-        private bool TryLoad(string path)
+        private static void Retire(string path, string suffix)
         {
             try
             {
-                if (!File.Exists(path))
+                if (File.Exists(path))
                 {
-                    return false;
+                    File.Move(path, path + suffix, overwrite: true);
                 }
-
-                using var stream = File.OpenRead(path);
-                using var reader = new BinaryReader(stream, Encoding.UTF8);
-
-                if (reader.ReadUInt32() != Magic || reader.ReadByte() != Format)
-                {
-                    throw new InvalidDataException("Not a settings file");
-                }
-
-                Read(reader, this);
-
-                if (stream.Position != stream.Length)
-                {
-                    throw new InvalidDataException("Trailing data after the settings tree");
-                }
-
-                return true;
             }
             catch
             {
-                // Nothing of a file that failed halfway is kept: defaults rather than a mix.
-                _values.Clear();
-                _containers.Clear();
-                return false;
+                // Left where it is, and the next start tries again.
             }
         }
 
-        private static void Write(BinaryWriter writer, FileSettingsStore container)
+        private static bool TryRead(string path, out Node tree)
         {
-            writer.Write(container._values.Count);
-
-            foreach (var value in container._values)
+            try
             {
-                writer.Write(value.Key);
-                WriteValue(writer, value.Value);
+                if (File.Exists(path))
+                {
+                    using var stream = File.OpenRead(path);
+                    using var reader = new BinaryReader(stream, Encoding.UTF8);
+
+                    if (reader.ReadUInt32() == Magic && reader.ReadByte() == Format)
+                    {
+                        tree = Read(reader);
+
+                        if (stream.Position == stream.Length)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Nothing of a file that failed halfway is kept: the next one, or defaults.
             }
 
-            writer.Write(container._containers.Count);
-
-            foreach (var child in container._containers)
-            {
-                writer.Write(child.Key);
-                Write(writer, child.Value);
-            }
+            tree = null;
+            return false;
         }
 
-        private static void Read(BinaryReader reader, FileSettingsStore container)
+        private static Node Read(BinaryReader reader)
         {
+            var node = new Node();
             var values = reader.ReadInt32();
 
             for (int i = 0; i < values; i++)
             {
                 var key = reader.ReadString();
-                container._values[key] = ReadValue(reader);
+                node.Values[key] = ReadValue(reader);
             }
 
             var containers = reader.ReadInt32();
@@ -524,68 +367,10 @@ namespace Telegram.Services.Settings
             for (int i = 0; i < containers; i++)
             {
                 var name = reader.ReadString();
-                var child = new FileSettingsStore(container._root);
-
-                Read(reader, child);
-                container._containers[name] = child;
+                node.Containers[name] = Read(reader);
             }
-        }
 
-        // Exactly the types WriteValue has a tag for.
-        private static bool CanWrite(object value)
-        {
-            return value is null or bool or int or uint or long or ulong or float or double or string or byte[];
-        }
-
-        // The set is closed on purpose: an unknown tag cannot be skipped, so a value that does not
-        // round-trip has to fail here rather than take the whole file down on the next load.
-        private static void WriteValue(BinaryWriter writer, object value)
-        {
-            switch (value)
-            {
-                case null:
-                    writer.Write(TagNull);
-                    break;
-                case bool boolean:
-                    writer.Write(TagBoolean);
-                    writer.Write(boolean);
-                    break;
-                case int int32:
-                    writer.Write(TagInt32);
-                    writer.Write(int32);
-                    break;
-                case uint uint32:
-                    writer.Write(TagUInt32);
-                    writer.Write(uint32);
-                    break;
-                case long int64:
-                    writer.Write(TagInt64);
-                    writer.Write(int64);
-                    break;
-                case ulong uint64:
-                    writer.Write(TagUInt64);
-                    writer.Write(uint64);
-                    break;
-                case float single:
-                    writer.Write(TagSingle);
-                    writer.Write(single);
-                    break;
-                case double doubl:
-                    writer.Write(TagDouble);
-                    writer.Write(doubl);
-                    break;
-                case string text:
-                    writer.Write(TagString);
-                    writer.Write(text);
-                    break;
-                case byte[] bytes:
-                    writer.Write(TagBytes);
-                    writer.Write(bytes.Length);
-                    writer.Write(bytes);
-                    break;
-                default:
-                    throw new NotSupportedException($"{value.GetType()} cannot be stored in the settings file");
-            }
+            return node;
         }
 
         private static object ReadValue(BinaryReader reader)

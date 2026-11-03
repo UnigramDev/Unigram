@@ -96,6 +96,8 @@ Name: "{userdesktop}\{#AppName}"; Filename: "{app}\app\Telegram.exe"; AppUserMod
 Root: HKCU; Subkey: "Software\Classes\AppUserModelId\{#AppUserModelId}"; Flags: uninsdeletekey
 ; ToastActivator.Clsid, the class the shell starts the app through when a toast is clicked.
 Root: HKCU; Subkey: "Software\Classes\CLSID\{{3542F50C-8B9A-4A2B-A47D-9E5EAF762103}"; Flags: uninsdeletekey
+; The app's settings, which ApplicationData.GetForUnpackaged keeps here: removed with the data folder.
+Root: HKCU; Subkey: "Software\Classes\Local Settings\Software\TelegramFZ-LLC"; Flags: uninsdeletekey
 
 ; tg:, tonsite: and tc:, which the packaged flavours declare in their manifest. The command is the
 ; form Windows App SDK's AppInstance decodes into a protocol activation, as

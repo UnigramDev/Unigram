@@ -21,7 +21,6 @@ using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
-using Telegram.Services.Settings;
 using Telegram.Views.Host;
 using Windows.Foundation;
 using Windows.Graphics;
@@ -217,8 +216,6 @@ namespace Telegram.Navigation
             // go of the icon by then, so nothing is keeping the app alive either.
             if (SystemTray.IsSessionEnding)
             {
-                // The process is ended with the session, before the store's debounced write.
-                SettingsStore.Local.Flush();
                 return;
             }
 
@@ -327,8 +324,6 @@ namespace Telegram.Navigation
         {
             if (All.Count == 0 && !SystemTray.IsShowing())
             {
-                // The store writes on a timer, which the exit does not wait for.
-                SettingsStore.Local.Flush();
                 Application.Current.Exit();
             }
         }

@@ -180,7 +180,6 @@ namespace Telegram.Services
             ResetCache();
 
             UseTestDC = useTestDC;
-            _own.Flush();
         }
 
         // Every value is cached on first read, and a log out is followed by a log in on the same
