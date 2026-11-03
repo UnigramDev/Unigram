@@ -37,7 +37,7 @@ namespace Telegram.Controls
             {
                 integrated = true;
 
-#if DESKTOP_BRIDGE
+#if WINUI3
                 FindName(nameof(ToggleMinimized));
 #endif
 
@@ -47,6 +47,7 @@ namespace Telegram.Controls
             else if (!ApiInfo.HasPackageIdentity)
             {
                 integrated = true;
+                FindName(nameof(ToggleMinimized));
                 OnLoaded();
             }
 #endif
@@ -55,6 +56,12 @@ namespace Telegram.Controls
                 // A StartupTask is declared in the manifest and this device has none, so the toggle
                 // is hidden rather than left as a switch that does nothing.
                 Toggle.Visibility = Visibility.Collapsed;
+            }
+
+            if (TraySwitch != null && ToggleMinimized != null)
+            {
+                TraySwitch.Checked += Tray_Toggled;
+                TraySwitch.Unchecked += Tray_Toggled;
             }
 
             Visibility = integrated
@@ -99,7 +106,9 @@ namespace Telegram.Controls
                 if (ToggleMinimized != null)
                 {
                     ToggleMinimized.IsChecked = AppSettings.IsLaunchMinimized;
-                    ToggleMinimized.Visibility = Visibility.Visible;
+                    ToggleMinimized.Visibility = AppSettings.IsTrayVisible
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
                 }
 
                 Headered.Footer = state == StartupTaskState.EnabledByPolicy
@@ -146,6 +155,15 @@ namespace Telegram.Controls
                 ToggleMinimized.Checked += Minimized_Toggled;
                 ToggleMinimized.Unchecked += Minimized_Toggled;
             }
+        }
+
+        // Launch minimized starts the app behind the notification area icon, so without the icon
+        // it has nothing to do. Read from the checkbox: the setting may not be written back yet.
+        private void Tray_Toggled(object sender, RoutedEventArgs e)
+        {
+            ToggleMinimized.Visibility = Toggle.IsChecked is true && TraySwitch.IsChecked is true
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private async void OnToggled(object sender, RoutedEventArgs e)

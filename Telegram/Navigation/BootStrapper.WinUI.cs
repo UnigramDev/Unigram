@@ -126,15 +126,16 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// Started with the user's session rather than by the user. With the notification area icon
-        /// on, the app starts behind it - accounts connected, notifications showing - and the first
-        /// click on the icon builds the window through <see cref="ReopenFromNotifyIcon"/>, as it
-        /// does after the window was closed to the icon. Without the icon there would be nothing
-        /// to open it from, so the caller starts it as any other launch.
+        /// Started with the user's session rather than by the user. With Launch minimized checked,
+        /// the app starts behind the notification area icon - accounts connected, notifications
+        /// showing - and the first click on the icon builds the window through
+        /// <see cref="ReopenFromNotifyIcon"/>, as it does after the window was closed to the icon.
+        /// Without the icon there would be nothing to open it from, so the caller starts it as any
+        /// other launch.
         /// </summary>
         private bool TryStartInBackground(IActivatedEventArgs args)
         {
-            if (!AppSettings.IsTrayVisible)
+            if (!AppSettings.IsLaunchMinimized || !AppSettings.IsTrayVisible)
             {
                 return false;
             }

@@ -22,7 +22,7 @@
         <CheckBox x:Name="ToggleMinimized"
                   x:Load="False"
                   Content="{CustomResource AutoStartMinized}"
-                  Visibility="{x:Bind Toggle.IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  Visibility="Collapsed"
                   Style="{StaticResource SettingsCheckBoxStyle}" />
     </local:HeaderedControl>
 </UserControl>
