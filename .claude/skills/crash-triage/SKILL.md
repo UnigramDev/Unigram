@@ -35,7 +35,8 @@ $CRASHCTL list --days 7 --sort users --limit 20
 Columns: group hash, count, affected users, version, `SYMS`, type/message. `SYMS` is
 `cached/total` PDBs — a group showing `2/9` will need downloads or will leave frames
 unresolved. `--sort users` ranks by people affected, which is usually the right priority;
-`--sort count` ranks by raw volume.
+`--sort count` ranks by raw volume. A `[winui]` marker before `[fatal]` flags a group reported
+by the WinUI flavour; `--flavour uwp|winui` keeps to one.
 
 These figures are for deciding what to work on. They are private telemetry and never get
 published — see section 5.
@@ -125,6 +126,13 @@ question; adding it is a legitimate follow-up.
 ## 3. Map the version to its source — do not skip
 
 A crash reported against `12.8.1.0` must be read at 12.8.1's code.
+
+**Unless it came from the WinUI flavour.** `Build.WinUI.ps1` stamps a build with the version in
+`Telegram.Msix/Package.appxmanifest` at the time, so a WinUI report carries a release's version
+while its code is whatever `develop` held when it was built. The tag below is the wrong source
+for it. `show` prints a `flavour` line: when it says `winui`, the version only bounds the build
+from below, and the anchor check is what tells you whether a candidate commit fits. Reports from
+WinUI builds older than the flag carry no marker and read as `uwp`.
 
 **Find the reference commit.** Try the tag first; the trailing `.0` is not part of the tag name:
 
