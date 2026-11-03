@@ -332,7 +332,7 @@
       The two halves of the Windows App SDK this app is, rather than the Microsoft.WindowsAppSDK
       metapackage that pulls all ten. WinUI brings Base, Foundation and InteractiveExperiences with
       it; Runtime is the framework package reference and the MSIX tooling. The versions are the
-      ones the 2.5.1 metapackage pins, so this is the same servicing set, minus the four leaves
+      ones the 2.6.5 metapackage pins, so this is the same servicing set, minus the four leaves
       nothing here calls: AI, ML, Widgets and Search.
 
       ML is the one that pays for itself. It ships app-local rather than in the framework package -
@@ -341,19 +341,18 @@
       framework package supplies DWriteCore, and nothing here uses the app-local one.
     -->
     <!--
-      All four are named, and they have to be: the Runtime package checks the version of every
-      component it sees and fails the build on a mismatch, and WinUI's own transitive pins are
-      older than what Runtime 2.5.1 expects (InteractiveExperiences 2.1.8 against 2.1.9). These
-      are the metapackage's versions, so what resolves is exactly what it would have resolved.
+      All four are named, so that they move together: the Runtime package checks the version of
+      every component it sees and fails the build on a mismatch. These are the metapackage's
+      versions, so what resolves is exactly what it would have resolved.
 
-      Held at 2.5.1: 2.6.4 corrupts text on hybrid-GPU machines when the window is on a display
-      wired to the other GPU (microsoft-ui-xaml#12434). Check that issue before moving up.
+      Not 2.6.4: it corrupts text on hybrid-GPU machines when the window is on a display wired to
+      the other GPU (microsoft-ui-xaml#12434), fixed in 2.6.5.
     -->
-    <PackageReference Include="Microsoft.WindowsAppSDK.Base" Version="2.0.4" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="2.5.1" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Base" Version="2.6.5" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.6.5" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.6.5" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.6.5" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="2.6.5" />
     <PackageReference Include="Markdig" Version="1.3.2" />
     <!-- The WinUI 3 build of Win2D. Same Microsoft.Graphics.Canvas API as Win2D.uwp, against
          Microsoft.UI.Composition instead of Windows.UI.Composition. 1.4.0 rather than 1.3.2
