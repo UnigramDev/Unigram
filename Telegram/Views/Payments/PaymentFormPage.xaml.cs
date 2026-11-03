@@ -32,6 +32,7 @@ namespace Telegram.Views.Payments
         {
             ViewModel.Window.SetTitleBar(TitleBar);
             ViewModel.Window.CaptionButtons = CaptionButtons.Close;
+            ViewModel.Window.SetResizable(false);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

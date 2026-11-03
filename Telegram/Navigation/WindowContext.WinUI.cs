@@ -637,7 +637,7 @@ namespace Telegram.Navigation
         /// <summary>
         /// A subset is drawn by WindowPresenter, as on UWP, so the framework's caption goes
         /// entirely: it has no way to show Close alone, and kept beside the app's own it is a
-        /// second close button. Without Maximize the window is not resizable either, as on Win32.
+        /// second close button.
         /// </summary>
         partial void SetHostCaptionButtons(CaptionButtons buttons)
         {
@@ -645,8 +645,15 @@ namespace Telegram.Navigation
             {
                 presenter.IsMinimizable = buttons.HasFlag(CaptionButtons.Minimize);
                 presenter.IsMaximizable = buttons.HasFlag(CaptionButtons.Maximize);
-                presenter.IsResizable = buttons.HasFlag(CaptionButtons.Maximize);
                 presenter.SetBorderAndTitleBar(true, buttons == CaptionButtons.All);
+            }
+        }
+
+        partial void SetHostResizable(bool resizable)
+        {
+            if (_window.AppWindow.Presenter is OverlappedPresenter presenter)
+            {
+                presenter.IsResizable = resizable;
             }
         }
 

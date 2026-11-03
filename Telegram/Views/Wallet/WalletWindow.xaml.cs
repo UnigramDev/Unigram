@@ -126,6 +126,7 @@ namespace Telegram.Views.Wallet
             // The handle, not the whole strip: a drag region takes the pointer away from anything
             // under it, and the window's own close button is drawn over the right of this bar.
             Window.CaptionButtons = CaptionButtons.Close;
+            Window.SetResizable(false);
 
             // What navigation would do for a page, and once rather than on every load: it subscribes
             // the view model to the aggregator, and OnWindowClosed is the other half of that.
