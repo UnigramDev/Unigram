@@ -94,6 +94,7 @@ namespace Telegram.Native
         static Boolean IsMediaSupported();
 
         static void OverrideScaleForCurrentView(Int32 value);
+        static void ResetScaleForCurrentView();
         static Int32 GetScaleForCurrentView();
 
         // On the window's thread, right before Window.Close of a secondary view. Without it a view

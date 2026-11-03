@@ -129,6 +129,21 @@ void CoreWindowHelpers::OverrideDpiForCurrentThread(float dpi)
 		GetWindowThreadProcessId = (GetWindowThreadProcessId_t)GetProcAddress(user32, "GetWindowThreadProcessId");
 	}
 
+	NotifyDpiChanged();
+}
+
+// The hooks stay installed: with the flag cleared they pass every call through to the originals.
+void CoreWindowHelpers::ResetDpiForCurrentThread()
+{
+	if (!CoreWindowHelpersClassics::OverrideDpiForCurrentThread)
+		return;
+
+	CoreWindowHelpersClassics::OverrideDpiForCurrentThread = false;
+	NotifyDpiChanged();
+}
+
+void CoreWindowHelpers::NotifyDpiChanged()
+{
 #ifdef WINUI3
 	EnumThreadWindows(GetCurrentThreadId(), NotifyWindow, 0);
 #else

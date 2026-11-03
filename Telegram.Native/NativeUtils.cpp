@@ -1343,6 +1343,11 @@ namespace winrt::Telegram::Native::implementation
         InternalsRT::Core::Windowing::CoreWindowHelpers::OverrideDpiForCurrentThread(value * 96.0f / 100.0f);
     }
 
+    void NativeUtils::ResetScaleForCurrentView()
+    {
+        InternalsRT::Core::Windowing::CoreWindowHelpers::ResetDpiForCurrentThread();
+    }
+
     int32_t NativeUtils::GetScaleForCurrentView()
     {
         return InternalsRT::Core::Windowing::CoreWindowHelpers::GetDpiForCurrentThread() / 96.0f * 100.0f;

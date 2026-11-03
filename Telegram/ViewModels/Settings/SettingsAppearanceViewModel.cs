@@ -304,8 +304,9 @@ namespace Telegram.ViewModels.Settings
                     var scaling = _scalingIndexer[value];
                     if (scaling == 0)
                     {
-                        NativeUtils.OverrideScaleForCurrentView(AppSettings.Appearance.Scaling = _scaling = NativeUtils.GetScaleForCurrentView());
+                        NativeUtils.ResetScaleForCurrentView();
                         AppSettings.Appearance.UseDefaultScaling = true;
+                        _scaling = 0;
                     }
                     else
                     {

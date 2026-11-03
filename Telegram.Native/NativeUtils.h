@@ -71,6 +71,7 @@ namespace winrt::Telegram::Native::implementation
         static bool IsMediaSupported();
 
         static void OverrideScaleForCurrentView(int32_t value);
+        static void ResetScaleForCurrentView();
         static int32_t GetScaleForCurrentView();
 
         static void PrepareCoreWindowClose(winrt::Windows::UI::Core::CoreWindow const& window);

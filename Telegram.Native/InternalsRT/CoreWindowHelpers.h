@@ -70,12 +70,15 @@ namespace InternalsRT::Core::Windowing
         static GetWindowThreadProcessId_t GetWindowThreadProcessId;
 
         static inline DEVICE_SCALE_FACTOR DpiToScaleFactor(float dpi) { return (DEVICE_SCALE_FACTOR)(int)(dpi * 100 / 96.0f); }
+
+        static void NotifyDpiChanged();
     public:
         static uint64_t GetHwnd(CoreWindow window);
         static uint64_t GetHwndForCurrentThread();
         static WindowId GetWindowId(CoreWindow window);
         static WindowId GetWindowIdForCurrentThread();
         static void OverrideDpiForCurrentThread(float dpi);
+        static void ResetDpiForCurrentThread();
         static float GetDpiForCurrentThread();
     };
 }
