@@ -145,6 +145,17 @@
     <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; &quot;$(WinUIRewriter)&quot; --markup &quot;$(MSBuildProjectDirectory)&quot; &quot;$(MSBuildProjectDirectory)\$(WinUISourceDir.TrimEnd('\'))&quot;" />
   </Target>
 
+  <!-- The markup compiler looks up every using: type in each non-system reference before the project's
+       own assembly, scanning type forwarders on each miss. Flagged, the ref pack's facades are only the
+       fallback for a lookup nothing else answers. -->
+  <Target Name="FlagFrameworkReferencesAsSystem" BeforeTargets="MarkupCompilePass1;DesignTimeMarkupCompilation">
+    <ItemGroup>
+      <ReferencePath Condition="'%(ReferencePath.FrameworkReferenceName)' == 'Microsoft.NETCore.App'">
+        <IsSystemReference>true</IsSystemReference>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+
   <!--
     Link is what keeps the patched files addressable. The markup compiler derives a page's resource
     path from its item path, so without it Themes\Generic.xaml would be published as
