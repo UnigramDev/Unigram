@@ -198,7 +198,7 @@ namespace Telegram.Services
         private static async Task<bool> LaunchUnpackagedAsync()
         {
             var navigation = WindowContext.Main?.GetNavigationService();
-            if (navigation != null && UnpackagedUpdates.TryStartUpdater())
+            if (navigation != null && await Task.Run(UnpackagedUpdates.TryStartUpdater))
             {
                 Logger.Info("Updater started");
 

@@ -1,5 +1,5 @@
 ﻿; First install of the unpackaged build. Only that: updates are staged by the app and applied by
-; Telegram.Updater, which swaps app.new\ in for app\ and never runs this installer.
+; Telegram.Updater, which copies the changed files from app.new\ over app\ and never runs this installer.
 ;
 ;   iscc /DAppVersion=13.0.0.0 /DArch=x64 /DPublishDir=<publish folder> /DOutputDir=<folder> Telegram.iss
 ;
@@ -77,7 +77,7 @@ WizardBackColorDynamicDark=black
 WizardResizable=no
 
 [InstallDelete]
-; A reinstall replaces the version whole, as an update does, instead of leaving files behind.
+; A reinstall replaces the version whole instead of leaving files behind, and drops any update staged.
 Type: filesandordirs; Name: "{app}\app"
 Type: filesandordirs; Name: "{app}\app.new"
 Type: filesandordirs; Name: "{app}\app.old"

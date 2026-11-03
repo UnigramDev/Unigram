@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
+using System.IO.Enumeration;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -25,32 +26,44 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Storage;
 using File = System.IO.File;
+using FileAttributes = System.IO.FileAttributes;
 
 namespace Telegram.Services
 {
     /// <summary>
     /// Updates for the build Telegram.Installer puts on disk, which has no identity for
     /// PackageManager to install over. The app downloads Telegram-&lt;version&gt;-&lt;arch&gt;.zip,
-    /// checks it against its manifest and extracts it beside the running version; once the app has
-    /// exited, Telegram.Updater swaps the two folders.
+    /// checks it against its manifest and extracts the files that differ from the running version;
+    /// once the app has exited, Telegram.Updater copies them over it.
     ///
     ///   %LOCALAPPDATA%\TelegramFZ-LLC.Windows\
-    ///     Updater.exe   copied out of app\ before each run, because app\ is what it renames
+    ///     Updater.exe   copied out of app\ before each run, because it overwrites app\
     ///     app\          the running version
-    ///     app.new\      the staged one, complete once app.new\.update holds its version
-    ///     app.old\      the one replaced, deleted on the next start
+    ///     app.new\      the changed files, complete once app.new\.update holds the version;
+    ///                   app.new\.delete lists what the new version no longer ships
+    ///     app.old\      the files the update replaced, deleted on the next start
+    ///
+    /// Nothing renames app\: anything holding it - a process with it as its current directory, a
+    /// file open in it - would block that, and nothing stops another process from doing either.
     /// </summary>
-    public static partial class UnpackagedUpdates
+    public static class UnpackagedUpdates
     {
         // Held from the moment the updater is started, never released: the process is on its way
-        // out, and a download finishing in the meantime must not replace the folder being swapped.
+        // out, and a download finishing in the meantime must not replace the files being applied.
         private static readonly SemaphoreSlim _stageLock = new(1, 1);
+
+        // The one thing the app writes into app\ itself: WebView2's default profile, beside the exe.
+        private const string WebViewProfile = "Telegram.exe.WebView2";
 
         private static string RootPath => Path.GetDirectoryName(AppPaths.LocalPath);
 
         private static string StagedPath => Path.Combine(RootPath, "app.new");
 
+        private static string PreviousPath => Path.Combine(RootPath, "app.old");
+
         private static string MarkerPath => Path.Combine(StagedPath, ".update");
+
+        private static string RemovedPath => Path.Combine(StagedPath, ".delete");
 
         /// <summary>
         /// Whether this is the copy the installer laid out. A build run from anywhere else, an
@@ -122,10 +135,7 @@ namespace Telegram.Services
 
             try
             {
-                if (Directory.Exists(staged))
-                {
-                    Directory.Delete(staged, true);
-                }
+                ClearStage();
 
                 using var archive = ZipFile.OpenRead(package);
                 using var manifest = ReadManifest(archive);
@@ -144,7 +154,7 @@ namespace Telegram.Services
                     Extract(input, ResolveTarget(staged, path), file, hash, buffer);
                 }
 
-                Complete(staged, version, package);
+                Complete(staged, root, version, package);
 
                 Logger.Info($"Staged {version}");
                 return true;
@@ -167,8 +177,8 @@ namespace Telegram.Services
         /// Stages an update by downloading only what differs from the running version: the
         /// package's central directory and manifest first, then each payload entry whose file is
         /// not already installed as the manifest describes it, all of them ranges of the same
-        /// download. Unchanged files are hard links to the running version's, which app\ only
-        /// ever loses by being renamed and deleted whole.
+        /// download. Unchanged files are not staged at all: the updater only copies what app.new
+        /// holds.
         ///
         /// False when the package cannot be read this way; the caller then downloads it whole. A
         /// partial result is never left behind: the same checks as a full extraction gate the marker.
@@ -213,10 +223,7 @@ namespace Telegram.Services
 
             try
             {
-                if (Directory.Exists(staged))
-                {
-                    Directory.Delete(staged, true);
-                }
+                ClearStage();
 
                 using var package = new RemotePackage(clientService, file);
 
@@ -230,7 +237,7 @@ namespace Telegram.Services
                 using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
                 var buffer = new byte[81920];
                 var installed = AppPaths.InstalledPath;
-                var kept = 0;
+                var unchanged = 0;
                 var changed = new List<JsonElement>();
                 long expected = 0;
 
@@ -241,8 +248,7 @@ namespace Telegram.Services
 
                     if (IsUnchanged(current, entry, hash, buffer))
                     {
-                        Keep(current, ResolveTarget(staged, path));
-                        kept++;
+                        unchanged++;
                     }
                     else
                     {
@@ -262,13 +268,13 @@ namespace Telegram.Services
                     Extract(input, ResolveTarget(staged, path), entry, hash, buffer);
                 }
 
-                Complete(staged, version, source);
+                Complete(staged, root, version, source);
 
                 // The parts fetched are of no use once staged, and a download that never completes
                 // is otherwise left in TDLib's temporary folder.
                 clientService.Send(new DeleteFile(file.Id));
 
-                Logger.Info($"Staged {version}: {changed.Count} files downloaded, {package.Downloaded} bytes, {kept} kept");
+                Logger.Info($"Staged {version}: {changed.Count} files downloaded, {package.Downloaded} bytes, {unchanged} unchanged");
                 return true;
             }
             catch (Exception ex)
@@ -362,36 +368,90 @@ namespace Telegram.Services
                 && string.Equals(sha256, file.GetProperty("sha256").GetString(), StringComparison.OrdinalIgnoreCase);
         }
 
-        private static void Keep(string current, string target)
+        /// <summary>
+        /// The updater backs up into app.old only the files it does not already hold there, so
+        /// that a run picked up again after being cut short keeps the originals. That holds only
+        /// if every update starts from an empty app.old.
+        /// </summary>
+        private static void ClearStage()
         {
-            // A copy where a link cannot be made, which is only another volume or file system.
-            if (!CreateHardLinkW(target, current, IntPtr.Zero))
+            if (Directory.Exists(StagedPath))
             {
-                File.Copy(current, target, true);
+                Directory.Delete(StagedPath, true);
+            }
+
+            if (Directory.Exists(PreviousPath))
+            {
+                Directory.Delete(PreviousPath, true);
             }
         }
 
-        private static void Complete(string staged, Version version, string source)
+        private static void Complete(string staged, JsonElement root, Version version, string source)
         {
-            // The updater launches one and is relaunched from the other, so a payload without
-            // either would leave nothing to start.
-            if (!File.Exists(Path.Combine(staged, "Telegram.exe")) || !File.Exists(Path.Combine(staged, "Updater.exe")))
+            var shipped = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var file in root.GetProperty("files").EnumerateArray())
+            {
+                shipped.Add(file.GetProperty("path").GetString().Replace('/', Path.DirectorySeparatorChar));
+            }
+
+            // The updater relaunches one and is run from a copy of the other, and whatever the
+            // manifest does not list is deleted from app\.
+            if (!shipped.Contains("Telegram.exe") || !shipped.Contains("Updater.exe"))
             {
                 throw new InvalidDataException($"{source} has no Telegram.exe or Updater.exe");
+            }
+
+            // Every file may have been unchanged, leaving nothing to stage but the marker.
+            Directory.CreateDirectory(staged);
+
+            var removed = FindRemoved(shipped);
+            if (removed.Count > 0)
+            {
+                File.WriteAllLines(RemovedPath, removed);
             }
 
             // Last: its presence is what tells the updater the folder is complete.
             File.WriteAllText(MarkerPath, version.ToString());
         }
 
+        /// <summary>
+        /// The files in app\ that the new version does not ship, relative to it. Links are not
+        /// followed, and the WebView2 profile is the app's data rather than part of a version.
+        /// </summary>
+        private static List<string> FindRemoved(HashSet<string> shipped)
+        {
+            var installed = AppPaths.InstalledPath;
+            var options = new EnumerationOptions
+            {
+                RecurseSubdirectories = true,
+                AttributesToSkip = FileAttributes.ReparsePoint
+            };
+
+            var files = new FileSystemEnumerable<string>(installed, static (ref FileSystemEntry entry) => entry.ToFullPath(), options)
+            {
+                ShouldIncludePredicate = static (ref FileSystemEntry entry) => !entry.IsDirectory,
+                ShouldRecursePredicate = static (ref FileSystemEntry entry) => !entry.FileName.Equals(WebViewProfile, StringComparison.OrdinalIgnoreCase)
+            };
+
+            var removed = new List<string>();
+
+            foreach (var file in files)
+            {
+                var path = Path.GetRelativePath(installed, file);
+                if (!shipped.Contains(path))
+                {
+                    removed.Add(path);
+                }
+            }
+
+            return removed;
+        }
+
         private static ZipEntryRange Find(Dictionary<string, ZipEntryRange> entries, string name)
         {
             return entries.TryGetValue(name, out var entry) ? entry : throw new InvalidDataException($"{name} is missing");
         }
-
-        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool CreateHardLinkW(string lpFileName, string lpExistingFileName, IntPtr lpSecurityAttributes);
 
         private record ZipEntryRange(int Method, long CompressedSize, long Size, long LocalHeaderOffset);
 
@@ -708,6 +768,7 @@ namespace Telegram.Services
         /// Starts Telegram.Updater if a newer version is staged, after which the caller has to exit
         /// for it to proceed: it waits for this process before touching app\.
         ///
+        /// Blocks on copying the updater out and starting it, which has been seen to take seconds.
         /// Logs nothing, because Program calls it before the logger can be brought up.
         /// </summary>
         public static bool TryStartUpdater()
@@ -757,7 +818,7 @@ namespace Telegram.Services
         }
 
         /// <summary>
-        /// What a finished update leaves behind: the version it replaced, a staged folder no newer
+        /// What a finished update leaves behind: the files it replaced, a staged folder no newer
         /// than this one, and the packages already installed.
         /// </summary>
         public static void RemoveLeftovers()
@@ -771,16 +832,12 @@ namespace Telegram.Services
             {
                 var current = AppIdentity.Version.ToVersion();
 
-                var previous = Path.Combine(RootPath, "app.old");
-                if (Directory.Exists(previous))
-                {
-                    Directory.Delete(previous, true);
-                }
-
+                // A newer version still staged may be an update cut short, and its updater needs
+                // the originals in app.old to put back if it is cancelled.
                 var staged = ReadStagedVersion();
-                if (Directory.Exists(StagedPath) && (staged == null || staged <= current))
+                if (staged == null || staged <= current)
                 {
-                    Directory.Delete(StagedPath, true);
+                    ClearStage();
                 }
 
                 var updates = Path.Combine(AppPaths.LocalPath, "updates");

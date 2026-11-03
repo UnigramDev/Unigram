@@ -3,21 +3,27 @@
 //   %LOCALAPPDATA%\TelegramFZ-LLC.Windows\
 //     Updater.exe     this program, copied here by the app before each run
 //     app\            the installed version
-//     app.new\        the staged one; complete once app.new\.update exists
-//     app.old\        the version replaced, deleted by the app once the new one is up
+//     app.new\        the files that changed; complete once app.new\.update exists, and
+//                     app.new\.delete lists what the new version no longer ships
+//     app.old\        the originals of the files replaced, deleted by the app once the new one is up
 //
-// The swap is two directory renames on one volume, so at every point either app\ is a complete
-// version or the previous one can be renamed back. Nothing is copied.
+// Each staged file is copied over the installed one, after a copy of the original goes to
+// app.old\, so a cancelled update can put back everything it replaced. Nothing is renamed: a
+// folder cannot be renamed while another process has it as its current directory or any file in
+// it open, whereas copying a file is blocked only by a handle on that file.
 //
 // Statically linked against the CRT: it runs from the root, and the CRT DLLs are in app\, which
-// it renames away.
+// it overwrites.
 
+#define NOMINMAX
 #include <windows.h>
 #include <shellapi.h>
 
+#include <algorithm>
 #include <cstdarg>
 #include <cstdio>
 #include <string>
+#include <vector>
 
 namespace
 {
@@ -27,9 +33,10 @@ namespace
 
     constexpr DWORD kExitTimeout = 30000;
 
-    // Antivirus, the indexer or an Explorer window can hold a handle in the folder briefly.
-    constexpr int kRenameAttempts = 40;
-    constexpr DWORD kRenameDelay = 250;
+    // Antivirus, the indexer or a process still exiting can hold a file briefly. Past that only
+    // the user can close whatever holds it, so they are asked.
+    constexpr int kCopyAttempts = 100;
+    constexpr DWORD kCopyDelay = 100;
 
     std::wstring g_root;
     FILE* g_log = nullptr;
@@ -91,89 +98,186 @@ namespace
         return result == WAIT_OBJECT_0;
     }
 
-    bool Rename(const std::wstring& from, const std::wstring& to)
+    void CreateParents(const std::wstring& path)
     {
-        for (int attempt = 1;; attempt++)
+        for (size_t i = g_root.size() + 1; (i = path.find(L'\\', i)) != std::wstring::npos; i++)
         {
-            if (MoveFileExW(from.c_str(), to.c_str(), 0))
-            {
-                return true;
-            }
-
-            DWORD error = GetLastError();
-            if (attempt == kRenameAttempts)
-            {
-                Log(L"Rename %s -> %s failed: %lu", from.c_str(), to.c_str(), error);
-                return false;
-            }
-
-            Sleep(kRenameDelay);
+            CreateDirectoryW(path.substr(0, i).c_str(), nullptr);
         }
     }
 
-    // Junctions are removed, never followed: what they point at is not ours.
-    bool DeleteTree(const std::wstring& path)
+    // Relative to the folder. Links are not followed: what they point at is not ours.
+    void ListFiles(const std::wstring& folder, const std::wstring& relative, std::vector<std::wstring>& files)
     {
         WIN32_FIND_DATAW data;
-        HANDLE find = FindFirstFileW((path + L"\\*").c_str(), &data);
+        HANDLE find = FindFirstFileW((relative.empty() ? folder + L"\\*" : folder + L'\\' + relative + L"\\*").c_str(), &data);
 
-        if (find != INVALID_HANDLE_VALUE)
+        if (find == INVALID_HANDLE_VALUE)
         {
-            do
-            {
-                if (wcscmp(data.cFileName, L".") == 0 || wcscmp(data.cFileName, L"..") == 0)
-                {
-                    continue;
-                }
-
-                std::wstring child = path + L'\\' + data.cFileName;
-
-                if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0 && (data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) == 0)
-                {
-                    DeleteTree(child);
-                }
-                else
-                {
-                    if ((data.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0)
-                    {
-                        SetFileAttributesW(child.c_str(), data.dwFileAttributes & ~FILE_ATTRIBUTE_READONLY);
-                    }
-
-                    if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
-                    {
-                        RemoveDirectoryW(child.c_str());
-                    }
-                    else
-                    {
-                        DeleteFileW(child.c_str());
-                    }
-                }
-            } while (FindNextFileW(find, &data));
-
-            FindClose(find);
+            return;
         }
 
-        return RemoveDirectoryW(path.c_str()) || GetLastError() == ERROR_FILE_NOT_FOUND;
+        do
+        {
+            if (wcscmp(data.cFileName, L".") == 0 || wcscmp(data.cFileName, L"..") == 0 || (data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0)
+            {
+                continue;
+            }
+
+            std::wstring child = relative.empty() ? std::wstring(data.cFileName) : relative + L'\\' + data.cFileName;
+
+            if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+            {
+                ListFiles(folder, child, files);
+            }
+            else
+            {
+                files.push_back(child);
+            }
+        } while (FindNextFileW(find, &data));
+
+        FindClose(find);
     }
 
-    // The marker holds the staged version as one line of ASCII, written by the app last.
-    std::wstring ReadVersion(const std::wstring& marker)
+    bool AskToRetry(const std::wstring& path, DWORD error)
     {
-        std::wstring version;
+        wchar_t* reason = nullptr;
+        FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, error, 0, reinterpret_cast<LPWSTR>(&reason), 0, nullptr);
+
+        std::wstring text = L"Telegram could not be updated, because this file could not be replaced:\n\n" + path + L"\n\n";
+        if (reason != nullptr)
+        {
+            text += reason;
+            LocalFree(reason);
+        }
+
+        text += L"\nClose any program that may be using it and retry, or cancel to keep the current version.";
+
+        return MessageBoxW(nullptr, text.c_str(), L"Telegram", MB_ICONERROR | MB_RETRYCANCEL | MB_SETFOREGROUND) == IDRETRY;
+    }
+
+    // False once the user gives up, who is shown the installed file whichever end of the copy it
+    // is. With keepExisting, a target already there counts as copied.
+    bool Copy(const std::wstring& from, const std::wstring& to, bool keepExisting, const std::wstring& installed)
+    {
+        for (;;)
+        {
+            DWORD error = 0;
+
+            for (int attempt = 0; attempt < kCopyAttempts; attempt++)
+            {
+                if (CopyFileW(from.c_str(), to.c_str(), keepExisting))
+                {
+                    return true;
+                }
+
+                error = GetLastError();
+                if (keepExisting && error == ERROR_FILE_EXISTS)
+                {
+                    return true;
+                }
+
+                Sleep(kCopyDelay);
+            }
+
+            Log(L"Copy %s -> %s failed: %lu", from.c_str(), to.c_str(), error);
+
+            if (!AskToRetry(installed, error))
+            {
+                return false;
+            }
+        }
+    }
+
+    struct Replaced
+    {
+        std::wstring installed;
+
+        // Empty for a file the update added.
+        std::wstring original;
+    };
+
+    // Newest first. A file that cannot be put back is logged and skipped: stopping there would
+    // leave more of the update in place, not less.
+    void Restore(const std::vector<Replaced>& replaced)
+    {
+        for (auto it = replaced.rbegin(); it != replaced.rend(); ++it)
+        {
+            bool restored = it->original.empty()
+                ? DeleteFileW(it->installed.c_str()) || GetLastError() == ERROR_FILE_NOT_FOUND
+                : CopyFileW(it->original.c_str(), it->installed.c_str(), FALSE);
+
+            if (!restored)
+            {
+                Log(L"Could not restore %s: %lu", it->installed.c_str(), GetLastError());
+            }
+        }
+    }
+
+    std::wstring ReadText(const std::wstring& path)
+    {
+        std::string bytes;
 
         FILE* file = nullptr;
-        if (_wfopen_s(&file, marker.c_str(), L"rb") == 0 && file != nullptr)
+        if (_wfopen_s(&file, path.c_str(), L"rb") == 0 && file != nullptr)
         {
-            int c;
-            while ((c = fgetc(file)) != EOF && c != '\r' && c != '\n' && version.size() < 32)
+            char buffer[4096];
+            size_t read;
+            while ((read = fread(buffer, 1, sizeof(buffer), file)) > 0)
             {
-                version.push_back(wchar_t(c));
+                bytes.append(buffer, read);
             }
 
             fclose(file);
         }
 
-        return version;
+        std::wstring text(MultiByteToWideChar(CP_UTF8, 0, bytes.data(), int(bytes.size()), nullptr, 0), L'\0');
+        MultiByteToWideChar(CP_UTF8, 0, bytes.data(), int(bytes.size()), text.data(), int(text.size()));
+        return text;
+    }
+
+    // The marker holds the staged version as one line of ASCII, written by the app last.
+    std::wstring ReadVersion(const std::wstring& marker)
+    {
+        std::wstring text = ReadText(marker);
+        return text.substr(0, std::min(text.find_first_of(L"\r\n"), size_t(32)));
+    }
+
+    // Written by the app from its own listing of app\; this only keeps a damaged list inside it.
+    bool IsInside(const std::wstring& path)
+    {
+        return !path.empty() && path[0] != L'\\' && path.find(L':') == std::wstring::npos && path.find(L"..") == std::wstring::npos;
+    }
+
+    // A file the new version does not ship is only clutter, so one that cannot be deleted is
+    // logged and left.
+    void DeleteRemoved(const std::wstring& installed, const std::wstring& list)
+    {
+        std::wstring text = ReadText(list);
+
+        for (size_t start = 0; start < text.size();)
+        {
+            size_t end = std::min(text.find_first_of(L"\r\n", start), text.size());
+            std::wstring path = text.substr(start, end - start);
+            start = end + 1;
+
+            if (path.empty())
+            {
+                continue;
+            }
+
+            if (!IsInside(path))
+            {
+                Log(L"Not deleting %s", path.c_str());
+                continue;
+            }
+
+            std::wstring target = installed + L'\\' + path;
+            if (!DeleteFileW(target.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+            {
+                Log(L"Could not delete %s: %lu", target.c_str(), GetLastError());
+            }
+        }
     }
 
     // Installed apps reads the version from Inno Setup's uninstall entry, which only the
@@ -234,6 +338,7 @@ namespace
         std::wstring staged = Path(L"app.new");
         std::wstring previous = Path(L"app.old");
         std::wstring marker = staged + L"\\.update";
+        std::wstring removed = staged + L"\\.delete";
 
         if (!Exists(marker))
         {
@@ -245,42 +350,82 @@ namespace
         std::wstring version = ReadVersion(marker);
         Log(L"Applying %s", version.c_str());
 
+        std::vector<std::wstring> files;
+        ListFiles(staged, std::wstring(), files);
+
+        files.erase(std::remove_if(files.begin(), files.end(), [](const std::wstring& file)
+        {
+            return file == L".update" || file == L".delete";
+        }), files.end());
+
+        // Last: until it is replaced, the installed Telegram.exe is the old version, which starts
+        // this updater again whenever a newer one is staged. An update cut short by a crash or a
+        // shutdown is picked up at the next launch.
+        auto exe = std::find_if(files.begin(), files.end(), [](const std::wstring& file)
+        {
+            return _wcsicmp(file.c_str(), L"Telegram.exe") == 0;
+        });
+
+        if (exe != files.end())
+        {
+            std::rotate(exe, exe + 1, files.end());
+        }
+
+        std::vector<Replaced> replaced;
+        bool cancelled = false;
+
+        for (const std::wstring& file : files)
+        {
+            std::wstring source = staged + L'\\' + file;
+            std::wstring target = installed + L'\\' + file;
+            std::wstring original;
+
+            if (Exists(target))
+            {
+                original = previous + L'\\' + file;
+                CreateParents(original);
+
+                // An original already there is from this same update, cut short before: the
+                // installed file may be the new one by now.
+                if (!Copy(target, original, true, target))
+                {
+                    cancelled = true;
+                    break;
+                }
+            }
+            else
+            {
+                CreateParents(target);
+            }
+
+            // Before the copy, which can leave the target half written when it fails.
+            replaced.push_back({ target, original });
+
+            if (!Copy(source, target, false, target))
+            {
+                cancelled = true;
+                break;
+            }
+        }
+
         // The app starts this updater whenever it finds the marker, so a failure that left it in
         // place would have the relaunch below start it again, and again. Without it the app stages
         // the update afresh, and the next restart is the retry.
-        auto fail = [&]()
+        DeleteFileW(marker.c_str());
+
+        if (cancelled)
         {
-            DeleteFileW(marker.c_str());
+            Restore(replaced);
+            Log(L"Cancelled %s, %zu files restored", version.c_str(), replaced.size());
+
             Launch();
             return 1;
-        };
-
-        if (Exists(previous) && !DeleteTree(previous))
-        {
-            Log(L"Could not remove %s", previous.c_str());
-            return fail();
         }
 
-        if (!Rename(installed, previous))
-        {
-            return fail();
-        }
-
-        if (!Rename(staged, installed))
-        {
-            if (!Rename(previous, installed))
-            {
-                Log(L"Could not restore %s", installed.c_str());
-                return 1;
-            }
-
-            return fail();
-        }
-
-        DeleteFileW((installed + L"\\.update").c_str());
+        DeleteRemoved(installed, removed);
         UpdateUninstallEntry(version);
 
-        Log(L"Applied %s", version.c_str());
+        Log(L"Applied %s, %zu files replaced", version.c_str(), replaced.size());
         Launch();
         return 0;
     }
