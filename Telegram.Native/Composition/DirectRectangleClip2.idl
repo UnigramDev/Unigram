@@ -18,11 +18,5 @@ namespace Telegram.Native.Composition
 
         void SetInset(Single uniform);
         void SetInset(Single left, Single top, Single right, Single bottom);
-
-        void AnimateTop(UIComposition.Compositor compositor, Single from, Single to, Double duration);
-        void AnimateBottom(UIComposition.Compositor compositor, Single from, Single to, Double duration);
-
-        void AnimateBottomLeft(UIComposition.Compositor compositor, Windows.Foundation.Numerics.Vector2 from, Windows.Foundation.Numerics.Vector2 to, Double duration);
-        void AnimateBottomRight(UIComposition.Compositor compositor, Windows.Foundation.Numerics.Vector2 from, Windows.Foundation.Numerics.Vector2 to, Double duration);
     }
 }

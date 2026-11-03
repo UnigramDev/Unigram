@@ -7,7 +7,6 @@
 #undef WINAPI_FAMILY
 #define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
 #define IUnknown ::IUnknown
-#include <UIAnimation.h>
 #include <dcomp.h>
 #pragma pop_macro("WINAPI_FAMILY")
 #undef IUnknown
@@ -16,14 +15,24 @@ using namespace winrt::Windows::Foundation::Numerics;
 
 namespace winrt::Telegram::Native::Composition::implementation
 {
+    // The Windows App SDK compositor is not DirectComposition, and its objects answer none of
+    // dcomp.h's interfaces; its RectangleClip has the per-corner radii this needs. UWP keeps the
+    // DirectComposition clip because RectangleClip needs Windows 10 2004, past its minimum.
     struct DirectRectangleClip2 : DirectRectangleClip2T<DirectRectangleClip2>
     {
         friend CompositionDevice;
 
+#ifdef WINUI3
+        DirectRectangleClip2(winrt::UIComposition::RectangleClip impl)
+        : m_impl(impl) {
+
+        }
+#else
         DirectRectangleClip2(winrt::com_ptr<IDCompositionRectangleClip> impl)
         : m_impl(impl) {
 
         }
+#endif
 
         float Left();
         void Left(float value);
@@ -57,14 +66,12 @@ namespace winrt::Telegram::Native::Composition::implementation
         void SetInset(float uniform);
         void SetInset(float left, float top, float right, float bottom);
 
-        void AnimateTop(Compositor compositor, float from, float to, double duration);
-        void AnimateBottom(Compositor compositor, float from, float to, double duration);
-
-        void AnimateBottomLeft(Compositor compositor, float2 from, float2 to, double duration);
-        void AnimateBottomRight(Compositor compositor, float2 from, float2 to, double duration);
-
     private:
+#ifdef WINUI3
+        winrt::UIComposition::RectangleClip m_impl{ nullptr };
+#else
         winrt::com_ptr<IDCompositionRectangleClip> m_impl;
+#endif
 
         float m_left = 0;
         float m_top = 0;

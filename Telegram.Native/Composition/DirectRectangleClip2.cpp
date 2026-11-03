@@ -11,7 +11,11 @@ namespace winrt::Telegram::Native::Composition::implementation
     void DirectRectangleClip2::Left(float value)
     {
         m_left = value;
+#ifdef WINUI3
+        m_impl.Left(value);
+#else
         m_impl->SetLeft(value);
+#endif
     }
 
     float DirectRectangleClip2::Top()
@@ -22,7 +26,11 @@ namespace winrt::Telegram::Native::Composition::implementation
     void DirectRectangleClip2::Top(float value)
     {
         m_top = value;
+#ifdef WINUI3
+        m_impl.Top(value);
+#else
         m_impl->SetTop(value);
+#endif
     }
 
     float DirectRectangleClip2::Right()
@@ -33,7 +41,11 @@ namespace winrt::Telegram::Native::Composition::implementation
     void DirectRectangleClip2::Right(float value)
     {
         m_right = value;
+#ifdef WINUI3
+        m_impl.Right(value);
+#else
         m_impl->SetRight(value);
+#endif
     }
 
     float DirectRectangleClip2::Bottom()
@@ -44,7 +56,11 @@ namespace winrt::Telegram::Native::Composition::implementation
     void DirectRectangleClip2::Bottom(float value)
     {
         m_bottom = value;
+#ifdef WINUI3
+        m_impl.Bottom(value);
+#else
         m_impl->SetBottom(value);
+#endif
     }
 
 
@@ -57,8 +73,12 @@ namespace winrt::Telegram::Native::Composition::implementation
     void DirectRectangleClip2::TopLeft(float2 value)
     {
         m_topLeft = value;
+#ifdef WINUI3
+        m_impl.TopLeftRadius(value);
+#else
         m_impl->SetTopLeftRadiusX(value.x);
         m_impl->SetTopLeftRadiusY(value.y);
+#endif
     }
 
     float2 DirectRectangleClip2::TopRight()
@@ -69,8 +89,12 @@ namespace winrt::Telegram::Native::Composition::implementation
     void DirectRectangleClip2::TopRight(float2 value)
     {
         m_topRight = value;
+#ifdef WINUI3
+        m_impl.TopRightRadius(value);
+#else
         m_impl->SetTopRightRadiusX(value.x);
         m_impl->SetTopRightRadiusY(value.y);
+#endif
     }
 
     float2 DirectRectangleClip2::BottomRight()
@@ -81,8 +105,12 @@ namespace winrt::Telegram::Native::Composition::implementation
     void DirectRectangleClip2::BottomRight(float2 value)
     {
         m_bottomRight = value;
+#ifdef WINUI3
+        m_impl.BottomRightRadius(value);
+#else
         m_impl->SetBottomRightRadiusX(value.x);
         m_impl->SetBottomRightRadiusY(value.y);
+#endif
     }
 
     float2 DirectRectangleClip2::BottomLeft()
@@ -93,8 +121,12 @@ namespace winrt::Telegram::Native::Composition::implementation
     void DirectRectangleClip2::BottomLeft(float2 value)
     {
         m_bottomLeft = value;
+#ifdef WINUI3
+        m_impl.BottomLeftRadius(value);
+#else
         m_impl->SetBottomLeftRadiusX(value.x);
         m_impl->SetBottomLeftRadiusY(value.y);
+#endif
     }
 
     void DirectRectangleClip2::Set(float2 uniform)
@@ -127,93 +159,5 @@ namespace winrt::Telegram::Native::Composition::implementation
         Top(top);
         Right(right);
         Bottom(bottom);
-    }
-
-    void DirectRectangleClip2::AnimateTop(Compositor compositor, float from, float to, double duration)
-    {
-        m_top = to;
-
-        HRESULT hr;
-        auto device = CompositionDevice::Current();
-
-        winrt::com_ptr<IDCompositionAnimation> animation;
-        hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
-
-        if (SUCCEEDED(hr))
-        {
-            m_impl->SetTop(animation.get());
-        }
-        else
-        {
-            m_impl->SetTop(to);
-        }
-    }
-
-    void DirectRectangleClip2::AnimateBottom(Compositor compositor, float from, float to, double duration)
-    {
-        m_bottom = to;
-
-        HRESULT hr;
-        auto device = CompositionDevice::Current();
-
-        winrt::com_ptr<IDCompositionAnimation> animation;
-        hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
-
-        if (SUCCEEDED(hr))
-        {
-            m_impl->SetBottom(animation.get());
-        }
-        else
-        {
-            m_impl->SetBottom(to);
-        }
-    }
-
-    void DirectRectangleClip2::AnimateBottomLeft(Compositor compositor, float2 from, float2 to, double duration)
-    {
-        m_bottomLeft = to;
-
-        HRESULT hr;
-        auto device = CompositionDevice::Current();
-
-        winrt::com_ptr<IDCompositionAnimation> animationX;
-        winrt::com_ptr<IDCompositionAnimation> animationY;
-        hr = device->CreateCubicBezierAnimation(compositor, from.x, to.x, duration, animationX.put());
-        hr = device->CreateCubicBezierAnimation(compositor, from.y, to.y, duration, animationY.put());
-
-        if (SUCCEEDED(hr))
-        {
-            m_impl->SetBottomLeftRadiusX(animationX.get());
-            m_impl->SetBottomLeftRadiusY(animationY.get());
-        }
-        else
-        {
-            m_impl->SetBottomLeftRadiusX(to.x);
-            m_impl->SetBottomLeftRadiusY(to.y);
-        }
-    }
-
-    void DirectRectangleClip2::AnimateBottomRight(Compositor compositor, float2 from, float2 to, double duration)
-    {
-        m_bottomRight = to;
-
-        HRESULT hr;
-        auto device = CompositionDevice::Current();
-
-        winrt::com_ptr<IDCompositionAnimation> animationX;
-        winrt::com_ptr<IDCompositionAnimation> animationY;
-        hr = device->CreateCubicBezierAnimation(compositor, from.x, to.x, duration, animationX.put());
-        hr = device->CreateCubicBezierAnimation(compositor, from.y, to.y, duration, animationY.put());
-
-        if (SUCCEEDED(hr))
-        {
-            m_impl->SetBottomRightRadiusX(animationX.get());
-            m_impl->SetBottomRightRadiusY(animationY.get());
-        }
-        else
-        {
-            m_impl->SetBottomRightRadiusX(to.x);
-            m_impl->SetBottomRightRadiusY(to.y);
-        }
     }
 }
