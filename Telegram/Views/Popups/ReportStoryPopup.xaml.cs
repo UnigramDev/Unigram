@@ -22,7 +22,7 @@ namespace Telegram.Views.Popups
 {
     public record ReportStorySelection(ReportOption Option, string Text, object Result);
 
-    public sealed partial class ReportStoryPopup : ContentPopup
+    public sealed partial class ReportStoryPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly long _storyPosterChatId;

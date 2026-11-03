@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class AddProxyPopup : ContentPopup
+    public sealed partial class AddProxyPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;

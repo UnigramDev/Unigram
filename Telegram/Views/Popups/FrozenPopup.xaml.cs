@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class FrozenPopup : ContentPopup
+    public sealed partial class FrozenPopup : ModalPopup
     {
         private readonly UpdateFreezeState _state;
 
@@ -42,7 +42,7 @@ namespace Telegram.Views.Popups
             PrimaryButtonClick += OnPrimaryButtonClick;
         }
 
-        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             var navigationService = WindowContext.GetNavigationService(sender.XamlRoot);
             if (navigationService != null)

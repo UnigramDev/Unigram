@@ -21,7 +21,7 @@ namespace Telegram.Views.Popups
         Auto
     }
 
-    public sealed partial class ChatTtlPopup : ContentPopup
+    public sealed partial class ChatTtlPopup : ModalPopup
     {
         private readonly List<SettingsOptionItem<int>> _items;
 

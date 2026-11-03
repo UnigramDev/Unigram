@@ -13,7 +13,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class LoginUrlInfoPopup : ContentPopup
+    public sealed partial class LoginUrlInfoPopup : ModalPopup
     {
         public LoginUrlInfoPopup(IClientService clientService, LoginUrlInfoRequestConfirmation requestConfirmation)
         {

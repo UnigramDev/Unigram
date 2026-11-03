@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class TextEditorPopup : ContentPopup
+    public sealed partial class TextEditorPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -72,7 +72,7 @@ namespace Telegram.Views.Popups
             });
         }
 
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        private void OnClosed(ModalPopup sender, ModalPopupClosedEventArgs args)
         {
             if (_closedExpected)
             {
@@ -377,7 +377,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (Navigation.SelectedIndex == 0)
             {

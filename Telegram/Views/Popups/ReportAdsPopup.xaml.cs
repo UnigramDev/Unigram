@@ -24,7 +24,7 @@ namespace Telegram.Views.Popups
 {
     public record ReportAdsSelection(ReportOption Option, object Result);
 
-    public sealed partial class ReportAdsPopup : ContentPopup
+    public sealed partial class ReportAdsPopup : ModalPopup
     {
         private readonly DialogViewModel _viewModel;
         private readonly IClientService _clientService;

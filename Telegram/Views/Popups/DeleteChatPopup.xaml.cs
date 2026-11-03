@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class DeleteChatPopup : ContentPopup
+    public sealed partial class DeleteChatPopup : ModalPopup
     {
         public DeleteChatPopup(IClientService clientService, Chat chat, ChatList chatList, bool clear, bool asOwner = false)
         {

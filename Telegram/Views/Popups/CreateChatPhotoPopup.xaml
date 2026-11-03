@@ -1,21 +1,21 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.CreateChatPhotoPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:common="using:Telegram.Common"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:chats="using:Telegram.Controls.Chats"
-                       xmlns:drawers="using:Telegram.Controls.Drawers"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:td="using:Telegram.Td.Api"
-                       mc:Ignorable="d"
-                       Title="{x:Null}"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       IsPrimaryButtonEnabled="{x:Bind ConvertEnabled(ViewModel.SelectedBackground, ViewModel.SelectedForeground), Mode=OneWay}"
-                       Closing="OnClosing"
-                       VerticalContentAlignment="Stretch"
-                       Padding="0">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.CreateChatPhotoPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:local="using:Telegram.Views.Popups"
+                     xmlns:common="using:Telegram.Common"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:chats="using:Telegram.Controls.Chats"
+                     xmlns:drawers="using:Telegram.Controls.Drawers"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:td="using:Telegram.Td.Api"
+                     mc:Ignorable="d"
+                     Title="{x:Null}"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     IsPrimaryButtonEnabled="{x:Bind ConvertEnabled(ViewModel.SelectedBackground, ViewModel.SelectedForeground), Mode=OneWay}"
+                     Closing="OnClosing"
+                     VerticalContentAlignment="Stretch"
+                     Padding="0">
 
     <Grid Margin="0,0,0,-32">
         <Grid.RowDefinitions>
@@ -135,4 +135,4 @@
             </controls:TopNavView>
         </Grid>
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

@@ -23,7 +23,7 @@ namespace Telegram.Views.Popups
 {
     public record ReportChatSelection(ReportOption Option, Vector<long> MessageIds, string Text, object Result);
 
-    public sealed partial class ReportChatPopup : ContentPopup
+    public sealed partial class ReportChatPopup : ModalPopup
     {
         private readonly TaskCompletionSource<ReportChatSelection> _task = new();
         private bool _collapsed = true;
@@ -241,7 +241,7 @@ namespace Telegram.Views.Popups
             batch.End();
         }
 
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        private void OnClosed(ModalPopup sender, ModalPopupClosedEventArgs args)
         {
             _task.TrySetResult(null);
         }

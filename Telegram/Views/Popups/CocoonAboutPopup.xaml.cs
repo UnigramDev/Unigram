@@ -15,7 +15,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class CocoonAboutPopup : ContentPopup
+    public sealed partial class CocoonAboutPopup : ModalPopup
     {
         public CocoonAboutPopup()
         {

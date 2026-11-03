@@ -1,17 +1,14 @@
-<controls:ContentPopup x:Class="Telegram.Views.Popups.ProxyPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:controls="using:Telegram.Controls"
-                       mc:Ignorable="d"
-                       Background="{ThemeResource PageBackgroundDarkBrush}"
-                       PrimaryButtonText="OK"
-                       SecondaryButtonText="Cancel"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       Padding="0,24,0,0">
+<controls:ModalPopup x:Class="Telegram.Views.Popups.ProxyPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     Padding="0,24,0,0">
 
-    <ContentDialog.Title>
+    <controls:ModalPopup.Title>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -27,7 +24,7 @@
                                   Margin="0,-8,-12,-24"
                                   Grid.Column="1" />
         </Grid>
-    </ContentDialog.Title>
+    </controls:ModalPopup.Title>
 
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
@@ -95,4 +92,4 @@
                                     ScrollingHost="{x:Bind ScrollingHost}"
                                     BottomInset="0" />
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

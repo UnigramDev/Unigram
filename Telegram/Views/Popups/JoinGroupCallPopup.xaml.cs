@@ -14,7 +14,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class JoinGroupCallPopup : ContentPopup
+    public sealed partial class JoinGroupCallPopup : ModalPopup
     {
         private readonly IClientService _clientService;
 

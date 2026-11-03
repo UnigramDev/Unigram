@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class CreateChatPhotoPopup : ContentPopup
+    public sealed partial class CreateChatPhotoPopup : ModalPopup
     {
         public CreateChatPhotoViewModel ViewModel => DataContext as CreateChatPhotoViewModel;
 
@@ -37,7 +37,7 @@ namespace Telegram.Views.Popups
 
         private readonly TaskCompletionSource<object> _completion;
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void OnClosing(ModalPopup sender, ModalPopupClosingEventArgs args)
         {
             _completion.TrySetResult(null);
 
@@ -75,7 +75,7 @@ namespace Telegram.Views.Popups
             ViewModel.SelectedForeground = e.Sticker;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             _completion.SetResult(ViewModel.Send());
         }

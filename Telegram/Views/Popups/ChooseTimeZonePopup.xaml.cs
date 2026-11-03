@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ChooseTimeZonePopup : ContentPopup
+    public sealed partial class ChooseTimeZonePopup : ModalPopup
     {
         private readonly List<TimeZone> _languages;
         private readonly DiffObservableCollection<TimeZone> _diff;
@@ -45,7 +45,7 @@ namespace Telegram.Views.Popups
             ScrollingHost.SelectedItem = selected;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (ScrollingHost.SelectedItem is not TimeZone timeZone)
             {

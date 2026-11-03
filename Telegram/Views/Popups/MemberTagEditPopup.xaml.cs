@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class MemberTagEditPopup : ContentPopup
+    public sealed partial class MemberTagEditPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
@@ -49,7 +49,7 @@ namespace Telegram.Views.Popups
 
         private bool _submitted;
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (_submitted || _member.MemberId is not MessageSenderUser user)
             {

@@ -454,8 +454,6 @@ namespace Telegram.Views.Popups
 
         private async void CountryCodes_Click(object sender, RoutedEventArgs e)
         {
-            Hide();
-
             var popup = new ChooseCountriesPopup(_viewModel.ClientService, _countryCodes.Select(x => x.CountryCode));
 
             var confirm = await _viewModel.ShowPopupAsync(popup);
@@ -468,8 +466,6 @@ namespace Telegram.Views.Popups
                     ? _countryCodes[0].Name
                     : Strings.SearchCountriesSelect;
             }
-
-            await ShowQueuedAsync(XamlRoot);
         }
 
         private void CountriesOnly_Toggled(object sender, RoutedEventArgs e)

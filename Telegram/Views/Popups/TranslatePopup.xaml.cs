@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class TranslatePopup : ContentPopup
+    public sealed partial class TranslatePopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly ITranslateService _translateService;
@@ -131,7 +131,7 @@ namespace Telegram.Views.Popups
             Opened += OnOpened;
         }
 
-        private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private async void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
             if (_loadingMore)
             {

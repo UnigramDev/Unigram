@@ -1294,7 +1294,7 @@ namespace Telegram.Views.Popups
                 user = ViewModel.ClientService.GetUser(chat);
             }
 
-            var popup = new ScheduleMessageToast(user, self)
+            var popup = new ScheduleMessagePopup(ViewModel.ClientService, ViewModel.NavigationService, user, self)
             {
                 //Title = Strings.ExpireAfter,
                 //Header = Strings.PaidContentPriceTitle,

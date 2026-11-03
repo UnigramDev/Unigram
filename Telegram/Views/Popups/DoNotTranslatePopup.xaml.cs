@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class DoNotTranslatePopup : ContentPopup
+    public sealed partial class DoNotTranslatePopup : ModalPopup
     {
         public DoNotTranslatePopup(IList<LanguagePackInfo> languages, IEnumerable<string> selected)
         {
@@ -56,7 +56,7 @@ namespace Telegram.Views.Popups
 
         public HashSet<string> SelectedItems { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             SelectedItems = ScrollingHost.SelectedItems.Cast<LanguagePackInfo>().Select(x => x.Id).ToHashSet();
         }

@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class WebAppRestorePopup : ContentPopup
+    public sealed partial class WebAppRestorePopup : ModalPopup
     {
         private readonly IClientService _clientService;
 

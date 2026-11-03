@@ -10,7 +10,7 @@ using Telegram.Services;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class DisableSharingPopup : ContentPopup
+    public sealed partial class DisableSharingPopup : ModalPopup
     {
         public DisableSharingPopup(IClientService clientService)
         {

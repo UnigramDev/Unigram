@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ChooseStatusDurationPopup : ContentPopup
+    public sealed partial class ChooseStatusDurationPopup : ModalPopup
     {
         private readonly List<SettingsOptionItem<int>> _items;
 

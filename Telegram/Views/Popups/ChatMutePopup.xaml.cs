@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ChatMutePopup : ContentPopup
+    public sealed partial class ChatMutePopup : ModalPopup
     {
         public ChatMutePopup(int mutedFor)
         {
@@ -33,7 +33,7 @@ namespace Telegram.Views.Popups
 
         public int Value { get; set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             var duration = new TimeSpan(DaysPicker.Value, HoursPicker.Value, 0, 0);
             Value = (int)duration.TotalSeconds;

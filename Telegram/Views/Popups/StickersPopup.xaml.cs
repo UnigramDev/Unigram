@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class StickersPopup : ContentPopup
+    public sealed partial class StickersPopup : ModalPopup
     {
         public StickersViewModel ViewModel => DataContext as StickersViewModel;
 
@@ -62,7 +62,7 @@ namespace Telegram.Views.Popups
             _handler.Resume();
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void OnClosing(ModalPopup sender, ModalPopupClosingEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
 
@@ -308,7 +308,7 @@ namespace Telegram.Views.Popups
             MessageHelper.CopyLink(ViewModel.ClientService, XamlRoot, new InternalLinkTypeStickerSet(ViewModel.Items[0].Name, ViewModel.StickerType is StickerTypeCustomEmoji));
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             ViewModel.Execute();
         }

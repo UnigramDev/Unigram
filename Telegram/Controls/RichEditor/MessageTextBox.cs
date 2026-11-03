@@ -1056,7 +1056,7 @@ namespace Telegram.Controls.RichEditor
         {
             var selected = _engine.GetSelectedText();
 
-            var url = await ChooseDateTimeToast.ChooseDateUrlAsync(XamlRoot);
+            var url = await ChooseDateTimePopup.ChooseDateUrlAsync(XamlRoot);
             if (url != null && TdExtensions.TryParseDateTime(url, out TextEntityTypeDateTime dateTime) && selected == _engine.GetSelectedText())
             {
                 ApplyLink(RichLink.FromDateTime(dateTime.UnixTime, dateTime.FormattingType), selected, selected);

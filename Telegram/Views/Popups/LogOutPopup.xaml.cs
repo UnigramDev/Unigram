@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views
 {
-    public sealed partial class LogOutPopup : ContentPopup
+    public sealed partial class LogOutPopup : ModalPopup
     {
         public LogOutViewModel ViewModel => DataContext as LogOutViewModel;
 
@@ -35,7 +35,7 @@ namespace Telegram.Views
             Closed += OnClosed;
         }
 
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        private void OnClosed(ModalPopup sender, ModalPopupClosedEventArgs args)
         {
             if (args.Result == ContentDialogResult.Primary)
             {

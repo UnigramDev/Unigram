@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ChatNotificationsPopup : ContentPopup
+    public sealed partial class ChatNotificationsPopup : ModalPopup
     {
         public ChatNotificationsViewModel ViewModel => DataContext as ChatNotificationsViewModel;
 
@@ -24,7 +24,7 @@ namespace Telegram.Views.Popups
             SecondaryButtonText = Strings.Cancel;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (AllOptions == null)
             {

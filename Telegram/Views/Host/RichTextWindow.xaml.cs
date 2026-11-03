@@ -1624,7 +1624,7 @@ namespace Telegram.Views.Host
         {
             var selected = _engine.GetSelectedText();
 
-            var popup = new ChooseDateTimeToast
+            var popup = new ChooseDateTimePopup
             {
                 Title = Strings.RelativeDateAddDate,
                 PrimaryButtonContent = Strings.OK,

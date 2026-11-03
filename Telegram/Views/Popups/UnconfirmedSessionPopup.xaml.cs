@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class UnconfirmedSessionPopup : ContentPopup
+    public sealed partial class UnconfirmedSessionPopup : ModalPopup
     {
         private DispatcherTimer _timer;
         private int _cooldown = 5;
@@ -78,13 +78,13 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private async void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
             await Task.Delay(1000);
             Icon.Play();
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void OnClosing(ModalPopup sender, ModalPopupClosingEventArgs args)
         {
             args.Cancel = _cooldown > 0;
         }

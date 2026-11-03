@@ -400,7 +400,7 @@ namespace Telegram.ViewModels.Settings
             return confirm;
         }
 
-        public async Task<ContentDialogResult> ShowPopupAsync2(ContentPopup popup)
+        public async Task<ContentDialogResult> ShowPopupAsync2(ModalPopup popup)
         {
             if (Popup != null)
             {

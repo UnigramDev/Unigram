@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ChooseCountriesPopup : ContentPopup
+    public sealed partial class ChooseCountriesPopup : ModalPopup
     {
         private List<CountryInfo> _countries;
         private DiffObservableCollection<CountryInfo> _diff;
@@ -84,7 +84,7 @@ namespace Telegram.Views.Popups
 
         public IList<CountryInfo> SelectedItems { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             SelectedItems = _selection.ToList();
         }

@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class IdenticonPopup : ContentPopup
+    public sealed partial class IdenticonPopup : ModalPopup
     {
         public IdenticonPopup(IClientService clientService, Chat chat)
         {

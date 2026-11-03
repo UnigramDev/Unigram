@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class MemberTagInfoPopup : ContentPopup
+    public sealed partial class MemberTagInfoPopup : ModalPopup
     {
         public MemberTagInfoPopup(MessageViewModel message)
         {

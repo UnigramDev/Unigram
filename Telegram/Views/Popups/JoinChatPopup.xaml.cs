@@ -14,7 +14,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class JoinChatPopup : ContentPopup
+    public sealed partial class JoinChatPopup : ModalPopup
     {
         private readonly IClientService _clientService;
 

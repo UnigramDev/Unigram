@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class DeleteMessagesPopup : ContentPopup
+    public sealed partial class DeleteMessagesPopup : ModalPopup
     {
         public SupergroupEditRestrictedViewModel ViewModel => DataContext as SupergroupEditRestrictedViewModel;
 

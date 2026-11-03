@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class PollResultsPopup : ContentPopup
+    public sealed partial class PollResultsPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly IMessageDelegate _delegate;

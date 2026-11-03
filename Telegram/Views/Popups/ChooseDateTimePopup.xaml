@@ -1,14 +1,15 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.ChooseDateTimePopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:controls="using:Telegram.Controls"
-                       mc:Ignorable="d">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.ChooseDateTimePopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d">
 
     <StackPanel>
         <TextBlock x:Name="HeaderText"
-                   Style="{StaticResource BodyTextBlockStyle}" />
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Visibility="Collapsed" />
 
         <CalendarDatePicker x:Name="Date"
                             Margin="0,12,0,12"
@@ -16,5 +17,7 @@
         <TimePicker x:Name="Time"
                     BorderBrush="{ThemeResource ButtonBorderBrush}"
                     HorizontalAlignment="Stretch" />
+
+        <Border x:Name="FooterRoot" />
     </StackPanel>
-</controls:ContentPopup>
+</controls:ModalPopup>

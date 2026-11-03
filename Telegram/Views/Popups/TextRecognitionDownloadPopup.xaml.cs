@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class TextRecognitionDownloadPopup : ContentPopup
+    public sealed partial class TextRecognitionDownloadPopup : ModalPopup
     {
         private long _fileToken;
 

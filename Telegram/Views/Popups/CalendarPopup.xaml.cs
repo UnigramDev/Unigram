@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class CalendarPopup : ContentPopup
+    public sealed partial class CalendarPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;
@@ -234,7 +234,7 @@ namespace Telegram.Views.Popups
 
         public bool ClearHistory { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (View.SelectionMode == CalendarViewSelectionMode.Single && !_programmaticChange)
             {
@@ -255,7 +255,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnSecondaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (View.SelectionMode == CalendarViewSelectionMode.Multiple)
             {

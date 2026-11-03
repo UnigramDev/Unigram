@@ -1657,9 +1657,6 @@
     <Compile Include="Views\Popups\JoinGroupCallPopup.xaml.cs">
       <DependentUpon>JoinGroupCallPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ScheduleMessageToast.xaml.cs">
-      <DependentUpon>ScheduleMessageToast.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Popups\MoveGiftToWalletPopup.xaml.cs">
       <DependentUpon>MoveGiftToWalletPopup.xaml</DependentUpon>
     </Compile>
@@ -1683,9 +1680,6 @@
     </Compile>
     <Compile Include="Views\Popups\ReportChatPopup.xaml.cs">
       <DependentUpon>ReportChatPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\ChooseDateTimeToast.xaml.cs">
-      <DependentUpon>ChooseDateTimeToast.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\EmojiStatusPopup.xaml.cs">
       <DependentUpon>EmojiStatusPopup.xaml</DependentUpon>
@@ -4232,10 +4226,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ScheduleMessageToast.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Popups\MoveGiftToWalletPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -4267,10 +4257,6 @@
     <Page Include="Views\Popups\ReportChatPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Popups\ChooseDateTimeToast.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\EmojiStatusPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

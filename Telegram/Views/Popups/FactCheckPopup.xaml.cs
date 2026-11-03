@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class FactCheckPopup : ContentPopup
+    public sealed partial class FactCheckPopup : ModalPopup
     {
         public FormattedText Text { get; set; }
 
@@ -29,7 +29,7 @@ namespace Telegram.Views.Popups
             Label.SetText(text);
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             Text = Label.GetFormattedText();
         }

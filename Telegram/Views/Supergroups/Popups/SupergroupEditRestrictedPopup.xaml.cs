@@ -129,7 +129,7 @@ namespace Telegram.Views.Supergroups.Popups
             {
                 if (value.Value == int.MinValue)
                 {
-                    var popup = new ChooseDateTimeToast
+                    var popup = new ChooseDateTimePopup
                     {
                         Title = Strings.ExpireAfter,
                         //Header = Strings.PaidContentPriceTitle,

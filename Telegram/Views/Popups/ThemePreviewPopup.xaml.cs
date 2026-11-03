@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ThemePreviewPopup : ContentPopup
+    public sealed partial class ThemePreviewPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly StorageFile _file;
@@ -93,7 +93,7 @@ namespace Telegram.Views.Popups
             SecondaryButtonText = Strings.Cancel;
         }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             try
             {

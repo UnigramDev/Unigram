@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class SuggestPostPopup : ContentPopup
+    public sealed partial class SuggestPostPopup : ModalPopup
     {
         public long Minimum { get; set; } = 0;
         public long Maximum { get; set; } = long.MaxValue;
@@ -254,7 +254,7 @@ namespace Telegram.Views.Popups
 
         private async void SendDate_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new ChooseDateTimeToast
+            var popup = new ChooseDateTimePopup
             {
                 Title = Strings.PostSuggestionsAddTime,
                 Content = Strings.PostSuggestionsAddTimeHint,

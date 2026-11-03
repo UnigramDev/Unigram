@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ScheduleMessagePopup : ContentPopup
+    public sealed partial class ScheduleMessagePopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -106,7 +106,7 @@ namespace Telegram.Views.Popups
             return DateTime.MinValue;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (Date.Date == null || Date.Date < DateTime.Today)
             {
@@ -124,7 +124,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnSecondaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             SchedulingState = new MessageSchedulingStateSendWhenOnline();
         }

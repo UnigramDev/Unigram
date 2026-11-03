@@ -29,7 +29,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class PlaybackPopup : ContentPopup, IDiffHandler<PlaybackItem>
+    public sealed partial class PlaybackPopup : ModalPopup, IDiffHandler<PlaybackItem>
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -60,14 +60,12 @@ namespace Telegram.Views.Popups
             LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
             LifetimeService.Current.Playback.PlaylistChanged += OnPlaylistChanged;
 
-            Unloaded += OnUnloaded;
-
             ScrollingHost.ItemsSource = _items;
 
             UpdateGlyph();
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
@@ -97,7 +95,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             _ = ScrollingHost.ScrollToItem2(LifetimeService.Current.Playback?.CurrentItem, VerticalAlignment.Center);
         }

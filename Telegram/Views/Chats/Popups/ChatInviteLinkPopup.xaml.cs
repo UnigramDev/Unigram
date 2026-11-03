@@ -262,7 +262,7 @@ namespace Telegram.Views.Chats.Popups
             {
                 if (value.Value == int.MaxValue)
                 {
-                    var popup = new ChooseDateTimeToast
+                    var popup = new ChooseDateTimePopup
                     {
                         Title = Strings.ExpireAfter,
                         //Header = Strings.PaidContentPriceTitle,

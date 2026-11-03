@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class StakeDicePopup : ContentPopup
+    public sealed partial class StakeDicePopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly MessageViewModel _message;
@@ -110,7 +110,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             _message.Delegate.SendMessage(new InputMessageStakeDice(_message.ClientService.StakeDiceState.StateHash, _toncoinAmount, false));
         }

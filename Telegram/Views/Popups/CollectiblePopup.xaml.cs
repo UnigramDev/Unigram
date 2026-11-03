@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class CollectiblePopup : ContentPopup
+    public sealed partial class CollectiblePopup : ModalPopup
     {
         private readonly string _value;
         private readonly string _url;
@@ -98,7 +98,7 @@ namespace Telegram.Views.Popups
             CopyCommand.Content = secondary;
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
             Icon.Play();
         }
