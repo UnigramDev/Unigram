@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Resources;
 using Telegram.Common;
 using Telegram.Host;
+using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using AppLifecycle = Microsoft.Windows.AppLifecycle;
@@ -77,6 +78,10 @@ namespace Telegram.Navigation
                 WatchDog.Launch(launch.PreviousExecutionState);
                 CallInternalLaunchAsync(launch);
             }
+            else if (args?.Kind == ActivationKind.StartupTask && TryStartInBackground(args))
+            {
+                Logger.Info(args.Kind);
+            }
             else if (args != null)
             {
                 Logger.Info(args.Kind);
@@ -106,6 +111,11 @@ namespace Telegram.Navigation
                 Logger.Info("No identity; starting from a link");
                 CallInternalActivated(link);
             }
+            else if (UnpackagedStartup.IsStartedBy(Environment.GetCommandLineArgs())
+                && TryStartInBackground(new PlainActivatedEventArgs(ApplicationExecutionState.NotRunning)))
+            {
+                Logger.Info("No identity; started with the session");
+            }
             else
             {
                 Logger.Info("No identity; starting as a plain launch");
@@ -114,6 +124,35 @@ namespace Telegram.Navigation
 
             ToastActivator.Ready();
         }
+
+        /// <summary>
+        /// Started with the user's session rather than by the user. With the notification area icon
+        /// on, the app starts behind it - accounts connected, notifications showing - and the first
+        /// click on the icon builds the window through <see cref="ReopenFromNotifyIcon"/>, as it
+        /// does after the window was closed to the icon. Without the icon there would be nothing
+        /// to open it from, so the caller starts it as any other launch.
+        /// </summary>
+        private bool TryStartInBackground(IActivatedEventArgs args)
+        {
+            if (!AppSettings.IsTrayVisible)
+            {
+                return false;
+            }
+
+            Logger.Info();
+
+            // The passcode lock, which a window would otherwise apply when its frame is built. It
+            // runs once per process, so the first window skips it.
+            CallOnInitialize(false, args);
+            OnStartInBackground();
+            return true;
+        }
+
+        /// <summary>
+        /// What the app starts that does not belong to a window: the notification area icon, the
+        /// update check, the cleanup after an update.
+        /// </summary>
+        protected abstract void OnStartInBackground();
 
         /// <summary>
         /// A link opened while the app runs, redirected here by the process the shell started for

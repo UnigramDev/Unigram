@@ -98,6 +98,10 @@ Root: HKCU; Subkey: "Software\Classes\AppUserModelId\{#AppUserModelId}"; Flags: 
 Root: HKCU; Subkey: "Software\Classes\CLSID\{{3542F50C-8B9A-4A2B-A47D-9E5EAF762103}"; Flags: uninsdeletekey
 ; The app's settings, which ApplicationData.GetForUnpackaged keeps here: removed with the data folder.
 Root: HKCU; Subkey: "Software\Classes\Local Settings\Software\TelegramFZ-LLC"; Flags: uninsdeletekey
+; Launch at startup, which the app writes when it is turned on (UnpackagedStartup), and the choice
+; Startup apps records under the same name. Neither is created here.
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: none; ValueName: "{#AppUserModelId}"; Flags: uninsdeletevalue dontcreatekey
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"; ValueType: none; ValueName: "{#AppUserModelId}"; Flags: uninsdeletevalue dontcreatekey
 
 ; tg:, tonsite: and tc:, which the packaged flavours declare in their manifest. The command is the
 ; form Windows App SDK's AppInstance decodes into a protocol activation, as

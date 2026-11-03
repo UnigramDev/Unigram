@@ -195,6 +195,14 @@ namespace Telegram
             }
         }
 
+#if WINUI3
+        protected override void OnStartInBackground()
+        {
+            var update = LifetimeService.Current.ActiveItem.Resolve<ICloudUpdateService>();
+            _ = Task.Run(() => OnStartSync(StartKind.Activate, update));
+        }
+#endif
+
         public override UIElement CreateRootElement(IActivatedEventArgs args, WindowContext window)
         {
             var sessionId = Toast.GetSession(args);

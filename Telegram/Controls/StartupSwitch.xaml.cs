@@ -43,11 +43,17 @@ namespace Telegram.Controls
 
                 OnLoaded();
             }
+#if UNPACKAGED
+            else if (!ApiInfo.HasPackageIdentity)
+            {
+                integrated = true;
+                OnLoaded();
+            }
+#endif
             else
             {
-                // A StartupTask is declared in the manifest and there is none. The unpackaged
-                // equivalent is a HKCU\...\Run value, which nothing here writes yet, so the
-                // toggle is hidden rather than left as a switch that does nothing.
+                // A StartupTask is declared in the manifest and this device has none, so the toggle
+                // is hidden rather than left as a switch that does nothing.
                 Toggle.Visibility = Visibility.Collapsed;
             }
 
@@ -67,8 +73,8 @@ namespace Telegram.Controls
                 ToggleMinimized.Unchecked -= Minimized_Toggled;
             }
 
-            var task = await GetTaskAsync();
-            if (task == null || task.State is StartupTaskState.DisabledByUser or StartupTaskState.DisabledByPolicy)
+            var state = await GetStateAsync();
+            if (state is null or StartupTaskState.DisabledByUser or StartupTaskState.DisabledByPolicy)
             {
                 Toggle.IsChecked = false;
                 Toggle.IsEnabled = false;
@@ -79,16 +85,16 @@ namespace Telegram.Controls
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
-                Headered.Footer = task?.State == StartupTaskState.DisabledByPolicy
+                Headered.Footer = state == StartupTaskState.DisabledByPolicy
                     ? Strings.AutoStartDisabledByPolicyInfo
                     : Strings.AutoStartDisabledInfo;
 
                 Visibility = Visibility.Visible;
             }
-            else if (task.State is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy)
+            else if (state is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy)
             {
                 Toggle.IsChecked = true;
-                Toggle.IsEnabled = task.State == StartupTaskState.Enabled;
+                Toggle.IsEnabled = state == StartupTaskState.Enabled;
 
                 if (ToggleMinimized != null)
                 {
@@ -96,13 +102,13 @@ namespace Telegram.Controls
                     ToggleMinimized.Visibility = Visibility.Visible;
                 }
 
-                Headered.Footer = task.State == StartupTaskState.EnabledByPolicy
+                Headered.Footer = state == StartupTaskState.EnabledByPolicy
                     ? Strings.AutoStartEnabledByPolicyInfo
                     : string.Empty;
 
                 Visibility = Visibility.Visible;
             }
-            else if (task.State == StartupTaskState.Disabled)
+            else if (state == StartupTaskState.Disabled)
             {
                 Toggle.IsChecked = false;
                 Toggle.IsEnabled = true;
@@ -144,13 +150,40 @@ namespace Telegram.Controls
 
         private async void OnToggled(object sender, RoutedEventArgs e)
         {
+            await SetEnabledAsync(Toggle.IsChecked is true);
+            OnLoaded();
+        }
+
+        private async Task<StartupTaskState?> GetStateAsync()
+        {
+#if UNPACKAGED
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                return UnpackagedStartup.GetState();
+            }
+#endif
+
+            var task = await GetTaskAsync();
+            return task?.State;
+        }
+
+        private async Task SetEnabledAsync(bool enabled)
+        {
+#if UNPACKAGED
+            if (!ApiInfo.HasPackageIdentity)
+            {
+                UnpackagedStartup.SetEnabled(enabled);
+                return;
+            }
+#endif
+
             var task = await GetTaskAsync();
             if (task == null)
             {
                 return;
             }
 
-            if (Toggle.IsChecked is true)
+            if (enabled)
             {
                 await task.RequestEnableAsync();
             }
@@ -158,8 +191,6 @@ namespace Telegram.Controls
             {
                 task.Disable();
             }
-
-            OnLoaded();
         }
 
         private async Task<StartupTask> GetTaskAsync()

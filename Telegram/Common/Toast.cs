@@ -30,9 +30,9 @@ namespace Telegram.Common
         // debug build registers its own, or running it would point the installed app's toasts and
         // taskbar button at the debug executable.
 #if DEBUG
-        private const string UnpackagedApplicationId = "TelegramFZ-LLC.Windows.Debug";
+        internal const string UnpackagedApplicationId = "TelegramFZ-LLC.Windows.Debug";
 #else
-        private const string UnpackagedApplicationId = "TelegramFZ-LLC.Windows";
+        internal const string UnpackagedApplicationId = "TelegramFZ-LLC.Windows";
 #endif
 
         /// <summary>
