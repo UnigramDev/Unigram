@@ -2176,11 +2176,25 @@ namespace Telegram.Controls
 
         private readonly double _pollInterval;
 
+        // The timestamp of the frame on screen, and the gap before it. A frame's own length is not
+        // known, so that gap is what a loop's last frame is held for.
         private double _lastPosition;
-        private double _nextDue;
-
-        // How long the frame just rendered is held: the gap between the last two timestamps.
         private double _frameDuration;
+
+        // The cache reports the end of a loop on its last frame, so the frame after the one on
+        // screen is the next loop's first.
+        private bool _loopEnded;
+
+        // A decoded frame waiting for its own timestamp, in the buffer it was decoded into. Each
+        // frame is shown at its timestamp, which is only known once it is decoded: holding the one
+        // on screen for the gap before it instead puts a variable frame rate's long holds after
+        // the wrong frames. The presenter has a single decode buffer and hands it back untouched on
+        // a Skip, so the frame is still in it on the next poll; anything else drops the frame.
+        private IBuffer _pending;
+        private double _pendingDue;
+        private double _pendingSeconds;
+        private bool _pendingCompleted;
+        private bool _pendingWrapped;
 
         public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
         {
@@ -2194,55 +2208,31 @@ namespace Telegram.Controls
                 return AnimatedImageTaskState.Skip;
             }
 
-            // Half a frame early counts, for the reason LottieAnimatedImageTask rounds: a deadline
+            if (_pending != frame)
+            {
+                _pending = null;
+            }
+
+            var clock = Advance(_pending != null ? _pendingDue : _lastPosition + _frameDuration);
+
+            if (_pending == null)
+            {
+                clock = Decode(frame, clock);
+            }
+
+            // Half a poll early counts, for the reason LottieAnimatedImageTask rounds: a deadline
             // that falls on a vblank is otherwise met or missed by jitter.
-            var clock = Advance(_nextDue);
-            if (clock + _frameDuration / 2 < _nextDue)
+            if (clock + _pollInterval / 2 < _pendingDue)
             {
                 return AnimatedImageTaskState.Skip;
             }
 
-            // Within a frame and a half of the clock the next frame is on time. Further behind, the
-            // frames before the clock are passed over rather than every one of them shown late.
-            var behind = clock - _nextDue > _frameDuration * 1.5;
-            var previous = _lastPosition;
+            var seconds = _pendingSeconds;
+            var completed = _pendingCompleted;
 
-            _animation.RenderSync(frame, behind ? clock - _frameDuration : 0, out double seconds, out bool completed);
-            _index++;
-
-            // The end of a loop is reported on two different frames: the cache reports it on the last
-            // one, while live decoding seeks back and decodes on in the same call, and reports it on
-            // the next loop's first. The timestamp going back is what tells them apart.
-            var wrapped = completed && seconds < previous;
-
-            // The next frame's timestamp is only known once it has been decoded, so the one just
-            // rendered is held for as long as frames have been lasting, and the deadline is
-            // re-anchored on a real timestamp every time, so the estimate cannot drift. A gap that
-            // spans skipped frames is not a frame's length, so it is only measured on time.
-            // A timestamp that did not move forward means the frame was not rendered at all, and
-            // pacing off it would put the deadline in the past and spin.
-            if (wrapped)
-            {
-                // As though the last frame of the loop that ended had been held for its length, and
-                // with what the clock ran past that carried into this one.
-                SetClock(clock - (previous + _frameDuration) + seconds);
-                _nextDue = seconds + _frameDuration;
-            }
-            else if (seconds > previous)
-            {
-                if (!behind)
-                {
-                    _frameDuration = seconds - previous;
-                }
-
-                _nextDue = seconds + _frameDuration;
-            }
-            else
-            {
-                _nextDue = seconds + _pollInterval;
-            }
-
+            _pending = null;
             _lastPosition = seconds;
+            _index++;
 
             // completed is authoritative, and TotalFrame deliberately is not: it is 0 until a
             // cache exists, because a video producer cannot know its length in advance. Comparing
@@ -2259,16 +2249,7 @@ namespace Telegram.Controls
             else if (completed)
             {
                 _index = 0;
-
-                // The last frame, held for a frame's length before the next loop starts from zero.
-                // The length measured so far is kept: starting it over at the poll interval showed
-                // every loop's first frame for one poll, which a loop of a few frames plays fast on.
-                if (!wrapped)
-                {
-                    SetClock(clock - (seconds + _frameDuration));
-                    _nextDue = 0;
-                    _lastPosition = -_frameDuration;
-                }
+                _loopEnded = !_pendingWrapped;
 
                 return AnimatedImageTaskState.Loop;
             }
@@ -2277,15 +2258,78 @@ namespace Telegram.Controls
             return AnimatedImageTaskState.None;
         }
 
+        // Returns the clock, moved back by the loop's length when the frame starts the next loop.
+        private double Decode(IBuffer frame, double clock)
+        {
+            var previous = _lastPosition;
+
+            if (_loopEnded)
+            {
+                _loopEnded = false;
+                clock = NextLoop(clock, ref previous);
+            }
+
+            // Within a frame and a half of the clock the next frame is on time. Further behind, the
+            // frames before the clock are passed over rather than every one of them shown late.
+            var behind = clock - (previous + _frameDuration) > _frameDuration * 1.5;
+
+            _animation.RenderSync(frame, behind ? clock - _frameDuration : 0, out double seconds, out bool completed);
+
+            // Live decoding seeks back and decodes on in the same call, so it reports the end of a
+            // loop on the next loop's first frame: the timestamp going back tells it apart from
+            // the cache's report on the last frame.
+            var wrapped = completed && seconds < previous;
+            if (wrapped)
+            {
+                clock = NextLoop(clock, ref previous);
+            }
+
+            // A gap that spans skipped frames is not a frame's length, so it is only measured on
+            // time. A timestamp that did not move forward means the frame was not rendered at all,
+            // and is shown at once rather than paced off.
+            if (seconds > previous)
+            {
+                if (!behind)
+                {
+                    _frameDuration = seconds - previous;
+                }
+
+                _pendingDue = seconds;
+            }
+            else
+            {
+                _pendingDue = clock;
+            }
+
+            _pending = frame;
+            _pendingSeconds = seconds;
+            _pendingCompleted = completed;
+            _pendingWrapped = wrapped;
+
+            return clock;
+        }
+
+        // As though the loop's last frame had been held for its length, and with what the clock ran
+        // past that carried into the next one.
+        private double NextLoop(double clock, ref double previous)
+        {
+            clock -= previous + _frameDuration;
+            SetClock(clock);
+
+            previous = -_frameDuration;
+            return clock;
+        }
+
         private void Rewind()
         {
             SetClock(0);
-            _nextDue = 0;
 
-            // One poll behind zero, so the first frame's hold is estimated at the poll
-            // interval rather than at nothing, which would show the second frame instantly.
+            // One poll behind zero, so the first decode is not taken for one that fell behind.
             _frameDuration = _pollInterval;
             _lastPosition = -_pollInterval;
+
+            _loopEnded = false;
+            _pending = null;
         }
 
         public override void Dispose()
