@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
@@ -272,14 +273,14 @@ namespace Telegram.Controls.Stories
             ConnectTitle();
         }
 
-        // Two titles, as one: the expanded one fades and shrinks over the first half of the
-        // scroll, and the collapsed one fades in with the gathering, just right of the stack. The
-        // title shows whichever of the two is the more opaque.
+        // Two titles, as one: the expanded one fades and shrinks until the stack gathers, and the
+        // collapsed one fades in with the gathering, just right of the stack. The title shows
+        // whichever of the two is the more opaque.
         private void ConnectTitle()
         {
             var compositor = _progress.Compositor;
 
-            var expanded = "Clamp(2 * _.Progress - 1, 0, 1)";
+            var expanded = string.Format(CultureInfo.InvariantCulture, "Clamp((_.Progress - {0}) / (1 - {0}), 0, 1)", StoriesStack.Threshold);
             var collapsed = "Clamp(Min(m.Collapse, 1 - m.Morph), 0, 1)";
             var shown = "_.Visible && _.Count > 0";
 
