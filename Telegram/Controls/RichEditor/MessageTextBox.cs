@@ -889,7 +889,7 @@ namespace Telegram.Controls.RichEditor
                 }
 
                 formatting.CreateFlyoutSeparator();
-                formatting.CreateFlyoutItem(length && (status.Marks != RichMarks.None || status.HasLink), _engine.ClearFormatting, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                formatting.CreateFlyoutItem(_engine.CanClearFormatting(), _engine.ClearFormatting, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
                 flyout.Items.Add(formatting);
             }

@@ -423,16 +423,7 @@ namespace Telegram.Controls.RichEditor
             if (quote != null && IsInside(_node ?? End.Leaf.Owner, quote))
             {
                 BeginChange();
-
-                var container = _document.GetContainer(quote, out int index);
-                container.RemoveAt(index);
-                container.InsertRange(index, quote.Children);
-
-                if (!quote.Credit.IsEmpty)
-                {
-                    container.Insert(index + quote.Children.Count, new RichParagraphBlock(RichBlockKind.Paragraph, quote.Credit));
-                }
-
+                UnwrapQuote(quote);
                 EndChange();
                 return;
             }
@@ -463,6 +454,19 @@ namespace Telegram.Controls.RichEditor
             siblings.Insert(first, new RichBlockQuote(children) { HasCredit = Schema == null });
 
             EndChange();
+        }
+
+        /// <summary>The structural half of unwrapping a quote, for an edit already open.</summary>
+        private void UnwrapQuote(RichBlockQuote quote)
+        {
+            var container = _document.GetContainer(quote, out int index);
+            container.RemoveAt(index);
+            container.InsertRange(index, quote.Children);
+
+            if (!quote.Credit.IsEmpty)
+            {
+                container.Insert(index + quote.Children.Count, new RichParagraphBlock(RichBlockKind.Paragraph, quote.Credit));
+            }
         }
 
         /// <summary>

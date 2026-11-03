@@ -1019,10 +1019,98 @@ namespace Telegram.Controls.RichEditor
                 leaf.SetLink(start, end, null);
             });
 
+            if (Schema != null && ClearBlockFormatting())
+            {
+                Reindex();
+            }
+
             Raise(multiple ? RichEditorChanges.Structure : RichEditorChanges.Text, _focus.Leaf);
 
             EndBatch();
             EndEdit(RichEditKind.Other);
+        }
+
+        /// <summary>
+        /// In a message, code blocks and quotes are formatting like any mark, so the lines touched
+        /// by the selection lose them too. A quote goes as a whole, as toggling it does. An article
+        /// has its own paragraph styles for this and keeps its blocks.
+        /// </summary>
+        private bool ClearBlockFormatting()
+        {
+            var start = Start;
+            var end = End;
+            var changed = false;
+
+            // The leaf list and Parent links stay as they were until Reindex, so walking on after
+            // a quote is unwrapped is safe, and its later lines still find it.
+            RichBlockQuote unwrapped = null;
+
+            var leaves = _document.Leaves;
+            for (int i = start.Leaf.Index; i <= end.Leaf.Index; i++)
+            {
+                var leaf = leaves[i];
+                var from = i == start.Leaf.Index ? start.Offset : 0;
+                var to = i == end.Leaf.Index ? end.Offset : leaf.Length;
+
+                if (to <= from)
+                {
+                    continue;
+                }
+
+                if (leaf.Owner is RichParagraphBlock { Kind: RichBlockKind.Preformatted } code)
+                {
+                    code.SetKind(RichBlockKind.Paragraph);
+                    code.Language = string.Empty;
+                    changed = true;
+                }
+
+                var quote = FindAncestor<RichBlockQuote>(leaf.Owner);
+                if (quote != null && quote != unwrapped)
+                {
+                    UnwrapQuote(quote);
+                    unwrapped = quote;
+                    changed = true;
+                }
+            }
+
+            return changed;
+        }
+
+        /// <summary>Whether <see cref="ClearFormatting"/> has anything to clear anywhere in the selection.</summary>
+        public bool CanClearFormatting()
+        {
+            if (_node != null || IsSelectionEmpty)
+            {
+                return false;
+            }
+
+            var start = Start;
+            var end = End;
+
+            var leaves = _document.Leaves;
+            for (int i = start.Leaf.Index; i <= end.Leaf.Index; i++)
+            {
+                var leaf = leaves[i];
+                var from = i == start.Leaf.Index ? start.Offset : 0;
+                var to = i == end.Leaf.Index ? end.Offset : leaf.Length;
+
+                if (to <= from)
+                {
+                    continue;
+                }
+
+                if (leaf.HasFormatting(from, to))
+                {
+                    return true;
+                }
+
+                if (Schema != null && (leaf.Owner is RichParagraphBlock { Kind: RichBlockKind.Preformatted } || FindAncestor<RichBlockQuote>(leaf.Owner) != null))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

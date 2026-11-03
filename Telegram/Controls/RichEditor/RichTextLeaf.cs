@@ -442,6 +442,30 @@ namespace Telegram.Controls.RichEditor
             return common == (RichMarks)ushort.MaxValue ? RichMarks.None : common;
         }
 
+        /// <summary>Whether any character of [start, end) carries a mark or a link.</summary>
+        public bool HasFormatting(int start, int end)
+        {
+            var position = 0;
+
+            foreach (var run in _runs)
+            {
+                if (position >= end)
+                {
+                    break;
+                }
+
+                var runEnd = position + run.Length;
+                if (runEnd > start && (run.Marks != RichMarks.None || run.Link != null))
+                {
+                    return true;
+                }
+
+                position = runEnd;
+            }
+
+            return false;
+        }
+
         /// <summary>The link over all of [start, end), or null when it changes or stops inside it.</summary>
         public RichLink GetCommonLink(int start, int end)
         {
