@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -82,6 +83,7 @@ namespace Telegram.Controls.Stories
 
         private readonly ActiveStoriesAvatar[] _slots = new ActiveStoriesAvatar[Capacity];
         private readonly ActiveStoriesViewModel[] _items = new ActiveStoriesViewModel[Capacity];
+        private readonly ChatActiveStories[] _drawn = new ChatActiveStories[Capacity];
 
         private readonly CompositionClip[] _segmentsClips = new CompositionClip[Capacity];
         private readonly CompositionClip[] _photoClips = new CompositionClip[Capacity];
@@ -171,7 +173,19 @@ namespace Telegram.Controls.Stories
                         item.PropertyChanged += OnPropertyChanged;
 
                         _slots[i].Update(item);
-                        _slots[i].UpdateSegments(item.Item);
+                    }
+                }
+
+                // Reading a story moves its chat by removing and inserting it again, often at the
+                // same index, which raises no PropertyChanged: only the new ChatActiveStories tells.
+                var activeStories = item?.Item;
+                if (_drawn[i] != activeStories)
+                {
+                    _drawn[i] = activeStories;
+
+                    if (activeStories != null)
+                    {
+                        _slots[i].UpdateSegments(activeStories);
                     }
                 }
 
@@ -205,7 +219,8 @@ namespace Telegram.Controls.Stories
             {
                 if (_items[i] == sender)
                 {
-                    _slots[i].UpdateSegments(_items[i].Item);
+                    _drawn[i] = _items[i].Item;
+                    _slots[i].UpdateSegments(_drawn[i]);
                 }
             }
         }
