@@ -1332,6 +1332,7 @@
                                   Grid.ColumnSpan="2"
                                   Grid.Row="1">
                                 <controls:FormattedTextInputHost x:Name="TextField"
+                                                                 AutomationProperties.Name="{CustomResource TypeMessage}"
                                                                  Kind="Composer"
                                                                  Tier="All"
                                                                  LegacyStyle="{StaticResource ComposerLegacyTextBoxStyle}"
