@@ -31,6 +31,7 @@
                    TextAlignment="Center" />
 
         <TextBox x:Name="PrimaryInput"
+                 AutomationProperties.Name="{CustomResource YourNewEmail}"
                  KeyDown="PrimaryInput_KeyDown"
                  Margin="0,12,0,0"
                  InputScope="EmailNameOrAddress"

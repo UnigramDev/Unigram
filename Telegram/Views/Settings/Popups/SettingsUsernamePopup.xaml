@@ -26,6 +26,7 @@
         <ListView.Header>
             <StackPanel Margin="24,0">
                 <TextBox x:Name="Username"
+                         AutomationProperties.Name="{CustomResource UsernamePlaceholder}"
                          Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          IsEnabled="{x:Bind ViewModel.CanBeEdited}"
                          PlaceholderText="{CustomResource UsernamePlaceholder}" />
