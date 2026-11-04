@@ -5743,6 +5743,14 @@ namespace Telegram.Views
 
         public void UpdateChat(Chat chat)
         {
+            AutomationProperties.SetName(Messages, ViewModel.Type switch
+            {
+                DialogType.Pinned => Strings.PinnedMessages,
+                DialogType.ScheduledMessages => Strings.ScheduledMessages,
+                DialogType.History when chat.Type is ChatTypeSupergroup { IsChannel: true } => Strings.SearchPosts,
+                _ => Strings.SearchMessages
+            });
+
             UpdateComposerChat();
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
