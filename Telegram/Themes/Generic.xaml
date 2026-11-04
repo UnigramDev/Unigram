@@ -9561,6 +9561,8 @@
     </Style>
 
     <Style TargetType="local:GlassToggleButton">
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
         <Setter Property="Width"
                 Value="48" />
         <Setter Property="Height"
@@ -9590,6 +9592,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <TextBlock x:Name="ContentPresenter"
                                    Foreground="#FFFFFF"
+                                   AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
                                    TextAlignment="Center"
                                    VerticalAlignment="Center"

@@ -198,6 +198,7 @@
                             </Grid.RowDefinitions>
 
                             <Slider x:Name="KeepMedia"
+                                    AutomationProperties.Name="{CustomResource KeepMedia}"
                                     Value="{x:Bind ConvertKeepMedia(ViewModel.KeepMedia), Mode=TwoWay, BindBack=ConvertKeepMediaBack}"
                                     Maximum="3"
                                     Minimum="0"

@@ -580,6 +580,7 @@
                                                        ItemClick="ListView_ItemClick"
                                                        IsItemClickEnabled="True"
                                                        AutomationProperties.LandmarkType="Main"
+                                                       AutomationProperties.Name="{CustomResource FilterChats}"
                                                        DataContext="{x:Bind ViewModel.Chats}"
                                                        ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                                        SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
@@ -777,6 +778,7 @@
                       Margin="0,8,0,0"
                       Grid.Row="1">
                     <ListView ItemsSource="{x:Bind ViewModel.Settings.Results}"
+                              AutomationProperties.Name="{CustomResource Search}"
                               SelectionMode="None"
                               ContainerContentChanging="Settings_ContainerContentChanging"
                               Grid.Row="1">

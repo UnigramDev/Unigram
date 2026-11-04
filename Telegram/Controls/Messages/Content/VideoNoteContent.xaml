@@ -49,6 +49,7 @@
                                     UseLayoutRounding="False"
                                     IsHitTestVisible="False">
                                 <TextBlock Text="&#xE918;"
+                                           AutomationProperties.AccessibilityView="Raw"
                                            Foreground="#FFFFFF"
                                            FontSize="20"
                                            FontFamily="{StaticResource SymbolThemeFontFamily}" />

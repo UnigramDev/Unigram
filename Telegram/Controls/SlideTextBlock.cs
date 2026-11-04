@@ -6,7 +6,10 @@
 //
 
 using System.Numerics;
+using System.Collections.Generic;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
@@ -21,6 +24,11 @@ namespace Telegram.Controls
         public SlideTextBlock()
         {
             DefaultStyleKey = typeof(SlideTextBlock);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new SlideTextBlockAutomationPeer(this);
         }
 
         protected override void OnApplyTemplate()
@@ -126,6 +134,12 @@ namespace Telegram.Controls
 
         private void OnTextChanged(string newValue, string oldValue)
         {
+            var peer = FrameworkElementAutomationPeer.FromElement(this);
+            if (string.IsNullOrEmpty(AutomationProperties.GetName(this))
+                && AutomationProperties.GetLabeledBy(this) == null)
+            {
+                peer?.RaisePropertyChangedEvent(AutomationElementIdentifiers.NameProperty, oldValue, newValue);
+            }
             if (NextPart == null)
             {
                 return;
@@ -178,5 +192,33 @@ namespace Telegram.Controls
             //InvalidateMeasure();
             SkipAnimation = false;
         }
+    }
+
+    public sealed class SlideTextBlockAutomationPeer : FrameworkElementAutomationPeer
+    {
+        private readonly SlideTextBlock _owner;
+
+        public SlideTextBlockAutomationPeer(SlideTextBlock owner) : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.Text;
+
+        protected override string GetClassNameCore() => nameof(SlideTextBlock);
+
+        protected override string GetNameCore()
+        {
+            if (!string.IsNullOrEmpty(AutomationProperties.GetName(_owner))
+                || AutomationProperties.GetLabeledBy(_owner) != null)
+            {
+                return base.GetNameCore();
+            }
+
+            return _owner.Text ?? string.Empty;
+        }
+
+        // Animation retains the previous text briefly; expose only the current text.
+        protected override IList<AutomationPeer> GetChildrenCore() => null;
     }
 }

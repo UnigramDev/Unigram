@@ -29,6 +29,7 @@
                 <StackPanel>
                     <StackPanel>
                         <Button x:Name="CurrentLocationButton"
+                                AutomationProperties.Name="{CustomResource EditProfileChannelHide}"
                                 Click="CurrentLocation_Click"
                                 Background="Transparent"
                                 Padding="0"

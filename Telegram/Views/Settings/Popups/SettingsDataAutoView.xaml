@@ -45,6 +45,7 @@
                            Grid.Column="1" />
 
                 <Slider Value="{x:Bind ConvertLimit(ViewModel.Limit), Mode=TwoWay, BindBack=ConvertLimitBack}"
+                        AutomationProperties.Name="{CustomResource AutoDownloadMaxFileSize}"
                         Minimum="0"
                         Maximum="1"
                         SmallChange="0.01"

@@ -91,6 +91,7 @@
                     <calls:SignalBars x:Name="SignalBars" />
 
                     <TextBlock x:Name="Duration"
+                               AutomationProperties.AccessibilityView="Raw"
                                Text="00:00"
                                Typography.NumeralAlignment="Tabular"
                                Grid.Column="1" />
@@ -104,7 +105,9 @@
                         Padding="12,0"
                         Margin="0,12,0,0"
                         Grid.Row="2">
-                    <TextBlock Text="{CustomResource VoipWeakNetwork}"
+                    <TextBlock x:Name="WeakNetworkLabel"
+                               Text="{CustomResource VoipWeakNetwork}"
+                               AutomationProperties.AccessibilityView="Raw"
                                VerticalAlignment="Center" />
                 </Border>
             </Grid>
@@ -125,6 +128,7 @@
 
         <!-- We use Apple Color Emoji always here -->
         <Button x:Name="Emoji"
+                AutomationProperties.Name="{CustomResource VoipHintEncryptionKey}"
                 Click="Emoji_Click"
                 Visibility="Collapsed"
                 FontFamily="ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji"
@@ -184,15 +188,18 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <controls:GlassToggleButton x:Name="Screen"
+                                            AutomationProperties.Name="{CustomResource VoipChatStartScreenCapture}"
                                             Content="{CustomResource VoipScreen2}"
                                             Click="Screen_Click"
                                             Glyph="&#xEA5E;" />
                 <controls:GlassToggleButton x:Name="Camera"
+                                            AutomationProperties.Name="{CustomResource VoipStartVideo}"
                                             Content="{CustomResource VoipVideo2}"
                                             Click="Camera_Click"
                                             Glyph="&#xE91E;"
                                             Grid.Column="1" />
                 <controls:GlassToggleButton x:Name="Mute"
+                                            AutomationProperties.Name="{CustomResource VoipMute}"
                                             Content="{CustomResource VoipMute2}"
                                             Click="Mute_Click"
                                             Glyph="&#xEA93;"
@@ -200,7 +207,9 @@
                 <Border Background="{ThemeResource DangerButtonBackground}"
                         CornerRadius="24"
                         Grid.Column="3">
-                    <controls:GlyphButton Click="Discard_Click"
+                    <controls:GlyphButton x:Name="EndCall"
+                                          Click="Discard_Click"
+                                          AutomationProperties.Name="{CustomResource VoipEndCall}"
                                           Content="{CustomResource VoipEnd2}"
                                           Glyph="&#xEA1F;"
                                           FontSize="24"
@@ -209,20 +218,24 @@
                 </Border>
 
                 <TextBlock Text="{CustomResource VoipScreen2}"
+                           AutomationProperties.AccessibilityView="Raw"
                            TextAlignment="Center"
                            Grid.Row="1" />
 
                 <TextBlock Text="{CustomResource VoipVideo2}"
+                           AutomationProperties.AccessibilityView="Raw"
                            TextAlignment="Center"
                            Grid.Column="1"
                            Grid.Row="1" />
 
                 <TextBlock Text="{CustomResource VoipMute2}"
+                           AutomationProperties.AccessibilityView="Raw"
                            TextAlignment="Center"
                            Grid.Column="2"
                            Grid.Row="1" />
 
                 <TextBlock Text="{CustomResource VoipEnd2}"
+                           AutomationProperties.AccessibilityView="Raw"
                            TextAlignment="Center"
                            Grid.Column="3"
                            Grid.Row="1" />

@@ -25,6 +25,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton x:Name="DeleteButton"
+                                      AutomationProperties.Name="{CustomResource Delete}"
                                       Click="ButtonCancelRecording_Click"
                                       Glyph="&#xE74D;"
                                       Visibility="Collapsed" />
@@ -51,6 +52,7 @@
                         SizeChanged="SlidePanel_SizeChanged"
                         Orientation="Horizontal">
                 <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                          AutomationProperties.AccessibilityView="Raw"
                           Glyph="&#xE0E2;"
                           FontSize="12"
                           Margin="0,1,4,0" />
@@ -173,6 +175,7 @@
                                     Height="36"
                                     Width="36">
                                 <controls:AnimatedGlyphToggleButton x:Name="ViewOnceButton"
+                                                                    AutomationProperties.Name="{CustomResource TimerPeriodOnce}"
                                                                     Click="ViewOnce_Click"
                                                                     Width="44"
                                                                     Height="44"
@@ -199,6 +202,7 @@
                                     Height="36"
                                     Width="36">
                                 <controls:AnimatedGlyphToggleButton x:Name="PauseButton"
+                                                                    AutomationProperties.Name="{CustomResource AccActionPause}"
                                                                     Click="Pause_Click"
                                                                     Width="44"
                                                                     Height="44"
@@ -216,12 +220,16 @@
                           Width="80"
                           Height="80">
                         <TextBlock x:Name="ChatRecordGlyph"
+                                   AutomationProperties.AccessibilityView="Raw"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="{StaticResource GlyphLargeFontSize}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Foreground="#FFFFFF" />
-                        <Button Click="ChatRecordLocked_Click"
+                        <Button x:Name="SendButton"
+                                Click="ChatRecordLocked_Click"
+                                AutomationProperties.Name="{CustomResource SendMessage}"
+                                IsEnabled="False"
                                 Style="{StaticResource EmptyButtonStyle}"
                                 Opacity="0" />
                     </Grid>

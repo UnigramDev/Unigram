@@ -11,6 +11,7 @@
 
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
+                      AutomationProperties.Name="{CustomResource Settings}"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
@@ -182,6 +183,7 @@
                            Height="1" />
 
                 <controls:TopNavView x:Name="Navigation"
+                                     AutomationProperties.Name="{CustomResource Settings}"
                                      SingleSelectionFollowsFocus="False"
                                      Orientation="Vertical"
                                      Height="Auto">
