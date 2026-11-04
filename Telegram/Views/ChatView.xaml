@@ -1525,6 +1525,7 @@
                                       Grid.Column="2"
                                       Canvas.ZIndex="1000">
                                     <chats:ChatRecordButton x:Name="btnVoiceMessage"
+                                                            IsTabStop="True"
                                                             AllowFocusOnInteraction="False"
                                                             Glyph="&#xE9D7;"
                                                             CheckedGlyph="&#xE9D6;"

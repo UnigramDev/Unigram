@@ -23,6 +23,7 @@ using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -445,7 +446,13 @@ namespace Telegram.Controls.Chats
 
                 DetachExpression();
 
+                var restoreFocus = ButtonCancelRecording.FocusState != FocusState.Unfocused
+                    || DeleteButton.FocusState != FocusState.Unfocused
+                    || PauseButton.FocusState != FocusState.Unfocused
+                    || ViewOnceButton.FocusState != FocusState.Unfocused
+                    || SendButton.FocusState != FocusState.Unfocused;
                 ChatRecordPopup.IsOpen = false;
+                SendButton.IsEnabled = false;
 
                 Visibility = Visibility.Collapsed;
                 ButtonCancelRecording.Visibility = Visibility.Collapsed;
@@ -453,6 +460,7 @@ namespace Telegram.Controls.Chats
                 ViewOnceButton.IsChecked = false;
                 PauseRoot.Visibility = Visibility.Collapsed;
                 PauseButton.IsChecked = false;
+                Automation.SetToolTip(PauseButton, Strings.AccActionPause);
                 ElapsedLabel.Text = "0:00,0";
 
                 WaveformLabel.Text = string.Empty;
@@ -476,6 +484,11 @@ namespace Telegram.Controls.Chats
                 point.Y = 0;
 
                 _ellipseVisual.Properties.InsertVector3("Translation", point);
+
+                if (restoreFocus)
+                {
+                    ControlledButton?.Focus(FocusState.Programmatic);
+                }
             };
 
             var slideAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
@@ -525,6 +538,7 @@ namespace Telegram.Controls.Chats
         {
             ChatRecordGlyph.Text = Icons.SendFilled;
             ChatRecordPopup.IsHitTestVisible = true;
+            SendButton.IsEnabled = true;
 
             DetachExpression();
 
@@ -666,11 +680,45 @@ namespace Telegram.Controls.Chats
             Pause_Click(null, null);
         }
 
+        private bool _pausePending;
+
         private async void Pause_Click(object sender, RoutedEventArgs e)
         {
+            if (_pausePending || ControlledButton?.IsLocked != true)
+            {
+                PauseButton.IsChecked = ControlledButton?.Session.IsPaused ?? false;
+                return;
+            }
+
             _elapsedTimer.Stop();
 
-            var result = await ControlledButton.TogglePauseAsync();
+            _pausePending = true;
+            ChatRecordResult result;
+            try
+            {
+                result = await ControlledButton.TogglePauseAsync();
+            }
+            finally
+            {
+                _pausePending = false;
+            }
+
+            if (ControlledButton?.IsLocked != true)
+            {
+                return;
+            }
+
+            PauseButton.IsChecked = ControlledButton.Session.IsPaused;
+            Automation.SetToolTip(PauseButton, ControlledButton.Session.IsPaused ? Strings.Continue : Strings.AccActionPause);
+            if (sender == null)
+            {
+                var peer = FrameworkElementAutomationPeer.CreatePeerForElement(ControlledButton);
+                var announcement = ControlledButton.Session.IsPaused
+                    ? Strings.AccActionPause
+                    : ControlledButton.Mode == ChatRecordMode.Voice ? Strings.RecordingAudio : Strings.RecordingRound;
+                peer?.RaiseNotificationEvent(AutomationNotificationKind.ActionCompleted, AutomationNotificationProcessing.MostRecent,
+                    announcement, "RecordingPause");
+            }
             if (result != null)
             {
                 _blobVisual.StopAnimating();
