@@ -10,6 +10,7 @@
 
     <StackPanel>
         <ComboBox x:Name="Type"
+                  AutomationProperties.Name="{CustomResource Passcode}"
                   Margin="0,12,0,12"
                   HorizontalAlignment="Stretch"
                   SelectionChanged="Type_SelectionChanged">
@@ -18,11 +19,13 @@
         </ComboBox>
 
         <PasswordBox x:Name="First"
+                     AutomationProperties.Name="{CustomResource EnterNewFirstPasscode}"
                      PlaceholderText="{CustomResource EnterNewFirstPasscode}"
                      PasswordChanged="First_Changed"
                      KeyDown="Password_KeyDown"
                      Margin="0,0,0,12" />
         <PasswordBox x:Name="Confirm"
+                     AutomationProperties.Name="{CustomResource ReEnterYourPasscode}"
                      PlaceholderText="{CustomResource ReEnterYourPasscode}"
                      PasswordChanged="Confirm_Changed"
                      KeyDown="Password_KeyDown" />
