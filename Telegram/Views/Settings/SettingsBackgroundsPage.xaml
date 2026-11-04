@@ -19,6 +19,7 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <GridView x:Name="ScrollingHost"
+                  AutomationProperties.Name="{CustomResource ChatBackground}"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"

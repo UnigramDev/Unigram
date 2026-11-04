@@ -45,6 +45,7 @@
                         </Grid>
 
                         <ListView x:Name="List"
+                                  AutomationProperties.Name="{CustomResource ChatThemes}"
                                   ItemsSource="{x:Bind ViewModel.ChatThemes}"
                                   SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
                                   SelectionMode="Single"
