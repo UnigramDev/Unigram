@@ -373,18 +373,28 @@ namespace Telegram.Controls
             return null;
         }
 
+        protected override string GetNameCore()
+        {
+            // Templates keep their label out of the automation tree. Read string content
+            // directly, while retaining explicit names and labels supplied by the page.
+            if (!string.IsNullOrEmpty(AutomationProperties.GetName(_owner))
+                || AutomationProperties.GetLabeledBy(_owner) != null)
+            {
+                return base.GetNameCore();
+            }
+
+            return _owner.Content is string content ? content : base.GetNameCore();
+        }
+
         protected override string GetFullDescriptionCore()
         {
             if (_owner.Description is FrameworkElement element)
             {
-                var peer = FrameworkElementAutomationPeer.FromElement(element);
-                if (peer != null)
-                {
-                    return peer.GetName();
-                }
+                var peer = FrameworkElementAutomationPeer.CreatePeerForElement(element);
+                return peer?.GetName() ?? base.GetFullDescriptionCore();
             }
 
-            return _owner.Description?.ToString() ?? string.Empty;
+            return _owner.Description?.ToString() ?? base.GetFullDescriptionCore();
         }
 
         // Both fall back to the attached property, which is zero unless the page declares a set:
