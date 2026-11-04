@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Telegram.Collections;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Navigation;
 using Telegram.Services;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -40,13 +41,21 @@ namespace Telegram.Views.Popups
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
+            Loaded += OnLoaded;
             Closed += OnClosed;
         }
 
         // The stills are released with the popup rather than whenever it is collected.
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
+            Loaded -= OnLoaded;
             Closed -= OnClosed;
+
+            if (_window != null)
+            {
+                _window.Activated -= OnActivated;
+                _window = null;
+            }
 
             foreach (var cell in RealizedCells())
             {
@@ -93,26 +102,34 @@ namespace Telegram.Views.Popups
         }
 
         // The list is only correct for as long as the user stays here: they usually leave to
-        // arrange the window they want to share. Focus follows window activation, and unlike
-        // WindowContext it needs no XamlRoot - which is null by the time the popup unloads, so
-        // detaching from Activated there was itself a crash.
-        private bool _lostFocus;
+        // arrange the window they want to share. The context is kept rather than looked up again
+        // on the way out, because XamlRoot is null by the time the popup unloads.
+        private WindowContext _window;
+        private bool _deactivated;
 
-        protected override void OnLostFocus(RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            base.OnLostFocus(e);
-            _lostFocus = true;
+            Loaded -= OnLoaded;
+
+            _window = WindowContext.ForXamlRoot(XamlRoot);
+
+            if (_window != null)
+            {
+                _window.Activated += OnActivated;
+            }
         }
 
-        protected override void OnGotFocus(RoutedEventArgs e)
+        private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
-            base.OnGotFocus(e);
-
-            // Only a pair counts. Enumerating every window on the system is not something to do
-            // on any focus change, and focus arrives here once simply by opening the popup.
-            if (_lostFocus)
+            // Only a return counts: activation can be raised again while the window is already
+            // active, and enumerating every window on the system is not something to repeat.
+            if (!e.IsActive)
             {
-                _lostFocus = false;
+                _deactivated = true;
+            }
+            else if (_deactivated)
+            {
+                _deactivated = false;
                 _items.ReplaceDiff(CaptureSessionService.FindAll(_excluded));
 
                 // Cells the diff kept are not bound again, and what they show is as old as the
