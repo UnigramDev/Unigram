@@ -11,6 +11,7 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
+                                AutomationProperties.Name="{CustomResource Language}"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
@@ -57,6 +58,7 @@
                               Margin="24,0,24,2"
                               Width="280">
                             <TextBox x:Name="SearchField"
+                                     AutomationProperties.Name="{CustomResource Search}"
                                      Text="{x:Bind ViewModel.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      PlaceholderText="{CustomResource Search}"
                                      PreventKeyboardDisplayOnProgrammaticFocus="True"

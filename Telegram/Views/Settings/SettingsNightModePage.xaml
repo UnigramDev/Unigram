@@ -91,6 +91,7 @@
                 <controls:HeaderedControl Header="{CustomResource AutoNightPreferred}"
                                           Background="{ThemeResource SettingsItemBackground}">
                     <ListView x:Name="ScrollingHost"
+                              AutomationProperties.Name="{CustomResource Theme}"
                               ItemsSource="{x:Bind ViewModel.Items}"
                               SelectionMode="None"
                               ChoosingItemContainer="OnChoosingItemContainer"

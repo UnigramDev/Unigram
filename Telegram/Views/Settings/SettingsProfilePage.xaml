@@ -40,6 +40,7 @@
                         </Grid>
 
                         <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="{CustomResource FirstNameSmall}"
                                  PlaceholderText="{CustomResource FirstNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                  MaxLength="{StaticResource UserFirstNameMaxLength}"
@@ -47,6 +48,7 @@
                                  Margin="0,0,0,2"
                                  Grid.Column="1" />
                         <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="{CustomResource LastNameSmall}"
                                  PlaceholderText="{CustomResource LastNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                  MaxLength="{StaticResource UserLastNameMaxLength}"
@@ -83,6 +85,7 @@
                                           Footer="{CustomResource EditProfileBioInfo}"
                                           Click="BioPrivacy_Click">
                     <TextBox x:Name="About"
+                             AutomationProperties.Name="{CustomResource EditProfileBio}"
                              Text="{x:Bind ViewModel.Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              FontFamily="{ThemeResource EmojiThemeFontFamily}"
                              MaxLength="{x:Bind ViewModel.BioMaxLength}"

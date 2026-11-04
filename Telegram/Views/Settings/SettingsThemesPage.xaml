@@ -50,6 +50,7 @@
                         </Grid>
 
                         <ListView x:Name="List"
+                                  AutomationProperties.Name="{CustomResource ColorThemes}"
                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                   ItemsSource="{x:Bind ViewModel.Themes}"
                                   SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
@@ -133,6 +134,7 @@
                             <ContentControl.ContentTemplate>
                                 <DataTemplate x:DataType="viewModels:ThemeData">
                                     <ListView ItemsSource="{x:Bind Items, Mode=OneWay}"
+                                              AutomationProperties.Name="{CustomResource ColorThemes}"
                                               SelectedItem="{x:Bind SelectedAccent, Mode=TwoWay}"
                                               Visibility="{x:Bind HasVariants, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -190,6 +192,7 @@
                                                                   CornerRadius="18"
                                                                   Margin="12,12,12,12" />-->
                                             <HyperlinkButton Click="CreateVariant_Click"
+                                                             AutomationProperties.Name="{CustomResource CreateNewTheme}"
                                                              Width="36"
                                                              Height="36"
                                                              Margin="12,0,12,12"
