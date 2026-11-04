@@ -68,7 +68,18 @@ namespace Telegram.Common
                 parentLength = maxLength;
             }
 
-            return trigger.GetItemLength(Math.Floor(parentLength), out maximumRowsOrColumns);
+            var itemLength = trigger.GetItemLength(Math.Floor(parentLength), out maximumRowsOrColumns);
+            return SnapToPixels(owner, itemLength);
+        }
+
+        // Items are floored to whole physical pixels so that the panel's rounding can never make a
+        // row wider than the length it was cut from. A whole DIP is a whole pixel only at integer scales.
+        private static double SnapToPixels(UIElement owner, double length)
+        {
+            var scale = owner.XamlRoot?.RasterizationScale ?? 1;
+
+            // The epsilon stops a length that is already whole, but stored as 267.99999, losing a pixel.
+            return Math.Floor(length * scale + 0.001) / scale;
         }
 
         private static void SetActive(FluidGridViewTriggerCollection triggers, WrapGridReference reference)
@@ -114,6 +125,7 @@ namespace Telegram.Common
 
                 //var itemLength = trigger.GetItemLength(parentLength - paddingNear - paddingFar);
                 var itemLength = trigger.GetItemLength(Math.Floor(parentLength), out int maximumRowsOrColumns);
+                itemLength = SnapToPixels(owner, itemLength);
 
                 reference.MaximumRowsOrColumns = maximumRowsOrColumns;
 
