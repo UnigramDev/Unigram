@@ -2,6 +2,11 @@
 #include "WindowVisual.h"
 #include "Composition/WindowVisual.g.cpp"
 
+#ifdef WINUI3
+#include <MemoryBuffer.h>
+#include <cmath>
+#endif
+
 using namespace winrt::Windows::UI;
 using namespace winrt::UIComposition;
 
@@ -194,6 +199,205 @@ namespace winrt::Telegram::Native::Composition::implementation
         root.Value = windowId.Value ? (uint64_t)GetAncestor((HWND)windowId.Value, GA_ROOT) : 0;
         return root;
     }
+
+#ifdef WINUI3
+    namespace
+    {
+        struct ThreadDpiAwareness
+        {
+            DPI_AWARENESS_CONTEXT Previous;
+
+            ThreadDpiAwareness(DPI_AWARENESS_CONTEXT context)
+                : Previous(SetThreadDpiAwarenessContext(context))
+            {
+            }
+
+            ~ThreadDpiAwareness()
+            {
+                if (Previous)
+                {
+                    SetThreadDpiAwarenessContext(Previous);
+                }
+            }
+        };
+
+        struct MemoryDC
+        {
+            HDC Value = CreateCompatibleDC(nullptr);
+
+            ~MemoryDC()
+            {
+                if (Value)
+                {
+                    DeleteDC(Value);
+                }
+            }
+        };
+
+        // Top-down 32-bit, so a row of bits is a row of pixels from the top.
+        struct DibSection
+        {
+            HBITMAP Value = nullptr;
+            uint32_t* Bits = nullptr;
+
+            DibSection(int width, int height)
+            {
+                BITMAPINFO info{};
+                info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+                info.bmiHeader.biWidth = width;
+                info.bmiHeader.biHeight = -height;
+                info.bmiHeader.biPlanes = 1;
+                info.bmiHeader.biBitCount = 32;
+                info.bmiHeader.biCompression = BI_RGB;
+
+                Value = CreateDIBSection(nullptr, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&Bits), nullptr, 0);
+            }
+
+            ~DibSection()
+            {
+                if (Value)
+                {
+                    DeleteObject(Value);
+                }
+            }
+        };
+
+        // Declared after the DC and the bitmap it joins, so it is undone before either is deleted.
+        struct Selection
+        {
+            HDC DC;
+            HGDIOBJ Previous;
+
+            Selection(HDC dc, HGDIOBJ value)
+                : DC(dc)
+                , Previous(SelectObject(dc, value))
+            {
+            }
+
+            ~Selection()
+            {
+                SelectObject(DC, Previous);
+            }
+        };
+    }
+
+    winrt::Windows::Graphics::Imaging::SoftwareBitmap WindowVisual::CaptureSnapshot(WindowId windowId, int32_t maxWidth, int32_t maxHeight)
+    {
+        using namespace winrt::Windows::Graphics::Imaging;
+
+        const static auto DwmGetWindowAttribute = (pDwmGetWindowAttribute)GetProcAddress(GetDwmApi(), "DwmGetWindowAttribute");
+
+        HWND window = (HWND)windowId.Value;
+
+        if (maxWidth <= 0 || maxHeight <= 0 || !IsWindow(window) || IsIconic(window))
+        {
+            return nullptr;
+        }
+
+        // The extended frame bounds are physical pixels whoever asks, the window rect is in the
+        // calling thread's awareness: per monitor, both are the pixels PrintWindow draws.
+        ThreadDpiAwareness awareness(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
+        RECT bounds;
+        if (!GetWindowRect(window, &bounds))
+        {
+            return nullptr;
+        }
+
+        const int width = bounds.right - bounds.left;
+        const int height = bounds.bottom - bounds.top;
+
+        if (width <= 0 || height <= 0)
+        {
+            return nullptr;
+        }
+
+        // PrintWindow draws the whole window rect, the invisible resize borders around the frame
+        // included, and those come out black.
+        RECT frame;
+        if (DwmGetWindowAttribute(window, DWMWA_EXTENDED_FRAME_BOUNDS, &frame, sizeof(frame)) != S_OK || !IntersectRect(&frame, &frame, &bounds))
+        {
+            frame = bounds;
+        }
+
+        OffsetRect(&frame, -bounds.left, -bounds.top);
+
+        const int frameWidth = frame.right - frame.left;
+        const int frameHeight = frame.bottom - frame.top;
+
+        const double scale = std::min({ 1.0, double(maxWidth) / frameWidth, double(maxHeight) / frameHeight });
+        const int targetWidth = std::max(1, int(std::lround(frameWidth * scale)));
+        const int targetHeight = std::max(1, int(std::lround(frameHeight * scale)));
+
+        MemoryDC sourceDC;
+        DibSection source(width, height);
+
+        if (!sourceDC.Value || !source.Value)
+        {
+            return nullptr;
+        }
+
+        Selection sourceSelection(sourceDC.Value, source.Value);
+
+        // The flag is what reaches DirectComposition content, the Windows App SDK's own windows
+        // among it: without it they come out blank.
+        if (!PrintWindow(window, sourceDC.Value, PW_RENDERFULLCONTENT))
+        {
+            return nullptr;
+        }
+
+        MemoryDC targetDC;
+        DibSection target(targetWidth, targetHeight);
+
+        if (!targetDC.Value || !target.Value)
+        {
+            return nullptr;
+        }
+
+        Selection targetSelection(targetDC.Value, target.Value);
+
+        // HALFTONE averages the pixels it drops, where the default mode skips them; it leaves the
+        // brush origin undefined until it is set again.
+        SetStretchBltMode(targetDC.Value, HALFTONE);
+        SetBrushOrgEx(targetDC.Value, 0, 0, nullptr);
+
+        if (!StretchBlt(targetDC.Value, 0, 0, targetWidth, targetHeight, sourceDC.Value, frame.left, frame.top, frameWidth, frameHeight, SRCCOPY))
+        {
+            return nullptr;
+        }
+
+        GdiFlush();
+
+        SoftwareBitmap bitmap(BitmapPixelFormat::Bgra8, targetWidth, targetHeight, BitmapAlphaMode::Premultiplied);
+
+        {
+            auto buffer = bitmap.LockBuffer(BitmapBufferAccessMode::Write);
+            auto plane = buffer.GetPlaneDescription(0);
+            auto reference = buffer.CreateReference();
+
+            uint8_t* data;
+            uint32_t capacity;
+            winrt::check_hresult(reference.as<::Windows::Foundation::IMemoryBufferByteAccess>()->GetBuffer(&data, &capacity));
+
+            // GDI leaves alpha undefined, and a window is opaque.
+            for (int y = 0; y < targetHeight; y++)
+            {
+                auto row = reinterpret_cast<uint32_t*>(data + plane.StartIndex + y * plane.Stride);
+                auto pixels = target.Bits + y * targetWidth;
+
+                for (int x = 0; x < targetWidth; x++)
+                {
+                    row[x] = pixels[x] | 0xFF000000;
+                }
+            }
+
+            reference.Close();
+            buffer.Close();
+        }
+
+        return bitmap;
+    }
+#endif
 
     winrt::Telegram::Native::Composition::WindowVisual WindowVisual::Create(WindowId windowId, WindowId destinationId, Compositor compositor, float rasterizationScale)
     {

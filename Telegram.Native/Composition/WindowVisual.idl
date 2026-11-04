@@ -10,6 +10,13 @@ namespace Telegram.Native.Composition
         // The top-level window one belongs to: a CoreWindow's frame, a WinUI window itself.
         static Windows.UI.WindowId GetRootWindowId(Windows.UI.WindowId windowId);
 
+#ifdef WINUI3
+        // The shared thumbnail Create builds needs a DirectComposition device, which the Windows
+        // App SDK compositor is not, so the WinUI picker shows a still of the window instead,
+        // scaled to fit maxWidth by maxHeight physical pixels. Null if the window cannot be drawn.
+        static Windows.Graphics.Imaging.SoftwareBitmap CaptureSnapshot(Windows.UI.WindowId windowId, Int32 maxWidth, Int32 maxHeight);
+#endif
+
         UIComposition.Visual Child{ get; };
         // Z carries the rasterization scale of the element showing the thumbnail: DWM
         // rasterizes it in physical pixels, and the visual has no way of asking.

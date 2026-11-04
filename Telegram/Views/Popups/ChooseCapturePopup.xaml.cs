@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Collections.Generic;
 using Telegram.Collections;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -13,12 +14,14 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Popups
 {
     public sealed partial class ChooseCapturePopup : ContentPopup
     {
         private readonly DiffObservableCollection<CaptureSessionItem> _items;
+        private readonly ThumbnailQueue _thumbnails = new();
         private readonly WindowId _excluded;
 
         public ChooseCapturePopup(bool canShareAudio, WindowId excluded)
@@ -36,6 +39,35 @@ namespace Telegram.Views.Popups
             ShareSystemAudio.Visibility = canShareAudio
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            Closed += OnClosed;
+        }
+
+        // The stills are released with the popup rather than whenever it is collected.
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            Closed -= OnClosed;
+
+            foreach (var cell in RealizedCells())
+            {
+                cell.UpdateCell(null, null);
+            }
+        }
+
+        private IEnumerable<CaptureSessionItemCell> RealizedCells()
+        {
+            if (ScrollingHost.ItemsPanelRoot is not Panel panel)
+            {
+                yield break;
+            }
+
+            foreach (var child in panel.Children)
+            {
+                if (child is SelectorItem { ContentTemplateRoot: CaptureSessionItemCell cell })
+                {
+                    yield return cell;
+                }
+            }
         }
 
         class CaptureSessionItemDiffHandler : IDiffHandler<CaptureSessionItem>
@@ -82,6 +114,13 @@ namespace Telegram.Views.Popups
             {
                 _lostFocus = false;
                 _items.ReplaceDiff(CaptureSessionService.FindAll(_excluded));
+
+                // Cells the diff kept are not bound again, and what they show is as old as the
+                // moment the user left.
+                foreach (var cell in RealizedCells())
+                {
+                    cell.RefreshThumbnail();
+                }
             }
         }
 
@@ -95,11 +134,11 @@ namespace Telegram.Views.Popups
             {
                 if (args.InRecycleQueue)
                 {
-                    content.UpdateCell(null);
+                    content.UpdateCell(null, null);
                 }
                 else if (args.Item is CaptureSessionItem item)
                 {
-                    content.UpdateCell(item);
+                    content.UpdateCell(item, _thumbnails);
                     AutomationProperties.SetName(args.ItemContainer, item.DisplayName);
                 }
             }

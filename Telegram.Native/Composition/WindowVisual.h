@@ -6,6 +6,11 @@
 
 #include <winrt/Windows.UI.h>
 
+#ifdef WINUI3
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Graphics.Imaging.h>
+#endif
+
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::UI;
 using namespace winrt::UIComposition;
@@ -19,6 +24,10 @@ namespace winrt::Telegram::Native::Composition::implementation
 
         static uint32_t GetWindowProcessId(WindowId windowId);
         static WindowId GetRootWindowId(WindowId windowId);
+
+#ifdef WINUI3
+        static winrt::Windows::Graphics::Imaging::SoftwareBitmap CaptureSnapshot(WindowId windowId, int32_t maxWidth, int32_t maxHeight);
+#endif
 
         WindowVisual(HWND window, HTHUMBNAIL thumbnail, Visual visual, float3 size, float scale);
         ~WindowVisual();
