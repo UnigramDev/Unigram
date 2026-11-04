@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Composition;
+using Telegram.Navigation;
 using Telegram.Views.Popups;
 using Windows.Graphics;
 using Windows.Graphics.Capture;
@@ -93,7 +94,10 @@ namespace Telegram.Services
 
             WatchDog.MemoryStatus();
 
-            var popup = new ChooseCapturePopup(canShareAudio);
+            // The window the call is in: sharing it would only send the call back into itself.
+            var excluded = WindowVisual.GetRootWindowId(new WindowId { Value = (ulong)WindowContext.GetWindowHandle(xamlRoot).ToInt64() });
+
+            var popup = new ChooseCapturePopup(canShareAudio, excluded);
 
             var confirm = await popup.ShowQueuedAsync(xamlRoot);
             if (confirm != ContentDialogResult.Primary)
@@ -144,25 +148,23 @@ namespace Telegram.Services
             return AppCapabilityAccessStatus.UserPromptRequired;
         }
 
-        public static IList<CaptureSessionItem> FindAll()
+        public static IList<CaptureSessionItem> FindAll(WindowId excluded)
         {
             var items = new List<CaptureSessionItem>();
             items.AddRange(FindAllDisplayIds());
-            items.AddRange(FindAllTopLevelWindowIds());
+            items.AddRange(FindAllTopLevelWindowIds(excluded));
 
             return items;
         }
 
-        public static IList<CaptureSessionItem> FindAllTopLevelWindowIds()
+        public static IList<CaptureSessionItem> FindAllTopLevelWindowIds(WindowId excluded)
         {
             var windows = WindowServices.FindAllTopLevelWindowIds();
             var items = new List<CaptureSessionItem>();
 
-            var current = WindowVisual.GetCurrentWindowId();
-
             foreach (var window in windows)
             {
-                if (window.Value == current.Value)
+                if (window.Value == excluded.Value)
                 {
                     continue;
                 }

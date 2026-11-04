@@ -7,7 +7,8 @@ namespace Telegram.Native.Composition
         static WindowVisual Create(Windows.UI.WindowId windowId, Windows.UI.WindowId destinationId, UIComposition.Compositor compositor, Single rasterizationScale);
 
         static UInt32 GetWindowProcessId(Windows.UI.WindowId windowId);
-        static Windows.UI.WindowId GetCurrentWindowId();
+        // The top-level window one belongs to: a CoreWindow's frame, a WinUI window itself.
+        static Windows.UI.WindowId GetRootWindowId(Windows.UI.WindowId windowId);
 
         UIComposition.Visual Child{ get; };
         // Z carries the rasterization scale of the element showing the thumbnail: DWM

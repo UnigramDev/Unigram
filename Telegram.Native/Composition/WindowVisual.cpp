@@ -2,13 +2,12 @@
 #include "WindowVisual.h"
 #include "Composition/WindowVisual.g.cpp"
 
-#include "winrt/Windows.UI.Core.h"
-
 using namespace winrt::Windows::UI;
 using namespace winrt::UIComposition;
-using namespace winrt::Windows::UI::Core;
-using namespace winrt::UIXaml;
 
+#ifndef GA_ROOT
+#define GA_ROOT             2
+#endif
 #define GW_OWNER            4
 #define WS_EX_TOOLWINDOW    0x00000080L
 #define DWMWA_CLOAKED       14
@@ -187,19 +186,13 @@ namespace winrt::Telegram::Native::Composition::implementation
         return process_id;
     }
 
-    WindowId WindowVisual::GetCurrentWindowId()
+    WindowId WindowVisual::GetRootWindowId(WindowId windowId)
     {
-        const static auto GetParent = (pGetParent)GetProcAddress(GetUser32(), "GetParent");
+        const static auto GetAncestor = (pGetAncestor)GetProcAddress(GetUser32(), "GetAncestor");
 
-        CoreWindow coreWnd = Window::Current().CoreWindow();
-        winrt::com_ptr<ICoreWindowInterop> interop = coreWnd.as<ICoreWindowInterop>();
-
-        HWND destination;
-        interop->get_WindowHandle(&destination);
-
-        WindowId windowId;
-        windowId.Value = (uint64_t)GetParent(destination);
-        return windowId;
+        WindowId root;
+        root.Value = windowId.Value ? (uint64_t)GetAncestor((HWND)windowId.Value, GA_ROOT) : 0;
+        return root;
     }
 
     winrt::Telegram::Native::Composition::WindowVisual WindowVisual::Create(WindowId windowId, WindowId destinationId, Compositor compositor, float rasterizationScale)

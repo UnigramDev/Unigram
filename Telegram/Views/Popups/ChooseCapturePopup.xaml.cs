@@ -9,6 +9,7 @@ using Telegram.Collections;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Services;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -18,13 +19,16 @@ namespace Telegram.Views.Popups
     public sealed partial class ChooseCapturePopup : ContentPopup
     {
         private readonly DiffObservableCollection<CaptureSessionItem> _items;
+        private readonly WindowId _excluded;
 
-        public ChooseCapturePopup(bool canShareAudio)
+        public ChooseCapturePopup(bool canShareAudio, WindowId excluded)
         {
             InitializeComponent();
 
+            _excluded = excluded;
+
             _items = new DiffObservableCollection<CaptureSessionItem>(new CaptureSessionItemDiffHandler(), detectMoves: false);
-            _items.ReplaceDiff(CaptureSessionService.FindAll());
+            _items.ReplaceDiff(CaptureSessionService.FindAll(excluded));
 
             ScrollingHost.ItemsSource = _items;
             ScrollingHost.SelectedIndex = 0;
@@ -77,7 +81,7 @@ namespace Telegram.Views.Popups
             if (_lostFocus)
             {
                 _lostFocus = false;
-                _items.ReplaceDiff(CaptureSessionService.FindAll());
+                _items.ReplaceDiff(CaptureSessionService.FindAll(_excluded));
             }
         }
 

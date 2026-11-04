@@ -18,7 +18,7 @@ namespace winrt::Telegram::Native::Composition::implementation
         static winrt::Telegram::Native::Composition::WindowVisual Create(WindowId windowId, WindowId destinationId, Compositor compositor, float rasterizationScale);
 
         static uint32_t GetWindowProcessId(WindowId windowId);
-        static WindowId GetCurrentWindowId();
+        static WindowId GetRootWindowId(WindowId windowId);
 
         WindowVisual(HWND window, HTHUMBNAIL thumbnail, Visual visual, float3 size, float scale);
         ~WindowVisual();

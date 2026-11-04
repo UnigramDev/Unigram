@@ -118,6 +118,12 @@ typedef HWND
     pGetParent)(
         _In_ HWND hWnd);
 
+typedef HWND
+(WINAPI*
+    pGetAncestor)(
+        _In_ HWND hwnd,
+        _In_ UINT gaFlags);
+
 typedef HRESULT
 (WINAPI*
     pDwmGetWindowAttribute)(
