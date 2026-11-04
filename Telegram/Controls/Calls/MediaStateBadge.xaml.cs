@@ -8,7 +8,6 @@
 using System.Numerics;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
@@ -36,7 +35,7 @@ namespace Telegram.Controls.Calls
 
         private bool _collapsed = true;
 
-        public bool ShowHide(bool show, UIElement relative, bool announce = true)
+        public bool ShowHide(bool show, UIElement relative)
         {
             if (_collapsed != show)
             {
@@ -45,12 +44,6 @@ namespace Telegram.Controls.Calls
 
             _collapsed = !show;
             Visibility = Visibility.Visible;
-            if (show && announce && !string.IsNullOrEmpty(Text))
-            {
-                var peer = FrameworkElementAutomationPeer.CreatePeerForElement(TextValue);
-                peer?.RaiseNotificationEvent(AutomationNotificationKind.Other,
-                    AutomationNotificationProcessing.MostRecent, Text, Name);
-            }
 
             ElementCompositionPreview.SetIsTranslationEnabled(relative, true);
 

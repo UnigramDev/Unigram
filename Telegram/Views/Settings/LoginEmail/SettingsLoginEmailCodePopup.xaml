@@ -32,7 +32,6 @@
                    TextAlignment="Center" />
 
         <TextBox x:Name="PrimaryInput"
-                 AutomationProperties.Name="{CustomResource Code}"
                  KeyDown="PrimaryInput_KeyDown"
                  TextChanged="PrimaryInput_TextChanged"
                  Margin="0,12,0,0"

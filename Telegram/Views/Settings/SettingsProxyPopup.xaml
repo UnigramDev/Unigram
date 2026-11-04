@@ -13,7 +13,6 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ListView x:Name="ScrollingHost"
-                  AutomationProperties.Name="{CustomResource ProxyConnections}"
                   ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   SelectionMode="None"

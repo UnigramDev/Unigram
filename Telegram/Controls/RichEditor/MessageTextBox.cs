@@ -63,7 +63,6 @@ namespace Telegram.Controls.RichEditor
         public MessageTextBox()
         {
             DefaultStyleKey = typeof(MessageTextBox);
-            RegisterPropertyChangedCallback(AutomationProperties.NameProperty, OnAutomationNameChanged);
 
             _engine.Schema = ToSchema(_allowedEntities);
             _engine.Load(new RichDocument());
@@ -123,14 +122,6 @@ namespace Telegram.Controls.RichEditor
             }
         }
 
-        private void OnAutomationNameChanged(DependencyObject sender, DependencyProperty property)
-        {
-            if (Editor != null)
-            {
-                AutomationProperties.SetName(Editor, AutomationProperties.GetName(this));
-            }
-        }
-
         protected override void OnApplyTemplate()
         {
             if (Editor != null)
@@ -156,12 +147,6 @@ namespace Telegram.Controls.RichEditor
                 // The editor is what UI Automation sees, so it answers to the box's name.
                 var automationId = AutomationProperties.GetAutomationId(this);
                 AutomationProperties.SetAutomationId(Editor, string.IsNullOrEmpty(automationId) ? Name : automationId);
-                // Preserve the editor style's name when the box supplies no label.
-                var automationName = AutomationProperties.GetName(this);
-                if (!string.IsNullOrEmpty(automationName))
-                {
-                    AutomationProperties.SetName(Editor, automationName);
-                }
 
                 if (_controlledList != null)
                 {

@@ -87,15 +87,6 @@ namespace Telegram.Controls
         public FormattedTextInputHost()
         {
             DefaultStyleKey = typeof(FormattedTextInputHost);
-            RegisterPropertyChangedCallback(AutomationProperties.NameProperty, OnAutomationNameChanged);
-        }
-
-        private void OnAutomationNameChanged(DependencyObject sender, DependencyProperty property)
-        {
-            if (_input is DependencyObject element)
-            {
-                AutomationProperties.SetName(element, AutomationProperties.GetName(this));
-            }
         }
 
         /// <summary>
@@ -183,12 +174,6 @@ namespace Telegram.Controls
             // carried itself before this host took its place.
             var automationId = AutomationProperties.GetAutomationId(this);
             AutomationProperties.SetAutomationId(element, string.IsNullOrEmpty(automationId) ? Name : automationId);
-            // Preserve the input style's name when the host supplies no label.
-            var automationName = AutomationProperties.GetName(this);
-            if (!string.IsNullOrEmpty(automationName))
-            {
-                AutomationProperties.SetName(element, automationName);
-            }
 
             foreach (var property in _forwarded)
             {
