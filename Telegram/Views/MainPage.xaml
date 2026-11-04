@@ -580,7 +580,6 @@
                                                        ItemClick="ListView_ItemClick"
                                                        IsItemClickEnabled="True"
                                                        AutomationProperties.LandmarkType="Main"
-                                                       AutomationProperties.Name="{CustomResource FilterChats}"
                                                        DataContext="{x:Bind ViewModel.Chats}"
                                                        ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                                        SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"

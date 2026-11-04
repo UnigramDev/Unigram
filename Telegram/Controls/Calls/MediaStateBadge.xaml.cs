@@ -36,7 +36,7 @@ namespace Telegram.Controls.Calls
 
         private bool _collapsed = true;
 
-        public bool ShowHide(bool show, UIElement relative)
+        public bool ShowHide(bool show, UIElement relative, bool announce = true)
         {
             if (_collapsed != show)
             {
@@ -45,7 +45,7 @@ namespace Telegram.Controls.Calls
 
             _collapsed = !show;
             Visibility = Visibility.Visible;
-            if (show && !string.IsNullOrEmpty(Text))
+            if (show && announce && !string.IsNullOrEmpty(Text))
             {
                 var peer = FrameworkElementAutomationPeer.CreatePeerForElement(TextValue);
                 peer?.RaiseNotificationEvent(AutomationNotificationKind.Other,

@@ -828,8 +828,8 @@ namespace Telegram.Views.Calls
             Automation.SetToolTip(Camera, Camera.IsChecked == true ? Strings.VoipStopVideo : Strings.VoipStartVideo);
             Automation.SetToolTip(Screen, Screen.IsChecked == true ? Strings.VoipChatStopScreenCapture : Strings.VoipChatStartScreenCapture);
 
-            LocalAudioOff.ShowHide(args.Audio == VoipAudioState.Muted, LocalAudioPanel);
-            LocalVideoOff.ShowHide(_call.RemoteVideoState != VoipVideoState.Inactive && args.Video == VoipVideoState.Inactive, LocalVideoPanel);
+            LocalAudioOff.ShowHide(args.Audio == VoipAudioState.Muted, LocalAudioPanel, announce: false);
+            LocalVideoOff.ShowHide(_call.RemoteVideoState != VoipVideoState.Inactive && args.Video == VoipVideoState.Inactive, LocalVideoPanel, announce: false);
         }
 
         private void OnVideoFailed()
