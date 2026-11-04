@@ -6410,7 +6410,7 @@ namespace Telegram.Views
                 return GetPlaceholder(chat, basicGroup, out readOnly);
             }
 
-            return Strings.TypeMessage;
+            return string.Empty;
         }
 
         private string GetPlaceholder(Chat chat, Supergroup supergroup, out bool readOnly, out int forumTopicId)
@@ -6430,7 +6430,7 @@ namespace Telegram.Views
                 {
                     if (fullInfo.UnrestrictBoostCount != 0 && fullInfo.MyBoostCount >= fullInfo.UnrestrictBoostCount)
                     {
-                        return Strings.TypeMessage;
+                        return string.Empty;
                     }
                 }
 
@@ -6445,7 +6445,7 @@ namespace Telegram.Views
             {
                 if (supergroup.IsAdministeredDirectMessagesGroup)
                 {
-                    return Strings.TypeMessage;
+                    return string.Empty;
                 }
                 else if (supergroup.PaidMessageStarCount > 0)
                 {
@@ -6464,7 +6464,7 @@ namespace Telegram.Views
                 return string.Format(Strings.TypeMessageIn, forumTopic.Info.Name);
             }
 
-            return Strings.TypeMessage;
+            return string.Empty;
         }
 
         private string GetPlaceholder(Chat chat, BasicGroup basicGroup, out bool readOnly)
@@ -6477,7 +6477,7 @@ namespace Telegram.Views
                 return Strings.PlainTextRestrictedHint;
             }
 
-            return Strings.TypeMessage;
+            return string.Empty;
         }
 
         public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
