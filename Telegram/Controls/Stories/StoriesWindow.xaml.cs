@@ -517,7 +517,10 @@ namespace Telegram.Controls.Stories
             Composer.Width = x + 24;
             Composer.Margin = new Thickness(0, 0, 0, (ActualHeight - y) / 2 - 48 - 4);
 
+            // Just above the composer, as in chats. The panel ends where the last row begins, 64
+            // above the bottom, which the composer reaches into.
             StickersPanel.Width = x + 24;
+            StickersPanel.Margin = new Thickness(0, 56, 0, Math.Max(0, Composer.Margin.Bottom + 48 + 8 - 64));
         }
 
         private float ItemOffset(int index)
