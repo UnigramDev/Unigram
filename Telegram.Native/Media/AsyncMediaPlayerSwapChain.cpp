@@ -5,6 +5,7 @@
 #endif
 
 
+#include <cmath>
 #include <format>
 #include <stdexcept>
 
@@ -571,8 +572,10 @@ namespace winrt::Telegram::Native::Media::implementation
         float scaleX, scaleY;
         GetScale(scaleX, scaleY);
 
-        int w = static_cast<int>(m_panel.ActualWidth() * scaleX);
-        int h = static_cast<int>(m_panel.ActualHeight() * scaleY);
+        // Rounded, not truncated: at a fractional scale the size comes back a hair under the whole
+        // pixels layout snapped it to, and a buffer a pixel short shows the panel's background.
+        int w = static_cast<int>(std::lround(m_panel.ActualWidth() * scaleX));
+        int h = static_cast<int>(std::lround(m_panel.ActualHeight() * scaleY));
 
         UpdateSize(w, h);
     }

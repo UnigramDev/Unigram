@@ -63,6 +63,10 @@ namespace winrt::Telegram::Native::Media::implementation
         constexpr int kRecoveryAttempts = 8;
         constexpr int kRecoveryWait = 250;
 
+        // The panel's size is rounded to whole pixels, so a picture of the same aspect can miss it
+        // by this much, and the transparent clear would show through what is left.
+        constexpr LONG kRoundingSlack = 2;
+
         constexpr UINT Even(int32_t value) noexcept
         {
             return static_cast<UINT>((value + 1) & ~1);
@@ -1009,8 +1013,18 @@ namespace winrt::Telegram::Native::Media::implementation
         }
 
         const double scale = std::min(m_width / displayWidth, m_height / displayHeight);
-        const LONG fitWidth = std::max<LONG>(1, std::lround(displayWidth * scale));
-        const LONG fitHeight = std::max<LONG>(1, std::lround(displayHeight * scale));
+        LONG fitWidth = std::max<LONG>(1, std::lround(displayWidth * scale));
+        LONG fitHeight = std::max<LONG>(1, std::lround(displayHeight * scale));
+
+        if (static_cast<LONG>(m_width) - fitWidth <= kRoundingSlack)
+        {
+            fitWidth = static_cast<LONG>(m_width);
+        }
+
+        if (static_cast<LONG>(m_height) - fitHeight <= kRoundingSlack)
+        {
+            fitHeight = static_cast<LONG>(m_height);
+        }
 
         RECT rect;
         rect.left = (static_cast<LONG>(m_width) - fitWidth) / 2;
