@@ -5636,6 +5636,7 @@
 
 
     <string name="AnonymousNumber">Collectible Number</string>
+    <string name="AnonymousNumbers">Collectible Numbers</string>
     <string name="AnonymousNumberNotice">This number is not tied to a SIM card and was acquired on *Fragment*.</string>
     <string name="AutoDeleteMessages">Auto-Delete Messages</string>
     <string name="SetCustomTime">Set Custom Time</string>

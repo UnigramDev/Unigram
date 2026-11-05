@@ -86,7 +86,7 @@ namespace Telegram.Entities
 
         public static readonly IList<Country> All = new List<Country>
         {
-            new("FT", "888", Strings.AnonymousNumber),
+            new("FT", "888", Strings.AnonymousNumbers),
             new("AD", "376", "Andorra"),
             new("AE", "971", "United Arab Emirates"),
             new("AF", "93", "Afghanistan"),
