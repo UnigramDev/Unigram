@@ -40,6 +40,7 @@ namespace Telegram.ViewModels.Delegates
         void Unselect(MessageViewModel message, bool updateSelection = false);
 
         bool CanBeDownloaded(object content, File file);
+        bool CanBePreloaded(File file);
         void DownloadFile(MessageViewModel message, File file);
 
         void ForwardMessage(MessageViewModel message);

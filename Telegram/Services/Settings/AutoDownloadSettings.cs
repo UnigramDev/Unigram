@@ -301,6 +301,16 @@ namespace Telegram.Services.Settings
             return ShouldDownload(_videos, chat, networkType);
         }
 
+        public bool ShouldPreloadVideo(AutoDownloadChat chat, NetworkType networkType = null)
+        {
+            if (_disabled || !_preloadLargeVideos)
+            {
+                return false;
+            }
+
+            return ShouldDownload(_videos, chat, networkType);
+        }
+
         public bool ShouldDownloadDocument(AutoDownloadChat chat, long size, NetworkType networkType = null)
         {
             if (_disabled)

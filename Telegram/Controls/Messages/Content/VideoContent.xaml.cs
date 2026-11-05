@@ -282,7 +282,7 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
-                    Preload(message, video);
+                    Preload(message, video, file);
                     UpdateSource(null, null);
                 }
 
@@ -363,7 +363,7 @@ namespace Telegram.Controls.Messages.Content
                         // downloaded, and any other only after.
                         if (video.SupportsStreaming)
                         {
-                            Preload(message, video);
+                            Preload(message, video, file);
                         }
 
                         UpdateSource(null, null);
@@ -402,11 +402,16 @@ namespace Telegram.Controls.Messages.Content
             return video.GetDuration() + "\n";
         }
 
-        private void Preload(MessageViewModel message, Video video)
+        private void Preload(MessageViewModel message, Video video, File file)
         {
-            if (message.Delegate.Settings.AutoDownload.PreloadLargeVideos)
+            if (message.Delegate.CanBePreloaded(file))
             {
                 VideoPreloader.Load(message.ClientService, video, (message.GeneratedContent ?? message.Content) as MessageVideo, ref _preload);
+            }
+            else
+            {
+                // Canceling the download mid-read lands here with the read still running.
+                VideoPreloader.Cancel(ref _preload);
             }
         }
 

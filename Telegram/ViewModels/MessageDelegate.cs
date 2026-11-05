@@ -138,6 +138,17 @@ namespace Telegram.ViewModels
             return false;
         }
 
+        public virtual bool CanBePreloaded(File file)
+        {
+            var chat = Chat;
+            if (chat == null || ClientService.IsDownloadFileCanceled(file.Id))
+            {
+                return false;
+            }
+
+            return Settings.AutoDownload.ShouldPreloadVideo(GetChatType(chat));
+        }
+
         private AutoDownloadChat GetChatType(Chat chat)
         {
             if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel || chat.Type is ChatTypeBasicGroup)
@@ -829,6 +840,11 @@ namespace Telegram.ViewModels
         public override bool CanBeDownloaded(object content, File file)
         {
             return !Settings.AutoDownload.Disabled;
+        }
+
+        public override bool CanBePreloaded(File file)
+        {
+            return !Settings.AutoDownload.Disabled && Settings.AutoDownload.PreloadLargeVideos;
         }
 
         public override void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0)
