@@ -8373,7 +8373,8 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:PlaybackNextButton">
+    <Style x:Key="PlaybackButtonStyle"
+           TargetType="local:GlyphButton">
         <Setter Property="Background"
                 Value="Transparent" />
         <Setter Property="Foreground"
@@ -8410,7 +8411,7 @@
                 Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:PlaybackNextButton">
+                <ControlTemplate TargetType="local:GlyphButton">
                     <Grid x:Name="RootGrid"
                           Background="{TemplateBinding Background}"
                           CornerRadius="{TemplateBinding CornerRadius}"
@@ -8440,8 +8441,8 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border x:Name="Target"
-                                Width="16"
-                                Height="16" />
+                                Width="{TemplateBinding FontSize}"
+                                Height="{TemplateBinding FontSize}" />
 
                         <TextBlock x:Name="ContentPresenter"
                                    x:DeferLoadStrategy="Lazy"
@@ -8455,6 +8456,12 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="local:PlaybackNextButton"
+           BasedOn="{StaticResource PlaybackButtonStyle}" />
+
+    <Style TargetType="local:PlaybackPlayButton"
+           BasedOn="{StaticResource PlaybackButtonStyle}" />
 
     <Style TargetType="local:GlyphToggleButton">
         <Setter Property="Background"

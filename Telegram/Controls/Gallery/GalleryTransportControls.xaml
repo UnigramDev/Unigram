@@ -56,12 +56,11 @@
                                       Glyph="&#xEAE6;"
                                       Margin="0,0,-8,0" />
 
-                <controls:AnimatedGlyphButton x:Name="PlaybackButton"
-                                              Click="Toggle_Click"
-                                              Glyph="&#xE768;"
-                                              HorizontalAlignment="Center"
-                                              FontSize="24"
-                                              Grid.Column="1" />
+                <controls:PlaybackPlayButton x:Name="PlaybackButton"
+                                             Click="Toggle_Click"
+                                             HorizontalAlignment="Center"
+                                             FontSize="24"
+                                             Grid.Column="1" />
                 <controls:GlyphButton x:Name="SkipForwardButton"
                                       Click="SkipForwardButton_Click"
                                       AutomationProperties.Name="{CustomResource AccDescrMiniPlayer}"

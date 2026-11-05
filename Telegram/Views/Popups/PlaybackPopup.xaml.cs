@@ -165,7 +165,7 @@ namespace Telegram.Views.Popups
                 _ => Icons.SpeakerOff
             };
 
-            PlaybackButton.Glyph = LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused ? Icons.PlayFilled24 : Icons.PauseFilled24;
+            PlaybackButton.IsPlaying = LifetimeService.Current.Playback.PlaybackState != PlaybackState.Paused;
             Automation.SetToolTip(PlaybackButton, LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused ? Strings.AccActionPlay : Strings.AccActionPause);
 
             HeaderLabel.Visibility = Visibility.Collapsed;

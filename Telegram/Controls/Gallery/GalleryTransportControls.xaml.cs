@@ -385,7 +385,7 @@ namespace Telegram.Controls.Gallery
         {
             if (args.IsPlaying)
             {
-                PlaybackButton.Glyph = Icons.PauseFilled24;
+                PlaybackButton.IsPlaying = true;
                 Automation.SetToolTip(PlaybackButton, Strings.AccActionPause);
 
                 if (_request == null)
@@ -396,7 +396,7 @@ namespace Telegram.Controls.Gallery
             }
             else
             {
-                PlaybackButton.Glyph = Icons.PlayFilled24;
+                PlaybackButton.IsPlaying = false;
                 Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
 
                 _request?.TryRequestRelease();

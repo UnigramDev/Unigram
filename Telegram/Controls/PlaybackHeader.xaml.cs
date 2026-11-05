@@ -178,7 +178,7 @@ namespace Telegram.Controls
                 _ => Icons.SpeakerOff
             };
 
-            PlaybackButton.Glyph = LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused ? Icons.Play : Icons.Pause;
+            PlaybackButton.IsPlaying = LifetimeService.Current.Playback.PlaybackState != PlaybackState.Paused;
             Automation.SetToolTip(PlaybackButton, LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused ? Strings.AccActionPlay : Strings.AccActionPause);
 
             if (item is PlaybackItemMessage message)

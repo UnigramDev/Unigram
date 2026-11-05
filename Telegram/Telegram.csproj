@@ -1235,6 +1235,7 @@
       <DependentUpon>PlaybackHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PlaybackNextButton.cs" />
+    <Compile Include="Controls\PlaybackPlayButton.cs" />
     <Compile Include="Controls\PlaybackSlider.cs" />
     <Compile Include="Controls\Messages\Content\PollOptionContent.xaml.cs">
       <DependentUpon>PollOptionContent.xaml</DependentUpon>

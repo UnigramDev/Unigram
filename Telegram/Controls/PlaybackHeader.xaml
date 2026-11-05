@@ -120,7 +120,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
                                                                            Storyboard.TargetName="RootGrid">
                                                 <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -129,7 +129,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
                                                                            Storyboard.TargetName="RootGrid">
                                                 <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -171,7 +171,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
                                                                            Storyboard.TargetName="RootGrid">
                                                 <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -190,7 +190,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
                                                                            Storyboard.TargetName="RootGrid">
                                                 <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -237,7 +237,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
                                                                            Storyboard.TargetName="RootGrid">
                                                 <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -256,7 +256,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
                                                                            Storyboard.TargetName="RootGrid">
                                                 <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -361,13 +361,12 @@
                                          Margin="0,0,-4,0"
                                          AutomationProperties.Name="{CustomResource AccDescrPrevious}"
                                          ToolTipService.ToolTip="{CustomResource AccDescrPrevious}" />
-            <controls:AnimatedGlyphButton x:Name="PlaybackButton"
-                                          Click="Toggle_Click"
-                                          Glyph="&#xE768;"
-                                          Foreground="{ThemeResource AccentFillColorDefaultBrush}"
-                                          Width="48"
-                                          Height="40"
-                                          Grid.Column="1" />
+            <controls:PlaybackPlayButton x:Name="PlaybackButton"
+                                         Click="Toggle_Click"
+                                         Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                                         Width="48"
+                                         Height="40"
+                                         Grid.Column="1" />
             <controls:PlaybackNextButton x:Name="NextButton"
                                          Click="Next_Click"
                                          IsPrevious="False"
@@ -397,6 +396,7 @@
                                   Glyph="&#xE74F;"
                                   Width="40"
                                   Height="40"
+                                  Margin="0,0,-4,0"
                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                                   AutomationProperties.Name="{CustomResource VoipGroupVolume}"
                                   ToolTipService.ToolTip="{CustomResource VoipGroupVolume}" />
@@ -408,7 +408,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="10"
-                       Margin="0,5,0,6"
+                       Margin="0,5,-4,6"
                        Grid.Column="1" />
 
             <controls:SettingsButton x:Name="SpeedButton"
@@ -419,6 +419,7 @@
                                      Height="40"
                                      MinHeight="40"
                                      Padding="8"
+                                     Margin="0,0,-4,0"
                                      Grid.Column="1"
                                      AutomationProperties.Name="{CustomResource Speed}"
                                      ToolTipService.ToolTip="{CustomResource Speed}"
@@ -437,6 +438,7 @@
                                         Grid.Column="2"
                                         IsOneWay="False"
                                         IsThreeState="True"
+                                        Margin="0,0,-4,0"
                                         Style="{StaticResource ThreeStateToggleStyle}" />
             <controls:GlyphToggleButton x:Name="OrderButton"
                                         Click="Order_Click"
@@ -450,6 +452,7 @@
                                         Grid.Column="3"
                                         IsOneWay="False"
                                         IsThreeState="True"
+                                        Margin="0,0,-4,0"
                                         Style="{StaticResource ThreeStateToggleStyle}" />
 
             <controls:GlyphButton Click="Clear_Click"
