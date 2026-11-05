@@ -2718,6 +2718,7 @@ namespace Telegram.Controls
                 or TextEntityTypeBotCommand
                 or TextEntityTypeBankCardNumber
                 or TextEntityTypeTonAddress
+                or TextEntityTypeMediaTimestamp
                 // A date is one too, and for the same reason the inline path draws it as a
                 // hyperlink: TextStyleRun gives it the Url style. A click opens what it means.
                 or TextEntityTypeDateTime
