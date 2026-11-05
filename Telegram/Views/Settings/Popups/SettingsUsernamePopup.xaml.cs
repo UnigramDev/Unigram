@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Settings.Popups
 {
-    public sealed partial class SettingsUsernamePopup : ContentPopup
+    public sealed partial class SettingsUsernamePopup : ModalPopup
     {
         public SettingsUsernameViewModel ViewModel => DataContext as SettingsUsernameViewModel;
 
@@ -62,7 +62,7 @@ namespace Telegram.Views.Settings.Popups
 
         #endregion
 
-        private async void ContentPopup_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             IsPrimaryButtonEnabled = false;
 

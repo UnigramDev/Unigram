@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Settings.Popups
 {
-    public sealed partial class SettingsSessionPopup : ContentPopup
+    public sealed partial class SettingsSessionPopup : ModalPopup
     {
         public SettingsSessionPopup(Session session)
         {
@@ -79,7 +79,7 @@ namespace Telegram.Views.Settings.Popups
 
         public bool CanAcceptSecretChats => AcceptSecretChats.IsChecked == true;
 
-        private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private async void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
             await Task.Delay(500);
             Icon.Play();

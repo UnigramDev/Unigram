@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings.Popups
 {
-    public sealed partial class SettingsBirthdatePopup : ContentPopup
+    public sealed partial class SettingsBirthdatePopup : ModalPopup
     {
         private readonly ObservableCollection<int> _days = new();
         private readonly ObservableCollection<int> _months = new();
@@ -394,7 +394,7 @@ namespace Telegram.Views.Settings.Popups
 
         public bool ShowPrivacySettings { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (Value == null)
             {

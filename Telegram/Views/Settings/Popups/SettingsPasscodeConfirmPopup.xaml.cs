@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Settings.Popups
 {
-    public sealed partial class SettingsPasscodeConfirmPopup : ContentPopup
+    public sealed partial class SettingsPasscodeConfirmPopup : ModalPopup
     {
         private readonly IPasscodeService _passcodeService;
         private readonly DispatcherTimer _retryTimer;
@@ -61,7 +61,7 @@ namespace Telegram.Views.Settings.Popups
 
         public string Passcode { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (_passcodeService.TryUnlock(Field.Password))
             {
@@ -89,10 +89,6 @@ namespace Telegram.Views.Settings.Popups
         {
             _retryTimer.Stop();
             Passcode = Field.Password;
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void Confirm_Changed(object sender, RoutedEventArgs e)

@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings.Popups
 {
-    public sealed partial class SettingsPersonalChatPopup : ContentPopup, IIncrementalCollectionOwner
+    public sealed partial class SettingsPersonalChatPopup : ModalPopup, IIncrementalCollectionOwner
     {
         private readonly IClientService _clientService;
         private readonly long _selectedChatId;

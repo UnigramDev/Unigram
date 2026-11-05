@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings
 {
-    public sealed partial class SettingsStorageOptimizationPage : ContentPopup
+    public sealed partial class SettingsStorageOptimizationPage : ModalPopup
     {
         public SettingsStorageOptimizationPage(IClientService clientService, StorageStatisticsByChat statistics)
         {
@@ -114,7 +114,7 @@ namespace Telegram.Views.Settings
             args.IsContainerPrepared = true;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             var items = ScrollingHost.ItemsSource as IList<StorageChartItem>;
             if (items != null)
@@ -127,7 +127,7 @@ namespace Telegram.Views.Settings
             }
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnSecondaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             SelectedItems = null;
         }

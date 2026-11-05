@@ -1,15 +1,15 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Settings.Popups.SettingsBirthdatePopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
-                       mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       Padding="20,24,20,24">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Settings.Popups.SettingsBirthdatePopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
+                     mc:Ignorable="d"
+                     PrimaryButtonClick="OnPrimaryButtonClick"
+                     Padding="20,24,20,24">
 
-    <controls:ContentPopup.Resources>
+    <controls:ModalPopup.Resources>
         <Style TargetType="ListView">
             <Setter Property="IsTabStop"
                     Value="False" />
@@ -99,7 +99,7 @@
         </Style>
 
         <x:Boolean x:Key="ListViewItemSelectionIndicatorVisualEnabled">False</x:Boolean>
-    </controls:ContentPopup.Resources>
+    </controls:ModalPopup.Resources>
 
     <StackPanel>
         <Rectangle x:Name="TopPickerSpacing"
@@ -196,4 +196,4 @@
                 HorizontalAlignment="Stretch"
                 Margin="4,8,4,-16" />
     </StackPanel>
-</controls:ContentPopup>
+</controls:ModalPopup>

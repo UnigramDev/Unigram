@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Settings.Popups
 {
-    public sealed partial class SettingsPasscodeInputPopup : ContentPopup
+    public sealed partial class SettingsPasscodeInputPopup : ModalPopup
     {
         public SettingsPasscodeInputPopup()
         {
@@ -33,7 +33,7 @@ namespace Telegram.Views.Settings.Popups
 
         public string Passcode { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (IsSimple && (First.Password.Length != 4 || !First.Password.All(x => x is >= '0' and <= '9')))
             {

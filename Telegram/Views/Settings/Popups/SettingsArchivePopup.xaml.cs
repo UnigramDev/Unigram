@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings.Popups
 {
-    public sealed partial class SettingsArchivePopup : ContentPopup
+    public sealed partial class SettingsArchivePopup : ModalPopup
     {
         private readonly IClientService _clientService;
 
@@ -65,7 +65,7 @@ namespace Telegram.Views.Settings.Popups
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             _clientService.Send(new SetArchiveChatListSettings(new ArchiveChatListSettings
             {
