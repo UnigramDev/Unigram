@@ -652,7 +652,7 @@ namespace Telegram.Controls.Gallery
                 WatchDog.TrackEvent("TextRecognizer", new Properties { { "Status", "Unavailable" } });
                 return;
             }
-            else if (status is TextRecognitionStatusDownloading downloading && fileId == _fileId && IsLoaded)
+            else if (status is TextRecognitionStatusDownloading downloading && fileId == _itemId && IsLoaded)
             {
                 WatchDog.TrackEvent("TextRecognizer", new Properties { { "Status", "Downloading" } });
 
