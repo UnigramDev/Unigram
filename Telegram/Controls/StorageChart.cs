@@ -1308,8 +1308,9 @@ namespace Telegram.Controls
             // look like it was assembling out of pieces. Drawing per frame gets this for free: the
             // animated angles are never touched while loading >= 1, so the first value they ever
             // see is the final one and the animator snaps to it. Once loaded, a new set of numbers
-            // does ease, which is the only case this is false.
-            var settle = animated && !wasLoading;
+            // does ease, and so does one that arrives before the ring has finished turning back into
+            // a spinner, because the sectors are still partly on screen and a snap would show.
+            var settle = animated && (!wasLoading || _morphTimer.IsEnabled);
 
             Animate(_state, "Loading", 0, LoadingDuration, _easeOutQuint, animated);
             Animate(_state, "Complete", _complete ? 1 : 0, CompleteDuration, _easeOutQuint, animated);

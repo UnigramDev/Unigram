@@ -131,8 +131,9 @@ namespace Telegram.ViewModels.Settings
         // The ring is a partition, so it carries either the fold or its contents, never both.
         // Expanding splits its arc into the categories it stands for. The order survives that - the
         // fold sits where its largest child does - so every frame of the blend is still a
-        // partition.
-        public IList<StorageChartItem> ChartView => _other is { IsExpanded: true } ? _sections : _itemsView;
+        // partition. Null is the chart's loading state, which a clear goes back to until the new
+        // numbers are in.
+        public IList<StorageChartItem> ChartView => !_taskCompleted ? null : _other is { IsExpanded: true } ? _sections : _itemsView;
 
         public void SetExpanded(bool expanded)
         {
@@ -231,7 +232,13 @@ namespace Telegram.ViewModels.Settings
         public bool TaskCompleted
         {
             get => _taskCompleted;
-            set => Set(ref _taskCompleted, value);
+            set
+            {
+                if (Set(ref _taskCompleted, value))
+                {
+                    RaisePropertyChanged(nameof(ChartView));
+                }
+            }
         }
 
         public async void ClearCache()
@@ -248,13 +255,20 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
+            var totalBytes = TotalBytes;
+
             IsLoading = true;
             TaskCompleted = false;
+            TotalBytes = -1;
 
             var response = await ClientService.SendAsync(new OptimizeStorage(long.MaxValue, 0, int.MaxValue, 0, types, Array.Empty<long>(), Array.Empty<long>(), false, 25));
             if (response is StorageStatistics statistics)
             {
                 Statistics = statistics;
+            }
+            else
+            {
+                TotalBytes = totalBytes;
             }
 
             IsLoading = false;
@@ -294,13 +308,20 @@ namespace Telegram.ViewModels.Settings
                 excludedChatIds = _statistics.ByChat.Select(x => x.ChatId).Where(x => x != 0).ToArray();
             }
 
+            var totalBytes = TotalBytes;
+
             IsLoading = true;
             TaskCompleted = false;
+            TotalBytes = -1;
 
             var response = await ClientService.SendAsync(new OptimizeStorage(long.MaxValue, 0, int.MaxValue, 0, types, chatIds, excludedChatIds, false, 25));
             if (response is StorageStatistics statistics)
             {
                 Statistics = statistics;
+            }
+            else
+            {
+                TotalBytes = totalBytes;
             }
 
             IsLoading = false;

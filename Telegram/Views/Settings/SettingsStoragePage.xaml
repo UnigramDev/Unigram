@@ -167,6 +167,7 @@
                         <controls:HeaderedControl Footer="{CustomResource StorageUsageInfo}"
                                                   Padding="0,3,0,0">
                             <Button Click="{x:Bind ViewModel.ClearCache}"
+                                    IsEnabled="{x:Bind ViewModel.TaskCompleted, Mode=OneWay}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     HorizontalAlignment="Stretch">
                                 <Grid Padding="4">
