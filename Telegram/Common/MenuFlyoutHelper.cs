@@ -20,15 +20,22 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Common
 {
+    public enum MenuFlyoutAnimation
+    {
+        Standard,
+        Morph,
+        Overlap
+    }
+
     public static class MenuFlyoutHelper
     {
-        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement, bool overlap = false)
+        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement, MenuFlyoutAnimation animation = MenuFlyoutAnimation.Morph)
         {
             try
             {
-                if (flyout is MenuFlyout { Items.Count: > 0 } menuFlyout)
+                if (animation != MenuFlyoutAnimation.Standard && flyout is MenuFlyout { Items.Count: > 0 } menuFlyout)
                 {
-                    return menuFlyout.ShowMorphAt(placementTarget, placement, overlap: overlap);
+                    return menuFlyout.ShowMorphAt(placementTarget, placement, overlap: animation == MenuFlyoutAnimation.Overlap);
                 }
                 else
                 {
@@ -45,13 +52,13 @@ namespace Telegram.Common
             return false;
         }
 
-        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement, FlyoutShowMode showMode, bool overlap = false, FrameworkElement source = null)
+        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement, FlyoutShowMode showMode, MenuFlyoutAnimation animation = MenuFlyoutAnimation.Morph, FrameworkElement source = null)
         {
             try
             {
-                if (flyout is MenuFlyout { Items.Count: > 0 } menuFlyout)
+                if (animation != MenuFlyoutAnimation.Standard && flyout is MenuFlyout { Items.Count: > 0 } menuFlyout)
                 {
-                    return menuFlyout.ShowMorphAt(placementTarget, placement, showMode, overlap: overlap, source: source);
+                    return menuFlyout.ShowMorphAt(placementTarget, placement, showMode, overlap: animation == MenuFlyoutAnimation.Overlap, source: source);
                 }
                 else
                 {

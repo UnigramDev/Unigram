@@ -2899,7 +2899,7 @@ namespace Telegram.Views
                 };
             }
 
-            flyout.ShowAt(sender, FlyoutPlacementMode.TopEdgeAlignedRight);
+            flyout.ShowAt(sender, FlyoutPlacementMode.TopEdgeAlignedRight, animation: MenuFlyoutAnimation.Standard);
         }
 
         private void Send_RightTapped(object sender, RightTappedRoutedEventArgs e)
