@@ -33,8 +33,9 @@
     <TwSandbox>$(MSBuildThisFileDirectory)..\Libraries\widget-sandbox\</TwSandbox>
     <TwQuickJS>$(TwSandbox)packages\ios\Sources\CQuickJS\</TwQuickJS>
     <TwDesktop>$(TwSandbox)packages\desktop\</TwDesktop>
-    <TwCore>$(MSBuildThisFileDirectory)..\Libraries\twidget\Sources\TwidgetCore\</TwCore>
-    <TwLitehtml>$(MSBuildThisFileDirectory)..\Libraries\twidget\Sources\LiteHTML\litehtml\</TwLitehtml>
+    <TwCore>$(MSBuildThisFileDirectory)..\Libraries\twidget\core\</TwCore>
+    <TwLitehtml>$(MSBuildThisFileDirectory)..\Libraries\twidget\litehtml\</TwLitehtml>
+    <TwPlatforms>$(MSBuildThisFileDirectory)..\Libraries\twidget\platforms\</TwPlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TelegramWinUI)' == 'true'">
     <IntDir>$(Platform)\$(Configuration)\WinUI\</IntDir>
@@ -89,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(GeneratedFilesDir);$(IntDir)generated;$(TwDesktop)sandbox\include;$(TwQuickJS)include;$(TwQuickJS)quickjs;$(TwCore)src;$(TwCore)include;$(TwCore)platform\windows;$(TwLitehtml)include;$(TwLitehtml)include\litehtml;$(TwLitehtml)src;$(TwLitehtml)gumbo-include;$(TwDesktop)renderer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(GeneratedFilesDir);$(IntDir)generated;$(TwDesktop)sandbox\include;$(TwQuickJS)include;$(TwQuickJS)quickjs;$(TwCore)src;$(TwCore)include;$(TwPlatforms)windows;$(TwLitehtml)include;$(TwLitehtml)include\litehtml;$(TwLitehtml)src;$(TwLitehtml)gumbo-include;$(TwDesktop)renderer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINRT_DLL;QUICKJS_NG_BUILD;_CRT_SECURE_NO_WARNINGS;NOMINMAX;TW_LITEHTML_TWIDGET;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -161,7 +162,7 @@
     <TwQuickJSSource Include="$(TwQuickJS)quickjs\quickjs.c;$(TwQuickJS)quickjs\dtoa.c;$(TwQuickJS)quickjs\libregexp.c;$(TwQuickJS)quickjs\libunicode.c;$(TwQuickJS)shim\qjs_shim.c" />
     <TwGumboSource Include="$(TwLitehtml)src\gumbo\*.c" />
     <TwLitehtmlSource Include="$(TwLitehtml)src\*.cpp" />
-    <TwCoreSource Include="$(TwDesktop)sandbox\src\*.cpp;$(TwCore)src\*.cpp;$(TwCore)platform\windows\d2d_backend.cpp" />
+    <TwCoreSource Include="$(TwDesktop)sandbox\src\*.cpp;$(TwCore)src\*.cpp;$(TwPlatforms)windows\d2d_backend.cpp" />
     <ClCompile Include="@(TwQuickJSSource)">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SDLCheck>false</SDLCheck>
