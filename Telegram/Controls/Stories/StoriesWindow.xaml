@@ -330,7 +330,7 @@
                         <Border x:Name="btnAttach"
                                 Grid.Column="1">
                             <controls:GlyphButton x:Name="ButtonAttach"
-                                                  CornerRadius="4"
+                                                  CornerRadius="20"
                                                   Click="Attach_Click"
                                                   Glyph="&#xE9D8;"
                                                   AllowFocusOnInteraction="False"
@@ -357,6 +357,8 @@
                                                      AllowFocusOnInteraction="False"
                                                      VerticalAlignment="Bottom"
                                                      AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
+                                                     CornerRadius="20"
+                                                     Margin="0,0,-8,0"
                                                      Grid.Column="1" />
                             <!--ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"-->
 
@@ -367,19 +369,19 @@
                                 <chats:ChatRecordButton x:Name="btnVoiceMessage"
                                                         RecordingStarting="ButtonRecord_Started"
                                                         RecordingStopped="ButtonRecord_Stopped"
-                                                        CornerRadius="4"
+                                                        CornerRadius="20"
                                                         AllowFocusOnInteraction="False"
-                                                        Glyph="&#xE9E4;"
-                                                        CheckedGlyph="&#xE9E0;"
+                                                        Glyph="&#xE9D7;"
+                                                        CheckedGlyph="&#xE9D6;"
                                                         ManipulationMode="TranslateX,TranslateY">
                                     <controls:AnimatedIconToggleButton.Source>
-                                        <icons:VoiceVideo />
+                                        <icons:VoiceVideo2 />
                                     </controls:AnimatedIconToggleButton.Source>
                                 </chats:ChatRecordButton>
                             </Grid>
 
                             <chats:ChatSendButton x:Name="btnSendMessage"
-                                                  CornerRadius="4"
+                                                  CornerRadius="20"
                                                   ContextRequested="Send_ContextRequested"
                                                   VerticalAlignment="Bottom"
                                                   Click="btnSendMessage_Click"
