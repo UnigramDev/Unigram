@@ -23,6 +23,7 @@
         <controls:TopNavView x:Name="Navigation"
                              SelectedIndex="{x:Bind ViewModel.OnlyContacts, Mode=TwoWay}"
                              HorizontalAlignment="Left"
+                             Margin="24,0,0,0"
                              Height="48">
             <controls:TopNavView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -57,7 +58,7 @@
                                       Background="Transparent">
                                     <ContentPresenter x:Name="ContentPresenter"
                                                       Grid.Column="1"
-                                                      Margin="12,5,12,6"
+                                                      Margin="6,5,6,6"
                                                       TextWrapping="NoWrap"
                                                       Foreground="{TemplateBinding Foreground}"
                                                       ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -85,8 +86,7 @@
                     </Setter>
                 </Style>
             </controls:TopNavView.ItemContainerStyle>
-            <controls:TopNavViewItem Content="{CustomResource AllViewers}"
-                                     Margin="24,0,0,0" />
+            <controls:TopNavViewItem Content="{CustomResource AllViewers}" />
             <controls:TopNavViewItem Content="{CustomResource Contacts}" />
         </controls:TopNavView>
 
