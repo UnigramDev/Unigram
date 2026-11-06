@@ -128,11 +128,9 @@
         </ToolTip>
 
         <Grid x:Name="ManagePanel"
-              Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
               VerticalAlignment="Bottom"
               Visibility="Collapsed"
               Margin="24,0,24,8"
-              CornerRadius="15"
               Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -141,15 +139,17 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+            <Border x:Name="ManageCard"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1"
-                    CornerRadius="15"
+                    CornerRadius="24"
                     Grid.ColumnSpan="5" />
 
             <controls:GlyphButton x:Name="ButtonManage"
                                   Glyph="&#xE711;"
                                   Click="{x:Bind ViewModel.UnselectMessages}"
-                                  CornerRadius="13,4,4,13" />
+                                  CornerRadius="20" />
 
             <controls:AnimatedTextBlock x:Name="ManageCount"
                                         Text="{x:Bind ConvertSelection(ViewModel.SelectedItems.Count), Mode=OneWay}"
@@ -164,6 +164,7 @@
                                   Click="{x:Bind ViewModel.ForwardSelectedMessages}"
                                   IsEnabled="{x:Bind ViewModel.CanForwardSelectedMessages, Mode=OneWay}"
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
+                                  CornerRadius="20"
                                   Grid.Column="3" />
 
             <controls:GlyphButton x:Name="ButtonDelete"
@@ -173,7 +174,7 @@
                                   Click="{x:Bind ViewModel.DeleteSelectedMessages}"
                                   IsEnabled="{x:Bind ViewModel.CanDeleteSelectedMessages, Mode=OneWay}"
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
-                                  CornerRadius="4,13,13,4"
+                                  CornerRadius="20"
                                   Grid.Column="4" />
         </Grid>
     </Grid>

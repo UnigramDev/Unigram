@@ -54,6 +54,9 @@ namespace Telegram.Views
         private Visual _dateHeaderPanel;
         private bool _dateHeaderCollapsed = true;
 
+        private readonly ThemeShadowEx _toolTipShadow;
+        private readonly ThemeShadowEx _manageShadow;
+
         public ProfilePage()
         {
             InitializeComponent();
@@ -70,14 +73,8 @@ namespace Telegram.Views
 
             ScrollingHost.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChanged), true);
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
-            {
-                var themeShadow = new ThemeShadow();
-                ToolTip.Shadow = themeShadow;
-                ToolTip.Translation += new Vector3(0, 0, 32);
-
-                themeShadow.Receivers.Add(ScrollingHost);
-            }
+            _toolTipShadow = new ThemeShadowEx(ToolTip, 32);
+            _manageShadow = new ThemeShadowEx(ManageCard, 16);
         }
 
         public override HostedPagePositionBase GetPosition()
