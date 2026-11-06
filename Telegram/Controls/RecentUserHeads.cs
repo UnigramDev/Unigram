@@ -8,13 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,20 +22,38 @@ namespace Telegram.Controls
 {
     public delegate void RecentUserHeadChangedHandler(ProfilePicture sender, MessageSender messageSender);
 
-    public partial class RecentUserHeadChangedEventArgs : EventArgs
-    {
-
-    }
-
     public partial class RecentUserHeads : Control
     {
-        private readonly RecentUserCollection _items = new();
-        private readonly HashSet<UIElement> _toBeRemoved = new();
+        private const int MaxCount = 3;
 
-        private Grid LayoutRoot;
+        private sealed class Head
+        {
+            public Border Container;
+            public ProfilePicture Picture;
+            public MessageSender Sender;
 
-        private readonly int _maxCount = 3;
-        private readonly int _maxIndex = 2;
+            // Where the visual is, or is heading. Equal to its index in _heads between updates.
+            public int Slot = -1;
+        }
+
+        private readonly RecentUserCollection _items;
+
+        // The heads on display, in order. The order on screen comes from Slot and the Z index, so
+        // this is the only thing to index by: HeadsRoot.Children also holds the heads animating
+        // out, in no particular order.
+        private readonly List<Head> _heads = new();
+
+        private readonly List<UIElement> _removing = new();
+        private int _removalBatches;
+
+        private bool _animated;
+
+        // Only these have a Translation: StopAnimation throws for a property that does not exist.
+        private List<UIElement> _slid;
+
+        private Canvas HeadsRoot;
+        private ContentPresenter HeaderPresenter;
+        private ContentPresenter FooterPresenter;
 
         private int _itemSize = 32;
         private int _itemOverlap = 10;
@@ -46,6 +61,8 @@ namespace Telegram.Controls
         public RecentUserHeads()
         {
             DefaultStyleKey = typeof(RecentUserHeads);
+
+            _items = new RecentUserCollection(this);
         }
 
         #region ItemSize
@@ -61,14 +78,14 @@ namespace Telegram.Controls
 
         private static void OnItemSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((RecentUserHeads)d)._itemSize = (int)e.NewValue;
+            var sender = (RecentUserHeads)d;
+            sender._itemSize = (int)e.NewValue;
+            sender.Rebuild();
         }
 
         #endregion
 
         #region ItemOverlap
-
-
 
         public int ItemOverlap
         {
@@ -76,13 +93,75 @@ namespace Telegram.Controls
             set { SetValue(ItemOverlapProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for ItemOverlap.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ItemOverlapProperty =
             DependencyProperty.Register("ItemOverlap", typeof(int), typeof(RecentUserHeads), new PropertyMetadata(10, OnItemOverlapChanged));
 
         private static void OnItemOverlapChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((RecentUserHeads)d)._itemOverlap = (int)e.NewValue;
+            var sender = (RecentUserHeads)d;
+            sender._itemOverlap = (int)e.NewValue;
+            sender.Rebuild();
+        }
+
+        #endregion
+
+        #region Header
+
+        public object Header
+        {
+            get { return GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(object), typeof(RecentUserHeads), new PropertyMetadata(null, OnHeaderChanged));
+
+        private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((RecentUserHeads)d).UpdateHeader();
+        }
+
+        // Realized on first use: most hosts set neither, and there are many of them in a chat.
+        private void UpdateHeader()
+        {
+            var header = Header;
+            if (HeadsRoot == null || (header == null && HeaderPresenter == null))
+            {
+                return;
+            }
+
+            HeaderPresenter ??= GetTemplateChild(nameof(HeaderPresenter)) as ContentPresenter;
+            HeaderPresenter.Content = header;
+        }
+
+        #endregion
+
+        #region Footer
+
+        public object Footer
+        {
+            get { return GetValue(FooterProperty); }
+            set { SetValue(FooterProperty, value); }
+        }
+
+        public static readonly DependencyProperty FooterProperty =
+            DependencyProperty.Register("Footer", typeof(object), typeof(RecentUserHeads), new PropertyMetadata(null, OnFooterChanged));
+
+        private static void OnFooterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((RecentUserHeads)d).UpdateFooter();
+        }
+
+        private void UpdateFooter()
+        {
+            var footer = Footer;
+            if (HeadsRoot == null || (footer == null && FooterPresenter == null))
+            {
+                return;
+            }
+
+            FooterPresenter ??= GetTemplateChild(nameof(FooterPresenter)) as ContentPresenter;
+            FooterPresenter.Content = footer;
         }
 
         #endregion
@@ -93,463 +172,506 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
-            _items.CollectionChanged += OnCollectionChanged;
+            HeadsRoot = GetTemplateChild(nameof(HeadsRoot)) as Canvas;
+            HeaderPresenter = null;
+            FooterPresenter = null;
 
-            Reset();
+            _slid?.Clear();
+
+            UpdateHeader();
+            UpdateFooter();
+            Rebuild();
         }
 
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private int HeadSize => _itemSize + 4;
+
+        private float SlotOffset(int slot)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add && e.NewStartingIndex <= _maxIndex && e.NewItems.Count > 0)
-            {
-                InsertItem(e.NewStartingIndex, e.NewItems[0]);
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove && e.OldStartingIndex <= _maxIndex)
-            {
-                RemoveItem(e.OldStartingIndex, _items.Count > _maxIndex ? _items[_maxIndex] : null);
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Move)
-            {
-                if (e.OldStartingIndex > _maxIndex && e.NewStartingIndex <= _maxIndex)
-                {
-                    InsertItem(e.NewStartingIndex, e.NewItems[0]);
-                }
-                else if (e.OldStartingIndex <= _maxIndex && e.NewStartingIndex > _maxIndex)
-                {
-                    RemoveItem(e.OldStartingIndex, _items.Count > _maxIndex ? _items[_maxIndex] : null);
-                }
-                else if (e.OldStartingIndex <= _maxIndex && e.NewStartingIndex <= _maxIndex)
-                {
-                    MoveItem(e.OldStartingIndex, e.NewStartingIndex);
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Reset)
-            {
-                Reset();
-            }
+            return slot * (HeadSize - _itemOverlap);
         }
 
-        private void Reset()
+        private double HeadsWidth(int count)
         {
-            LayoutRoot.Children.Clear();
-
-            for (int i = 0; i < Math.Min(_maxCount, _items.Count); i++)
-            {
-                var container = CreateContainer(_items[i]);
-                var visual = ElementComposition.GetElementVisual(container);
-
-                visual.Offset = new Vector3(i * (_itemSize + 4 - _itemOverlap), 0, 0);
-
-                Canvas.SetZIndex(container, -i);
-                LayoutRoot.Children.Add(container);
-            }
+            return count > 0 ? (count * HeadSize) - ((count - 1) * _itemOverlap) : 0;
         }
 
-        private void InsertItem(int index, object item)
+        private void Rebuild()
         {
-            var batch = CreateScopedBatch();
-
-            var container = CreateContainer(item);
-            AnimateAdding(container, index);
-
-            for (int i = index, real = index; i < LayoutRoot.Children.Count; i++)
-            {
-                if (_toBeRemoved.Contains(LayoutRoot.Children[i]))
-                {
-                    continue;
-                }
-
-                if (real >= _maxCount - 1)
-                {
-                    _toBeRemoved.Add(LayoutRoot.Children[i]);
-
-                    AnimateRemoving(LayoutRoot.Children[i], real + 1);
-                    real++;
-                }
-                else
-                {
-                    AnimateMoving(LayoutRoot.Children[i], real, real + 1);
-                    UpdateContainer(LayoutRoot.Children[i], real + 1);
-                    real++;
-                }
-            }
-
-            index = Math.Max(Math.Min(LayoutRoot.Children.Count - 1, index), 0);
-
-            Canvas.SetZIndex(container, -index);
-            LayoutRoot.Children.Insert(index, container);
-
-            InvalidateMeasure();
-            AnimateAlignment();
-
-            batch.End();
-        }
-
-        private void RemoveItem(int index, object item)
-        {
-            var batch = CreateScopedBatch();
-            var count = LayoutRoot.Children.Count;
-
-            UIElement container = null;
-            if (item != null)
-            {
-                container = CreateContainer(item);
-                AnimateAdding(container, _maxIndex);
-            }
-
-            for (int i = index, real = index; i < LayoutRoot.Children.Count; i++)
-            {
-                if (_toBeRemoved.Contains(LayoutRoot.Children[i]))
-                {
-                    continue;
-                }
-
-                if (real == index || real >= _maxCount)
-                {
-                    _toBeRemoved.Add(LayoutRoot.Children[i]);
-                    count--;
-
-                    AnimateRemoving(LayoutRoot.Children[i], real + 1);
-                    real++;
-                }
-                else
-                {
-                    AnimateMoving(LayoutRoot.Children[i], real, real - 1);
-                    UpdateContainer(LayoutRoot.Children[i], real - 1);
-                    real++;
-                }
-            }
-
-            if (container != null && count < _maxCount)
-            {
-                Canvas.SetZIndex(container, -_maxCount);
-                LayoutRoot.Children.Insert(count, container);
-            }
-
-            InvalidateMeasure();
-            AnimateAlignment();
-
-            batch.End();
-        }
-
-        private void MoveItem(int oldIndex, int newIndex)
-        {
-            if (oldIndex >= LayoutRoot.Children.Count || newIndex >= LayoutRoot.Children.Count)
+            if (HeadsRoot == null)
             {
                 return;
             }
 
-            LayoutRoot.Children.Move((uint)oldIndex, (uint)newIndex);
+            HeadsRoot.Children.Clear();
+            HeadsRoot.Width = 0;
+            HeadsRoot.Height = HeadSize;
 
-            var compositor = BootStrapper.Current.Compositor;
-            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            _heads.Clear();
+            _removing.Clear();
+            _animated = false;
 
-            var start = Math.Min(oldIndex, newIndex);
-            var end = Math.Max(oldIndex, newIndex);
-
-            for (int i = start; i <= end; i++)
-            {
-                AnimateMoving(LayoutRoot.Children[i], -1, i);
-            }
-
-            batch.End();
+            Update(false);
         }
 
-        private UIElement CreateContainer(object item)
+        internal void OnItemsChanged(bool animated)
+        {
+            if (HeadsRoot != null)
+            {
+                Update(animated);
+            }
+        }
+
+        private void Update(bool animated)
+        {
+            var count = Math.Min(MaxCount, _items.Count);
+            if (IsUnchanged(count))
+            {
+                return;
+            }
+
+            var previousWidth = HeadsWidth(_heads.Count);
+            var width = HeadsWidth(count);
+
+            if (animated)
+            {
+                Reconcile(count);
+            }
+            else
+            {
+                Assign(count);
+            }
+
+            HeadsRoot.Width = width;
+
+            if (animated)
+            {
+                AnimateAlignment(width - previousWidth);
+            }
+        }
+
+        private bool IsUnchanged(int count)
+        {
+            if (_heads.Count != count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                if (!_heads[i].Sender.AreTheSame(_items[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // No animation, so whatever is on screen can be reused in place: this is what runs for every
+        // recycled container, where rebuilding the heads is the cost to avoid.
+        private void Assign(int count)
+        {
+            StopAnimations();
+            ClearRemoving();
+
+            while (_heads.Count > count)
+            {
+                HeadsRoot.Children.Remove(_heads[^1].Container);
+                _heads.RemoveAt(_heads.Count - 1);
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i < _heads.Count)
+                {
+                    if (!_heads[i].Sender.AreTheSame(_items[i]))
+                    {
+                        SetSender(_heads[i], _items[i]);
+                    }
+                }
+                else
+                {
+                    var head = CreateHead(_items[i]);
+                    head.Slot = i;
+
+                    Canvas.SetZIndex(head.Container, -i);
+
+                    if (i > 0)
+                    {
+                        ElementComposition.GetElementVisual(head.Container).Offset = new Vector3(SlotOffset(i), 0, 0);
+                    }
+
+                    _heads.Add(head);
+                    HeadsRoot.Children.Add(head.Container);
+                }
+            }
+        }
+
+        // Follows each sender to its new position, so a head keeps its container wherever it goes.
+        private void Reconcile(int count)
+        {
+            CompositionScopedBatch batch = null;
+
+            for (int i = _heads.Count - 1; i >= 0; i--)
+            {
+                var head = _heads[i];
+                if (IndexOfItem(head.Sender, count) < 0)
+                {
+                    batch ??= BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+                    _heads.RemoveAt(i);
+                    _removing.Add(head.Container);
+
+                    AnimateRemoving(head);
+                }
+            }
+
+            if (batch != null)
+            {
+                _removalBatches++;
+
+                batch.Completed += OnRemovalCompleted;
+                batch.End();
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                var index = IndexOfHead(_items[i], i);
+
+                Head head;
+                if (index == i)
+                {
+                    head = _heads[i];
+                }
+                else if (index > i)
+                {
+                    head = _heads[index];
+
+                    _heads.RemoveAt(index);
+                    _heads.Insert(i, head);
+                }
+                else
+                {
+                    head = CreateHead(_items[i]);
+
+                    _heads.Insert(i, head);
+                    HeadsRoot.Children.Add(head.Container);
+                }
+
+                if (head.Slot < 0)
+                {
+                    AnimateEntering(head, i);
+                }
+                else if (head.Slot != i)
+                {
+                    AnimateMoving(head, i);
+                }
+
+                head.Slot = i;
+                Canvas.SetZIndex(head.Container, -i);
+            }
+        }
+
+        private int IndexOfItem(MessageSender sender, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (_items[i].AreTheSame(sender))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private int IndexOfHead(MessageSender sender, int start)
+        {
+            for (int i = start; i < _heads.Count; i++)
+            {
+                if (_heads[i].Sender.AreTheSame(sender))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        // Only once every batch is done: one finishing early must not cut short the heads of a later
+        // one, and a head that has finished is invisible until then.
+        private void OnRemovalCompleted(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (sender is CompositionScopedBatch batch)
+            {
+                batch.Completed -= OnRemovalCompleted;
+            }
+
+            if (--_removalBatches == 0)
+            {
+                ClearRemoving();
+            }
+        }
+
+        private void ClearRemoving()
+        {
+            foreach (var element in _removing)
+            {
+                HeadsRoot.Children.Remove(element);
+            }
+
+            _removing.Clear();
+        }
+
+        private Head CreateHead(MessageSender sender)
         {
             var picture = new ProfilePicture();
             picture.Size = _itemSize;
-
-            if (item is MessageSender sender)
-            {
-                RecentUserHeadChanged?.Invoke(picture, sender);
-            }
 
             var borderBrush = new Binding();
             borderBrush.Source = this;
             borderBrush.Path = new PropertyPath(nameof(BorderBrush));
 
             var container = new Border();
-            container.Width = _itemSize + 4;
-            container.Height = _itemSize + 4;
-            container.VerticalAlignment = VerticalAlignment.Top;
-            container.HorizontalAlignment = HorizontalAlignment.Left;
+            container.Width = HeadSize;
+            container.Height = HeadSize;
             container.BorderThickness = new Thickness(2);
-            container.CornerRadius = new CornerRadius((_itemSize + 4) / (picture.ComputedShape == ProfilePictureShape.Superellipse ? 4 : 2));
             container.Child = picture;
-            container.Tag = item;
             container.SetBinding(Border.BorderBrushProperty, borderBrush);
 
-            return container;
-        }
-
-        private void UpdateContainer(UIElement container, int newIndex)
-        {
-            if (_items.Count > newIndex &&
-                container is Border border
-                && border.Child is ProfilePicture picture
-                && border.Tag is MessageSender previous)
+            var head = new Head
             {
-                if (_items[newIndex] is MessageSender sender && !sender.AreTheSame(previous))
-                {
-                    RecentUserHeadChanged?.Invoke(picture, sender);
-                }
-            }
-        }
-
-        private CompositionScopedBatch CreateScopedBatch()
-        {
-            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                foreach (var element in _toBeRemoved)
-                {
-                    LayoutRoot.Children.Remove(element);
-                }
-
-                _toBeRemoved.Clear();
-                InvalidateMeasure();
+                Container = container,
+                Picture = picture
             };
 
-            return batch;
+            SetSender(head, sender);
+            return head;
         }
 
-        private void AnimateAdding(UIElement container, int index)
+        private void SetSender(Head head, MessageSender sender)
         {
-            Canvas.SetZIndex(container, -index);
+            head.Sender = sender;
 
-            var visual = ElementComposition.GetElementVisual(container);
-            visual.Offset = new Vector3(index * (_itemSize + 4 - _itemOverlap), 0, 0);
-            visual.CenterPoint = new Vector3((_itemSize + 4) / 2);
+            RecentUserHeadChanged?.Invoke(head.Picture, sender);
 
-            var addingScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-            addingScale.InsertKeyFrame(0.0f, new Vector3(0));
-            addingScale.InsertKeyFrame(0.9f, new Vector3(1.1f, 1.1f, 1));
-            addingScale.InsertKeyFrame(1.0f, new Vector3(1));
-            //addingScale.Duration = TimeSpan.FromSeconds(1);
-
-            var addingOpacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            addingOpacity.InsertKeyFrame(0.0f, 0);
-            addingOpacity.InsertKeyFrame(1.0f, 1);
-            //addingOpacity.Duration = TimeSpan.FromSeconds(1);
-
-            visual.StartAnimation("Scale", addingScale);
-            visual.StartAnimation("Opacity", addingOpacity);
+            // After the event: the shape comes from the source the handler just set.
+            head.Container.CornerRadius = new CornerRadius(HeadSize / (head.Picture.ComputedShape == ProfilePictureShape.Superellipse ? 4d : 2d));
         }
 
-        private void AnimateRemoving(UIElement container, int index)
+        private void AnimateEntering(Head head, int slot)
         {
-            Canvas.SetZIndex(container, -index);
+            var compositor = BootStrapper.Current.Compositor;
 
-            var child = ElementComposition.GetElementVisual(container);
-            child.CenterPoint = new Vector3((_itemSize + 4) / 2);
+            var visual = ElementComposition.GetElementVisual(head.Container);
+            visual.Offset = new Vector3(SlotOffset(slot), 0, 0);
+            visual.CenterPoint = new Vector3(HeadSize / 2f, HeadSize / 2f, 0);
 
-            var removingScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-            removingScale.InsertKeyFrame(0.0f, new Vector3(1));
-            removingScale.InsertKeyFrame(1.0f, new Vector3(0));
-            //removingScale.Duration = TimeSpan.FromSeconds(1);
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0.0f, new Vector3(0));
+            scale.InsertKeyFrame(0.9f, new Vector3(1.1f, 1.1f, 1));
+            scale.InsertKeyFrame(1.0f, new Vector3(1));
 
-            var removingOpacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            removingOpacity.InsertKeyFrame(0.0f, 1);
-            removingOpacity.InsertKeyFrame(1.0f, 0);
-            //removingOpacity.Duration = TimeSpan.FromSeconds(1);
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0.0f, 0);
+            opacity.InsertKeyFrame(1.0f, 1);
 
-            child.StartAnimation("Scale", removingScale);
-            child.StartAnimation("Opacity", removingOpacity);
+            visual.StartAnimation("Scale", scale);
+            visual.StartAnimation("Opacity", opacity);
+
+            _animated = true;
         }
 
-        private void AnimateMoving(UIElement container, int oldIndex, int newIndex)
+        // From wherever it is, as it may still be on its way in.
+        private void AnimateRemoving(Head head)
         {
-            Canvas.SetZIndex(container, -newIndex);
+            var compositor = BootStrapper.Current.Compositor;
 
-            var child = ElementComposition.GetElementVisual(container);
+            Canvas.SetZIndex(head.Container, -(head.Slot + 1));
+
+            var visual = ElementComposition.GetElementVisual(head.Container);
+            visual.CenterPoint = new Vector3(HeadSize / 2f, HeadSize / 2f, 0);
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(1.0f, new Vector3(0));
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(1.0f, 0);
+
+            visual.StartAnimation("Scale", scale);
+            visual.StartAnimation("Opacity", opacity);
+
+            _animated = true;
+        }
+
+        // From wherever it is, as it may still be on its way to another slot.
+        private void AnimateMoving(Head head, int slot)
+        {
             var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(1, new Vector3(SlotOffset(slot), 0, 0));
 
-            if (oldIndex >= 0)
-            {
-                offset.InsertKeyFrame(0, new Vector3(oldIndex * (_itemSize + 4 - _itemOverlap), 0, 0));
-            }
+            ElementComposition.GetElementVisual(head.Container).StartAnimation("Offset", offset);
 
-            offset.InsertKeyFrame(1, new Vector3(newIndex * (_itemSize + 4 - _itemOverlap), 0, 0));
-            //offset.Duration = TimeSpan.FromSeconds(1);
-
-            child.StartAnimation("Offset", offset);
+            _animated = true;
         }
 
-        private void AnimateAlignment()
+        // The new width takes effect in the next layout pass, the same frame these start in. What
+        // layout moved is put back where it was and slid home: with the alignment anchoring the start
+        // the footer moves, anchoring the end everything before it does, and centred both do by half.
+        private void AnimateAlignment(double delta)
         {
-            if (HorizontalAlignment == HorizontalAlignment.Center)
+            if (delta == 0)
             {
-                // Not needed in templated control
-                ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
-
-                var maxWidth = ((_itemSize + 4) * _maxCount) - (_itemOverlap * (_maxCount - 1));
-
-                var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
-                var diff = maxWidth - (count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap));
-
-                var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-                offset.InsertKeyFrame(1, new Vector3(diff / 2, 0, 0));
-                //offset.Duration = TimeSpan.FromSeconds(1);
-
-                var visual = ElementComposition.GetElementVisual(LayoutRoot);
-                visual.StartAnimation("Translation", offset);
+                return;
             }
-            else if (HorizontalAlignment == HorizontalAlignment.Right)
+
+            var anchor = HorizontalAlignment switch
             {
-                // Not needed in templated control
-                ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
+                HorizontalAlignment.Center => 0.5f,
+                HorizontalAlignment.Right => 1f,
+                _ => 0f
+            };
 
-                var maxWidth = ((_itemSize + 4) * _maxCount) - (_itemOverlap * (_maxCount - 1));
+            if (anchor > 0)
+            {
+                Slide(HeaderPresenter, anchor * (float)delta);
+                Slide(HeadsRoot, anchor * (float)delta);
+            }
 
-                var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
-                var diff = maxWidth - (count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap));
-
-                var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-                offset.InsertKeyFrame(0, new Vector3(-diff, 0, 0));
-                offset.InsertKeyFrame(1, new Vector3());
-                //offset.Duration = TimeSpan.FromSeconds(10);
-
-                var visual = ElementComposition.GetElementVisual(LayoutRoot);
-                //visual.StartAnimation("Translation", offset);
+            if (anchor < 1)
+            {
+                Slide(FooterPresenter, (anchor - 1) * (float)delta);
             }
         }
 
-        // TODO: properly implement measure and arrange overrides
-
-        protected override Size MeasureOverride(Size availableSize)
+        private void Slide(UIElement element, float from)
         {
-            var count = Math.Min(_maxCount, _items.Count);
-            var width = count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap);
+            if (element == null)
+            {
+                return;
+            }
 
-            base.MeasureOverride(availableSize);
-            return new Size(width, _itemSize + 4);
+            _slid ??= new List<UIElement>(3);
+
+            if (!_slid.Contains(element))
+            {
+                _slid.Add(element);
+                ElementCompositionPreview.SetIsTranslationEnabled(element, true);
+            }
+
+            var animation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+
+            // Added to StartingValue so that a change arriving mid-slide carries on from there.
+            animation.SetScalarParameter("From", from);
+            animation.InsertExpressionKeyFrame(0, "this.StartingValue + From");
+            animation.InsertKeyFrame(1, 0);
+
+            ElementComposition.GetElementVisual(element).StartAnimation("Translation.X", animation);
+
+            _animated = true;
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
+        private void StopAnimations()
         {
-            return base.ArrangeOverride(finalSize);
+            if (!_animated)
+            {
+                return;
+            }
+
+            _animated = false;
+
+            foreach (var head in _heads)
+            {
+                var visual = ElementComposition.GetElementVisual(head.Container);
+
+                // A write does not override an animation still running on the property.
+                visual.StopAnimation("Offset");
+                visual.StopAnimation("Scale");
+                visual.StopAnimation("Opacity");
+
+                visual.Offset = new Vector3(SlotOffset(head.Slot), 0, 0);
+                visual.Scale = Vector3.One;
+                visual.Opacity = 1;
+            }
+
+            for (int i = 0; i < _slid?.Count; i++)
+            {
+                var visual = ElementComposition.GetElementVisual(_slid[i]);
+                visual.StopAnimation("Translation.X");
+                visual.Properties.InsertVector3("Translation", Vector3.Zero);
+            }
         }
     }
 
-    public partial class RecentUserCollection : ObservableCollection<MessageSender>
+    // ReplaceDiff needs no sequence of edits: only the heads on display can be told apart, and
+    // RecentUserHeads compares those itself.
+    public partial class RecentUserCollection : Collection<MessageSender>
     {
-        protected readonly struct SuppressEventsDisposable : IDisposable
-        {
-            private readonly RecentUserCollection _collection;
+        private readonly RecentUserHeads _owner;
+        private bool _suppressed;
 
-            public SuppressEventsDisposable(RecentUserCollection collection)
+        internal RecentUserCollection(RecentUserHeads owner)
+        {
+            _owner = owner;
+        }
+
+        protected override void ClearItems()
+        {
+            base.ClearItems();
+            Notify(false);
+        }
+
+        protected override void InsertItem(int index, MessageSender item)
+        {
+            base.InsertItem(index, item);
+            Notify(true);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            base.RemoveItem(index);
+            Notify(true);
+        }
+
+        protected override void SetItem(int index, MessageSender item)
+        {
+            base.SetItem(index, item);
+            Notify(true);
+        }
+
+        private void Notify(bool animated)
+        {
+            if (!_suppressed)
             {
-                _collection = collection;
-                ++collection._suppressEvents;
-            }
-
-            public void Dispose()
-            {
-                --_collection._suppressEvents;
-            }
-        }
-
-        private int _suppressEvents;
-
-        public RecentUserCollection()
-        {
-
-        }
-
-        protected SuppressEventsDisposable SuppressEvents()
-        {
-            return new SuppressEventsDisposable(this);
-        }
-
-        public bool EventsAreSuppressed
-        {
-            get { return _suppressEvents > 0; }
-        }
-
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            if (!EventsAreSuppressed)
-            {
-                base.OnCollectionChanged(e);
+                _owner.OnItemsChanged(animated);
             }
         }
 
         public void ReplaceWith(IEnumerable<MessageSender> items)
         {
-            using (SuppressEvents())
-            {
-                Clear();
-                this.AddRange(items);
-            }
-
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            Replace(items, false);
         }
 
         public void ReplaceDiff(IEnumerable<MessageSender> items)
         {
-            var origin = items?.ToList();
-            var destination = this;
+            Replace(items, true);
+        }
 
-            if (origin == null)
+        private void Replace(IEnumerable<MessageSender> items, bool animated)
+        {
+            if (items == null)
             {
                 return;
             }
-            else if (destination.Empty())
-            {
-                foreach (var item in origin)
-                {
-                    destination.Add(item);
-                }
 
-                return;
-            }
+            _suppressed = true;
 
-            for (int i = 0; i < origin.Count; i++)
-            {
-                var item = origin[i];
-                var index = -1;
+            Clear();
+            this.AddRange(items);
 
-                for (int j = 0; j < destination.Count; j++)
-                {
-                    if (destination[j].AreTheSame(item))
-                    {
-                        index = j;
-                        break;
-                    }
-                }
+            _suppressed = false;
 
-                if (index > -1 && index != i)
-                {
-                    destination.Move(index, Math.Min(i, destination.Count - 1));
-                }
-                else if (index == -1)
-                {
-                    destination.Insert(Math.Min(i, destination.Count), item);
-                }
-            }
-
-            for (int i = 0; i < destination.Count; i++)
-            {
-                var item = destination[i];
-                var index = -1;
-
-                for (int j = 0; j < origin.Count; j++)
-                {
-                    if (origin[j].AreTheSame(item))
-                    {
-                        index = j;
-                        break;
-                    }
-                }
-
-                if (index == -1)
-                {
-                    destination.Remove(item);
-                    i--;
-                }
-            }
+            Notify(animated);
         }
     }
 }

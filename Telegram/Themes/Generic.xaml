@@ -3656,14 +3656,21 @@
                 Value="88" />
         <Setter Property="Height"
                 Value="36" />-->
-        <Setter Property="HorizontalContentAlignment"
-                Value="Center" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate>
-                    <Grid x:Name="LayoutRoot" />
+                <ControlTemplate TargetType="local:RecentUserHeads">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentPresenter x:Name="HeaderPresenter"
+                                          x:Load="False"
+                                          VerticalAlignment="Center" />
+                        <Canvas x:Name="HeadsRoot"
+                                VerticalAlignment="Top" />
+                        <ContentPresenter x:Name="FooterPresenter"
+                                          x:Load="False"
+                                          VerticalAlignment="Center" />
+                    </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
