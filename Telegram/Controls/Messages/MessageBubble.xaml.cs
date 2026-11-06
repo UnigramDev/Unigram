@@ -1912,7 +1912,9 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessagePoll or MessageChecklist)
             {
-                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                var media = content is MessagePoll { Media: not null };
+
+                ContentPanel.Padding = new Thickness(0, media ? 0 : 4, 0, 0);
                 Media.Margin = new Thickness(0);
                 FooterToNormal();
                 Grid.SetRow(Footer, 4);

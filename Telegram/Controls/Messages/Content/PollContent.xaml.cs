@@ -285,19 +285,6 @@ namespace Telegram.Controls.Messages.Content
                 PollMediaVideo => new VideoContent(message),
                 _ => null
             };
-
-            // Media.Margin = new Thickness(10, 4, 10, 8);
-            Media.Margin = content switch
-            {
-                //MessageAnimation => new AnimationContent(message),
-                PollMediaAudio => new Thickness(10, 8, 10, 4),
-                PollMediaDocument => new Thickness(10, 8, 10, 4),
-                //MessageLocation => new LocationContent(message),
-                //MessagePhoto => new PhotoContent(message),
-                //MessageVenue => new VenueContent(message),
-                //MessageVideo => new VideoContent(message),
-                _ => new Thickness(0)
-            };
         }
 
         public IPlayerView GetPlaybackElement()
