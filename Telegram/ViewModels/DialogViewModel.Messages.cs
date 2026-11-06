@@ -2698,7 +2698,7 @@ namespace Telegram.ViewModels
                             votes.Add(i);
                         }
                     }
-                    else if (item.IsChosen)
+                    else if (item.IsChosen && poll.Poll.AllowsMultipleAnswers)
                     {
                         votes.Add(i);
                     }

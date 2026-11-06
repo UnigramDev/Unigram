@@ -3761,9 +3761,8 @@ namespace Telegram.Views
 
                     var messageTask = new MessagePollOption(message, pollOption);
 
-                    if (!poll.Poll.IsClosed)
+                    if (!poll.Poll.IsClosed && poll.Poll.AllowsRevoting && (pollOption.IsChosen || poll.Poll.VoteRestrictionReason == null))
                     {
-                        // TODO:
                         pollOptionItem.CreateFlyoutItem(ViewModel.MarkPollOption, messageTask, pollOption.IsChosen ? Strings.Unvote : Strings.PollSubmitVotesNoCaps, pollOption.IsChosen ? Icons.PollUndo : Icons.CheckmarkCircle);
                     }
 
@@ -4669,7 +4668,7 @@ namespace Telegram.Views
 
         private bool MessageUnvotePoll_Loaded(MessageViewModel message)
         {
-            if ((ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread) && message.Content is MessagePoll poll && poll.Poll.Type is PollTypeRegular && poll.Poll.AllowsRevoting)
+            if ((ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread) && message.Content is MessagePoll poll && poll.Poll.AllowsRevoting)
             {
                 return poll.Poll.Options.Any(x => x.IsChosen) && !poll.Poll.IsClosed;
             }
