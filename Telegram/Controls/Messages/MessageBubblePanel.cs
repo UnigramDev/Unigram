@@ -24,6 +24,10 @@ namespace Telegram.Controls.Messages
 
         private Size _margin;
 
+        // Taken off the box of a last line that reads against the flow, which would otherwise
+        // sit at the far edge of it, under the footer.
+        private double _textInset;
+
         // The children, found by one method rather than by the same index arithmetic written
         // out in both passes. The template declares text, media and footer in that order; a
         // fact check or a summary is inserted in front of them from code behind and the
@@ -100,13 +104,23 @@ namespace Telegram.Controls.Messages
             // block inside the media, so it is the article that has to widen.
             var footerTarget = _text.DesiredSize.Width;
 
+            _textInset = 0;
+
             if (_reactions != null && _reactions.HasReactions)
             {
                 _margin = new Size(0, 0);
             }
             else if (_textRow == _footerRow && _text.Children.Count > 0)
             {
-                _margin = Margins(availableSize.Width, 0, _text.DesiredSize.Width, _text.Children[^1] as ITextPresenter, _footer);
+                var last = _text.Children[^1] as ITextPresenter;
+
+                // Only a message of one block can move it: the blocks above must keep their width.
+                _margin = Margins(availableSize.Width, 0, _text.DesiredSize.Width, last, _footer, _text.Children.Count == 1);
+
+                if (last is { ContentAgainstFlow: true })
+                {
+                    _textInset = _margin.Width;
+                }
             }
             else if (_mediaRow == _footerRow)
             {
@@ -117,7 +131,7 @@ namespace Telegram.Controls.Messages
                 if (rich.LastBlock is ITextPresenter lastBlock)
                 {
                     footerTarget = _media.DesiredSize.Width;
-                    _margin = Margins(availableSize.Width, LeftInset(lastBlock as FrameworkElement, _media), footerTarget, lastBlock, _footer);
+                    _margin = Margins(availableSize.Width, LeftInset(lastBlock as FrameworkElement, _media), footerTarget, lastBlock, _footer, false);
                 }
                 else
                 {
@@ -163,7 +177,7 @@ namespace Telegram.Controls.Messages
 
             if (_textRow < _mediaRow)
             {
-                _text.Arrange(new Rect(0, 0, finalSize.Width, _text.DesiredSize.Height));
+                _text.Arrange(new Rect(0, 0, finalSize.Width - _textInset, _text.DesiredSize.Height));
 
                 if (_factCheck != null)
                 {
@@ -178,7 +192,7 @@ namespace Telegram.Controls.Messages
             else
             {
                 _media.Arrange(new Rect(0, 0, finalSize.Width, _media.DesiredSize.Height));
-                _text.Arrange(new Rect(0, _media.DesiredSize.Height, finalSize.Width, _text.DesiredSize.Height));
+                _text.Arrange(new Rect(0, _media.DesiredSize.Height, finalSize.Width - _textInset, _text.DesiredSize.Height));
 
                 _factCheck?.Arrange(new Rect(0, _media.DesiredSize.Height + _text.DesiredSize.Height, finalSize.Width, _factCheck.DesiredSize.Height));
             }
@@ -270,11 +284,15 @@ namespace Telegram.Controls.Messages
         /// whole text for a plain message, the whole article for a rich one, where the last line
         /// belongs to a block nested inside the media.
         /// </param>
+        /// <param name="canInset">
+        /// Whether the caller can keep the text's box clear of the footer, without which a last
+        /// line reading against the flow cannot share.
+        /// </param>
         /// <remarks>
         /// The last block of the text, whichever engine rendered it: both can say where their last
         /// line ends, and that is all this needs to know.
         /// </remarks>
-        private Size Margins(double availableWidth, double left, double width, ITextPresenter text, MessageFooter footer)
+        private Size Margins(double availableWidth, double left, double width, ITextPresenter text, MessageFooter footer, bool canInset)
         {
             var marginLeft = 0d;
             var marginBottom = 0d;
@@ -296,7 +314,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 var contentEnd = text.ContentEnd();
-                if (contentEnd == -1)
+                if (contentEnd == -1 || (text.ContentAgainstFlow && !canInset))
                 {
                     return new Size(0, fontSize * 1.33);
                 }

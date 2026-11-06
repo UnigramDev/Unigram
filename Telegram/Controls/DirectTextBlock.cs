@@ -1566,8 +1566,9 @@ namespace Telegram.Controls
             }
         }
 
-        // Used to decide whether or not MessageBubblePanel should reserve a line for the footer
-        private bool _bottomPadding;
+        private bool _contentAgainstFlow;
+
+        public bool ContentAgainstFlow => _contentAgainstFlow;
 
         /// <summary>
         /// The X where the last line of text ends, for a caller placing something beside it -
@@ -1575,9 +1576,13 @@ namespace Telegram.Controls
         /// </summary>
         public float ContentEnd()
         {
-            if (_bottomPadding)
+            if (_contentAgainstFlow)
             {
-                return -1;
+                // Wrapped, its last line ends away from where the footer can go. Alone, it takes
+                // the width the block measured to, wherever the last arrange happened to put it.
+                return Layout().LineCount == 1
+                    ? (float)Math.Max(0, DesiredSize.Width - Margin.Left - Margin.Right)
+                    : -1;
             }
 
             return (float)(Layout().ContentEnd().X + _contentLeft);
@@ -2372,7 +2377,7 @@ namespace Telegram.Controls
                         _ => locale
                     };
 
-                    _bottomPadding = direction != locale;
+                    _contentAgainstFlow = direction != locale;
                 }
             }
 

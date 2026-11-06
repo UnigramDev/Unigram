@@ -342,6 +342,9 @@ namespace Telegram.Controls
         public StyledText Text => _text;
 
         private bool _bottomPadding;
+        private bool _contentAgainstFlow;
+
+        public bool ContentAgainstFlow => _contentAgainstFlow;
 
         private bool _hasCodeBlocks;
         public bool HasCodeBlocks
@@ -578,6 +581,12 @@ namespace Telegram.Controls
             if (_first == _last && DesiredSize.Height - margin.Top - margin.Bottom - padding.Top - padding.Bottom < fontSize * 2)
             {
                 return (float)Math.Max(0, DesiredSize.Width - margin.Left - margin.Right - padding.Left - padding.Right);
+            }
+
+            // Wrapped against the flow, its last line ends away from where the footer can go.
+            if (_contentAgainstFlow)
+            {
+                return -1;
             }
 
             var paragraph = _text.Paragraphs[_last];
@@ -1534,6 +1543,13 @@ namespace Telegram.Controls
                     if (_direction != prevDirection)
                     {
                         direct.SetEnumProperty(_fastRun, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
+
+                        // The paragraph is still aligned for the text before this one. None to
+                        // align when the run lives in the inlines span.
+                        if (_activeParagraphs.Count > 0 && TextAlignment == TextAlignment.DetectFromContent)
+                        {
+                            direct.SetEnumProperty(_activeParagraphs[0], XamlPropertyIndex.Block_TextAlignment, (uint)(direction == TextBlock.FlowDirection ? TextAlignment.Left : TextAlignment.Right));
+                        }
                     }
 
                     // TODO: the if check is not correct here, as it should compare between computed sizes
@@ -1559,7 +1575,8 @@ namespace Telegram.Controls
                 // Plain text has no spoiler/cached/marked; only the query may apply.
                 ApplyHighlighters();
 
-                _bottomPadding = direction != locale;
+                _bottomPadding = false;
+                _contentAgainstFlow = direction != locale;
 
                 if (!_skeletonCollapsed)
                 {
@@ -2227,6 +2244,7 @@ namespace Telegram.Controls
             ApplyHighlighters();
 
             var bottomPadding = false;
+            var againstFlow = false;
 
             if (_spanForInlines == null)
             {
@@ -2239,14 +2257,13 @@ namespace Telegram.Controls
                         _ => locale
                     };
 
-                    if (direction != locale || lastType is not null)
-                    {
-                        bottomPadding = true;
-                    }
+                    againstFlow = direction != locale;
+                    bottomPadding = lastType is not null;
                 }
             }
 
             _bottomPadding = bottomPadding;
+            _contentAgainstFlow = againstFlow;
 
             if (spoilerChanged || !_skeletonCollapsed)
             {

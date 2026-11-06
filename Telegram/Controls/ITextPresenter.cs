@@ -36,5 +36,12 @@ namespace Telegram.Controls
         void SetText(IClientService clientService, RichText text);
 
         float ContentEnd();
+
+        /// <summary>
+        /// The last line reads against the app's direction, so it sits at the far edge of whatever
+        /// box the block is arranged in. To share that line, the caller has to keep the box clear
+        /// of what it places beside it.
+        /// </summary>
+        bool ContentAgainstFlow { get; }
     }
 }
