@@ -30,10 +30,11 @@ namespace winrt::Telegram::Native::Media::implementation
         constexpr double kMinGap = 0.02;
         constexpr double kMaxGap = 60;
 
-        // Matroska stores timestamps to the millisecond, which puts a packet up to half of one
-        // before where the previous ended. Closer than this it follows on, rather than lose the
-        // samples that overlap, which is heard as a click.
-        constexpr double kJitter = 0.005;
+        // Timestamps are coarser than the samples: Matroska's are whole milliseconds, and phones can
+        // stamp 21.3 ms AAC frames on a 20 ms grid, which puts a packet up to a whole step before
+        // where the previous ended. Closer than this it follows on, rather than lose the samples
+        // that overlap, which is heard as a click.
+        constexpr double kJitter = 0.05;
 
         // How often XAudio2 moves SamplesPlayed on.
         constexpr double kPass = 0.01;
