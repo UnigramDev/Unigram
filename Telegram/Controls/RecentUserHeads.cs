@@ -418,9 +418,12 @@ namespace Telegram.Controls
 
         // TODO: properly implement measure and arrange overrides
 
+        // A head leaving is kept on screen until its animation ends, and the count that follows
+        // must not slide under it: the width is taken from what is still on screen, and settles
+        // only when the leaving heads go, which the batch that removes them already measures for.
         protected override Size MeasureOverride(Size availableSize)
         {
-            var count = Math.Min(_maxCount, _items.Count);
+            var count = Math.Min(_maxCount, Math.Max(_items.Count, LayoutRoot?.Children.Count ?? 0));
             var width = count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap);
 
             base.MeasureOverride(availableSize);
