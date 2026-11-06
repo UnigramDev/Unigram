@@ -18,6 +18,7 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Gallery;
+using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -27,9 +28,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
-#if !WINUI3
-using ProgressBar = Windows.UI.Xaml.Controls.ProgressBar;
-#endif
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -58,8 +56,8 @@ namespace Telegram.Controls.Messages.Content
         private RecentUserHeads RecentVoters;
         private HyperlinkButton Media;
         private Border Tick;
-        private Ellipse Zero;
-        private ProgressBar Votes;
+        private Border Votes;
+        private Rectangle VotesIndicator;
         private Border VotesLine;
         private Border CheckmarkIcon;
 
@@ -73,8 +71,8 @@ namespace Telegram.Controls.Messages.Content
             Percentage = GetTemplateChild(nameof(Percentage)) as TextBlock;
             TextText = GetTemplateChild(nameof(TextText)) as FormattedTextBlock;
             Tick = GetTemplateChild(nameof(Tick)) as Border;
-            Zero = GetTemplateChild(nameof(Zero)) as Ellipse;
-            Votes = GetTemplateChild(nameof(Votes)) as ProgressBar;
+            Votes = GetTemplateChild(nameof(Votes)) as Border;
+            VotesIndicator = GetTemplateChild(nameof(VotesIndicator)) as Rectangle;
             VotesLine = GetTemplateChild(nameof(VotesLine)) as Border;
             CheckmarkIcon = GetTemplateChild(nameof(CheckmarkIcon)) as Border;
 
@@ -176,6 +174,8 @@ namespace Telegram.Controls.Messages.Content
                     RecentVoters.RecentUserHeadChanged += RecentVoters_RecentUserHeadChanged;
                 }
 
+                RecentVotersRoot.Visibility = Visibility.Visible;
+
                 var destination = RecentVoters.Items;
                 var origin = option.RecentVoterIds;
 
@@ -197,10 +197,16 @@ namespace Telegram.Controls.Messages.Content
 
             UpdatePollOptionMedia(message, poll, option);
 
-            Zero.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
+            if (results)
+            {
+                float maximum = Math.Max(poll.Options.Max(x => x.VoterCount), 1);
+                UpdateVotes(option.VoterCount / maximum, recycled);
+            }
+            else
+            {
+                UpdateVotes(0, recycled);
+            }
 
-            Votes.Maximum = results ? Math.Max(poll.Options.Max(x => x.VoterCount), 1) : 1;
-            Votes.Value = results ? option.VoterCount : 0;
             Votes.Opacity = results ? 1 : 0;
             VotesLine.Opacity = results ? 0 : 0.3;
 
@@ -246,6 +252,49 @@ namespace Telegram.Controls.Messages.Content
             _messageId = message.Id;
             _optionId = optionId;
             _chosen = option.IsChosen;
+        }
+
+        private float _votesProgress = -1;
+
+        // The indicator stays as wide as the track and slides out of its rounded clip: scaling it
+        // would flatten the rounded end of a short bar. 2 pixels always stay in, so an option
+        // with no votes still shows a mark.
+        private void UpdateVotes(float progress, bool animate)
+        {
+            if (_votesProgress == progress)
+            {
+                return;
+            }
+
+            var visual = ElementComposition.GetElementVisual(VotesIndicator);
+            var properties = visual.Properties;
+
+            if (_votesProgress < 0)
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(VotesIndicator, true);
+
+                var translation = visual.Compositor.CreateExpressionAnimation("Vector3(Max((_.Progress - 1) * this.Target.Size.X, 2 - this.Target.Size.X), 0, 0)");
+                translation.SetReferenceParameter("_", properties);
+
+                properties.InsertScalar("Progress", progress);
+                visual.StartAnimation("Translation", translation);
+            }
+            else if (animate)
+            {
+                var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(1, progress);
+                animation.Duration = Constants.SoftAnimation;
+
+                properties.StartAnimation("Progress", animation);
+            }
+            else
+            {
+                // A write does not override an animation still running on the property.
+                properties.StopAnimation("Progress");
+                properties.InsertScalar("Progress", progress);
+            }
+
+            _votesProgress = progress;
         }
 
         private void RecentVoters_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
@@ -524,5 +573,70 @@ namespace Telegram.Controls.Messages.Content
         }
 
         #endregion
+    }
+
+    // The recent voters share the last line of the text when they fit beside it, and take a line
+    // of their own when they do not.
+    public partial class PollOptionTextPanel : Panel
+    {
+        private double _votersTop;
+
+        // Taken off the box of a line that reads against the flow, which would otherwise sit at
+        // the far edge of it, under the voters.
+        private double _textInset;
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var text = Children[0] as FormattedTextBlock;
+            text.Measure(availableSize);
+
+            var width = text.DesiredSize.Width;
+            var height = text.DesiredSize.Height;
+
+            _textInset = 0;
+
+            // x:Load keeps the voters out of Children until an option first has some.
+            if (Children.Count > 1 && Children[1].Visibility == Visibility.Visible)
+            {
+                var voters = Children[1];
+                voters.Measure(availableSize);
+
+                // Negative when the last line cannot be shared, whatever the room beside it.
+                var contentEnd = text.ContentEnd();
+                var votersEnd = contentEnd + voters.DesiredSize.Width;
+
+                if (contentEnd >= 0 && votersEnd <= availableSize.Width)
+                {
+                    width = Math.Max(width, votersEnd);
+
+                    if (text.ContentAgainstFlow)
+                    {
+                        _textInset = voters.DesiredSize.Width;
+                    }
+                }
+                else
+                {
+                    height += voters.DesiredSize.Height;
+                }
+
+                _votersTop = height - text.Margin.Bottom - voters.DesiredSize.Height;
+            }
+
+            return new Size(width, height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var text = Children[0];
+            text.Arrange(new Rect(0, 0, finalSize.Width - _textInset, text.DesiredSize.Height));
+
+            if (Children.Count > 1)
+            {
+                var voters = Children[1];
+                voters.Arrange(new Rect(finalSize.Width - voters.DesiredSize.Width, _votersTop, voters.DesiredSize.Width, voters.DesiredSize.Height));
+            }
+
+            return finalSize;
+        }
     }
 }
