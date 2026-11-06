@@ -1018,7 +1018,8 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            if (story.CanBeReplied)
+            // Your own story can be replied to, in Saved Messages, but not reacted to.
+            if (story.CanBeReplied && !activeStories.IsMyStory)
             {
                 flyout.Opened += async (s, args) =>
                 {
