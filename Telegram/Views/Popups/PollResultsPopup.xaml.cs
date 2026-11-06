@@ -55,7 +55,6 @@ namespace Telegram.Views.Popups
                 var content = button.Content as ProfileCell;
 
                 content.UpdatePollVoter(_clientService, pollVoter);
-                button.Click += User_Click;
 
                 if (_clientService.TryGetUser(pollVoter.VoterId, out User user))
                 {
@@ -87,13 +86,13 @@ namespace Telegram.Views.Popups
 
         private void User_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is MessageSender messageSender)
+            if (sender is Button button && button.DataContext is PollVoter voter)
             {
-                if (messageSender is MessageSenderUser user)
+                if (voter.VoterId is MessageSenderUser user)
                 {
                     _delegate.OpenUser(user.UserId);
                 }
-                else if (messageSender is MessageSenderChat chat)
+                else if (voter.VoterId is MessageSenderChat chat)
                 {
                     _delegate.OpenChat(chat.ChatId, true);
                 }

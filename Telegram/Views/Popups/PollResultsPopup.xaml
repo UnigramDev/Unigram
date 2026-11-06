@@ -64,7 +64,8 @@
                                                     Grid.Row="1">
                                     <muxc:ItemsRepeater.ItemTemplate>
                                         <DataTemplate>
-                                            <Button Style="{StaticResource ListEmptyButtonStyle}"
+                                            <Button Click="User_Click"
+                                                    Style="{StaticResource ListEmptyButtonStyle}"
                                                     BorderBrush="Transparent"
                                                     BorderThickness="2"
                                                     CornerRadius="4"
