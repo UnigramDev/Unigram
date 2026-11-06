@@ -40,6 +40,7 @@ namespace Telegram.Views.Popups
         private readonly CreatePollViewModel _viewModel;
 
         private IList<CountryInfo> _countryCodes = [];
+        private int _openPeriod = 24 * 60 * 60;
 
         public CreatePollPopup(IClientService clientService, INavigationService navigationService, FormattedText question, bool forceQuiz, bool forceRegular, bool channel)
         {
@@ -70,30 +71,16 @@ namespace Telegram.Views.Popups
 
             Duration.Badge = Locale.Declension(Strings.R.Hours, 24);
 
-            //if (forceQuiz)
-            //{
-            //    Quiz.IsChecked = true;
-            //    Quiz.Visibility = Visibility.Collapsed;
-            //    Multiple.Visibility = Visibility.Collapsed;
-            //    Settings.Footer = string.Empty;
-            //}
-            //else if (forceRegular)
-            //{
-            //    Quiz.IsChecked = false;
-            //    Quiz.Visibility = Visibility.Collapsed;
-            //    Settings.Footer = string.Empty;
-            //}
-
-            //if (forceAnonymous)
-            //{
-            //    Anonymous.IsChecked = true;
-            //    Anonymous.Visibility = Visibility.Collapsed;
-            //}
-            //else
-            //{
-            //    Anonymous.IsChecked = true;
-            //    Anonymous.Visibility = Visibility.Visible;
-            //}
+            if (forceQuiz)
+            {
+                Quiz.IsChecked = true;
+                Quiz.Visibility = Visibility.Collapsed;
+            }
+            else if (forceRegular)
+            {
+                Quiz.IsChecked = false;
+                Quiz.Visibility = Visibility.Collapsed;
+            }
 
             if (channel)
             {
@@ -116,32 +103,55 @@ namespace Telegram.Views.Popups
             get
             {
                 var question = QuestionText.GetFormattedText();
-                var options = Items.Where(x => !string.IsNullOrWhiteSpace(x.Text.Text)).Select(x => new InputPollOption(x.Text, null)).ToVector();
+                MutableVector<InputPollOption> options = [];
+                MutableVector<int> correct = [];
+
+                foreach (var item in Items)
+                {
+                    if (string.IsNullOrWhiteSpace(item.Text.Text))
+                    {
+                        continue;
+                    }
+
+                    // Indexes into the options that get sent, which leave out the blank ones.
+                    if (item.IsChecked)
+                    {
+                        correct.Add(options.Count);
+                    }
+
+                    options.Add(new InputPollOption(item.Text, null));
+                }
+
                 var description = DescriptionText.GetFormattedText();
                 var media = default(InputPollMedia);
                 var isAnonymous = IsAnonymous.IsChecked == false;
                 var allowsMultipleAnswers = AllowsMultipleAnswers.IsChecked == true;
                 var allowsRevoting = AllowsRevoting.IsChecked == true;
                 var membersOnly = MembersOnly.IsChecked == true;
-                var countryCodes = _countryCodes.Select(x => x.CountryCode).ToVector();
                 var shuffleOptions = ShuffleOptions.IsChecked == true;
                 var hideResultsUntilCloses = LimitDuration.IsChecked == true && HideResults.IsChecked == true;
-                var openPeriod = 0;
+                var openPeriod = LimitDuration.IsChecked == true ? _openPeriod : 0;
                 var closeDate = 0;
+
+                // The selection stays when the toggle is turned off, and only counts while it's on.
+                MutableVector<string> countryCodes = [];
+
+                if (CountriesOnly.IsChecked == true)
+                {
+                    foreach (var country in _countryCodes)
+                    {
+                        countryCodes.Add(country.CountryCode);
+                    }
+                }
 
                 InputPollType type;
                 if (Quiz.IsChecked == true)
                 {
-                    MutableVector<int> correct = [];
-                    for (int i = 0; i < Items.Count; i++)
-                        if (Items[i].IsChecked)
-                            correct.Add(i);
-
                     type = new InputPollTypeQuiz(correct, QuizExplanation.GetFormattedText(), null);
                 }
                 else
                 {
-                    type = new InputPollTypeRegular(AllowsMultipleAnswers.IsChecked == true);
+                    type = new InputPollTypeRegular(AllowsAddingOptions.IsChecked == true);
                 }
 
                 return new InputMessagePoll(question, options, description, media, isAnonymous, allowsMultipleAnswers, allowsRevoting, membersOnly, countryCodes, shuffleOptions, hideResultsUntilCloses, type, openPeriod, closeDate);
@@ -168,11 +178,11 @@ namespace Telegram.Views.Popups
         private void UpdatePrimaryButton()
         {
             var condition = !QuestionText.IsEmpty;
-            condition = condition && Items.Count(x => !string.IsNullOrEmpty(x.Text.Text)) >= 2;
+            condition = condition && Items.Count(x => !string.IsNullOrWhiteSpace(x.Text.Text)) >= 2;
 
             if (Quiz.IsChecked == true)
             {
-                condition = condition && Items.Count(x => x.IsChecked) == 1;
+                condition = condition && Items.Any(x => x.IsChecked && !string.IsNullOrWhiteSpace(x.Text.Text));
             }
 
             IsPrimaryButtonEnabled = condition;
@@ -217,9 +227,18 @@ namespace Telegram.Views.Popups
         {
             if (sender is CheckBox check && check.DataContext is PollOptionViewModel option)
             {
+                var exclusive = AllowsMultipleAnswers.IsChecked != true;
+
                 foreach (var item in Items)
                 {
-                    item.IsChecked = item == option;
+                    if (item == option)
+                    {
+                        item.IsChecked = true;
+                    }
+                    else if (exclusive)
+                    {
+                        item.IsChecked = false;
+                    }
                 }
             }
 
@@ -389,20 +408,59 @@ namespace Telegram.Views.Popups
 
         private void Multiple_Toggled(object sender, RoutedEventArgs e)
         {
-            //if (Multiple.IsChecked == true)
-            //{
-            //    Quiz.IsChecked = false;
-            //}
+            // IsChecked is set in XAML, and this can be raised during InitializeComponent.
+            if (Items == null)
+            {
+                return;
+            }
+
+            if (AllowsMultipleAnswers.IsChecked != true)
+            {
+                var found = false;
+
+                foreach (var item in Items)
+                {
+                    if (item.IsChecked)
+                    {
+                        item.IsChecked = !found;
+                        found = true;
+                    }
+                }
+            }
+
+            UpdatePrimaryButton();
+        }
+
+        private void IsAnonymous_Toggled(object sender, RoutedEventArgs e)
+        {
+            // IsChecked is set in XAML, and this can be raised during InitializeComponent.
+            if (Items != null)
+            {
+                UpdateAllowsAddingOptions();
+            }
+        }
+
+        private void UpdateAllowsAddingOptions()
+        {
+            // IsAnonymous being checked means showing who voted, so the poll is not anonymous.
+            var allowed = IsAnonymous.IsChecked == true && Quiz.IsChecked != true;
+
+            AllowsAddingOptions.IsEnabled = allowed;
+
+            if (!allowed)
+            {
+                AllowsAddingOptions.IsChecked = false;
+            }
         }
 
         private void Quiz_Toggled(object sender, RoutedEventArgs e)
         {
             QuizSettings.Visibility = Quiz.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
 
-            //if (Quiz.IsChecked == true)
-            //{
-            //    Multiple.IsChecked = false;
-            //}
+            if (Quiz.IsChecked == true)
+            {
+                AllowsRevoting.IsChecked = false;
+            }
 
             foreach (var item in Items)
             {
@@ -412,6 +470,7 @@ namespace Telegram.Views.Popups
 
             AddAnOption.Margin = new Thickness(Quiz.IsChecked == true ? 28 + 24 : 24, 8, 24, 0);
 
+            UpdateAllowsAddingOptions();
             UpdatePrimaryButton();
         }
 
@@ -487,7 +546,20 @@ namespace Telegram.Views.Popups
 
         private void Duration_Click(object sender, RoutedEventArgs e)
         {
+            var flyout = new MenuFlyout();
 
+            foreach (var hours in new[] { 1, 3, 8, 24, 72 })
+            {
+                flyout.CreateFlyoutItem(SetDuration, hours, Locale.Declension(Strings.R.Hours, hours));
+            }
+
+            flyout.ShowAt(Duration, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void SetDuration(int hours)
+        {
+            _openPeriod = hours * 60 * 60;
+            Duration.Badge = Locale.Declension(Strings.R.Hours, hours);
         }
     }
 

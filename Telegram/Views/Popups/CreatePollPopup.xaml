@@ -799,6 +799,8 @@
 
                 <StackPanel Margin="24,0">
                     <CheckBox x:Name="IsAnonymous"
+                              Checked="IsAnonymous_Toggled"
+                              Unchecked="IsAnonymous_Toggled"
                               IsChecked="True"
                               Style="{StaticResource FlippedCheckBoxStyle}"
                               Margin="0,12,0,0">
