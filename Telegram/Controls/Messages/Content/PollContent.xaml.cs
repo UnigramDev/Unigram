@@ -9,6 +9,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Native.Controls;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -26,6 +27,15 @@ namespace Telegram.Controls.Messages.Content
         private DispatcherTimer _timeoutTimer;
         private bool _runningOut;
 
+        private bool _canVote;
+        private bool _canPreview;
+        private bool _canViewVotes;
+        private bool _showPreview;
+        private bool _resultsHidden;
+        private bool _awaitingVote;
+        private bool _botChat;
+        private bool _showClock;
+
         public PollContent(MessageViewModel message)
         {
             _message = message;
@@ -33,10 +43,27 @@ namespace Telegram.Controls.Messages.Content
             DefaultStyleKey = typeof(PollContent);
         }
 
+        protected override void OnLoaded()
+        {
+            if (_templateApplied && _message?.Content is MessagePoll poll)
+            {
+                UpdateTimeout(poll.Poll);
+            }
+        }
+
         protected override void OnUnloaded()
         {
-            _timeoutTimer?.Stop();
-            _timeoutTimer = null;
+            StopTimeoutTimer();
+        }
+
+        private void StopTimeoutTimer()
+        {
+            if (_timeoutTimer != null)
+            {
+                _timeoutTimer.Stop();
+                _timeoutTimer.Tick -= TimeoutTimer_Tick;
+                _timeoutTimer = null;
+            }
         }
 
         #region InitializeComponent
@@ -54,6 +81,8 @@ namespace Telegram.Controls.Messages.Content
         private TextBlock Votes;
         private Button Submit;
         private Button View;
+        private TextBlock ViewText;
+        private TextBlock EndsIn;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -71,6 +100,8 @@ namespace Telegram.Controls.Messages.Content
             Votes = GetTemplateChild(nameof(Votes)) as TextBlock;
             Submit = GetTemplateChild(nameof(Submit)) as Button;
             View = GetTemplateChild(nameof(View)) as Button;
+            ViewText = GetTemplateChild(nameof(ViewText)) as TextBlock;
+            EndsIn = GetTemplateChild(nameof(EndsIn)) as TextBlock;
 
             Description.TextEntityClick += QuestionText_TextEntityClick;
             QuestionText.TextEntityClick += QuestionText_TextEntityClick;
@@ -101,39 +132,59 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var results = poll.Poll.IsClosed || poll.Poll.Options.Any(x => x.IsChosen);
+            var pollOptions = poll.Poll.Options;
+            var voted = false;
+            var beingChosen = false;
+            var maximum = 0;
 
-            if (poll.Poll.Type is PollTypeQuiz && poll.Poll.CloseDate != 0 && !results)
+            for (int i = 0; i < pollOptions.Count; i++)
             {
-                var now = DateTime.Now.ToUnixTimeSeconds();
-
-                var diff = poll.Poll.CloseDate - now;
-                if (diff > 0)
-                {
-                    TimeoutLabel.Visibility = Visibility.Visible;
-                    Timeout.Text = TimeSpan.FromSeconds(diff).ToString("m\\:ss");
-
-                    if (_timeoutTimer == null)
-                    {
-                        _timeoutTimer = new DispatcherTimer();
-                        _timeoutTimer.Interval = TimeSpan.FromSeconds(1);
-                        _timeoutTimer.Tick += TimeoutTimer_Tick;
-                    }
-
-                    _timeoutTimer.Stop();
-                    _timeoutTimer.Start();
-                }
-                else
-                {
-                    _timeoutTimer?.Stop();
-                    TimeoutLabel.Visibility = Visibility.Collapsed;
-                }
+                var option = pollOptions[i];
+                voted |= option.IsChosen;
+                beingChosen |= option.IsBeingChosen;
+                maximum = Math.Max(maximum, option.VoterCount);
             }
-            else
+
+            var closed = poll.Poll.IsClosed;
+            var total = poll.Poll.TotalVoterCount;
+            var restricted = poll.Poll.VoteRestrictionReason is PollVoteRestrictionReasonCountryRestricted or PollVoteRestrictionReasonMembershipRequired;
+
+            _canVote = !voted && !closed && poll.Poll.VoteRestrictionReason == null;
+
+            // Only the creator gets here: the rest either voted, are restricted, or can't see results.
+            _canPreview = !voted && !closed && !restricted && poll.Poll.CanSeeResults && total > 0;
+            _canViewVotes = poll.Poll.CanGetVoters && total > 0 && (voted || closed);
+
+            if (!recycled || !_canPreview)
             {
-                _timeoutTimer?.Stop();
-                TimeoutLabel.Visibility = Visibility.Collapsed;
+                _showPreview = false;
             }
+
+            // CanSeeResults is also true for the creator before voting and, whether or not the
+            // poll hides its results, for a restricted user. A hidden poll sends that user a total
+            // and no per-option counts, which is the only way to tell the two apart.
+            var showResults = closed
+                || _showPreview
+                || (voted && poll.Poll.CanSeeResults)
+                || (restricted && (maximum > 0 || total == 0));
+
+            // Until the answer is saved a chosen option is still being chosen and CanSeeResults is
+            // false on every poll, so this would otherwise be true for a moment after any vote.
+            var resultsHidden = voted && !closed && !beingChosen && !poll.Poll.CanSeeResults;
+
+            // The first render counts as recycled, because the constructor already set _message:
+            // without this, a poll voted long ago would show the toast whenever it scrolls in.
+            if (resultsHidden && _awaitingVote && recycled)
+            {
+                message.Delegate.NavigationService.ShowToast(Strings.PollResultsWillLater, ToastPopupIcon.Info);
+            }
+
+            _awaitingVote = !voted || beingChosen;
+            _resultsHidden = resultsHidden;
+            _botChat = message.ClientService.TryGetUser(message.Chat, out User user) && user.Type is UserTypeBot;
+            _showClock = _botChat && poll.Poll.Type is PollTypeQuiz && !voted && !closed;
+
+            UpdateTimeout(poll.Poll);
 
             UpdateMedia(message, poll);
 
@@ -150,92 +201,59 @@ namespace Telegram.Controls.Messages.Content
                 ? Strings.NoVotesQuiz
                 : Strings.NoVotes;
 
-            if (poll.Poll.Type is PollTypeRegular reg)
+            var quiz = poll.Poll.Type as PollTypeQuiz;
+
+            Type.Text = closed
+                ? Strings.FinalResults
+                : quiz != null
+                ? poll.Poll.IsAnonymous ? Strings.AnonymousQuizPoll : Strings.QuizPoll
+                : poll.Poll.IsAnonymous ? Strings.AnonymousPoll : Strings.PublicPoll;
+
+            Explanation.Visibility = (voted || showResults) && !string.IsNullOrEmpty(quiz?.Explanation.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            var order = poll.Poll.OptionOrder;
+            var shuffled = order.Count == pollOptions.Count;
+
+            var canVote = _canVote && !_showPreview;
+
+            for (int i = 0; i < pollOptions.Count; i++)
             {
-                Type.Text = poll.Poll.IsClosed ? Strings.FinalResults : poll.Poll.IsAnonymous ? Strings.AnonymousPoll : Strings.PublicPoll;
-                View.Visibility = results && poll.Poll.TotalVoterCount > 0 && !poll.Poll.IsAnonymous
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-                Submit.Visibility = !results && poll.Poll.AllowsMultipleAnswers
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-                Explanation.Visibility = Visibility.Collapsed;
-            }
-            else if (poll.Poll.Type is PollTypeQuiz quiz)
-            {
-                Type.Text = poll.Poll.IsClosed ? Strings.FinalResults : poll.Poll.IsAnonymous ? Strings.AnonymousQuizPoll : Strings.QuizPoll;
-                View.Visibility = results && poll.Poll.TotalVoterCount > 0 && !poll.Poll.IsAnonymous
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-                Submit.Visibility = Visibility.Collapsed;
-                Explanation.Visibility = results && !string.IsNullOrEmpty(quiz.Explanation?.Text)
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-            }
+                PollOptionContent button;
 
-            Votes.Visibility = View.Visibility == Visibility.Collapsed
-                && Submit.Visibility == Visibility.Collapsed
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-
-            Submit.IsEnabled = false;
-            //Options.Children.Clear();
-
-            //foreach (var option in poll.Poll.Options)
-            //{
-            //    var button = new PollOptionControl();
-            //    button.Click += Option_Click;
-            //    button.UpdatePollOption(poll.Poll, option);
-
-            //    Options.Children.Add(button);
-            //}
-
-            for (int i = 0; i < Math.Max(poll.Poll.Options.Count, Options.Children.Count); i++)
-            {
                 if (i < Options.Children.Count)
                 {
-                    var button = Options.Children[i] as PollOptionContent;
-                    button.Click -= Option_Click;
-                    button.Checked -= Option_Toggled;
-                    button.Unchecked -= Option_Toggled;
-
-                    if (i < poll.Poll.Options.Count)
-                    {
-                        button.UpdatePollOption(message, poll.Poll, poll.Poll.Options[i]);
-
-                        if (poll.Poll.AllowsMultipleAnswers && poll.Poll.VoteRestrictionReason == null)
-                        {
-                            button.Checked += Option_Toggled;
-                            button.Unchecked += Option_Toggled;
-                        }
-                        else
-                        {
-                            button.Click += Option_Click;
-                        }
-                    }
-                    else
-                    {
-                        Options.Children.Remove(button);
-                    }
+                    button = Options.Children[i] as PollOptionContent;
+                    DetachOption(button);
                 }
                 else
                 {
-                    var button = new PollOptionContent();
-                    button.UpdatePollOption(message, poll.Poll, poll.Poll.Options[i]);
-
-                    if (poll.Poll.AllowsMultipleAnswers && poll.Poll.VoteRestrictionReason == null)
-                    {
-                        button.Checked += Option_Toggled;
-                        button.Unchecked += Option_Toggled;
-                    }
-                    else
-                    {
-                        button.Click += Option_Click;
-                    }
-
+                    button = new PollOptionContent();
                     Options.Children.Add(button);
                 }
+
+                button.UpdatePollOption(message, poll.Poll, pollOptions[shuffled ? order[i] : i], canVote, showResults, maximum);
+
+                if (poll.Poll.AllowsMultipleAnswers && poll.Poll.VoteRestrictionReason == null)
+                {
+                    button.Checked += Option_Toggled;
+                    button.Unchecked += Option_Toggled;
+                }
+                else
+                {
+                    button.Click += Option_Click;
+                }
             }
+
+            for (int i = Options.Children.Count - 1; i >= pollOptions.Count; i--)
+            {
+                DetachOption(Options.Children[i] as PollOptionContent);
+                Options.Children.RemoveAt(i);
+            }
+
+            // Reads the options' checked state, so it has to follow them.
+            UpdateFooter(poll.Poll);
 
             var destination = RecentVoters.Items;
             var origin = poll.Poll.RecentVoterIds;
@@ -250,6 +268,128 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        private void DetachOption(PollOptionContent button)
+        {
+            button.Click -= Option_Click;
+            button.Checked -= Option_Toggled;
+            button.Unchecked -= Option_Toggled;
+        }
+
+        private void UpdateFooter(Poll poll)
+        {
+            var total = poll.TotalVoterCount;
+            var submit = poll.AllowsMultipleAnswers && _canVote && !_showPreview;
+            var hasChecked = false;
+
+            if (submit)
+            {
+                for (int i = 0; i < Options.Children.Count; i++)
+                {
+                    if (Options.Children[i] is PollOptionContent { IsChecked: true })
+                    {
+                        hasChecked = true;
+                        break;
+                    }
+                }
+            }
+
+            string view = null;
+
+            if (_canPreview && !(submit && hasChecked))
+            {
+                submit = false;
+                view = poll.CanGetVoters
+                    ? string.Format(Strings.PollViewVotesX, total)
+                    : _showPreview
+                    ? Strings.PollViewBack
+                    : Locale.Declension(Strings.R.PollViewVotesAsAdmin, total);
+            }
+            else if (!submit && _canViewVotes)
+            {
+                view = string.Format(Strings.PollViewVotesX, total);
+            }
+
+            if (view != null)
+            {
+                ViewText.Text = view;
+            }
+
+            View.Visibility = view != null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            Submit.Visibility = submit
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            Submit.IsEnabled = hasChecked;
+            Votes.Visibility = view == null && !submit
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        private void UpdateTimeout(Poll poll)
+        {
+            var diff = poll.CloseDate > 0 && !poll.IsClosed
+                ? poll.CloseDate - DateTime.Now.ToUnixTimeSeconds()
+                : 0;
+
+            var clock = diff > 0 && _showClock;
+            var label = diff > 0 && !_botChat;
+
+            TimeoutLabel.Visibility = clock
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            EndsIn.Visibility = label
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (clock)
+            {
+                Timeout.Text = string.Format("{0}:{1:00}", diff / 60, diff % 60);
+            }
+            else if (label)
+            {
+                var time = diff < 86400
+                    ? Formatter.Duration(diff)
+                    : Locale.Declension(Strings.R.Days, diff / 86400);
+
+                EndsIn.Text = string.Format(_resultsHidden ? Strings.PollResultsIn : Strings.PollEndsIn, time);
+            }
+
+            var runningOut = clock && diff <= 5;
+            if (runningOut != _runningOut)
+            {
+                _runningOut = runningOut;
+                VisualStateManager.GoToState(this, runningOut ? "RunningOut" : "Default", false);
+            }
+
+            // A running timer keeps this control alive, so it only runs while the control is in
+            // the tree. OnLoaded picks it up again. Above a day the text only changes once a day.
+            if ((clock || label) && IsConnected)
+            {
+                var interval = TimeSpan.FromSeconds(diff >= 86400 && !clock ? diff % 86400 + 1 : 1);
+
+                if (_timeoutTimer == null)
+                {
+                    _timeoutTimer = new DispatcherTimer();
+                    _timeoutTimer.Tick += TimeoutTimer_Tick;
+                }
+
+                if (_timeoutTimer.Interval != interval)
+                {
+                    _timeoutTimer.Interval = interval;
+                }
+
+                if (!_timeoutTimer.IsEnabled)
+                {
+                    _timeoutTimer.Start();
+                }
+            }
+            else
+            {
+                StopTimeoutTimer();
+            }
+        }
+
         public void UpdateMedia(MessageViewModel message, MessagePoll poll)
         {
             // Currently, can be only of the types messageAnimation, messageAudio, messageDocument, messageLocation, messagePhoto, messageVenue, or messageVideo without caption
@@ -258,7 +398,8 @@ namespace Telegram.Controls.Messages.Content
 
             if (Media.Child is IContent media)
             {
-                if (media.IsValid(message.Content, true))
+                // The content hosted here is not the primary one: the poll is.
+                if (media.IsValid(message.Content, false))
                 {
                     media.UpdateMessage(message);
                     return;
@@ -313,40 +454,23 @@ namespace Telegram.Controls.Messages.Content
 
         private void TimeoutTimer_Tick(object sender, object e)
         {
-            var poll = _message?.Content as MessagePoll;
-            if (poll == null)
+            if (_message?.Content is MessagePoll poll)
             {
-                _timeoutTimer?.Stop();
-                return;
-            }
-
-            var now = DateTime.Now.ToUnixTimeSeconds();
-
-            var diff = poll.Poll.CloseDate - now;
-            if (diff > 0)
-            {
-                Timeout.Text = TimeSpan.FromSeconds(diff).ToString("m\\:ss");
-
-                if (diff <= 5 && !_runningOut)
-                {
-                    _runningOut = true;
-                    VisualStateManager.GoToState(this, "RunningOut", false);
-                }
-                else if (diff > 5 && _runningOut)
-                {
-                    _runningOut = false;
-                    VisualStateManager.GoToState(this, "Default", false);
-                }
+                UpdateTimeout(poll.Poll);
             }
             else
             {
-                _timeoutTimer?.Stop();
-                TimeoutLabel.Visibility = Visibility.Collapsed;
+                StopTimeoutTimer();
             }
         }
 
         public Rect Highlight(MessageBubbleHighlightOptions options)
         {
+            if (Options == null)
+            {
+                return Rect.Empty;
+            }
+
             foreach (var child in Options.Children)
             {
                 if (child is PollOptionContent button
@@ -365,6 +489,13 @@ namespace Telegram.Controls.Messages.Content
         public void Recycle()
         {
             _message = null;
+
+            StopTimeoutTimer();
+
+            if (Media?.Child is IContent media)
+            {
+                media.Recycle();
+            }
         }
 
         public bool IsValid(MessageContent content, bool primary)
@@ -432,6 +563,11 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            if (poll.Poll.VoteRestrictionReason != null)
+            {
+                return;
+            }
+
             var button = sender as PollOptionContent;
             if (button.IsChecked == null)
             {
@@ -453,35 +589,35 @@ namespace Telegram.Controls.Messages.Content
 
         private void Option_Toggled(object sender, RoutedEventArgs e)
         {
-            Submit.IsEnabled = false;
-
-            foreach (PollOptionContent button in Options.Children)
+            if (_message?.Content is MessagePoll poll)
             {
-                if (button.IsChecked == true && button.Option is PollOption)
-                {
-                    Submit.IsEnabled = true;
-                }
+                UpdateFooter(poll.Poll);
             }
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            MutableVector<int> options = null;
-
-            for (int i = 0; i < Options.Children.Count; i++)
-            {
-                var button = Options.Children[i] as PollOptionContent;
-                if (button != null && button.IsChecked == true)
-                {
-                    options ??= new();
-                    options.Add(i);
-                }
-            }
-
             var poll = _message?.Content as MessagePoll;
             if (poll == null)
             {
                 return;
+            }
+
+            MutableVector<int> options = null;
+
+            for (int i = 0; i < Options.Children.Count; i++)
+            {
+                // The children follow the display order, the API takes indexes into Poll.Options.
+                var button = Options.Children[i] as PollOptionContent;
+                if (button != null && button.IsChecked == true)
+                {
+                    var optionId = poll.Poll.Options.IndexOf(button.Option);
+                    if (optionId != -1)
+                    {
+                        options ??= new();
+                        options.Add(optionId);
+                    }
+                }
             }
 
             _message.Delegate.VotePoll(_message, options);
@@ -489,7 +625,20 @@ namespace Telegram.Controls.Messages.Content
 
         private void View_Click(object sender, RoutedEventArgs e)
         {
-            _message.Delegate.OpenPoll(_message);
+            if (_message?.Content is not MessagePoll poll)
+            {
+                return;
+            }
+
+            if (poll.Poll.CanGetVoters)
+            {
+                _message.Delegate.OpenPoll(_message);
+            }
+            else
+            {
+                _showPreview = !_showPreview;
+                UpdateMessage(_message);
+            }
         }
 
         private void Explanation_Click(object sender, RoutedEventArgs e)

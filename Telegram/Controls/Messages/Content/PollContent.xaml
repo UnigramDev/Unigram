@@ -17,6 +17,19 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:PollContent">
                     <StackPanel>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="RunningOut">
+                                    <VisualState.Setters>
+                                        <Setter Target="Timeout.Foreground"
+                                                Value="{ThemeResource MessagePollWrongBrush}" />
+                                        <Setter Target="TimeoutGlyph.Foreground"
+                                                Value="{ThemeResource MessagePollWrongBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Default" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Border x:Name="Media" />
                         <controls:FormattedTextBlock x:Name="Description"
                                                      TextWrapping="Wrap"
@@ -27,19 +40,6 @@
                                                      Margin="10,4,10,0"/>
 
                         <Grid Margin="10,4,10,0">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup>
-                                    <VisualState x:Name="RunningOut">
-                                        <VisualState.Setters>
-                                            <Setter Target="Timeout.Foreground"
-                                                    Value="{ThemeResource MessagePollWrongBrush}" />
-                                            <Setter Target="TimeoutGlyph.Foreground"
-                                                    Value="{ThemeResource MessagePollWrongBrush}" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Default" />
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -105,7 +105,7 @@
                                 HorizontalAlignment="Center"
                                 CornerRadius="4"
                                 Margin="0,4,0,0">
-                            <TextBlock Text="{CustomResource PollSubmitVotes}"
+                            <TextBlock Text="{CustomResource PollSubmitVotesNoCaps}"
                                        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                                        FontWeight="SemiBold"
                                        TextAlignment="Center"
@@ -117,12 +117,19 @@
                                 HorizontalAlignment="Center"
                                 CornerRadius="4"
                                 Margin="0,4,0,0">
-                            <TextBlock Text="{CustomResource PollViewResults}"
+                            <TextBlock x:Name="ViewText"
                                        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                                        FontWeight="SemiBold"
                                        TextAlignment="Center"
                                        Margin="8,4,8,4" />
                         </Button>
+
+                        <TextBlock x:Name="EndsIn"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                                   TextAlignment="Center"
+                                   Visibility="Collapsed"
+                                   Margin="0,0,0,4" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>

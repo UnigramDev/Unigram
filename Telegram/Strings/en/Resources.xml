@@ -13758,6 +13758,13 @@
     <string name="PollV2PollDurationOptionCustom">Custom</string>
     <string name="PollV2HideResults">Hide results</string>
     <string name="PollV2HideResultsInfo">When enabled, results will not be visible until the poll closes.</string>
+    <string name="PollEndsIn">ends in {0}</string>
+    <string name="PollResultsIn">results in {0}</string>
+    <string name="PollResultsWillLater">Results will appear after the poll ends</string>
+    <string name="PollViewBack">&lt; Vote</string>
+    <string name="PollViewVotesAsAdmin_one">{0} Vote &gt;</string>
+    <string name="PollViewVotesAsAdmin_other">{0} Votes &gt;</string>
+    <string name="PollViewVotesX">View Votes ({0})</string>
 
     <string name="UserRestrictionsSendReactions">Send Reactions</string>
     <string name="EventLogRestrictedSendReactions">Send Reactions</string>

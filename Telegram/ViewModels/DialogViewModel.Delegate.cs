@@ -297,9 +297,20 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await ClientService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, options));
+            var response = await ClientService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, options));
+            if (response is not Ok || options.Count == 0)
+            {
+                return;
+            }
 
+            // The correct answers are known here even when the poll hides its results until it
+            // closes: reacting to them would give the result away. The bubble shows a toast.
             var updated = message.Content as MessagePoll;
+            if (!updated.Poll.IsClosed && !updated.Poll.CanSeeResults)
+            {
+                return;
+            }
+
             if (updated.Poll.Type is PollTypeQuiz quiz)
             {
                 var ids1 = quiz.CorrectOptionIds.OrderBy(x => x).ToList();

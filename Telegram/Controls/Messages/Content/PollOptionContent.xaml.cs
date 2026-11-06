@@ -38,6 +38,11 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         private Poll _poll;
         private PollOption _option;
+        private PollMedia _media;
+
+        private bool _canVote;
+        private bool _showResults;
+        private int _maximum;
 
         public PollOptionContent()
         {
@@ -60,6 +65,7 @@ namespace Telegram.Controls.Messages.Content
         private Rectangle VotesIndicator;
         private Border VotesLine;
         private Border CheckmarkIcon;
+        private Grid CheckmarkRoot;
 
         private bool _templateApplied;
 
@@ -75,6 +81,7 @@ namespace Telegram.Controls.Messages.Content
             VotesIndicator = GetTemplateChild(nameof(VotesIndicator)) as Rectangle;
             VotesLine = GetTemplateChild(nameof(VotesLine)) as Border;
             CheckmarkIcon = GetTemplateChild(nameof(CheckmarkIcon)) as Border;
+            CheckmarkRoot = GetTemplateChild(nameof(CheckmarkRoot)) as Grid;
 
             TextText.TextEntityClick += TextText_TextEntityClick;
 
@@ -82,7 +89,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (_message != null && _poll != null && _option != null)
             {
-                UpdatePollOption(_message, _poll, _option);
+                UpdatePollOption(_message, _poll, _option, _canVote, _showResults, _maximum);
             }
         }
 
@@ -103,18 +110,21 @@ namespace Telegram.Controls.Messages.Content
             MessageBubble.TextEntityClick(_message, e);
         }
 
-        public PollOption Option { get; private set; }
+        public PollOption Option => _option;
 
         private long _chatId;
         private long _messageId;
         private int _optionId;
         private bool _chosen;
 
-        public void UpdatePollOption(MessageViewModel message, Poll poll, PollOption option)
+        public void UpdatePollOption(MessageViewModel message, Poll poll, PollOption option, bool canVote, bool showResults, int maximum)
         {
             _message = message;
             _poll = poll;
             _option = option;
+            _canVote = canVote;
+            _showResults = showResults;
+            _maximum = maximum;
 
             if (!_templateApplied)
             {
@@ -126,26 +136,34 @@ namespace Telegram.Controls.Messages.Content
                 && _messageId == message.Id
                 && _optionId == optionId;
 
-            var results = poll.IsClosed || poll.VoteRestrictionReason != null || poll.Options.Any(x => x.IsChosen);
-            var correct = poll.Type is PollTypeQuiz quiz && quiz.CorrectOptionIds.Contains(poll.Options.IndexOf(option));
+            var quiz = poll.Type as PollTypeQuiz;
+            var correct = quiz != null && quiz.CorrectOptionIds.Contains(optionId);
 
-            var votes = Locale.Declension(poll.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, option.VoterCount);
+            // The correct options are withheld until the user can see them.
+            var graded = showResults && quiz != null && quiz.CorrectOptionIds.Count > 0;
 
-            Option = option;
-            IsThreeState = results;
+            var votes = Locale.Declension(quiz != null ? Strings.R.Answer : Strings.R.Vote, option.VoterCount);
+
+            IsThreeState = !canVote;
 
             RootGrid.Padding = new Thickness(10, option.Media != null ? 4 : 0, 10, 0);
 
-            if (results || !recycled || !poll.AllowsMultipleAnswers)
+            // A null state is left behind by the results, leaving a preview has to clear it.
+            if (!canVote || !recycled || !poll.AllowsMultipleAnswers || IsChecked == null)
             {
-                IsChecked = results ? null : new bool?(false);
+                IsChecked = canVote ? false : null;
             }
 
-            _allowToggle = poll.AllowsMultipleAnswers && !results;
+            _allowToggle = poll.AllowsMultipleAnswers && canVote;
 
-            if (_allowToggle)
+            // A vote on a poll that hides its results has no bar to show for it.
+            var hiddenChoice = option.IsChosen && !showResults && !option.IsBeingChosen;
+            var hiddenSingleChoice = hiddenChoice && !poll.AllowsMultipleAnswers;
+
+            if (_allowToggle || (hiddenChoice && poll.AllowsMultipleAnswers))
             {
                 CreateIcon(true);
+                UpdateIcon(IsChecked == true || hiddenChoice, false);
             }
             else
             {
@@ -153,18 +171,22 @@ namespace Telegram.Controls.Messages.Content
                 CheckmarkIcon.Visibility = Visibility.Collapsed;
             }
 
-            Ellipse.Opacity = results || option.IsBeingChosen ? 0 : 1;
+            CheckmarkRoot.Visibility = hiddenSingleChoice
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            Ellipse.Opacity = showResults || option.IsBeingChosen || hiddenSingleChoice ? 0 : 1;
             Ellipse.RadiusX = Ellipse.RadiusY = poll.AllowsMultipleAnswers ? 4 : 10;
             Tick.CornerRadius = new CornerRadius(poll.AllowsMultipleAnswers ? 2 : 6);
 
-            Percentage.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
+            Percentage.Visibility = showResults ? Visibility.Visible : Visibility.Collapsed;
             Percentage.Text = $"{option.VotePercentage}%";
 
-            Extensions.SetToolTip(Percentage, results ? votes : null);
+            Extensions.SetToolTip(Percentage, showResults ? votes : null);
 
             TextText.SetText(message.ClientService, option.Text);
 
-            if (option.VoterCount > 0)
+            if (showResults && option.VoterCount > 0)
             {
                 if (RecentVotersRoot == null)
                 {
@@ -195,39 +217,32 @@ namespace Telegram.Controls.Messages.Content
                 RecentVotersRoot.Visibility = Visibility.Collapsed;
             }
 
-            UpdatePollOptionMedia(message, poll, option);
+            UpdatePollOptionMedia(message, option);
 
-            if (results)
+            if (showResults)
             {
-                float maximum = Math.Max(poll.Options.Max(x => x.VoterCount), 1);
-                UpdateVotes(option.VoterCount / maximum, recycled);
+                float maximumVotes = Math.Max(maximum, 1);
+                UpdateVotes(option.VoterCount / maximumVotes, recycled);
             }
             else
             {
                 UpdateVotes(0, recycled);
             }
 
-            Votes.Opacity = results ? 1 : 0;
-            VotesLine.Opacity = results ? 0 : 0.3;
+            Votes.Opacity = showResults ? 1 : 0;
+            VotesLine.Opacity = showResults ? 0 : 0.3;
 
             Loading.IsActive = option.IsBeingChosen;
 
-            Tick.Visibility = (results && correct) || option.IsChosen ? Visibility.Visible : Visibility.Collapsed;
+            Tick.Visibility = showResults && (correct || option.IsChosen) ? Visibility.Visible : Visibility.Collapsed;
 
-            if (option.IsChosen && poll.Type is PollTypeQuiz)
-            {
-                VisualStateManager.GoToState(this, correct ? "Correct" : "Wrong", false);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "Unknown", false);
-            }
+            VisualStateManager.GoToState(this, graded ? correct ? "Correct" : "Wrong" : "Unknown", false);
 
-            if (results)
+            if (showResults)
             {
                 var name = $"{option.Text.Text}, {votes}, {option.VotePercentage}%";
 
-                if (poll.Type is PollTypeQuiz && (option.IsChosen || correct))
+                if (graded && (option.IsChosen || correct))
                 {
                     name += ", " + (correct ? Strings.AccDescrQuizCorrectAnswer : Strings.AccDescrQuizIncorrectAnswer);
                 }
@@ -241,7 +256,7 @@ namespace Telegram.Controls.Messages.Content
 
             // Voting leaves focus on the option, and a name change alone is never read,
             // so the outcome of a quiz answer has to be announced.
-            if (recycled && option.IsChosen && !_chosen && poll.Type is PollTypeQuiz)
+            if (recycled && option.IsChosen && !_chosen && graded)
             {
                 var peer = FrameworkElementAutomationPeer.CreatePeerForElement(this);
                 peer?.RaiseNotificationEvent(AutomationNotificationKind.Other, AutomationNotificationProcessing.MostRecent,
@@ -302,126 +317,110 @@ namespace Telegram.Controls.Messages.Content
             photo.Source = ProfilePictureSource.MessageSender(_message.ClientService, sender);
         }
 
-        private void UpdatePollOptionMedia(MessageViewModel message, Poll poll, PollOption option)
+        private void UpdatePollOptionMedia(MessageViewModel message, PollOption option)
         {
             // Currently, can be only of the types messageAnimation, messageLocation, messagePhoto, messageSticker, messageVenue, or messageVideo without caption
 
+            // Every update delivers new objects for the same media, and a vote updates all the
+            // options: rebuilding here would reload and flash each image.
+            var same = IsSameMedia(_media, option.Media);
+
+            _media = option.Media;
+
+            if (same)
+            {
+                return;
+            }
+
             if (option.Media is PollMediaAnimation animation)
             {
-                var child = new ImageView
-                {
-                    Width = 32,
-                    Height = 32,
-                    Stretch = Stretch.UniformToFill
-                };
-
-                child.XamlRoot = XamlRoot;
+                var child = CreateMediaImage();
                 child.SetSource(message.ClientService, animation.Animation.Thumbnail?.File, animation.Animation.Minithumbnail);
 
-                if (Media == null)
-                {
-                    Media = GetTemplateChild(nameof(Media)) as HyperlinkButton;
-                    Media.Click += Media_Click;
-                }
-
-                Media.Content = child;
+                SetMedia(child);
             }
             else if (option.Media is PollMediaLocation location)
             {
-                var child = new ImageView
-                {
-                    Width = 32,
-                    Height = 32,
-                    Stretch = Stretch.UniformToFill
-                };
-
-                child.XamlRoot = XamlRoot;
+                var child = CreateMediaImage();
                 child.SetSource(message.ClientService, location.Location, 32, 32, message.ChatId);
 
-                if (Media == null)
-                {
-                    Media = GetTemplateChild(nameof(Media)) as HyperlinkButton;
-                    Media.Click += Media_Click;
-                }
-
-                Media.Content = child;
+                SetMedia(child);
             }
             else if (option.Media is PollMediaPhoto photo)
             {
-                var child = new ImageView
-                {
-                    Width = 32,
-                    Height = 32,
-                    Stretch = Stretch.UniformToFill
-                };
-
-                child.XamlRoot = XamlRoot;
+                var child = CreateMediaImage();
                 child.SetSource(message.ClientService, photo.Photo.GetSmall()?.Photo, photo.Photo.Minithumbnail);
 
-                if (Media == null)
-                {
-                    Media = GetTemplateChild(nameof(Media)) as HyperlinkButton;
-                    Media.Click += Media_Click;
-                }
-
-                Media.Content = child;
+                SetMedia(child);
             }
             else if (option.Media is PollMediaSticker sticker)
             {
-                Media ??= GetTemplateChild(nameof(Media)) as HyperlinkButton;
-                Media.Content = new AnimatedImage
+                SetMedia(new AnimatedImage
                 {
                     Width = 32,
                     Height = 32,
                     FrameSize = new Windows.Foundation.Size(32, 32),
                     DecodeFrameType = DecodePixelType.Logical,
                     Source = DelayedFileSource.FromSticker(message.ClientService, sticker.Sticker)
-                };
+                });
             }
             else if (option.Media is PollMediaVenue venue)
             {
-                var child = new ImageView
-                {
-                    Width = 32,
-                    Height = 32,
-                    Stretch = Stretch.UniformToFill
-                };
-
-                child.XamlRoot = XamlRoot;
+                var child = CreateMediaImage();
                 child.SetSource(message.ClientService, venue.Venue.Location, 32, 32, message.ChatId);
 
-                if (Media == null)
-                {
-                    Media = GetTemplateChild(nameof(Media)) as HyperlinkButton;
-                    Media.Click += Media_Click;
-                }
-
-                Media.Content = child;
+                SetMedia(child);
             }
             else if (option.Media is PollMediaVideo video)
             {
-                var child = new ImageView
-                {
-                    Width = 32,
-                    Height = 32,
-                    Stretch = Stretch.UniformToFill
-                };
-
-                child.XamlRoot = XamlRoot;
+                var child = CreateMediaImage();
                 child.SetSource(message.ClientService, video.Cover?.GetSmall()?.Photo ?? video.Video.Thumbnail?.File, video.Cover?.Minithumbnail ?? video.Video.Minithumbnail);
 
-                if (Media == null)
-                {
-                    Media = GetTemplateChild(nameof(Media)) as HyperlinkButton;
-                    Media.Click += Media_Click;
-                }
-
-                Media.Content = child;
+                SetMedia(child);
             }
-            else
+            else if (Media != null)
             {
-                Media?.Content = null;
+                Media.Content = null;
+                Media.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private ImageView CreateMediaImage()
+        {
+            return new ImageView
+            {
+                Width = 32,
+                Height = 32,
+                Stretch = Stretch.UniformToFill,
+                XamlRoot = XamlRoot
+            };
+        }
+
+        private void SetMedia(FrameworkElement child)
+        {
+            if (Media == null)
+            {
+                Media = GetTemplateChild(nameof(Media)) as HyperlinkButton;
+                Media.Click += Media_Click;
+            }
+
+            Media.Content = child;
+            Media.Visibility = Visibility.Visible;
+        }
+
+        private static bool IsSameMedia(PollMedia x, PollMedia y)
+        {
+            return (x, y) switch
+            {
+                (null, null) => true,
+                (PollMediaAnimation a, PollMediaAnimation b) => a.Animation.AnimationValue.Id == b.Animation.AnimationValue.Id,
+                (PollMediaLocation a, PollMediaLocation b) => a.Location.Latitude == b.Location.Latitude && a.Location.Longitude == b.Location.Longitude,
+                (PollMediaPhoto a, PollMediaPhoto b) => a.Photo.GetSmall()?.Photo.Id == b.Photo.GetSmall()?.Photo.Id,
+                (PollMediaSticker a, PollMediaSticker b) => a.Sticker.StickerValue.Id == b.Sticker.StickerValue.Id,
+                (PollMediaVenue a, PollMediaVenue b) => a.Venue.Location.Latitude == b.Venue.Location.Latitude && a.Venue.Location.Longitude == b.Venue.Location.Longitude,
+                (PollMediaVideo a, PollMediaVideo b) => a.Video.VideoValue.Id == b.Video.VideoValue.Id,
+                _ => false
+            };
         }
 
         private void Media_Click(object sender, RoutedEventArgs e)
@@ -432,7 +431,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (_option.Media is PollMediaSticker sticker)
             {
-
+                _message.Delegate.OpenSticker(sticker.Sticker);
             }
             else if (_option.Media is PollMediaVenue venue)
             {
@@ -475,9 +474,10 @@ namespace Telegram.Controls.Messages.Content
 
         private void CreateIcon(bool allowsMultipleAnswers)
         {
+            CheckmarkIcon.Visibility = Visibility.Visible;
+
             if (_source != null && _allowsMultipleAnswers == allowsMultipleAnswers)
             {
-                CheckmarkIcon.Visibility = Visibility.Visible;
                 return;
             }
 
@@ -506,6 +506,8 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
+                    // A write does not override an animation still running on the property.
+                    _props.StopAnimation("Progress");
                     _props.InsertScalar("Progress", selected ? 1.0F : 0.0F);
                 }
             }
