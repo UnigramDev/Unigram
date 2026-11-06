@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class SharedFileCell : Grid
+    public sealed partial class SharedFileCell : Control
     {
         private MediaTabsViewModelBase _viewModel;
         private MessageWithOwner _message;
@@ -31,8 +31,35 @@ namespace Telegram.Controls.Cells
 
         public SharedFileCell()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(SharedFileCell);
         }
+
+        #region InitializeComponent
+
+        private FileButton Button;
+        private TextBlock Title;
+        private TextBlock TitleTrim;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            TitleTrim = GetTemplateChild(nameof(TitleTrim)) as TextBlock;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_viewModel, _message);
+            }
+        }
+
+        #endregion
 
         public void UpdateFileDownload(DownloadsViewModel viewModel, FileDownloadViewModel fileDownload)
         {
@@ -69,7 +96,7 @@ namespace Telegram.Controls.Cells
             _message = message;
 
             var data = message.GetFileAndThumbnailAndName();
-            if (data.File == null)
+            if (data.File == null || !_templateApplied)
             {
                 return;
             }

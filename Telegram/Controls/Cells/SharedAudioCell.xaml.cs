@@ -16,7 +16,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class SharedAudioCell : GridEx
+    public sealed partial class SharedAudioCell : ControlEx
     {
         private MessageWithOwner _message;
         public MessageWithOwner Message => _message;
@@ -25,8 +25,40 @@ namespace Telegram.Controls.Cells
 
         public SharedAudioCell()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(SharedAudioCell);
         }
+
+        #region InitializeComponent
+
+        private FileButton Button;
+        private Grid DownloadRoot;
+        private FileButton Download;
+        private TextBlock Title;
+        private TextBlock TitleTrim;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            DownloadRoot = GetTemplateChild(nameof(DownloadRoot)) as Grid;
+            Download = GetTemplateChild(nameof(Download)) as FileButton;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            TitleTrim = GetTemplateChild(nameof(TitleTrim)) as TextBlock;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+            Download.Click += Download_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         protected override void OnLoaded()
         {
@@ -72,7 +104,7 @@ namespace Telegram.Controls.Cells
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
 
             var audio = GetContent(message.Content);
-            if (audio == null)
+            if (audio == null || !_templateApplied)
             {
                 return;
             }

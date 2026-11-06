@@ -1,56 +1,63 @@
-<Grid x:Class="Telegram.Controls.Cells.SharedLinkCell"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:controls="using:Telegram.Controls"
-      mc:Ignorable="d"
-      d:DesignHeight="300"
-      d:DesignWidth="400"
-      Padding="12,6">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:local="using:Telegram.Controls.Cells"
+                    xmlns:controls="using:Telegram.Controls"
+                    mc:Ignorable="d">
 
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="48" />
-        <ColumnDefinition />
-    </Grid.ColumnDefinitions>
-    <Border x:Name="Thumbnail"
-            VerticalAlignment="Top"
-            CornerRadius="4">
-        <HyperlinkButton Click="Thumbnail_Click"
-                         Style="{StaticResource EmptyHyperlinkButtonStyle}"
-                         Width="48"
-                         Height="48">
-            <controls:ProfilePicture x:Name="Photo"
-                                     Shape="None"
-                                     Size="48" />
-        </HyperlinkButton>
-    </Border>
-    <StackPanel Margin="12,0,0,0"
-                Grid.Column="1">
-        <TextBlock x:Name="TitleLabel"
-                   MaxLines="1"
-                   TextTrimming="CharacterEllipsis"
-                   Foreground="{ThemeResource MessageForegroundBrush}"
-                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                   Style="{StaticResource BaseTextBlockStyle}" />
-        <TextBlock x:Name="DescriptionLabel"
-                   MaxLines="3"
-                   TextTrimming="CharacterEllipsis"
-                   Foreground="{ThemeResource MessageForegroundBrush}"
-                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                   Style="{StaticResource BodyTextBlockStyle}" />
-        <TextBlock x:Name="Description2Label"
-                   MaxLines="3"
-                   TextTrimming="CharacterEllipsis"
-                   Foreground="{ThemeResource MessageForegroundBrush}"
-                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                   Style="{StaticResource BodyTextBlockStyle}" />
-        <controls:FormattedTextBlock x:Name="LinksLabel"
-                                     ContextRequested="OnContextRequested"
-                                     TextEntityClick="OnTextEntityClick"
-                                     IsTextSelectionEnabled="False"
-                                     AutoFontSize="False"
-                                     TextWrapping="NoWrap"
-                                     TextTrimming="CharacterEllipsis" />
-    </StackPanel>
-</Grid>
+    <Style TargetType="local:SharedLinkCell">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SharedLinkCell">
+                    <Grid Padding="12,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="Thumbnail"
+                                VerticalAlignment="Top"
+                                CornerRadius="4">
+                            <HyperlinkButton x:Name="Button"
+                                             Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                             Width="48"
+                                             Height="48">
+                                <controls:ProfilePicture x:Name="Photo"
+                                                         Shape="None"
+                                                         Size="48" />
+                            </HyperlinkButton>
+                        </Border>
+                        <StackPanel Margin="12,0,0,0"
+                                    Grid.Column="1">
+                            <TextBlock x:Name="TitleLabel"
+                                       MaxLines="1"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{ThemeResource MessageForegroundBrush}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Style="{StaticResource BaseTextBlockStyle}" />
+                            <TextBlock x:Name="DescriptionLabel"
+                                       MaxLines="3"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{ThemeResource MessageForegroundBrush}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Style="{StaticResource BodyTextBlockStyle}" />
+                            <TextBlock x:Name="Description2Label"
+                                       MaxLines="3"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{ThemeResource MessageForegroundBrush}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Style="{StaticResource BodyTextBlockStyle}" />
+                            <controls:FormattedTextBlock x:Name="LinksLabel"
+                                                         IsTextSelectionEnabled="False"
+                                                         AutoFontSize="False"
+                                                         TextWrapping="NoWrap"
+                                                         TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -17,7 +17,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class SharedVoiceCell : GridEx
+    public sealed partial class SharedVoiceCell : ControlEx
     {
         private MessageWithOwner _message;
         public MessageWithOwner Message => _message;
@@ -26,7 +26,7 @@ namespace Telegram.Controls.Cells
 
         public SharedVoiceCell()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(SharedVoiceCell);
         }
 
         protected override void OnLoaded()
@@ -46,6 +46,31 @@ namespace Telegram.Controls.Cells
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
         }
+
+        #region InitializeComponent
+
+        private FileButton Button;
+        private TextBlock Title;
+        private TextBlock Subtitle;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Button = GetTemplateChild(nameof(Button)) as FileButton;
+            Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+
+            Button.Click += Button_Click;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_message);
+            }
+        }
+
+        #endregion
 
         private bool _hidden;
 
@@ -73,7 +98,7 @@ namespace Telegram.Controls.Cells
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
 
             var file = message.GetFile();
-            if (file == null)
+            if (file == null || !_templateApplied)
             {
                 return;
             }

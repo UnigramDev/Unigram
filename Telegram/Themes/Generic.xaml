@@ -19,7 +19,11 @@
         <ResourceDictionary Source="ms-appx:///Controls/Cells/ChatShareCell.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Cells/ForumTopicCell.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Cells/ForumTopicVerticalCell.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Cells/SharedAudioCell.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Cells/SharedFileCell.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Cells/SharedLinkCell.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Cells/SharedMediaCell.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Cells/SharedVoiceCell.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Cells/ProfileCell.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/AnimationContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/AudioContent.xaml" />

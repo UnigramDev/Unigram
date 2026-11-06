@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class SharedLinkCell : Grid
+    public sealed partial class SharedLinkCell : Control
     {
         private MessageWithOwner _message;
         private INavigationService _navigationService;
@@ -27,13 +27,51 @@ namespace Telegram.Controls.Cells
 
         public SharedLinkCell()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(SharedLinkCell);
         }
+
+        #region InitializeComponent
+
+        private HyperlinkButton Button;
+        private ProfilePicture Photo;
+        private TextBlock TitleLabel;
+        private TextBlock DescriptionLabel;
+        private TextBlock Description2Label;
+        private FormattedTextBlock LinksLabel;
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            Button = GetTemplateChild(nameof(Button)) as HyperlinkButton;
+            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
+            DescriptionLabel = GetTemplateChild(nameof(DescriptionLabel)) as TextBlock;
+            Description2Label = GetTemplateChild(nameof(Description2Label)) as TextBlock;
+            LinksLabel = GetTemplateChild(nameof(LinksLabel)) as FormattedTextBlock;
+
+            Button.Click += Thumbnail_Click;
+            LinksLabel.ContextRequested += OnContextRequested;
+            LinksLabel.TextEntityClick += OnTextEntityClick;
+
+            _templateApplied = true;
+
+            if (_message != null)
+            {
+                UpdateMessage(_navigationService, _message);
+            }
+        }
+
+        #endregion
 
         public void UpdateMessage(INavigationService navigationService, MessageWithOwner message)
         {
             _navigationService = navigationService;
             _message = message;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
 
             var links = new List<string>();
 
