@@ -1668,7 +1668,11 @@ namespace Telegram.Controls.Cells
                 // TODO: this is better than nothing, although it's not the best 
                 if (topMessage.ForwardInfo != null && !topMessage.IsSaved(_clientService.Options.MyId))
                 {
-                    return TdExtensions.Concat(ClientEx.CustomEmoji(Icons.ShareFilled + Icons.Space), text);
+                    return FormattedText.Concat(Icons.ArrowForwardFilled14 + Icons.Space, text);
+                }
+                else if (topMessage.ReplyTo is MessageReplyToStory)
+                {
+                    return FormattedText.Concat(Icons.ArrowStoryFilled14 + Icons.Space, text);
                 }
 
                 return text;

@@ -1,7 +1,7 @@
 {
   "font": {"family": "Telegram", "unitsPerEm": 1024, "ascent": 960, "descent": 64, "version": "2.186"},
   "sources": {
-    "fluent": {"type": "npm", "package": "@fluentui/svg-icons", "version": "1.1.344", "prefix": "icons/"}
+    "fluent": {"type": "npm", "package": "@fluentui/svg-icons", "version": "1.1.345", "prefix": "icons/"}
   },
   "icons": [
     {"name": "uniE001", "code": "E001", "src": "alias:E8FB", "note": "same glyph as ic_fluent_checkmark_20_regular"},
@@ -714,6 +714,8 @@
     {"name": "ic_fluent_shapes_16_regular", "code": "F7AF", "src": "fluent:shapes_16_regular"},
     {"name": "ic_fluent_hd_20_regular", "code": "F7B0", "src": "fluent:hd_20_regular"},
     {"name": "ic_fluent_hd_off_20_regular", "code": "F7B1", "src": "fluent:hd_off_20_regular"},
+    {"name": "tl_fluent_arrow_forward_14_filled", "code": "F7B2", "src": "icons/tl_fluent_arrow_forward_14_filled.svg"},
+    {"name": "tl_fluent_arrow_story_14_filled", "code": "F7B3", "src": "icons/tl_fluent_arrow_story_14_filled.svg"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }

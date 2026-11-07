@@ -161,6 +161,13 @@ def _contains(polygon, point):
     return inside
 
 
+def _nested_in(polygon, other):
+    # A hole can start on a vertex of the contour around it, where containment is
+    # arbitrary, so no single point can decide.
+    inside = sum(1 for point in polygon if _contains(other, point))
+    return inside * 2 > len(polygon)
+
+
 def _rewind(contours):
     """Re-wind contours so nonzero filling reproduces evenodd.
 
@@ -175,7 +182,7 @@ def _rewind(contours):
             out.append(contour)
             continue
         depth = sum(1 for j, other in enumerate(polygons)
-                    if j != i and len(other) >= 3 and _contains(other, polygons[i][0]))
+                    if j != i and len(other) >= 3 and _nested_in(polygons[i], other))
         want_positive = depth % 2 == 1
         if (_area(polygons[i]) > 0) != want_positive:
             out.append(_reverse(contour))
