@@ -39,16 +39,10 @@
                                           ItemSize="28"
                                           Margin="4,2,0,2" />
                 <controls:AnimatedTextBlock x:Name="ViewersCount"
-                                             VerticalAlignment="Center"
-                                             Foreground="#FFFFFF"
-                                             Margin="8,1,12,3"
-                                             Grid.Column="1">
-                    <controls:AnimatedTextBlock.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </controls:AnimatedTextBlock.Transitions>
-                </controls:AnimatedTextBlock>
+                                            VerticalAlignment="Center"
+                                            Foreground="#FFFFFF"
+                                            Margin="8,1,12,3"
+                                            Grid.Column="1" />
 
                 <TextBlock x:Name="ReactionIcon"
                            Text="&#xE985;"
@@ -56,25 +50,13 @@
                            Foreground="#FF0000"
                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                            FontSize="20"
-                           Grid.Column="2">
-                    <TextBlock.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </TextBlock.Transitions>
-                </TextBlock>
+                           Grid.Column="2" />
 
                 <controls:AnimatedTextBlock x:Name="ReactionCount"
                                             VerticalAlignment="Center"
                                             Foreground="#FFFFFF"
                                             Margin="4,1,12,3"
-                                            Grid.Column="3">
-                    <controls:AnimatedTextBlock.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </controls:AnimatedTextBlock.Transitions>
-                </controls:AnimatedTextBlock>
+                                            Grid.Column="3" />
             </Grid>
         </HyperlinkButton>
 
