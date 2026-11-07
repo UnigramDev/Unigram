@@ -634,6 +634,7 @@ namespace Telegram.Controls.Messages.Content
                         }
                         else if (text.LinkPreview?.Type is LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer)
                         {
+                            cover = embeddedVideoPlayer.Thumbnail;
                             return embeddedVideoPlayer.Video;
                         }
                         else if (text.LinkPreview?.Type is LinkPreviewTypeAlbum previewAlbum && previewAlbum.Media[0] is LinkPreviewAlbumMediaVideo albumVideo)
