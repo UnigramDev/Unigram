@@ -919,7 +919,7 @@ namespace Telegram.Controls
 
             range.GetText(TextGetOptions.NoHidden, out string text);
 
-            var url = await ChooseDateTimeToast.ChooseDateUrlAsync(XamlRoot);
+            var url = await ChooseDateTimePopup.ChooseDateUrlAsync(XamlRoot);
             if (url == null)
             {
                 return;

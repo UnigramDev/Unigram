@@ -100,6 +100,8 @@ namespace Telegram.Controls.Media
 
         public const string ArrowReply24 = "\uEA4A";
         public const string ArrowForward24 = "\uEB26";
+        public const string ArrowForwardFilled14 = "\uF7B2";
+        public const string ArrowStoryFilled14 = "\uF7B3";
         public const string Link24 = "\uEA49";
         public const string Edit24 = "\uEA4B";
 
