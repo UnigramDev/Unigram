@@ -15,6 +15,7 @@ using Telegram.Controls.Media;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -196,12 +197,33 @@ namespace Telegram.Views.Stories.Popups
                 if (args.Item is StoryInteraction interaction)
                 {
                     cell.UpdateStoryViewer(ViewModel.ClientService, args, OnContainerContentChanging);
-                    animated.Source = interaction.Type is StoryInteractionTypeView view && view.ChosenReactionType != null
-                        ? new ReactionFileSource(ViewModel.ClientService, view.ChosenReactionType)
-                        {
-                            UseCenterAnimation = true
-                        }
+
+                    var reactionType = interaction.Type is StoryInteractionTypeView view
+                        ? view.ChosenReactionType
                         : null;
+
+                    // The center animation paints an emoji in just a part of its frame, and not
+                    // quite in its middle, leaving room for an effect: shown at twice the size,
+                    // as ReactionButton shows reactions and InteractionsView sizes those of a
+                    // message, an emoji reaction is as large as a custom emoji.
+                    var emoji = reactionType is ReactionTypeEmoji;
+
+                    using (animated.BeginBatchUpdate())
+                    {
+                        var size = emoji ? 40 : 20;
+
+                        animated.Width = animated.Height = size;
+                        animated.Margin = new Thickness(0, 0, emoji ? 2 : 12, 0);
+                        animated.FrameSize = new Size(size, size);
+
+                        animated.Source = reactionType != null
+                            ? new ReactionFileSource(ViewModel.ClientService, reactionType)
+                            {
+                                UseCenterAnimation = true,
+                                IsAnimated = !emoji
+                            }
+                            : null;
+                    }
                 }
             }
         }
