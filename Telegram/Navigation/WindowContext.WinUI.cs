@@ -616,9 +616,38 @@ namespace Telegram.Navigation
         /// </summary>
         public void SetTitleBar(UIElement titleBar)
         {
+            _titleBar = titleBar;
+
             try
             {
                 _window.SetTitleBar(titleBar);
+            }
+            catch
+            {
+                // Not in the tree yet, or the window is going away.
+            }
+        }
+
+        private UIElement _titleBar;
+
+        /// <summary>
+        /// Measures the drag region again. The framework follows the element's size but not its
+        /// position, so one that layout moves without resizing keeps dragging from where it was.
+        /// Setting it again is the only way to make the framework look: a different element first,
+        /// since the same one may be taken as no change. Re-applies whatever was last set, so while
+        /// a popup has the title bar cleared this leaves it cleared.
+        /// </summary>
+        public void InvalidateTitleBar()
+        {
+            if (_titleBar == null)
+            {
+                return;
+            }
+
+            try
+            {
+                _window.SetTitleBar(null);
+                _window.SetTitleBar(_titleBar);
             }
             catch
             {

@@ -74,14 +74,14 @@ namespace Telegram.Views
             View.PopupClosed();
         }
 
-        public void StartBannerAnimation(ScalarKeyFrameAnimation translate)
+        public void StartBannerAnimation(ScalarKeyFrameAnimation translate, bool title)
         {
-            View.StartBannerAnimation(translate);
+            View.StartBannerAnimation(translate, title);
         }
 
-        public void CompleteBannerAnimation()
+        public void CompleteBannerAnimation(bool title)
         {
-            View.CompleteBannerAnimation();
+            View.CompleteBannerAnimation(title);
         }
     }
 }

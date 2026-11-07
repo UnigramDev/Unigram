@@ -46,6 +46,7 @@ namespace Telegram.Controls
             }
             else if (_call is VoipGroupCall oldGroupCall)
             {
+                oldGroupCall.NetworkStateChanged -= OnNetworkStateChanged;
                 oldGroupCall.MutedChanged -= OnMutedChanged;
                 oldGroupCall.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             }
@@ -58,10 +59,10 @@ namespace Telegram.Controls
                 newPrivateCall.AudioLevelUpdated += OnAudioLevelUpdated;
 
                 StartAnimating();
-                UpdateCurveColors(newPrivateCall.AudioState == VoipAudioState.Muted);
+                UpdateCurveColors(true, newPrivateCall.AudioState == VoipAudioState.Muted);
 
                 Audio.Visibility = Visibility.Visible;
-                Dismiss.Visibility = Visibility.Visible;
+                //Dismiss.Visibility = Visibility.Visible;
 
                 try
                 {
@@ -78,14 +79,15 @@ namespace Telegram.Controls
             }
             else if (_call is VoipGroupCall newGroupCall)
             {
+                newGroupCall.NetworkStateChanged += OnNetworkStateChanged;
                 newGroupCall.MutedChanged += OnMutedChanged;
                 newGroupCall.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
                 StartAnimating();
-                UpdateCurveColors(newGroupCall.IsMuted);
+                UpdateCurveColors(newGroupCall.IsConnected, newGroupCall.IsMuted);
 
                 Audio.Visibility = newGroupCall.IsRtmpStream ? Visibility.Collapsed : Visibility.Visible;
-                Dismiss.Visibility = Visibility.Visible;
+                //Dismiss.Visibility = Visibility.Visible;
 
                 TitleInfo.Text = newGroupCall.GetTitle();
                 Audio.IsChecked = !newGroupCall.IsMuted;
@@ -98,12 +100,16 @@ namespace Telegram.Controls
             }
         }
 
-        private void UpdateCurveColors(bool muted)
+        private void UpdateCurveColors(bool connected, bool muted)
         {
             // TODO: there are multiple states to be supported: connecting, active, speaking, can't speak, late
             if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
             {
-                if (muted)
+                if (!connected)
+                {
+                    _curveVisual.SetColorStops(0xFF3e3f41, 0xFF3e3f41);
+                }
+                else if (muted)
                 {
                     _curveVisual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
                 }
@@ -114,7 +120,11 @@ namespace Telegram.Controls
             }
             else
             {
-                if (muted)
+                if (!connected)
+                {
+                    RootGrid.Background = ColorsHelper.LinearGradient(0xFF3e3f41, 0xFF3e3f41);
+                }
+                else if (muted)
                 {
                     RootGrid.Background = ColorsHelper.LinearGradient(0xFF59c7f8, 0xFF0078ff);
                 }
@@ -125,13 +135,24 @@ namespace Telegram.Controls
             }
         }
 
+        private void OnNetworkStateChanged(VoipGroupCall sender, VoipGroupCallNetworkStateChangedEventArgs args)
+        {
+            if (sender is VoipGroupCall groupCall && groupCall.IsMuted is bool groupMuted)
+            {
+                this.BeginOnUIThread(() =>
+                {
+                    UpdateCurveColors(args.IsConnected, groupMuted);
+                });
+            }
+        }
+
         private void OnMutedChanged(object sender, EventArgs e)
         {
             if (sender is VoipGroupCall groupCall && groupCall.IsMuted is bool groupMuted)
             {
                 this.BeginOnUIThread(() =>
                 {
-                    UpdateCurveColors(groupMuted);
+                    UpdateCurveColors(groupCall.IsConnected, groupMuted);
 
                     Audio.IsChecked = !groupMuted;
                     Automation.SetToolTip(Audio, groupMuted ? Strings.VoipGroupUnmute : Strings.VoipGroupMute);
@@ -141,7 +162,7 @@ namespace Telegram.Controls
 
         private void OnMediaStateChanged(VoipCall sender, VoipCallMediaStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() => UpdateCurveColors(args.Audio == VoipAudioState.Muted));
+            this.BeginOnUIThread(() => UpdateCurveColors(true, args.Audio == VoipAudioState.Muted));
         }
 
         private void OnAudioLevelsUpdated(VoipGroupCall sender, IList<VoipGroupParticipant> args)

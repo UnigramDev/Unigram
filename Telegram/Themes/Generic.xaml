@@ -2404,6 +2404,14 @@
                                     <RowDefinition Height="64" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
+                                <ContentControl x:Name="BannerPresenter"
+                                                Content="{TemplateBinding Banner}"
+                                                IsTabStop="False"
+                                                TabIndex="3"
+                                                HorizontalContentAlignment="Stretch"
+                                                VerticalContentAlignment="Stretch"
+                                                VerticalAlignment="Top"
+                                                Canvas.ZIndex="1" />
                                 <Grid MaxWidth="1000"
                                       Margin="24,0"
                                       Canvas.ZIndex="1"
@@ -2456,14 +2464,6 @@
                                                        Grid.Row="1"
                                                        Grid.RowSpan="2" />
                             </Grid>
-                            <ContentControl x:Name="BannerPresenter"
-                                            Content="{TemplateBinding Banner}"
-                                            IsTabStop="False"
-                                            TabIndex="3"
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch"
-                                            VerticalAlignment="Top"
-                                            Canvas.ZIndex="1" />
 
                             <Border x:Name="BorderPart"
                                     BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"

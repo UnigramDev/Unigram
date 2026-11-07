@@ -553,6 +553,13 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
+        /// Nothing to do: the shell follows the element wherever layout moves it.
+        /// </summary>
+        public void InvalidateTitleBar()
+        {
+        }
+
+        /// <summary>
         /// The shell draws minimize, maximize and close for every view, and it is all three or
         /// none - there is no asking it for a subset. So the app's own buttons exist only for the
         /// subsets, and asking for all three means letting the shell do it.

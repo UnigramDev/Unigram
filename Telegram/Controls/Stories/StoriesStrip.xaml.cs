@@ -432,6 +432,7 @@ namespace Telegram.Controls.Stories
 
         public FrameworkElement TitleBarrr { get; set; }
         public Border TitleBarHandle { get; set; }
+        public FrameworkElement Banner { get; set; }
         public FrameworkElement Header { get; set; }
 
         private bool _tabsLeftCollapsed = true;
@@ -498,6 +499,8 @@ namespace Telegram.Controls.Stories
 
         public bool TabsTopCollapsed { get; set; } = true;
 
+        public bool BannerCollapsed { get; set; } = true;
+
         private ListView _controlledList;
         public ListView ControlledList
         {
@@ -511,7 +514,7 @@ namespace Telegram.Controls.Stories
             {
                 var title = 40;
                 var search = 32;
-                var padding = 4 + (TabsTopCollapsed || !TabsLeftCollapsed ? 0 : 36);
+                var padding = 4 + (TabsTopCollapsed || !TabsLeftCollapsed ? 0 : 36) + (BannerCollapsed ? 0 : 40);
                 //var padding = 8 + (ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 32);
                 //var padding = ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 40;
 
@@ -523,7 +526,18 @@ namespace Telegram.Controls.Stories
         {
             var title = 40;
             var search = 32;
-            var padding = 4 + (collapsed /*|| !TabsLeftCollapsed*/ ? 0 : 36);
+            var padding = 4 + (collapsed /*|| !TabsLeftCollapsed*/ ? 0 : 36) + (BannerCollapsed ? 0 : 40);
+            //var padding = 8 + (ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 32);
+            //var padding = ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 40;
+
+            return title + search + padding;
+        }
+
+        public double GetTopPaddingBanner(bool collapsed)
+        {
+            var title = 40;
+            var search = 32;
+            var padding = 4 + (TabsTopCollapsed || !TabsLeftCollapsed ? 0 : 36) + (collapsed ? 0 : 40);
             //var padding = 8 + (ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 32);
             //var padding = ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 40;
 
@@ -630,13 +644,22 @@ namespace Telegram.Controls.Stories
             storiesVisual.StartAnimation("Translation.Y", storiesVisualOffsetAnimation);
             headerVisual.StartAnimation("Translation.Y", headerVisualOffsetAnimation);
 
+            var tabsVisualOffsetAnimation = compositor.CreateExpressionAnimation(
+                "-80 + 84 * _.Progress");
+            tabsVisualOffsetAnimation.SetReferenceParameter("_", _progress);
+
+            if (Banner != null)
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(Banner, true);
+
+                var bannerVisual = ElementComposition.GetElementVisual(Banner);
+                bannerVisual.Properties.InsertVector3("Translation", Vector3.Zero);
+                bannerVisual.StartAnimation("Translation.Y", tabsVisualOffsetAnimation);
+            }
+
             if (ChatTabs != null)
             {
                 ElementCompositionPreview.SetIsTranslationEnabled(ChatTabs, true);
-
-                var tabsVisualOffsetAnimation = compositor.CreateExpressionAnimation(
-                    "-80 + 84 * _.Progress");
-                tabsVisualOffsetAnimation.SetReferenceParameter("_", _progress);
 
                 var tabsVisual = ElementComposition.GetElementVisual(ChatTabs);
                 tabsVisual.Properties.InsertVector3("Translation", Vector3.Zero);

@@ -238,6 +238,9 @@
     <Compile Include="Controls\CropToolbar.xaml.cs">
       <DependentUpon>CropToolbar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PlaybackMasterHeader.xaml.cs">
+      <DependentUpon>PlaybackMasterHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TrimToolbar.xaml.cs">
       <DependentUpon>TrimToolbar.xaml</DependentUpon>
     </Compile>
@@ -3130,6 +3133,10 @@
     <Page Include="Controls\CropToolbar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PlaybackMasterHeader.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TrimToolbar.xaml">
       <SubType>Designer</SubType>

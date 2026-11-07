@@ -878,54 +878,100 @@ namespace Telegram.Views
 
         public void Handle(UpdateActiveCall update)
         {
-            void UpdatePlaybackHidden(bool hidden)
-            {
-                Playback?.IsHidden = hidden;
-            }
-
             this.BeginOnUIThread(() =>
             {
-                var oldVisible = _activeCallVisible || _playbackVisible;
-
                 var call = ViewModel.VoipService.ActiveCall;
                 if (call != null)
                 {
-                    UpdatePlaybackHidden(true);
                     FindName(nameof(CallBanner));
 
                     CallBanner.Update(ViewModel.NavigationService, call);
-
-                    _activeCallVisible = true;
-                    MasterDetail.ShowHideBanner(_activeCallVisible || _playbackVisible);
+                    ShowHideActiveCall(true);
                 }
                 else
                 {
-                    UpdatePlaybackHidden(false);
-
                     CallBanner?.Update(null, null);
-
-                    _activeCallVisible = false;
-                }
-
-                var newVisible = _activeCallVisible || _playbackVisible;
-                if (newVisible && oldVisible && !_activeCallVisible)
-                {
-                    OnBannerCollapsed(null, null);
-                }
-                else
-                {
-                    MasterDetail.ShowHideBanner(_activeCallVisible || _playbackVisible);
+                    ShowHideActiveCall(false);
                 }
             });
         }
 
-        private void OnBannerCollapsed(object sender, EventArgs e)
+        private bool _activeCallCollapsed;
+
+        private void ShowHideActiveCall(bool show)
         {
-            if (CallBanner != null && !_activeCallVisible)
+            if (_activeCallCollapsed != show)
             {
-                CallBanner.Update(null, null);
-                UnloadObject(CallBanner);
+                return;
             }
+
+            if (CallBanner == null)
+            {
+                _activeCallCollapsed = !show;
+                return;
+            }
+
+            _activeCallCollapsed = !show;
+            CallBanner.Visibility = Visibility.Visible;
+
+            var visual = ElementComposition.GetElementVisual(LayoutRoot);
+            var footer = ElementComposition.GetElementVisual(Footer);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Footer, true);
+
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (MasterDetail.NavigationService.Content is IChatPage chatPage)
+                {
+                    chatPage.CompleteBannerAnimation(true);
+                }
+
+                visual.Properties.InsertVector3("Translation", Vector3.Zero);
+                footer.Properties.InsertVector3("Translation", Vector3.Zero);
+
+                LayoutRoot.Margin = new Thickness(0);
+
+                if (_activeCallCollapsed && CallBanner != null)
+                {
+                    CallBanner.Update(null, null);
+                    UnloadObject(CallBanner);
+                }
+
+                // The banner moves the title bar without resizing it, which the drag region does
+                // not follow. After a frame, so layout has put it where it ends up.
+                VisualUtilities.QueueCallbackForCompositionRendered(InvalidateTitleBar);
+            };
+
+            var translate = visual.Compositor.CreateScalarKeyFrameAnimation();
+            translate.InsertKeyFrame(show ? 0 : 1, -40);
+            translate.InsertKeyFrame(show ? 1 : 0, 0);
+            translate.Duration = Constants.FastAnimation;
+
+            var negative = visual.Compositor.CreateScalarKeyFrameAnimation();
+            negative.InsertKeyFrame(show ? 0 : 1, 0);
+            negative.InsertKeyFrame(show ? 1 : 0, -40);
+            negative.Duration = Constants.FastAnimation;
+
+            visual.StartAnimation("Translation.Y", translate);
+            footer.StartAnimation("Translation.Y", negative);
+
+            LayoutRoot.Margin = new(0, 0, 0, -40);
+
+            if (MasterDetail.NavigationService.Content is IChatPage chatPage)
+            {
+                chatPage.StartBannerAnimation(negative, true);
+            }
+
+            batch.End();
+
+            UpdateTitleBar();
+        }
+
+        private void InvalidateTitleBar()
+        {
+            NavigationService?.Window?.InvalidateTitleBar();
         }
 
         public void Handle(UpdateChatFoldersLayout update)
@@ -1114,6 +1160,118 @@ namespace Telegram.Views
             batch.End();
         }
 
+        private bool _playbackCollapsed = true;
+
+        private void ShowHidePlaybackMaster(bool show, bool animate)
+        {
+            if (_playbackCollapsed != show)
+            {
+                return;
+            }
+
+            _playbackCollapsed = !show;
+            FindName(nameof(PlaybackMaster));
+
+            Stories.BannerCollapsed = !show;
+            Stories.Banner = BannerMaster;
+            Stories.ControlledList = ChatsList;
+
+            void ShowHidePlaybackCompleted()
+            {
+                DialogsPanel.Margin = new Thickness();
+                ChatsList.Margin = new Thickness(0, Stories.TopPadding, 0, 0);
+                PlaybackMaster.Visibility = _playbackCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            }
+
+            var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
+            if (element == null || !animate)
+            {
+                // The animated hide ends on a transparent, clipped-away banner that only an
+                // animated show undoes. Stopped first: a value set under a running animation is dropped.
+                var banner = ElementComposition.GetElementVisual(BannerMaster);
+                banner.StopAnimation("Opacity");
+                banner.Opacity = 1;
+                banner.Clip = null;
+
+                var panel = ElementComposition.GetElementVisual(DialogsPanel);
+                panel.StopAnimation("Offset.Y");
+                panel.Offset = Vector3.Zero;
+
+                if (ChatTabsView != null)
+                {
+                    // Enabled first: StopAnimation throws for a property the visual does not have.
+                    ElementCompositionPreview.SetIsTranslationEnabled(ChatTabsView, true);
+
+                    var chatTabs = ElementComposition.GetElementVisual(ChatTabsView);
+                    chatTabs.StopAnimation("Translation.Y");
+                    chatTabs.Properties.InsertVector3("Translation", Vector3.Zero);
+                }
+
+                ShowHidePlaybackCompleted();
+                return;
+            }
+
+            var topPadding = Stories.GetTopPaddingBanner(false);
+
+            PlaybackMaster.Visibility = Visibility.Visible;
+            ChatsList.Margin = new Thickness(0, topPadding, 0, 0);
+            DialogsPanel.Margin = new Thickness(0, 0, 0, -40);
+
+            var visual = ElementComposition.GetElementVisual(DialogsPanel);
+            var header = ElementComposition.GetElementVisual(BannerMaster);
+            header.Clip = visual.Compositor.CreateInsetClip();
+
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                //header.Offset = new Vector3();
+                visual.Offset = new Vector3();
+
+                if (ChatTabsView != null)
+                {
+                    var chatTabs = ElementComposition.GetElementVisual(ChatTabsView);
+                    chatTabs.Properties.InsertVector3("Translation", Vector3.Zero);
+                }
+
+                ShowHidePlaybackCompleted();
+            };
+
+            var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            //opacity.Duration = Constants.FastAnimation;
+
+            var offset1 = visual.Compositor.CreateScalarKeyFrameAnimation();
+            offset1.InsertKeyFrame(show ? 0 : 1, -40);
+            offset1.InsertKeyFrame(show ? 1 : 0, 0);
+            //offset.Duration = Constants.FastAnimation;
+
+            var offset2 = visual.Compositor.CreateScalarKeyFrameAnimation();
+            offset2.InsertKeyFrame(show ? 0 : 1, 40);
+            offset2.InsertKeyFrame(show ? 1 : 0, 0);
+            //offset.Duration = Constants.FastAnimation;
+
+            header.StartAnimation("Opacity", opacity);
+            header.Clip.StartAnimation("TopInset", offset2);
+            visual.StartAnimation("Offset.Y", offset1);
+
+            if (ChatTabsView != null)
+            {
+                var chatTabs = ElementComposition.GetElementVisual(ChatTabsView);
+                ElementCompositionPreview.SetIsTranslationEnabled(ChatTabsView, true);
+
+                var offset3 = visual.Compositor.CreateScalarKeyFrameAnimation();
+                offset3.InsertKeyFrame(show ? 0 : 1, 40);
+                offset3.InsertKeyFrame(show ? 1 : 0, 0);
+
+                chatTabs.StartAnimation("Translation.Y", offset3);
+            }
+
+            batch.End();
+        }
+
         public void OnBackRequesting(BackRequestedRoutedEventArgs args)
         {
             if (!_searchCollapsed)
@@ -1294,7 +1452,7 @@ namespace Telegram.Views
 
             OnStateChanged(null, null);
 
-            ShowHideBanner(LifetimeService.Current.Playback);
+            UpdatePlaybackVisibility();
 
             var update = new UpdateConnectionState(ViewModel.ClientService.ConnectionState);
             if (update.State != null)
@@ -1378,22 +1536,43 @@ namespace Telegram.Views
 
         private void OnPlaybackSourceChanged(IPlaybackService sender, object e)
         {
-            this.BeginOnUIThread(() => ShowHideBanner(sender));
+            this.BeginOnUIThread(() => UpdatePlaybackVisibility(true));
         }
 
-        private bool _playbackVisible;
-        private bool _activeCallVisible;
-
-        private void ShowHideBanner(IPlaybackService sender)
+        private void UpdatePlaybackVisibility()
         {
-            if (sender.CurrentItem != null && Playback == null)
+            UpdatePlaybackVisibility(false);
+        }
+
+        private void UpdatePlaybackVisibility(bool animate)
+        {
+            var playing = LifetimeService.Current.Playback.CurrentItem != null;
+            if (playing)
             {
-                FindName(nameof(Playback));
-                Playback.Update(ViewModel.ClientService, ViewModel.NavigationService);
+                if (PlaybackDetail == null)
+                {
+                    FindName(nameof(PlaybackDetail));
+                    PlaybackDetail.Update(ViewModel.ClientService, ViewModel.NavigationService);
+                }
+
+                if (PlaybackMaster == null)
+                {
+                    FindName(nameof(PlaybackMaster));
+                    PlaybackMaster.Update(ViewModel.ClientService, ViewModel.NavigationService);
+                }
             }
 
-            _playbackVisible = sender.CurrentItem != null;
-            MasterDetail.ShowHideBanner(_playbackVisible || _activeCallVisible);
+            var minimal = MasterDetail.CurrentState == MasterDetailState.Minimal;
+            var blank = MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage);
+
+            var detailVisible = playing && (!minimal || !blank);
+            var masterVisible = playing && minimal;
+
+            MasterDetail.ShowHideBanner(detailVisible, animate);
+
+            // In Minimal the master header stays up while a page covers the list, so playback can
+            // start or stop under it: off screen, there is nothing to animate.
+            ShowHidePlaybackMaster(masterVisible, animate && minimal && blank);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -1957,6 +2136,7 @@ namespace Telegram.Views
             _shouldGoBackWithDetail = true;
 
             UpdatePaneToggleButtonVisibility();
+            UpdatePlaybackVisibility();
             UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetChatFromBackStack());
 
             SettingsView?.UpdateSelection(false);
@@ -1988,6 +2168,7 @@ namespace Telegram.Views
             }
 
             UpdatePaneToggleButtonVisibility();
+            UpdatePlaybackVisibility();
 
             ChatsList.UpdateViewState(MasterDetail.CurrentState);
 
@@ -2547,12 +2728,6 @@ namespace Telegram.Views
 
             chats.StartAnimation("Scale", scale2);
             chats.StartAnimation("Opacity", opacity2);
-
-            if (!_topicListCollapsed)
-            {
-                var header = ElementComposition.GetElementVisual(Header);
-                header.StartAnimation("Opacity", opacity1);
-            }
 
             batch.End();
         }
@@ -3641,6 +3816,20 @@ namespace Telegram.Views
             {
                 page.PopupClosed();
             }
+
+            UpdateTitleBar();
+        }
+
+        private void UpdateTitleBar()
+        {
+            if (_activeCallCollapsed)
+            {
+                NavigationService.Window.UpdateTitleBar();
+            }
+            else
+            {
+                NavigationService.Window.SetTitleBarForeground(Colors.White);
+            }
         }
 
         #region Context menu
@@ -4001,11 +4190,8 @@ namespace Telegram.Views
 
             var padding = ChatTabs != null
                 ? _tabsTopCollapsed ? -74 : -78
-                : -14;
+                : -78;
 
-            var margin = _tabsTopCollapsed ? 38 : 74;
-
-            DialogsPanel.Margin = new Thickness(0, -margin, 0, 0);
             TopicListPresenter.Margin = new Thickness(72, padding, 0, 0);
 
             void ShowHideTopicListCompleted()
@@ -4028,9 +4214,6 @@ namespace Telegram.Views
             var chats = ElementComposition.GetElementVisual(element);
             var panel = ElementComposition.GetElementVisual(TopicListPresenter);
 
-            var dialogs = ElementComposition.GetElementVisual(DialogsPanel);
-            var header = ElementComposition.GetElementVisual(Header);
-
             var compositor = chats.Compositor;
 
             var inset = 72;
@@ -4047,7 +4230,6 @@ namespace Telegram.Views
             ElementCompositionPreview.SetIsTranslationEnabled(TopicListPresenter, true);
 
             chats.Clip = compositor.CreateInsetClip(0, 0, width, 0);
-            dialogs.Clip = null;
 
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -4059,13 +4241,6 @@ namespace Telegram.Views
                 {
                     chats.Clip = null;
                     TopicListPresenter.Visibility = Visibility.Collapsed;
-
-                    dialogs.Properties.InsertVector3("Translation", Vector3.Zero);
-                    DialogsPanel.Margin = new Thickness(0);
-                }
-                else
-                {
-                    dialogs.Clip = compositor.CreateInsetClip(0, (float)ChatsList.Margin.Top, 0, 0);
                 }
             };
 
@@ -4089,30 +4264,6 @@ namespace Telegram.Views
             redirect.Clip.StartAnimation("LeftInset", clip0);
 
             ChatsList.UpdateViewState(show ? MasterDetailState.Compact : MasterDetail.CurrentState);
-
-            var offset2 = compositor.CreateScalarKeyFrameAnimation();
-            offset2.InsertKeyFrame(0, show ? margin : 0);
-            offset2.InsertKeyFrame(1, show ? 0 : margin);
-            offset2.Duration = Constants.FastAnimation;
-
-            var clip1 = compositor.CreateScalarKeyFrameAnimation();
-            clip1.InsertKeyFrame(0, show ? 0 : 40);
-            clip1.InsertKeyFrame(1, show ? 40 : 0);
-            clip1.Duration = Constants.FastAnimation;
-
-            var opacity = compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, show ? 1 : 0);
-            opacity.InsertKeyFrame(1, show ? 0 : 1);
-            opacity.Duration = Constants.FastAnimation;
-
-            dialogs.StartAnimation("Translation.Y", offset2);
-            header.StartAnimation("Opacity", opacity);
-
-            if (ChatTabs != null)
-            {
-                var tabs = ElementComposition.GetElementVisual(ChatTabs);
-                tabs.StartAnimation("Opacity", opacity);
-            }
 
             batch.End();
         }
@@ -4321,7 +4472,6 @@ namespace Telegram.Views
             Photo = null;
             MasterDetail = null;
             Confetti = null;
-            Playback = null;
             CallBanner = null;
             Header = null;
             Stories = null;

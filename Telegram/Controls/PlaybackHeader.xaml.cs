@@ -50,19 +50,6 @@ namespace Telegram.Controls
         }
 
         private bool _collapsed;
-        private bool _hidden;
-
-        public bool IsHidden
-        {
-            get => _hidden;
-            set
-            {
-                _hidden = value;
-                Visibility = value
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
-            }
-        }
 
         protected override void OnLoaded()
         {
@@ -165,9 +152,6 @@ namespace Telegram.Controls
                 }
 
                 _collapsed = false;
-                Visibility = _hidden
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
             }
 
             VolumeButton.Glyph = LifetimeService.Current.Playback.Volume switch

@@ -75,6 +75,7 @@
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -86,9 +87,15 @@
                           VerticalAlignment="Top"
                           Background="Transparent"
                           IsHitTestVisible="False"
-                          Grid.Column="1" />
+                          Grid.Column="1"
+                          Grid.RowSpan="2" />
+
+        <controls:GroupCallActiveHeader x:Load="False"
+                                        x:Name="CallBanner"
+                                        Grid.ColumnSpan="2" />
 
         <Grid Height="40"
+              Grid.Row="1"
               Grid.Column="1"
               Canvas.ZIndex="1">
             <Grid x:Name="TitleBarrr"
@@ -171,7 +178,7 @@
 
         <Grid x:Load="False"
               x:Name="ChatTabsLeft"
-              Grid.Row="1">
+              Grid.Row="2">
             <Border BackgroundSizing="OuterBorderEdge"
                     Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
@@ -326,21 +333,18 @@
                              ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
                              Canvas.ZIndex="2"
                              Grid.ColumnSpan="2"
-                             Grid.Row="0" />
+                             Grid.Row="1" />
 
         <controls:MasterDetailView x:Name="MasterDetail"
                                    ViewStateChanged="OnStateChanged"
                                    MasterVisibilityChanged="OnMasterVisibilityChanged"
-                                   BannerCollapsed="OnBannerCollapsed"
                                    Grid.Column="1"
-                                   Grid.Row="1">
+                                   Grid.Row="2">
             <controls:MasterDetailView.Banner>
-                <Grid SizeChanged="Banner_SizeChanged">
-                    <controls:PlaybackHeader x:Name="Playback"
+                <Grid x:Name="BannerDetail"
+                      SizeChanged="Banner_SizeChanged">
+                    <controls:PlaybackHeader x:Name="PlaybackDetail"
                                              x:Load="False" />
-
-                    <controls:GroupCallActiveHeader x:Load="False"
-                                                    x:Name="CallBanner" />
                 </Grid>
             </controls:MasterDetailView.Banner>
             <Grid x:Name="RootGrid">
@@ -489,9 +493,9 @@
                             </Grid.RowDefinitions>
                             <StackPanel x:Name="ChatListHeader"
                                         VerticalAlignment="Top"
-                                        Spacing="60"
                                         Canvas.ZIndex="1">
-                                <Border Height="92" />
+                                <Border Height="92"
+                                        Margin="0,0,0,60" />
 
                                 <Border x:Name="ChatTabs"
                                         x:Load="False">
@@ -566,6 +570,12 @@
                                         </controls:ChatFoldersNavView>
                                     </Grid>
                                 </Border>
+                                <Grid x:Name="BannerMaster">
+                                    <controls:PlaybackMasterHeader x:Name="PlaybackMaster"
+                                                                   x:Load="False"
+                                                                   Visibility="Collapsed"
+                                                                   Margin="16,4,16,4" />
+                                </Grid>
                             </StackPanel>
 
                             <views:ForumView x:Name="TopicListPresenter"
@@ -798,7 +808,8 @@
                     <local:SettingsPage x:Name="SettingsView" />
                 </Grid>
 
-                <StackPanel VerticalAlignment="Bottom"
+                <StackPanel x:Name="Footer"
+                            VerticalAlignment="Bottom"
                             MaxWidth="1000"
                             Margin="24,8"
                             Grid.RowSpan="2"
@@ -878,6 +889,7 @@
                                       ChatTabs="{x:Bind ChatTabs, Mode=OneWay}"
                                       TitleBarrr="{x:Bind TitleBarrr}"
                                       TitleBarHandle="{x:Bind TitleBarHandle}"
+                                      Banner="{x:Bind BannerMaster}"
                                       Header="{x:Bind Header}"
                                       VerticalAlignment="Top"
                                       Margin="0,-32,0,0"
@@ -888,13 +900,13 @@
         <Border x:Name="Transition"
                 IsHitTestVisible="False"
                 Grid.ColumnSpan="2"
-                Grid.RowSpan="2" />
+                Grid.RowSpan="3" />
 
         <controls:ConfettiView x:Name="Confetti"
                                x:Load="False"
                                IsHitTestVisible="False"
                                Grid.ColumnSpan="2"
-                               Grid.Row="1" />
+                               Grid.Row="2" />
         <!--Completed="Confetti_Completed"-->
     </Grid>
 </controls:CorePage>

@@ -446,28 +446,52 @@ namespace Telegram.Controls
 
         public event EventHandler BannerCollapsed;
 
-        public void ShowHideBanner(bool show)
+        public void ShowHideBanner(bool show, bool animate)
         {
             if (_bannerCollapsed != show)
             {
                 return;
             }
 
+            _bannerCollapsed = !show;
+
             if (BannerPresenter == null)
             {
-                _bannerCollapsed = !show;
                 return;
             }
 
-            _bannerCollapsed = !show;
-            BannerPresenter.Visibility = Visibility.Visible;
-
             var banner = ElementComposition.GetElementVisual(BannerPresenter);
             var detail = ElementComposition.GetElementVisual(DetailRoot);
-            var master = ElementComposition.GetElementVisual(MasterFrame);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BannerPresenter, true);
             ElementCompositionPreview.SetIsTranslationEnabled(DetailRoot, true);
+
+            if (!animate)
+            {
+                // The animated hide ends with the banner translated out, which only an animated
+                // show undoes. Stopped first: a value set under a running animation is dropped,
+                // and stopping completes the batch, which then settles on _bannerCollapsed.
+                banner.StopAnimation("Translation.Y");
+                banner.Properties.InsertVector3("Translation", Vector3.Zero);
+
+                detail.StopAnimation("Translation.Y");
+
+                BannerPresenter.Visibility = show
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                if (_bannerCollapsed)
+                {
+                    BannerCollapsed?.Invoke(this, EventArgs.Empty);
+                }
+
+                return;
+            }
+
+            BannerPresenter.Visibility = Visibility.Visible;
+
+            var master = ElementComposition.GetElementVisual(MasterFrame);
+
             ElementCompositionPreview.SetIsTranslationEnabled(MasterFrame, true);
 
             var batch = banner.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -475,7 +499,7 @@ namespace Telegram.Controls
             {
                 if (DetailFrame?.Content is IChatPage chatPage)
                 {
-                    chatPage.CompleteBannerAnimation();
+                    chatPage.CompleteBannerAnimation(false);
                 }
 
                 detail.Properties.InsertVector3("Translation", Vector3.Zero);
@@ -500,10 +524,10 @@ namespace Telegram.Controls
 
             if (CurrentState == MasterDetailState.Minimal && DetailFrame?.CurrentSourcePageType == BlankPageType)
             {
-                translate.InsertKeyFrame(show ? 0 : 1, -48);
+                //translate.InsertKeyFrame(show ? 0 : 1, -48);
 
-                MasterFrame.Margin = new Thickness(0, 0, 0, -48);
-                master.StartAnimation("Translation.Y", translate);
+                //MasterFrame.Margin = new Thickness(0, 0, 0, -48);
+                //master.StartAnimation("Translation.Y", translate);
             }
             else
             {
@@ -512,7 +536,7 @@ namespace Telegram.Controls
 
                 if (DetailFrame.Content is IChatPage chatPage)
                 {
-                    chatPage.StartBannerAnimation(translate);
+                    chatPage.StartBannerAnimation(translate, false);
                 }
                 else
                 {

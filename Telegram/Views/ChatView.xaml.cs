@@ -65,8 +65,8 @@ namespace Telegram.Views
     {
         DialogViewModel ViewModel { get; }
 
-        void StartBannerAnimation(ScalarKeyFrameAnimation translate);
-        void CompleteBannerAnimation();
+        void StartBannerAnimation(ScalarKeyFrameAnimation translate, bool title);
+        void CompleteBannerAnimation(bool title);
     }
 
     public interface IProfileChatPage : IChatPage
@@ -377,25 +377,50 @@ namespace Telegram.Views
             return result;
         }
 
-        public void StartBannerAnimation(ScalarKeyFrameAnimation translate)
+        public void StartBannerAnimation(ScalarKeyFrameAnimation translate, bool title)
         {
-            var header = ElementComposition.GetElementVisual(Header);
-            var clipper = ElementComposition.GetElementVisual(ClipperOuter);
+            if (title)
+            {
+                var footer = ElementComposition.GetElementVisual(Footer);
+                var content = ElementComposition.GetElementVisual(ContentPanel);
 
-            ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(ClipperOuter, true);
+                ElementCompositionPreview.SetIsTranslationEnabled(Footer, true);
+                ElementCompositionPreview.SetIsTranslationEnabled(ContentPanel, true);
 
-            header.StartAnimation("Translation.Y", translate);
-            clipper.StartAnimation("Translation.Y", translate);
+                footer.StartAnimation("Translation.Y", translate);
+                content.StartAnimation("Translation.Y", translate);
+            }
+            else
+            {
+                var header = ElementComposition.GetElementVisual(Header);
+                var clipper = ElementComposition.GetElementVisual(ClipperOuter);
+
+                ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
+                ElementCompositionPreview.SetIsTranslationEnabled(ClipperOuter, true);
+
+                header.StartAnimation("Translation.Y", translate);
+                clipper.StartAnimation("Translation.Y", translate);
+            }
         }
 
-        public void CompleteBannerAnimation()
+        public void CompleteBannerAnimation(bool title)
         {
-            var header = ElementComposition.GetElementVisual(Header);
-            var clipper = ElementComposition.GetElementVisual(ClipperOuter);
+            if (title)
+            {
+                var footer = ElementComposition.GetElementVisual(Footer);
+                var content = ElementComposition.GetElementVisual(ContentPanel);
 
-            header.Properties.InsertVector3("Translation", Vector3.Zero);
-            clipper.Properties.InsertVector3("Translation", Vector3.Zero);
+                footer.Properties.InsertVector3("Translation", Vector3.Zero);
+                content.Properties.InsertVector3("Translation", Vector3.Zero);
+            }
+            else
+            {
+                var header = ElementComposition.GetElementVisual(Header);
+                var clipper = ElementComposition.GetElementVisual(ClipperOuter);
+
+                header.Properties.InsertVector3("Translation", Vector3.Zero);
+                clipper.Properties.InsertVector3("Translation", Vector3.Zero);
+            }
         }
 
         private void InitializeStickers()

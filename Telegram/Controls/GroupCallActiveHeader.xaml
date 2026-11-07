@@ -44,14 +44,14 @@
                                             Height="40"
                                             RequestedTheme="Dark" />
 
-        <controls:GlyphButton x:Name="Dismiss"
+        <!--<controls:GlyphButton x:Name="Dismiss"
                               Click="Dismiss_Click"
                               Glyph="&#xE711;"
-                              Height="40"
+                              Height="32"
                               Grid.Column="7"
                               HorizontalAlignment="Right"
                               AutomationProperties.Name="{CustomResource VoipGroupLeave}"
                               ToolTipService.ToolTip="{CustomResource VoipGroupLeave}"
-                              RequestedTheme="Dark" />
+                              RequestedTheme="Dark" />-->
     </Grid>
 </UserControl>

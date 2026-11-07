@@ -68,20 +68,6 @@ namespace Telegram.Controls
 
         private bool _registerEvents = true;
 
-        private UIElement _banner;
-
-        private double GetBannerDesiredHeight(FrameworkElement detail)
-        {
-            _banner ??= detail.FindName("BannerPresenter") as UIElement;
-
-            if (_banner != null && _banner.DesiredSize.Height > 0)
-            {
-                return _banner.DesiredSize.Height + 8;
-            }
-
-            return 0;
-        }
-
         protected override Size MeasureOverride(Size availableSize)
         {
             var detail = Children[0] as FrameworkElement;
@@ -106,9 +92,7 @@ namespace Telegram.Controls
             if (availableSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain || !HasMaster)
             {
                 detail.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height)));
-
-                var desiredHeight = GetBannerDesiredHeight(detail);
-                master.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - desiredHeight)));
+                master.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height)));
 
                 grip.Measure(CreateSize(0, 0));
             }
@@ -145,9 +129,7 @@ namespace Telegram.Controls
                 CurrentState = MasterDetailState.Minimal;
 
                 detail.Arrange(CreateRect(0, 0, finalSize.Width, finalSize.Height));
-
-                var desiredHeight = GetBannerDesiredHeight(detail);
-                master.Arrange(CreateRect(0, desiredHeight, finalSize.Width, finalSize.Height - desiredHeight));
+                master.Arrange(CreateRect(0, 0, finalSize.Width, finalSize.Height));
 
                 grip.Arrange(CreateRect(0, 0, 0, 0));
             }

@@ -1,0 +1,155 @@
+<controls:UserControlEx x:Class="Telegram.Controls.PlaybackMasterHeader"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:local="using:Telegram.Controls"
+                        xmlns:cells="using:Telegram.Controls.Cells"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:native="using:Telegram.Native.Controls"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        mc:Ignorable="d"
+                        d:DesignHeight="300"
+                        d:DesignWidth="400"
+                        Background="{ThemeResource PageSubHeaderBackgroundBrush2}">
+
+    <controls:UserControlEx.Resources>
+        <Style TargetType="controls:PlaybackSlider">
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:PlaybackSlider">
+                        <Grid Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="PointerOver"
+                                                          To="Normal">
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                                 Storyboard.TargetName="ProgressBarIndicatorTransform"
+                                                                 Storyboard.TargetProperty="ScaleY"
+                                                                 To="0.3333333333333333" />
+                                                <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                                 Storyboard.TargetName="ProgressBarIndicatorTransform"
+                                                                 Storyboard.TargetProperty="TranslateY"
+                                                                 To="4" />
+                                            </Storyboard>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                             Storyboard.TargetName="ProgressBarIndicatorTransform"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="1.0" />
+                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                             Storyboard.TargetName="ProgressBarIndicatorTransform"
+                                                             Storyboard.TargetProperty="TranslateY"
+                                                             To="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="LayoutRoot"
+                                  Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ProgressBarIndicatorTransform"
+                                                        ScaleX="1.0"
+                                                        ScaleY="0.3333333333333333"
+                                                        TranslateX="0"
+                                                        TranslateY="4" />
+                                </Grid.RenderTransform>
+                                <Border x:Name="ProgressBarIndicator"
+                                        Background="{ThemeResource SystemControlHighlightAccentBrush}" />
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </controls:UserControlEx.Resources>
+
+    <Grid CornerRadius="16">
+        <Border Background="{ThemeResource TextControlBackground}"
+                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="16" />
+
+        <Button x:Name="ViewButton"
+                Click="View_Click"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                Padding="54,0,96,0"
+                Background="Transparent"
+                Style="{StaticResource ListEmptyButtonStyle}"
+                AutomationProperties.Name="{CustomResource AccDescrOpenChat}">
+            <Grid Margin="0,-2,0,0">
+                <TextBlock x:Name="Label1"
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}">
+                        <Run x:Name="TitleLabel1"
+                             FontWeight="SemiBold" />
+                        <Run x:Name="SubtitleLabel1" />
+                </TextBlock>
+
+                <TextBlock x:Name="Label2"
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}">
+                        <Run x:Name="TitleLabel2"
+                             FontWeight="SemiBold" />
+                        <Run x:Name="SubtitleLabel2" />
+                </TextBlock>
+            </Grid>
+        </Button>
+
+        <Grid x:Name="LeftButtons"
+              SizeChanged="Buttons_SizeChanged"
+              HorizontalAlignment="Left"
+              Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:PlaybackPlayButton x:Name="PlaybackButton"
+                                         Click="Toggle_Click"
+                                         Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                                         Width="48"
+                                         Height="32"
+                                         CornerRadius="12"
+                                         Grid.Column="1" />
+        </Grid>
+
+        <Grid x:Name="RightButtons"
+              SizeChanged="Buttons_SizeChanged"
+              HorizontalAlignment="Right"
+              Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:GlyphButton Click="Clear_Click"
+                                  Glyph="&#xE711;"
+                                  FontSize="16"
+                                  Width="40"
+                                  Height="32"
+                                  CornerRadius="12"
+                                  Grid.Column="4"
+                                  AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
+                                  ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}" />
+        </Grid>
+
+        <controls:PlaybackSlider x:Name="Slider"
+                                 Height="6"
+                                 VerticalAlignment="Bottom" />
+    </Grid>
+</controls:UserControlEx>
