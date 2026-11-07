@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls.Stories;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
@@ -51,6 +52,10 @@ namespace Telegram.Controls.Messages
 
         private MenuFlyoutPresenter _presenter;
         private Popup _popup;
+
+        // Set when shown on its own above an element rather than over a menu.
+        private readonly FrameworkElement _anchor;
+        private bool _expanding;
 
         public ReactionsMenuFlyout()
         {
@@ -94,6 +99,38 @@ namespace Telegram.Controls.Messages
         }
 
         /// <summary>
+        /// Offers <paramref name="reactions"/> for <paramref name="story"/> above
+        /// <paramref name="anchor"/>, with no menu under them, until one is chosen or the pointer
+        /// goes elsewhere. <see cref="Dismissed"/> reports when neither this nor the full picker
+        /// opened from it is open anymore.
+        /// </summary>
+        public static ReactionsMenuFlyout ShowAt(AvailableReactions reactions, StoryViewModel story, StoryReactionButton anchor)
+        {
+            return new ReactionsMenuFlyout(reactions, story, anchor);
+        }
+
+        private ReactionsMenuFlyout(AvailableReactions reactions, StoryViewModel story, StoryReactionButton anchor)
+        {
+            _reactions = reactions;
+            _story = story;
+            _reserved = anchor;
+            _anchor = anchor;
+
+            _viewModel = EmojiDrawerViewModel.Create(story.ClientService.Session, EmojiDrawerMode.Reactions);
+
+            InitializeComponent();
+            Initialize(reactions, story.ClientService, null);
+        }
+
+        public event EventHandler Dismissed;
+
+        /// <summary>
+        /// Raised for a story when the full picker is about to replace the menu the reactions are
+        /// shown over. <see cref="Dismissed"/> then reports when the picker is closed.
+        /// </summary>
+        public event EventHandler Expanding;
+
+        /// <summary>
         /// Offers <paramref name="reactions"/> over <paramref name="flyout"/> to choose one, which
         /// <see cref="ItemClick"/> reports. Nothing is sent.
         /// </summary>
@@ -116,16 +153,25 @@ namespace Telegram.Controls.Messages
 
         private async void Initialize(AvailableReactions available, IClientService clientService, MenuFlyout flyout)
         {
-            var first = flyout.Items[0];
-            var presenter = first.GetParent<MenuFlyoutPresenter>();
-            if (presenter == null)
+            // Without a menu the strip sits above the anchor instead, and measures from it.
+            MenuFlyoutPresenter presenter = null;
+            FrameworkElement target = _anchor;
+
+            if (flyout != null)
             {
-                return;
+                var first = flyout.Items[0];
+                presenter = first.GetParent<MenuFlyoutPresenter>();
+                if (presenter == null)
+                {
+                    return;
+                }
+
+                target = presenter;
+
+                flyout.Closed += Flyout_Closed;
+                presenter.PreviewKeyDown += Presenter_PreviewKeyDown;
             }
 
-            flyout.Closed += Flyout_Closed;
-
-            presenter.PreviewKeyDown += Presenter_PreviewKeyDown;
             Presenter.PreviewKeyDown += OnPreviewKeyDown;
 
             static void SetAutomation(UIElement element, int index, int count)
@@ -144,7 +190,7 @@ namespace Telegram.Controls.Messages
             _presenter = presenter;
             _popup = new Popup();
 
-            var transform = presenter.TransformToVisual(null);
+            var transform = target.TransformToVisual(null);
             var position = transform.TransformPoint(new Point());
 
             var sum = available.TopReactions.Count
@@ -159,8 +205,12 @@ namespace Telegram.Controls.Messages
 
             var itemTotal = itemSize + itemPadding;
 
-            var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
             var width = Math.Max(36 + 4, 8 + (count * itemTotal));
+
+            // Over a menu the strip is right-aligned with it, over an anchor it is placed below.
+            var actualWidth = presenter != null
+                ? presenter.ActualSize.X + 18 + 12 + 18
+                : width;
 
             var padding = actualWidth - width;
             var index = 0;
@@ -224,13 +274,18 @@ namespace Telegram.Controls.Messages
 
             LayoutRoot.Padding = new Thickness(16, 40, 16, 32);
 
-            var rect1 = CanvasGeometry.CreateRectangle(null, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
-            var elli1 = CanvasGeometry.CreateRoundedRectangle(null, width - actualWidth + 18 + 16, height + height + 5, presenter.ActualSize.X, 860, 8, 8);
-            var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
-
             var rootVisual = ElementComposition.GetElementVisual(LayoutRoot);
             var compositor = rootVisual.Compositor;
-            rootVisual.Clip = rootVisual.Compositor.CreateGeometricClip(rootVisual.Compositor.CreatePathGeometry(new CompositionPath(group1)));
+
+            // Cuts the menu out of the shadow, so there is nothing to cut without one.
+            if (presenter != null)
+            {
+                var rect1 = CanvasGeometry.CreateRectangle(null, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
+                var elli1 = CanvasGeometry.CreateRoundedRectangle(null, width - actualWidth + 18 + 16, height + height + 5, presenter.ActualSize.X, 860, 8, 8);
+                var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+                rootVisual.Clip = rootVisual.Compositor.CreateGeometricClip(rootVisual.Compositor.CreatePathGeometry(new CompositionPath(group1)));
+            }
 
             var pillShadow = compositor.CreateDropShadow();
             pillShadow.BlurRadius = 16f;
@@ -248,13 +303,24 @@ namespace Telegram.Controls.Messages
             var x = position.X - 18 + padding;
             var y = position.Y - (40 + 4);
 
+            if (presenter == null)
+            {
+                // The dot of the tail, 23 from the strip's right edge, lands over the anchor's
+                // center, and the dot's bottom stays just clear of the anchor's top.
+                x = position.X + target.ActualSize.X / 2 - (width - 23);
+                y = position.Y - (height + 20 - 7 + 3.5 + 4);
+
+                _popup.IsLightDismissEnabled = true;
+                _popup.Closed += Popup_Closed;
+            }
+
             _popup.Child = this;
             _popup.Margin = new Thickness(x - 16, y - height, 0, 0);
-            _popup.RequestedTheme = presenter.ActualTheme;
+            _popup.RequestedTheme = target.ActualTheme;
             _popup.ShouldConstrainToRootBounds = false;
             _popup.AllowFocusOnInteraction = false;
-            _popup.XamlRoot = presenter.XamlRoot;
-            this.ApplyChatTheme(presenter.XamlRoot);
+            _popup.XamlRoot = target.XamlRoot;
+            this.ApplyChatTheme(target.XamlRoot);
             _popup.IsOpen = true;
 
             var visualPill = ElementComposition.GetElementVisual(Pill);
@@ -998,9 +1064,25 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        private void Popup_Closed(object sender, object e)
+        {
+            _popup.Closed -= Popup_Closed;
+
+            // Expanding closes the strip, and the picker opened in its place reports instead.
+            if (!_expanding)
+            {
+                Dismissed?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         private void Reaction_Click(object sender, RoutedEventArgs e)
         {
             _flyout?.Hide();
+
+            if (_anchor != null)
+            {
+                _popup.IsOpen = false;
+            }
 
             if (sender is HyperlinkButton button)
             {
@@ -1030,11 +1112,11 @@ namespace Telegram.Controls.Messages
 
         public event EventHandler<AvailableReaction> ItemClick;
 
-        private async void StoryToggleReaction(AvailableReaction reaction)
+        private void StoryToggleReaction(AvailableReaction reaction)
         {
             if (reaction.NeedsPremium && !_story.ClientService.IsPremium)
             {
-                ToastPopup.ShowFeaturePromo(WindowContext.GetNavigationService(this), new PremiumFeatureUniqueReactions());
+                ToastPopup.ShowFeaturePromo(WindowContext.GetNavigationService(_reserved ?? this), new PremiumFeatureUniqueReactions());
                 return;
             }
 
@@ -1044,12 +1126,14 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                await _story.ClientService.SendAsync(new SetStoryReaction(_story.PosterChatId, _story.Id, reaction.Type, true));
-
-                if (_reserved != null && _reserved.IsLoaded)
+                // Shown in the button at once, which plays its effect once the story is updated
+                // with it.
+                if (_reserved is StoryReactionButton target && target.IsLoaded)
                 {
-                    // TODO: UI feedback
+                    target.Choose(reaction.Type);
                 }
+
+                _story.ClientService.Send(new SetStoryReaction(_story.PosterChatId, _story.Id, reaction.Type, true));
             }
         }
 
@@ -1119,9 +1203,30 @@ namespace Telegram.Controls.Messages
                 _flyout.Closed -= Flyout_Closed;
             }
 
-            if (_story != null)
+            if (_story != null && _anchor != null)
             {
+                // Near the bottom of the window, so the picker opens upwards over the strip.
+                var flyout = EmojiMenuFlyout.ShowAt(this, _story, _reserved, _reactions, _viewModel, EmojiFlyoutAlignment.Top);
+                flyout.Closed += (s, args) =>
+                {
+                    Dismissed?.Invoke(this, EventArgs.Empty);
+                };
+                flyout.Loaded += (s, args) =>
+                {
+                    _expanding = true;
+                    _popup.IsOpen = false;
+                };
+            }
+            else if (_story != null)
+            {
+                // The menu closes in favor of the picker, which outlives it.
+                Expanding?.Invoke(this, EventArgs.Empty);
+
                 var flyout = EmojiMenuFlyout.ShowAt(this, _story, _reserved, _reactions, _viewModel);
+                flyout.Closed += (s, args) =>
+                {
+                    Dismissed?.Invoke(this, EventArgs.Empty);
+                };
                 flyout.Loaded += (s, args) =>
                 {
                     _flyout?.Hide();
