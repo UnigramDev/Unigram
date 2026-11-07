@@ -110,8 +110,8 @@ namespace winrt::Telegram::Native::Media::implementation
         // queue here is enough to ride out one slow frame.
         constexpr size_t kVideoFrames = 3;
 
-        // A picture this late, with a newer one already due, makes the decoder skip the pictures
-        // nothing else refers to until it catches up.
+        // A picture this late makes the decoder skip the pictures nothing else refers to until it
+        // catches up.
         constexpr double kVideoBehind = 0.2;
 
         constexpr int kMaxReadErrors = 32;
@@ -812,7 +812,6 @@ namespace winrt::Telegram::Native::Media::implementation
 
         std::atomic<bool> m_demuxEnded{ false };
         std::atomic<bool> m_readingPaused{ false };
-        std::atomic<bool> m_videoBehind{ false };
         std::atomic<bool> m_running{ false };
         std::atomic<bool> m_stalledHint{ false };
         std::atomic<double> m_lastReport{ 0 };
@@ -2160,6 +2159,7 @@ namespace winrt::Telegram::Native::Media::implementation
         double target = 0;
         double nextPts = 0;
         bool pushed = false;
+        bool behind = false;
 
         // The last picture before the target, shown if the target turns out to be past the end.
         VideoFrame last;
@@ -2185,6 +2185,18 @@ namespace winrt::Telegram::Native::Media::implementation
                             last = { last.frame, pts, duration, serial, setup->format };
                         }
 
+                        av_frame_unref(frame);
+                        continue;
+                    }
+
+                    const double now = m_running ? CurrentTime() : pts;
+                    behind = now - pts > kVideoBehind;
+
+                    // The presenter waits for a vblank per picture, so it only gets through what
+                    // the queue holds in that time. Pictures due faster than that have to go here,
+                    // or the speed of the display decides how far the video falls behind the audio.
+                    if (pts + duration <= now && pushed && m_frames.Front() != nullptr && !m_videoPackets.Empty())
+                    {
                         av_frame_unref(frame);
                         continue;
                     }
@@ -2254,6 +2266,7 @@ namespace winrt::Telegram::Native::Media::implementation
                 target = item.target;
                 nextPts = target;
                 pushed = false;
+                behind = false;
 
                 // A decoder on a lost device decodes nothing more, so it is built again. One that
                 // failed to open is tried again: it marks the end only for the serial it failed in.
@@ -2325,7 +2338,7 @@ namespace winrt::Telegram::Native::Media::implementation
                 const double packetPts = ToSeconds(item.packet->pts, setup->timeBase) - setup->startTime;
                 const bool catchingUp = !std::isnan(packetPts) && packetPts + setup->frameDuration <= target - 0.001;
 
-                codec->skip_frame = catchingUp || m_videoBehind ? AVDISCARD_NONREF : AVDISCARD_DEFAULT;
+                codec->skip_frame = catchingUp || behind ? AVDISCARD_NONREF : AVDISCARD_DEFAULT;
 
                 int result = avcodec_send_packet(codec, item.packet);
 
@@ -2480,12 +2493,10 @@ namespace winrt::Telegram::Native::Media::implementation
             if (next != nullptr && next->frame != nullptr && next->serial == serial && next->pts <= now)
             {
                 // Late, and the next one is already due.
-                m_videoBehind = now - front->pts > kVideoBehind;
                 m_frames.Pop();
                 continue;
             }
 
-            m_videoBehind = false;
             m_renderer->Render(m_id, front->frame, front->format);
 
             {

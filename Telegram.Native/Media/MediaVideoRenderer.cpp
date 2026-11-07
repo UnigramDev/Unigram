@@ -58,6 +58,9 @@ namespace winrt::Telegram::Native::Media::implementation
         // A second loss within this long turns decoding on the GPU off for the player.
         constexpr double kRepeatedLoss = 60;
 
+        // Milliseconds. Long past the slowest refresh rate.
+        constexpr DWORD kFrameLatencyWait = 100;
+
         // While a driver resets, creating a device fails for a while. Tried this many times, with
         // the wait doubling from the first, before giving up.
         constexpr int kRecoveryAttempts = 8;
@@ -219,6 +222,7 @@ namespace winrt::Telegram::Native::Media::implementation
         m_device = owner->Device();
         m_context = owner->DeviceContext();
         m_swapChain = owner->SwapChain();
+        BindFrameLatency();
 
         if (HANDLE mutex = owner->ContextMutex())
         {
@@ -261,6 +265,11 @@ namespace winrt::Telegram::Native::Media::implementation
         if (m_contextMutex != nullptr)
         {
             CloseHandle(m_contextMutex);
+        }
+
+        if (m_frameLatency != nullptr)
+        {
+            CloseHandle(m_frameLatency);
         }
     }
 
@@ -356,7 +365,7 @@ namespace winrt::Telegram::Native::Media::implementation
         try
         {
             // Not held across the Present below: the decoders take the same lock to submit their
-            // work, and a Present can wait for a vblank.
+            // work, and presenting waits for a vblank.
             ContextLock lock(m_contextMutex);
 
             if (lock.Failed())
@@ -482,8 +491,30 @@ namespace winrt::Telegram::Native::Media::implementation
         ReleaseMutex(static_cast<HANDLE>(context));
     }
 
+    void MediaVideoRenderer::BindFrameLatency()
+    {
+        if (m_frameLatency != nullptr)
+        {
+            CloseHandle(m_frameLatency);
+            m_frameLatency = nullptr;
+        }
+
+        if (auto swapChain = m_swapChain ? m_swapChain.try_as<IDXGISwapChain2>() : nullptr)
+        {
+            m_frameLatency = swapChain->GetFrameLatencyWaitableObject();
+        }
+    }
+
     void MediaVideoRenderer::Present()
     {
+        // A Present that blocks for the vblank holds the D3D runtime lock while it does, leaving the
+        // hardware decoders a few calls per refresh, so the screen would set how fast video decodes.
+        // Waiting out here, Present returns at once. Bounded because the renderer's lock is held.
+        if (m_frameLatency != nullptr)
+        {
+            WaitForSingleObjectEx(m_frameLatency, kFrameLatencyWait, FALSE);
+        }
+
         const HRESULT result = m_swapChain->Present(1, 0);
 
         if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
@@ -589,6 +620,7 @@ namespace winrt::Telegram::Native::Media::implementation
             m_device = owner->Device();
             m_context = owner->DeviceContext();
             m_swapChain = owner->SwapChain();
+            BindFrameLatency();
 
             if (m_contextMutex != nullptr)
             {
@@ -655,7 +687,8 @@ namespace winrt::Telegram::Native::Media::implementation
         // ResizeBuffers fails while anything still holds one of the buffers.
         ReleaseTargets();
 
-        const HRESULT result = m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+        // The flag has to be the one the swap chain was created with.
+        const HRESULT result = m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
 
         if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
         {

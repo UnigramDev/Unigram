@@ -257,7 +257,7 @@ namespace winrt::Telegram::Native::Media::implementation
             swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
             swapChainDesc.BufferCount = 2;
             swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-            swapChainDesc.Flags = 0;
+            swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
             swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
 
             stage = L"CreateSwapChainForComposition";
@@ -268,8 +268,6 @@ namespace winrt::Telegram::Native::Media::implementation
                 nullptr,
                 resources.swapChain.put()));
 
-            device->SetMaximumFrameLatency(1);
-
             stage = L"IDXGIDevice3";
 
             // This is necessary so we can call Trim() on suspend
@@ -278,6 +276,7 @@ namespace winrt::Telegram::Native::Media::implementation
             stage = L"IDXGISwapChain2";
 
             winrt::check_hresult(resources.swapChain->QueryInterface(IID_PPV_ARGS(resources.swapChain2.put())));
+            winrt::check_hresult(resources.swapChain2->SetMaximumFrameLatency(1));
 
             return true;
         }

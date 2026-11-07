@@ -86,6 +86,7 @@ namespace winrt::Telegram::Native::Media::implementation
         bool DrawProcessor(bool upload);
         bool DrawSoftware();
         void Present();
+        void BindFrameLatency();
 
         void DeviceLost(const wchar_t* stage, HRESULT result);
         void StartRecovery();
@@ -125,6 +126,8 @@ namespace winrt::Telegram::Native::Media::implementation
         // Our own handle to the swap chain's context mutex: Close() on the swap chain closes its
         // handle, and this one may still be waited on by a frame in flight.
         HANDLE m_contextMutex{ nullptr };
+
+        HANDLE m_frameLatency{ nullptr };
 
         std::mutex m_lock;
         uint64_t m_session{ 0 };
