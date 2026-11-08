@@ -45,7 +45,7 @@ namespace Telegram.ViewModels.Supergroups
 
             if (Chat.Type is ChatTypeSupergroup supergroup)
             {
-                ClientService.Send(new ToggleSupergroupIsForum(supergroup.SupergroupId, value, UseTabsLayout));
+                ClientService.Send(new ToggleSupergroupIsForum(supergroup.SupergroupId, value, UseTabsLayout, false));
             }
         }
 
@@ -100,7 +100,7 @@ namespace Telegram.ViewModels.Supergroups
 
             if (Chat.Type is ChatTypeSupergroup supergroup)
             {
-                ClientService.Send(new ToggleSupergroupIsForum(supergroup.SupergroupId, true, type == LayoutType.Tabs));
+                ClientService.Send(new ToggleSupergroupIsForum(supergroup.SupergroupId, true, type == LayoutType.Tabs, false));
 
                 if (type == LayoutType.Tabs)
                 {

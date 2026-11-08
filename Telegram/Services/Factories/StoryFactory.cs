@@ -161,9 +161,9 @@ namespace Telegram.Services.Factories
                     var bounds = PaintEntityRenderer.GetWidgetBounds(entity);
 
                     // Named by the venue bot's query and result; by its point should those be missing.
-                    InputStoryAreaType type = entity.LocationQueryId != 0 && !string.IsNullOrEmpty(entity.LocationResultId)
+                    InputStoryAreaType type = /*entity.LocationQueryId != 0 && !string.IsNullOrEmpty(entity.LocationResultId)
                         ? new InputStoryAreaTypeFoundVenue(entity.LocationQueryId, entity.LocationResultId)
-                        : new InputStoryAreaTypeLocation(new Location(entity.LocationLatitude, entity.LocationLongitude, 0), null);
+                        :*/ new InputStoryAreaTypeLocation(new Location(entity.LocationLatitude, entity.LocationLongitude, 0), null);
 
                     areas ??= new List<InputStoryArea>();
                     areas.Add(new InputStoryArea(GetPosition(entity, bounds, state.FrameSize, bounds.Height * 0.2), type));
