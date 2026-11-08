@@ -16,6 +16,8 @@
     <UserControl.Resources>
         <Style x:Name="SuggestedReactionButtonStyle"
                TargetType="local:StoryReactionButton">
+            <Setter Property="FrameSize"
+                    Value="70" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="local:StoryReactionButton">
@@ -25,15 +27,20 @@
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Grid Margin="0,-4">
-                                <Image x:Name="Presenter"
-                                       Width="70"
-                                       Height="70" />
+                            <Grid Margin="0,-4"
+                                  Width="70"
+                                  Height="70">
+                                <!-- The reaction: a custom emoji at the size of the reaction,
+                                     Telegram's painting of an emoji larger, for the two
+                                     to look the same. The grid holds the size of it, for the
+                                     emoji's box to overflow it without moving anything. -->
                                 <controls:CustomEmojiIcon x:Name="Icon"
                                                           x:Load="False"
-                                                          Width="52"
-                                                          Height="52"
-                                                          FrameSize="52,52"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Width="70"
+                                                          Height="70"
+                                                          FrameSize="70,70"
                                                           IsViewportAware="False" />
                                 <Popup x:Name="Overlay"
                                        IsHitTestVisible="False"

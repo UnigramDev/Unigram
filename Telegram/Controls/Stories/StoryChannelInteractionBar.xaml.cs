@@ -6,7 +6,9 @@
 //
 
 using System;
+using System.Collections.Concurrent;
 using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Messages;
@@ -123,7 +125,6 @@ namespace Telegram.Controls.Stories
 
     public partial class StoryReactionButton : ToggleButton
     {
-        private Image Presenter;
         private TextBlock Glyph;
         private TextBlock Fallback;
         private CustomEmojiIcon Icon;
@@ -158,10 +159,44 @@ namespace Telegram.Controls.Stories
         public EmojiReaction EmojiReaction => _reaction;
         public Sticker CustomReaction => _sticker;
 
-        // As large as the empty heart, for the reaction not to jump in size when chosen.
-        public int FrameSize => _defaultValue != null ? 24 : 70;
+        // The size the template draws the reaction at, as large as the reply bar's other icons
+        // look next to it. Telegram's painting of an emoji reaction
+        // fills just a part of its animation's frame, and is drawn EmojiScale times this size
+        // for it to look as large as a custom emoji, which fills its own.
+        public static readonly DependencyProperty FrameSizeProperty = DependencyProperty.Register(
+            nameof(FrameSize), typeof(int), typeof(StoryReactionButton), new PropertyMetadata(28));
 
-        private long _presenterId;
+        public int FrameSize
+        {
+            get => (int)GetValue(FrameSizeProperty);
+            set => SetValue(FrameSizeProperty, value);
+        }
+
+        // How much larger than a custom emoji an emoji reaction's center animation is drawn, for
+        // the two to look the same size: 32 against 20, as ReactionButton draws them on messages.
+        private const double EmojiScale = 32.0 / 20.0;
+
+        private void SizeIcon(double size)
+        {
+            Icon.Width = size;
+            Icon.Height = size;
+            Icon.FrameSize = new Size(size, size);
+
+            // Larger than the box holding it, as an emoji's animation is, an element is laid out
+            // from the box's corner rather than centered on it: given the room, it stays centered.
+            var box = (Icon.Parent as FrameworkElement)?.Width ?? double.NaN;
+            Icon.Margin = new Thickness(double.IsNaN(box) ? 0 : Math.Min(0, (box - size) / 2));
+        }
+
+        /// <summary>
+        /// Places <paramref name="popup"/>, holding an effect three times the reaction's size, for
+        /// the effect to be centered on the reaction whatever size it is drawn at.
+        /// </summary>
+        private void CenterOverlay(Popup popup)
+        {
+            var box = (popup.Parent as FrameworkElement)?.Width ?? double.NaN;
+            popup.Margin = new Thickness(double.IsNaN(box) ? -FrameSize : (box - FrameSize * 3) / 2);
+        }
 
         private StoryViewModel _requested;
 
@@ -183,7 +218,7 @@ namespace Telegram.Controls.Stories
 
             // Nothing of the previous story may linger while this one's reaction is resolved, and
             // nothing shown waits on it either: right after starting the app that is a download.
-            if (_story != story && Presenter != null)
+            if (_story != story && Icon != null)
             {
                 StopEffects();
 
@@ -270,7 +305,7 @@ namespace Telegram.Controls.Stories
         public void Choose(ReactionType reaction)
         {
             var story = _story;
-            if (story == null || Presenter == null)
+            if (story == null || Icon == null)
             {
                 return;
             }
@@ -288,9 +323,7 @@ namespace Telegram.Controls.Stories
         private void ShowChosen(ReactionType reaction)
         {
             // Already drawn, as moving between stories with the same reaction finds it.
-            var drawn = _sticker != null
-                ? Icon != null && Icon.Visibility == Visibility.Visible && Icon.Source != null
-                : Presenter.Source != null && Presenter.Visibility == Visibility.Visible;
+            var drawn = Icon != null && Icon.Visibility == Visibility.Visible && Icon.Source != null;
 
             if (drawn && _interaction != null && _interaction.AreTheSame(reaction))
             {
@@ -301,39 +334,13 @@ namespace Telegram.Controls.Stories
             ShowEmpty(false);
             IsChecked = true;
 
-            // Drawn for good: the update showing it finds it drawn already, and leaves it be.
-            if (reaction is ReactionTypeCustomEmoji customEmoji && EmojiCache.TryGet(customEmoji.CustomEmojiId, out Sticker sticker))
-            {
-                _interaction = reaction;
-                _sticker = sticker;
-                _reaction = null;
+            _interaction = reaction;
+            _reaction = null;
+            _sticker = null;
 
-                DrawSticker(_story.ClientService, sticker);
-                return;
-            }
-
-            // Its image is the one the reactions offered to choose from draw, so usually on disk:
-            // as text only when it isn't.
-            if (reaction is ReactionTypeEmoji emoji && _story.ClientService.TryGetCachedReaction(emoji.Emoji, out EmojiReaction value))
-            {
-                _interaction = reaction;
-                _reaction = value;
-                _sticker = null;
-
-                DrawEmoji(_story.ClientService, value, true, emoji.Emoji);
-                return;
-            }
-
-            // Not even looked up yet: nothing to draw but its emoji, until the update showing it.
-            Presenter.Source = null;
-            _presenterId = 0;
-
-            if (Icon != null)
-            {
-                Icon.Visibility = Visibility.Collapsed;
-            }
-
-            ShowFallback(GetEmoji(reaction));
+            // Drawn the way the update showing it draws it, resolving it first: what there is
+            // of it in the meantime is its text emoji, for a reaction never shown before.
+            DrawReaction(_story.ClientService, reaction, GetEmoji(reaction));
         }
 
         /// <summary>
@@ -368,7 +375,7 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            foreach (var sticker in new[] { value.ActivateAnimation, value.CenterAnimation, value.AroundAnimation })
+            foreach (var sticker in new[] { value.CenterAnimation, value.AroundAnimation })
             {
                 var file = sticker?.StickerValue;
                 if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
@@ -392,14 +399,10 @@ namespace Telegram.Controls.Stories
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            // Regular emoji are drawn in the image, custom emoji in the icon.
-            Presenter.Visibility = empty || _sticker != null
-                ? Visibility.Collapsed
-                : Visibility.Visible;
-
+            // The reaction is drawn in the icon, whichever kind of it.
             if (Icon != null)
             {
-                Icon.Visibility = empty || _sticker == null
+                Icon.Visibility = empty
                     ? Visibility.Collapsed
                     : Visibility.Visible;
             }
@@ -443,11 +446,6 @@ namespace Telegram.Controls.Stories
                 Overlay.Child = null;
             }
 
-            if (Presenter != null)
-            {
-                Presenter.Opacity = 1;
-            }
-
             if (Icon != null)
             {
                 Icon.Opacity = 1;
@@ -479,7 +477,7 @@ namespace Telegram.Controls.Stories
 
         public void SetUnread(UnreadReaction unread)
         {
-            if (Presenter == null)
+            if (Icon == null)
             {
                 _unread = unread;
                 return;
@@ -495,7 +493,7 @@ namespace Telegram.Controls.Stories
 
         public void SetReaction(StoryViewModel story, ReactionType interaction, EmojiReaction value, EmojiReaction defaultValue)
         {
-            if (Presenter == null)
+            if (Icon == null)
             {
                 _story = story;
                 _interaction = interaction;
@@ -515,13 +513,6 @@ namespace Telegram.Controls.Stories
             _sticker = null;
             _defaultValue = defaultValue;
 
-            // A suggested reaction draws a regular emoji in the image, and may have been a custom
-            // emoji until now. The button draws both the same way, in the icon.
-            if (Icon != null && defaultValue == null)
-            {
-                Icon.Visibility = Visibility.Collapsed;
-            }
-
             ShowEmpty(defaultValue != null && story.ChosenReactionType == null);
             UpdateInteraction(story, interaction, recycled);
 
@@ -531,113 +522,244 @@ namespace Telegram.Controls.Stories
                 _story.ClientService.DownloadFile(around.Id, 32);
             }
 
-            DrawEmoji(story.ClientService, value, defaultValue != null, defaultValue != null && story.ChosenReactionType == null ? null : value?.Emoji);
+            // The default heart drawn for a story with no reaction is held behind the empty one,
+            // for the reaction chosen by tapping it to appear at once, at its size.
+            DrawReaction(story.ClientService, interaction, story.ChosenReactionType == null ? null : value?.Emoji);
         }
 
         /// <summary>
-        /// Draws <paramref name="value"/> as Telegram paints it, showing <paramref name="fallback"/>
-        /// as text in its place only while its image is still downloading, once that takes long
-        /// enough to notice.
+        /// Draws <paramref name="reaction"/> as <see cref="ReactionButton"/> draws one, in the
+        /// icon: a custom emoji fills it, while Telegram's painting of an emoji takes just a part
+        /// of its animation's frame and is drawn <see cref="EmojiScale"/> times the size for the
+        /// two to look the same,
+        /// until <see cref="CenterOnPaintedContent"/> measures that part and redraws the frame
+        /// from it.
         /// </summary>
-        private async void DrawEmoji(IClientService clientService, EmojiReaction value, bool icon, string fallback)
+        private void DrawReaction(IClientService clientService, ReactionType reaction, string fallback = null)
         {
-            // The first frame of the center animation is Telegram's painting of the emoji, which
-            // the effect starts and ends on. The activate animation starts from a plain emoji
-            // instead, and only turns into it as it plays. The emoji fills just the middle of the
-            // frame, so the button draws it at twice the size of the reaction, as the effect does.
-            var still = value?.CenterAnimation?.StickerValue;
-            if (still == null)
+            Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
+
+            var emoji = reaction is ReactionTypeEmoji;
+            var size = emoji ? FrameSize * EmojiScale : FrameSize;
+
+            var source = new ReactionFileSource(clientService, reaction)
             {
-                return;
+                UseCenterAnimation = true,
+                IsAnimated = !emoji
+            };
+
+            using (Icon.BeginBatchUpdate())
+            {
+                SizeIcon(size);
+
+                // The emoji's effect plays it once, where it rests, while a custom emoji keeps
+                // looping at rest, as custom emoji do elsewhere.
+                Icon.LoopCount = emoji ? 1 : 0;
+
+                // A custom emoji fills its frame and stays as drawn; an emoji's frame is redrawn
+                // from what it paints, once measured.
+                Icon.RenderTransform = null;
+
+                Icon.Source = source;
             }
 
-            if (icon)
+            if (emoji)
             {
-                // Custom emoji are drawn in the icon instead.
-                if (Icon != null)
-                {
-                    Icon.Visibility = Visibility.Collapsed;
-                }
-
-                Presenter.Visibility = Glyph?.Visibility == Visibility.Visible
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
+                CenterOnPaintedContent(source);
             }
 
-            if (still.Id == _presenterId)
-            {
-                return;
-            }
-
-            _presenterId = still.Id;
-
-            // Never the previous reaction's image while this one's is prepared.
-            Presenter.Source = null;
-            ShowFallback(null);
-
-            // Asked of TDLib rather than read from the sticker, whose file can say it isn't
-            // downloaded when the reactions offered to choose from have downloaded it already.
-            // That answer is immediate then, well before the emoji would show: only a download
-            // in progress shows it.
-            var downloaded = false;
-
+            // Its image is the one the reactions offered to choose from draw, so usually on
+            // disk: as text only when it isn't.
             if (fallback != null)
             {
-                var timer = _dispatcher.CreateTimer();
-                timer.Interval = TimeSpan.FromMilliseconds(100);
-                timer.IsRepeating = false;
-                timer.Tick += (s, args) =>
-                {
-                    if (_presenterId == still.Id && !downloaded)
-                    {
-                        ShowFallback(fallback);
-                    }
-                };
-                timer.Start();
-            }
-
-            var file = still.Local.IsDownloadingCompleted
-                ? still
-                : await clientService.DownloadFileAsync(still, 32);
-
-            downloaded = true;
-
-            if (_presenterId != still.Id || !file.Local.IsDownloadingCompleted)
-            {
-                return;
-            }
-
-            ImageSource source;
-            Rect content = default;
-
-            if (icon)
-            {
-                // Rendered large enough for the emoji, a part of the frame, to stay sharp once
-                // cropped to it and drawn as large as the reaction.
-                (source, content) = await LottieContent.RenderAsync(file.Local.Path, FrameSize * 4);
-            }
-            else
-            {
-                source = await GetLottieFrame(file.Local.Path, 0, FrameSize, FrameSize);
-            }
-
-            // A newer reaction may have been shown while this frame was rendered.
-            if (_presenterId == still.Id)
-            {
-                Presenter.Source = source;
-                _content = content;
-
-                ShowFallback(null);
+                ShowFallbackOnDemand(source, fallback);
             }
         }
 
-        // Where in the center animation's frame the emoji is painted, as a fraction of it, for its
-        // effect to draw the emoji in the same place and at the same size as the button does.
-        private Rect _content;
+        /// <summary>
+        /// Waits for the animation behind <paramref name="source"/> to be on disk and redraws the
+        /// icon from what it paints. Telegram paints an emoji in just a part of that frame, and
+        /// not quite in its middle, leaving room for its effect: measured, the frame is drawn for
+        /// its painted emoji to rest exactly where a custom emoji does, as large as one and in
+        /// the middle of the button, with everything the animation paints moving along.
+        /// </summary>
+        private void CenterOnPaintedContent(ReactionFileSource source)
+        {
+            var reaction = _interaction;
+
+            // The event answers a late subscriber as well, and the file is usually on disk
+            // already: drawn from whichever of the two speaks first.
+            source.Downloaded += (s, args) =>
+            {
+                if (_interaction.AreTheSame(reaction))
+                {
+                    DrawPaintedContent(source.FilePath, reaction);
+                }
+            };
+
+            if (source.IsDownloadingCompleted)
+            {
+                DrawPaintedContent(source.FilePath, reaction);
+            }
+        }
+
+        private void DrawPaintedContent(string path, ReactionType reaction)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            // The download may answer from any thread: drawn on the button's own.
+            if (!_dispatcher.HasThreadAccess)
+            {
+                _dispatcher.TryEnqueue(() => DrawPaintedContent(path, reaction));
+                return;
+            }
+
+            DrawPaintedContentUnsafe(path, reaction);
+        }
+
+        private async void DrawPaintedContentUnsafe(string path, ReactionType reaction)
+        {
+            var content = await GetPaintedContentAsync(path);
+
+            if (content is not Rect rect)
+            {
+                return;
+            }
+
+            if (Icon == null || !_interaction.AreTheSame(reaction))
+            {
+                return;
+            }
+
+            // The frame keeps the size it is drawn at, as ReactionButton draws it, and is
+            // translated for its painted part to sit in the middle of the button, where a custom
+            // emoji rests. The effect plays within the translated frame, and so starts and ends
+            // on the emoji, wherever in its frame Telegram painted it.
+            var size = FrameSize * EmojiScale;
+            var x = size * (0.5 - (rect.X + rect.Width / 2));
+            var y = size * (0.5 - (rect.Y + rect.Height / 2));
+
+            using (Icon.BeginBatchUpdate())
+            {
+                SizeIcon(size);
+
+                Icon.RenderTransform = new TranslateTransform
+                {
+                    X = x,
+                    Y = y
+                };
+            }
+
+        }
+
+        // What a reaction's center animation paints, as a fraction of its frame, measured once
+        // per file and shared by every button drawing that reaction.
+        private static readonly ConcurrentDictionary<string, Task<Rect?>> _paintedContent = new();
+
+        private static Task<Rect?> GetPaintedContentAsync(string path)
+        {
+            return _paintedContent.GetOrAdd(path, MeasurePaintedContentAsync);
+        }
+
+        private static async Task<Rect?> MeasurePaintedContentAsync(string path)
+        {
+            const int pixels = 96;
+
+            try
+            {
+                var buffer = BufferSurface.Create((uint)(pixels * pixels * 4));
+
+                var rendered = await Task.Run(() =>
+                {
+                    var animation = LottieAnimation.LoadFromFile(path, pixels, pixels, false, null);
+                    if (animation != null)
+                    {
+                        animation.RenderSync(buffer, 0);
+                        animation.Dispose();
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                if (!rendered)
+                {
+                    return null;
+                }
+
+                // BGRA, so the alpha of each pixel is its fourth byte.
+                var data = buffer.ToArray();
+
+                int minX = pixels, minY = pixels, maxX = -1, maxY = -1;
+
+                for (int y = 0; y < pixels; y++)
+                {
+                    for (int x = 0; x < pixels; x++)
+                    {
+                        if (data[(y * pixels + x) * 4 + 3] > 8)
+                        {
+                            minX = Math.Min(minX, x);
+                            maxX = Math.Max(maxX, x);
+                            minY = Math.Min(minY, y);
+                            maxY = Math.Max(maxY, y);
+                        }
+                    }
+                }
+
+                if (maxX < 0)
+                {
+                    return null;
+                }
+
+                var side = Math.Max(maxX - minX, maxY - minY) + 1;
+                var left = (minX + maxX + 1 - side) / 2;
+                var top = (minY + maxY + 1 - side) / 2;
+
+                // The square, as a fraction of the frame, centered on what it paints.
+                return new Rect((double)left / pixels, (double)top / pixels, (double)side / pixels, (double)side / pixels);
+            }
+            catch (Exception ex)
+            {
+                // Left as drawn, uncentered, which is how the message reaction button draws one
+                // too.
+                Logger.Exception(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Shows <paramref name="emoji"/> as text until <paramref name="source"/> is ready, so
+        /// that a reaction never shown before appears at once rather than after a download.
+        /// </summary>
+        private void ShowFallbackOnDemand(ReactionFileSource source, string emoji)
+        {
+            var timer = _dispatcher.CreateTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(100);
+            timer.IsRepeating = false;
+            timer.Tick += (s, args) =>
+            {
+                if (Icon?.Source == source && !source.IsDownloadingCompleted)
+                {
+                    ShowFallback(emoji);
+                }
+            };
+            timer.Start();
+
+            source.Downloaded += (s, args) =>
+            {
+                if (Icon?.Source == source)
+                {
+                    ShowFallback(null);
+                }
+            };
+        }
 
         public void SetReaction(StoryViewModel story, ReactionType interaction, Sticker value, EmojiReaction defaultValue)
         {
-            if (Presenter == null)
+            if (Icon == null)
             {
                 _story = story;
                 _interaction = interaction;
@@ -660,35 +782,7 @@ namespace Telegram.Controls.Stories
             ShowEmpty(false);
             UpdateInteraction(story, interaction, recycled);
 
-            DrawSticker(story.ClientService, value);
-        }
-
-        /// <summary>
-        /// Draws custom emoji <paramref name="value"/>, which having been offered to choose from is
-        /// downloaded already.
-        /// </summary>
-        private void DrawSticker(IClientService clientService, Sticker value)
-        {
-            Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-
-            // Hidden behind the empty heart until the reaction is chosen.
-            Icon.Visibility = Glyph?.Visibility == Visibility.Visible
-                ? Visibility.Collapsed
-                : Visibility.Visible;
-
-            if (_presenterId == value.StickerValue.Id)
-            {
-                return;
-            }
-
-            _presenterId = value.StickerValue.Id;
-
-            // Regular emoji are drawn in the image instead.
-            Presenter.Source = null;
-            ShowFallback(null);
-
-            Icon.FrameSize = new Size(FrameSize, FrameSize);
-            Icon.Source = new DelayedFileSource(clientService, value);
+            DrawReaction(story.ClientService, interaction);
         }
 
         private void UpdateInteraction(StoryViewModel story, ReactionType interaction, bool recycled)
@@ -729,47 +823,9 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private static async Task<ImageSource> GetLottieFrame(string path, int frame, int width, int height)
-        {
-            var dpi = WindowContext.Current.RasterizationScale;
-
-            width = (int)(width * dpi);
-            height = (int)(height * dpi);
-
-            if (width > 0 && height > 0)
-            {
-                var buffer = BufferSurface.Create((uint)(width * height * 4));
-
-                var rendered = await Task.Run(() =>
-                {
-                    var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
-                    if (animation != null)
-                    {
-                        animation.RenderSync(buffer, frame);
-                        animation.Dispose();
-                        return true;
-                    }
-
-                    return false;
-                });
-
-                var bitmap = new WriteableBitmap(width, height);
-
-                // Otherwise the buffer holds uninitialised memory.
-                if (rendered)
-                {
-                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
-                }
-
-                return bitmap;
-            }
-
-            return null;
-        }
-
         protected override void OnApplyTemplate()
         {
-            Presenter = GetTemplateChild(nameof(Presenter)) as Image;
+            Icon = GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
             Overlay = GetTemplateChild(nameof(Overlay)) as Popup;
 
             if (_sticker != null)
@@ -794,7 +850,7 @@ namespace Telegram.Controls.Stories
         private void OnClick(object sender, RoutedEventArgs e)
         {
             var story = _story;
-            if (story == null || Presenter == null)
+            if (story == null || Icon == null)
             {
                 return;
             }
@@ -847,15 +903,16 @@ namespace Telegram.Controls.Stories
                     var next = random.Next(0, stickers.StickersValue.Count);
 
                     var around = await _story.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
-                    if (around.Local.IsDownloadingCompleted && IsLoaded && token == _effectToken && _sticker?.FullType is StickerFullTypeCustomEmoji customEmoji)
+                    if (around.Local.IsDownloadingCompleted && IsLoaded && token == _effectToken && _sticker?.FullType is StickerFullTypeCustomEmoji)
                     {
-                        if (Icon != null)
+                        // The custom emoji plays along with the effect, from where it is at rest.
+                        if (Icon?.Source is ReactionFileSource source && !source.IsAnimated)
                         {
-                            Icon.Source = new CustomEmojiFileSource(_story.ClientService, customEmoji.CustomEmojiId);
-                            Icon.Play();
+                            Icon.Source = source.Clone(true);
                         }
 
-                        var presenter = Presenter;
+                        Icon?.Play();
+
                         var popup = Overlay;
 
                         var dispatcher = DispatcherQueue.GetForCurrentThread();
@@ -880,6 +937,7 @@ namespace Telegram.Controls.Stories
 
                         popup.Child = root;
                         popup.XamlRoot = XamlRoot;
+                        CenterOverlay(popup);
                         popup.IsOpen = true;
                     }
                 }
@@ -923,44 +981,20 @@ namespace Telegram.Controls.Stories
 
             if (center.Local.IsDownloadingCompleted && around.Local.IsDownloadingCompleted)
             {
-                var presenter = Presenter;
                 var popup = Overlay;
 
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                // The emoji fills only a part of the center animation, not quite in its middle.
-                // Measured where the button draws it, the animation is scaled and moved for the
-                // emoji to start and end where it is at rest, at the same size.
-                var content = _defaultValue != null ? _content : default;
-                var centerSize = content.Width > 0
-                    ? (int)Math.Round(FrameSize / content.Width)
-                    : FrameSize;
-
-                var centerView = new AnimatedImage();
-                centerView.Width = centerSize;
-                centerView.Height = centerSize;
-
-                if (content.Width > 0)
+                // The emoji's own animation plays in the icon, where the emoji rests already:
+                // the effect starts and ends on it without anything being drawn elsewhere,
+                // which is how ReactionButton plays one too. The rest of the effect is drawn
+                // around it, in the popup.
+                if (Icon?.Source is ReactionFileSource source && !source.IsAnimated)
                 {
-                    centerView.RenderTransform = new TranslateTransform
-                    {
-                        X = (0.5 - (content.X + content.Width / 2)) * centerSize,
-                        Y = (0.5 - (content.Y + content.Height / 2)) * centerSize
-                    };
+                    Icon.Source = source.Clone(true);
                 }
-                centerView.LoopCount = 1;
-                centerView.FrameSize = new Size(centerSize, centerSize);
-                centerView.DecodeFrameType = DecodePixelType.Logical;
-                centerView.AutoPlay = true;
-                centerView.Source = new LocalFileSource(center);
-                centerView.Ready += (s, args) =>
-                {
-                    dispatcher.TryEnqueue(Start);
-                };
-                centerView.LoopCompleted += (s, args) =>
-                {
-                    dispatcher.TryEnqueue(Continue1);
-                };
+
+                Icon?.Play();
 
                 var aroundView = new AnimatedImage();
                 aroundView.Width = FrameSize * 3;
@@ -978,11 +1012,11 @@ namespace Telegram.Controls.Stories
                 var root = new Grid();
                 root.Width = FrameSize * 3;
                 root.Height = FrameSize * 3;
-                root.Children.Add(centerView);
                 root.Children.Add(aroundView);
 
                 popup.Child = root;
                 popup.XamlRoot = XamlRoot;
+                CenterOverlay(popup);
                 popup.IsOpen = true;
             }
             else
@@ -996,50 +1030,6 @@ namespace Telegram.Controls.Stories
                 {
                     _story.ClientService.DownloadFile(around.Id, 32);
                 }
-            }
-        }
-
-        private void Start()
-        {
-            var presenter = Presenter;
-            if (presenter == null)
-            {
-                return;
-            }
-
-            presenter.Opacity = 0;
-
-            // The effect draws the emoji itself, which the button's own drawing of it and the
-            // stand-in would double.
-            if (Icon != null)
-            {
-                Icon.Opacity = 0;
-            }
-
-            if (Fallback != null)
-            {
-                Fallback.Opacity = 0;
-            }
-        }
-
-        private void Continue1()
-        {
-            var presenter = Presenter;
-            if (presenter == null)
-            {
-                return;
-            }
-
-            presenter.Opacity = 1;
-
-            if (Icon != null)
-            {
-                Icon.Opacity = 1;
-            }
-
-            if (Fallback != null)
-            {
-                Fallback.Opacity = 1;
             }
         }
 

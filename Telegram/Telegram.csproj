@@ -249,7 +249,6 @@
     <Compile Include="Collections\HashSetDictionary.cs" />
     <Compile Include="Common\Instrumentation.cs" />
     <Compile Include="Common\LocalDatabase.cs" />
-    <Compile Include="Common\LottieContent.cs" />
     <Compile Include="Common\MarkdownToInstantView.cs" />
     <Compile Include="Common\MediaDeviceTracker.cs" />
     <Compile Include="Common\MediaDeviceList.cs" />

@@ -3397,11 +3397,6 @@
                             <Grid Width="32"
                                   Height="32"
                                   Margin="0,-4">
-                                <!-- Telegram's painting of the emoji, cropped from the center
-                                     animation's first frame to fill the box as a custom emoji does -->
-                                <Image x:Name="Presenter"
-                                       Width="24"
-                                       Height="24" />
                                 <!-- Shown in place of the default reaction while none is chosen -->
                                 <TextBlock x:Name="Glyph"
                                            Text="&#xE987;"
@@ -3420,8 +3415,13 @@
                                            VerticalAlignment="Center"
                                            AutomationProperties.AccessibilityView="Raw"
                                            Visibility="Collapsed" />
+                                <!-- The reaction: a custom emoji at the size of the reaction,
+                                     Telegram's painting of an emoji larger, for the two
+                                     to look the same -->
                                 <local:CustomEmojiIcon x:Name="Icon"
                                                        x:Load="False"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
                                                        Width="24"
                                                        Height="24" />
                                 <!-- Three times the reaction, centered on it -->
