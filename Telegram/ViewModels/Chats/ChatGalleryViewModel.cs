@@ -37,14 +37,10 @@ namespace Telegram.ViewModels.Chats
 
         private readonly bool _isMirrored;
 
-        private readonly RangeObservableCollection<GalleryMedia> _group;
-
         public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, MessageTopic topic, MessageWithOwner selected, MessageProperties properties, bool mirrored = false, SearchMessagesFilter filter = null, long upgradedFromChatId = 0)
             : base(clientService, storageService, aggregator)
         {
             _isMirrored = mirrored;
-
-            _group = new RangeObservableCollection<GalleryMedia>();
 
             _chatId = chatId;
             _upgradedFromChatId = upgradedFromChatId;
@@ -297,8 +293,6 @@ namespace Telegram.ViewModels.Chats
         }
 
         #endregion
-
-        public override RangeObservableCollection<GalleryMedia> Group => _group;
 
         public override void View()
         {

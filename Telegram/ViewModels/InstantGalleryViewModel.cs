@@ -17,8 +17,6 @@ namespace Telegram.ViewModels
 {
     public partial class InstantGalleryViewModel : GalleryViewModelBase
     {
-        private readonly bool _shouldGroup;
-
         public InstantGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator)
             : base(clientService, storageService, aggregator)
         {
@@ -113,8 +111,6 @@ namespace Telegram.ViewModels
 
             return null;
         }
-
-        public override RangeObservableCollection<GalleryMedia> Group => _shouldGroup ? Items : null;
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

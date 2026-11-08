@@ -1062,6 +1062,8 @@ namespace Telegram.Controls.Gallery
             LayoutRoot.HasPrevious = index > 0;
             LayoutRoot.HasNext = index < viewModel.Items.Count - 1;
 
+            UpdateAlbum(viewModel);
+
             if (Window.IsMouseInteraction)
             {
                 PrevButton.IsEnabled = index > 0;
@@ -1094,6 +1096,59 @@ namespace Telegram.Controls.Gallery
             if (item.IsVideo /*&& initialize*/)
             {
                 Play(target, item, player);
+            }
+        }
+
+        private void UpdateAlbum(GalleryViewModelBase viewModel)
+        {
+            if (viewModel.TryGetAlbum(out int start, out int end))
+            {
+                var items = new GalleryMedia[end - start + 1];
+
+                for (int i = 0; i < items.Length; i++)
+                {
+                    items[i] = viewModel.Items[start + i];
+                }
+
+                Album.Update(items, viewModel.SelectedItem);
+            }
+            else
+            {
+                Album.Clear();
+            }
+        }
+
+        private void Album_ItemClick(object sender, GalleryMedia item)
+        {
+            var viewModel = ViewModel;
+            if (viewModel == null || LayoutRoot.IsScrolling)
+            {
+                return;
+            }
+
+            var index = viewModel.Items.IndexOf(item);
+            var selected = viewModel.SelectedIndex;
+
+            if (index < 0 || index == selected)
+            {
+                return;
+            }
+
+            // The neighbours are already in place, so they slide in like the arrows do.
+            if (index == selected - 1)
+            {
+                ChangeView(CarouselDirection.Previous);
+            }
+            else if (index == selected + 1)
+            {
+                ChangeView(CarouselDirection.Next);
+            }
+            else
+            {
+                viewModel.SelectedItem = item;
+                PrepareNext(CarouselDirection.None, dispose: true);
+
+                viewModel.LoadMore();
             }
         }
 

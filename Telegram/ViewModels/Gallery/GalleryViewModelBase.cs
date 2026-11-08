@@ -103,7 +103,34 @@ namespace Telegram.ViewModels.Gallery
 
         public RangeObservableCollection<GalleryMedia> Items { get; protected set; }
 
-        public virtual RangeObservableCollection<GalleryMedia> Group { get; }
+        /// <summary>
+        /// Finds the run of <see cref="Items"/> around the selection that was sent as one album.
+        /// Albums are sent as consecutive messages, so their items sit next to each other in any
+        /// list the gallery pages through. False when the selection isn't part of an album, or
+        /// when no other item of it has been loaded yet.
+        /// </summary>
+        public bool TryGetAlbum(out int start, out int end)
+        {
+            start = end = SelectedIndex;
+
+            var albumId = _selectedItem?.MediaAlbumId ?? 0;
+            if (albumId == 0 || Items == null || start < 0 || start >= Items.Count)
+            {
+                return false;
+            }
+
+            while (start > 0 && Items[start - 1].MediaAlbumId == albumId)
+            {
+                start--;
+            }
+
+            while (end < Items.Count - 1 && Items[end + 1].MediaAlbumId == albumId)
+            {
+                end++;
+            }
+
+            return end > start;
+        }
 
         #region Paging
 
@@ -127,8 +154,12 @@ namespace Telegram.ViewModels.Gallery
                 return;
             }
 
-            var previous = _hasPrevious && index <= LoadMoreThreshold;
-            var next = _hasNext && index >= Items.Count - 1 - LoadMoreThreshold;
+            // An album that reaches either end of Items may go on past it, and the strip of its
+            // thumbnails would only show part of it until the selection got near that end.
+            var album = TryGetAlbum(out int albumStart, out int albumEnd);
+
+            var previous = _hasPrevious && (index <= LoadMoreThreshold || album && albumStart == 0);
+            var next = _hasNext && (index >= Items.Count - 1 - LoadMoreThreshold || album && albumEnd == Items.Count - 1);
 
             if (!previous && !next)
             {

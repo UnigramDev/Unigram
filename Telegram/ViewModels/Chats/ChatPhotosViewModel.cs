@@ -182,8 +182,6 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public override RangeObservableCollection<GalleryMedia> Group => Items;
-
         public void SetAsMain()
         {
             var item = _selectedItem as GalleryChatPhoto;
