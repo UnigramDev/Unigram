@@ -129,8 +129,6 @@ namespace Telegram.ViewModels.Users
             return new IncrementalLoadResult((uint)photos.Photos.Count, Items.Count - _additionalPhotos < photos.TotalCount);
         }
 
-        public override RangeObservableCollection<GalleryMedia> Group => Items;
-
         public override bool CanDelete => _user != null && _user.Id == ClientService.Options.MyId;
 
         public override async void Delete()

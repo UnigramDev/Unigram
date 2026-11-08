@@ -118,6 +118,9 @@ namespace Telegram.ViewModels.Gallery
 
         public int Duration { get; protected init; }
 
+        // Shared by the items sent together as one album, 0 for anything sent on its own.
+        public long MediaAlbumId { get; protected init; }
+
         public bool IsPhoto => !IsVideo;
 
         public bool IsMedia { get; protected init; } = true;

@@ -176,6 +176,10 @@
                                                    Margin="8" />
                     </ScrollViewer>
                 </Border>
+                <local:GalleryAlbumStrip x:Name="Album"
+                                         ItemClick="Album_ItemClick"
+                                         HorizontalAlignment="Center"
+                                         Margin="0,8,0,0" />
             </StackPanel>
         </local:GalleryBottomPanel>
 

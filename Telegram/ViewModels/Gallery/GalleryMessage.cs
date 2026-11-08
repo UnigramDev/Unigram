@@ -57,6 +57,7 @@ namespace Telegram.ViewModels.Gallery
             From = GetFrom(clientService, _message);
             Caption = _message.GetCaption();
             Date = _message.Date;
+            MediaAlbumId = _message.MediaAlbumId;
 
             IsVideo = GetIsVideo(content);
             IsLoopingEnabled = GetIsLoopingEnabled(content);

@@ -1105,6 +1105,7 @@
       <DependentUpon>FormattedTextFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CarouselViewer.cs" />
+    <Compile Include="Controls\Gallery\GalleryAlbumStrip.cs" />
     <Compile Include="Controls\Gallery\GalleryBottomPanel.cs" />
     <Compile Include="Controls\CustomEmojiIcon.cs" />
     <Compile Include="Controls\Messages\Content\InvoicePreviewContent.xaml.cs">
