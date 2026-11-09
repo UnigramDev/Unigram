@@ -2529,6 +2529,8 @@
 
     <Style x:Key="EmptyHyperlinkButtonStyle"
            TargetType="HyperlinkButton">
+        <Setter Property="Background"
+                Value="Transparent" />
         <Setter Property="HorizontalAlignment"
                 Value="Stretch" />
         <Setter Property="VerticalAlignment"
