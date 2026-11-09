@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Settings;
@@ -71,6 +72,16 @@ namespace Telegram
             Toast.RegisterApplication();
 
             EnableOptionalChanges();
+
+            // The system compositor instead of the in-process one, chosen once per process and
+            // before anything creates a Compositor - so ahead of Application.Start. It is behind a
+            // Limited Access Feature, and either step failing leaves the in-process engine.
+            if (AppSettings.Diagnostics.UseSystemCompositor)
+            {
+                var unlocked = FeatureTokenGenerator.TryUnlockFeature("com.microsoft.windows.composition.engine");
+                var engine = unlocked && CompositionEngine.TrySetProcessEngine(CompositionEngineType.System);
+                Logger.Info($"System composition engine: unlocked {unlocked}, set {engine}");
+            }
 
             Application.Start(p =>
             {

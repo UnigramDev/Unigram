@@ -26,6 +26,10 @@ namespace Telegram.Views
         {
             InitializeComponent();
             Title = "Diagnostics";
+
+#if !WINUI3
+            SystemCompositor.Visibility = Visibility.Collapsed;
+#endif
         }
 
         #region Binding

@@ -56,6 +56,11 @@
                               Content="Legacy ScrollBar Style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox x:Name="SystemCompositor"
+                              IsChecked="{x:Bind services:AppSettings.Diagnostics.UseSystemCompositor, Mode=TwoWay}"
+                              Content="Use System Compositor (requires restart)"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ShowMemoryUsage, Mode=TwoWay}"
                               Content="Show Memory Usage"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

@@ -492,6 +492,93 @@
     </ItemGroup>
   </Target>
 
+  <!--
+    Without a package, Windows takes the identity Limited Access Features are unlocked for from an
+    Identity resource of type LimitedAccessFeature in the process's exe: the family name as UTF-16,
+    language neutral, and with no terminator - a name with one is refused. FeatureTokenGenerator reads
+    the resource back, so this property is the only place the name is written.
+
+    Both executables get it: the apphost a Debug launch runs, and the NativeAOT binary that ships.
+  -->
+  <PropertyGroup>
+    <LimitedAccessFeatureIdentity>TelegramFZ-LLC.Windows_3epzvh0nk91te</LimitedAccessFeatureIdentity>
+  </PropertyGroup>
+
+  <UsingTask TaskName="WriteLimitedAccessFeatureIdentity" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Executable ParameterType="System.String" Required="true" />
+      <Identity ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Class" Language="cs"><![CDATA[
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+
+public class WriteLimitedAccessFeatureIdentity : Task
+{
+    [Required]
+    public string Executable { get; set; }
+
+    [Required]
+    public string Identity { get; set; }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr BeginUpdateResourceW(string fileName, bool deleteExistingResources);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool UpdateResourceW(IntPtr update, string type, string name, ushort language, byte[] data, int size);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool EndUpdateResourceW(IntPtr update, bool discard);
+
+    public override bool Execute()
+    {
+        var data = Encoding.Unicode.GetBytes(Identity);
+
+        var update = BeginUpdateResourceW(Executable, false);
+        if (update == IntPtr.Zero)
+        {
+            Log.LogError("BeginUpdateResource failed for {0}: {1}", Executable, Marshal.GetLastWin32Error());
+            return false;
+        }
+
+        if (!UpdateResourceW(update, "LimitedAccessFeature", "Identity", 0, data, data.Length))
+        {
+            var error = Marshal.GetLastWin32Error();
+            EndUpdateResourceW(update, true);
+
+            Log.LogError("UpdateResource failed for {0}: {1}", Executable, error);
+            return false;
+        }
+
+        if (!EndUpdateResourceW(update, false))
+        {
+            Log.LogError("EndUpdateResource failed for {0}: {1}", Executable, Marshal.GetLastWin32Error());
+            return false;
+        }
+
+        return true;
+    }
+}
+]]></Code>
+    </Task>
+  </UsingTask>
+
+  <!-- The markers keep both targets incremental: writing the resource makes the exe newer than its
+       own inputs, so the targets that produce it stay up to date and it is not written again. -->
+  <Target Name="StampAppHostLimitedAccessFeatureIdentity" AfterTargets="_CreateAppHost" Condition="'$(Unpackaged)' == 'true' and '$(AppHostIntermediatePath)' != '' and Exists('$(AppHostIntermediatePath)')" Inputs="$(AppHostIntermediatePath);$(MSBuildThisFileFullPath)" Outputs="$(AppHostIntermediatePath).laf">
+    <WriteLimitedAccessFeatureIdentity Executable="$(AppHostIntermediatePath)" Identity="$(LimitedAccessFeatureIdentity)" />
+    <Touch Files="$(AppHostIntermediatePath).laf" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="StampNativeLimitedAccessFeatureIdentity" AfterTargets="LinkNative" Condition="'$(Unpackaged)' == 'true' and '$(NativeBinary)' != '' and Exists('$(NativeBinary)')" Inputs="$(NativeBinary);$(MSBuildThisFileFullPath)" Outputs="$(NativeBinary).laf">
+    <WriteLimitedAccessFeatureIdentity Executable="$(NativeBinary)" Identity="$(LimitedAccessFeatureIdentity)" />
+    <Touch Files="$(NativeBinary).laf" AlwaysCreate="true" />
+  </Target>
+
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
 </Project>

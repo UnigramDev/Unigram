@@ -56,6 +56,14 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _legacyScrollBars, "LegacyScrollBars", value);
         }
 
+        // WinUI only, and read once at startup: the composition engine is chosen per process.
+        private bool? _useSystemCompositor;
+        public bool UseSystemCompositor
+        {
+            get => _useSystemCompositor ??= GetValueOrDefault("UseSystemCompositor", false);
+            set => AddOrUpdateValue(ref _useSystemCompositor, "UseSystemCompositor", value);
+        }
+
         private bool? _disableDatabase;
         public bool DisableDatabase
         {
