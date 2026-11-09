@@ -62,9 +62,9 @@ namespace Telegram.Controls
 
         public bool HasMaster { get; set; } = true;
 
-        public double ActualMasterWidth => ((FrameworkElement)Children[2]).ActualWidth;
+        public double ActualMasterWidth => ((FrameworkElement)Children[1]).ActualWidth;
 
-        public double ActualDetailWidth => ((FrameworkElement)Children[1]).ActualWidth;
+        public double ActualDetailWidth => ((FrameworkElement)Children[0]).ActualWidth;
 
         private bool _registerEvents = true;
 
