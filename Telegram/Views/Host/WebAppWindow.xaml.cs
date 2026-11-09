@@ -979,7 +979,8 @@ namespace Telegram.Views.Host
 
         private void ProcessCheckHomeScreen(JsonObject eventData)
         {
-            if (_botUser.Type is not UserTypeBot { HasMainWebApp: true })
+            // Without package identity SecondaryTile.Exists throws 0x80070490 rather than answering.
+            if (!ApiInfo.HasPackageIdentity || _botUser.Type is not UserTypeBot { HasMainWebApp: true })
             {
                 PostEvent("home_screen_checked", "status", "unsupported");
             }
@@ -995,7 +996,10 @@ namespace Telegram.Views.Host
 
         private void ProcessAddToHomeScreen(JsonObject eventData)
         {
-            MenuItemAddToStartMenu();
+            if (ApiInfo.HasPackageIdentity)
+            {
+                MenuItemAddToStartMenu();
+            }
         }
 
         private void ProcessShareGame(bool withMyScore)
@@ -2112,7 +2116,7 @@ namespace Telegram.Views.Host
 
                 flyout.CreateFlyoutItem(MenuItemReloadPage, Strings.BotWebViewReloadPage, Icons.ArrowClockwise);
 
-                if (_botUser.Type is UserTypeBot { HasMainWebApp: true })
+                if (ApiInfo.HasPackageIdentity && _botUser.Type is UserTypeBot { HasMainWebApp: true })
                 {
                     if (SecondaryTile.Exists("web_app_" + _clientService.SessionId + "_" + _botUser.Id))
                     {
@@ -2165,6 +2169,8 @@ namespace Telegram.Views.Host
             if (SecondaryTile.Exists("web_app_" + _clientService.SessionId + "_" + _botUser.Id))
             {
                 var secondaryTile = new SecondaryTile("web_app_" + _clientService.SessionId + "_" + _botUser.Id);
+                WindowContext.InitializeWithWindow(secondaryTile, XamlRoot);
+
                 await secondaryTile.RequestDeleteForSelectionAsync(new Windows.Foundation.Rect(0, 0, ActualWidth, ActualHeight));
             }
         }
@@ -2215,6 +2221,8 @@ namespace Telegram.Views.Host
 #pragma warning restore CS0618 // Type or member is obsolete
 
                 secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = true;
+
+                WindowContext.InitializeWithWindow(secondaryTile, XamlRoot);
 
                 var pinned = await secondaryTile.RequestCreateForSelectionAsync(new Windows.Foundation.Rect(0, 0, ActualWidth, ActualHeight));
                 if (pinned)
