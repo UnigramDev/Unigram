@@ -37,6 +37,10 @@ namespace Telegram.Controls
         public NativeVideoPlayer()
         {
             InitializeComponent();
+
+            _mute = AppSettings.VolumeMuted;
+            _volume = AppSettings.VolumeLevel;
+            _rate = AppSettings.Playback.VideoSpeed;
         }
 
         public override bool IsUnloadedExpected { get; set; }
@@ -50,9 +54,9 @@ namespace Telegram.Controls
                 var options = new AsyncMediaPlayerOptions
                 {
                     CreateSwapChain = true,
-                    Mute = AppSettings.VolumeMuted,
-                    Volume = AppSettings.VolumeLevel,
-                    Rate = AppSettings.Playback.VideoSpeed,
+                    Mute = _mute,
+                    Volume = _volume,
+                    Rate = _rate,
                 };
 
                 try
@@ -297,9 +301,10 @@ namespace Telegram.Controls
             get => _core?.IsPlaying ?? false;
         }
 
+        private double _volume;
         public override double Volume
         {
-            get => _core?.Volume ?? 1;
+            get => _core?.Volume ?? _volume;
             set
             {
                 if (_core != null)
@@ -307,24 +312,30 @@ namespace Telegram.Controls
                     _core.Volume = value;
                     OnVolumeChanged(value);
                 }
+
+                _volume = value;
             }
         }
 
+        private double _rate;
         public override double Rate
         {
-            get => _core?.Rate ?? 1;
+            get => _core?.Rate ?? _rate;
             set
             {
                 _core?.Rate = value;
+                _rate = value;
             }
         }
 
+        private bool _mute;
         public override bool Mute
         {
-            get => _core?.Mute ?? false;
+            get => _core?.Mute ?? _mute;
             set
             {
                 _core?.Mute = value;
+                _mute = value;
             }
         }
 

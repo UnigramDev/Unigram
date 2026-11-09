@@ -447,6 +447,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 Video ??= new NativeVideoPlayer();
+                Video.Rate = item.IsLoopingEnabled ? 1 : AppSettings.Playback.VideoSpeed;
 
                 controls.Attach(item, file);
                 controls.Attach(Video);
