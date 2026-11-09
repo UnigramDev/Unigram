@@ -109,6 +109,9 @@ namespace Telegram.Common
 
         public static async Task<VoipPhoneCallResourceReservationStatus> TryReserveCallResourcesAsync(this VoipCallCoordinator coordinator)
         {
+#if WINUI3
+            return VoipPhoneCallResourceReservationStatus.Success;
+#else
             var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
             try
             {
@@ -126,6 +129,7 @@ namespace Telegram.Common
             }
 
             return status;
+#endif
         }
 
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
