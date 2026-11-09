@@ -12,7 +12,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {

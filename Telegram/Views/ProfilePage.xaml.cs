@@ -30,7 +30,6 @@ using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Profile;
 using Telegram.Views.Settings;
-using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

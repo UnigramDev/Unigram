@@ -304,7 +304,7 @@ namespace Telegram.Common
 
         public static bool IsDraggingMessage => _isDraggingMessage;
 
-        public static async void DragStarting(UIElement sender, MessageViewModel message, DragStartingEventArgs args)
+        public static async void DragStarting(UIElement sender, MessageWithOwner message, DragStartingEventArgs args)
         {
             var file = message?.GetFile();
             if (file != null && file.Local.IsDownloadingCompleted && message.CanBeSaved)

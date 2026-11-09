@@ -14,7 +14,6 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {

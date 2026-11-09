@@ -7,7 +7,6 @@
 
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Linq;
 using Telegram.Assets.Icons;
 using Telegram.Common;
 using Telegram.Composition;

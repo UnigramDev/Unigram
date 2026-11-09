@@ -21,8 +21,6 @@ using Telegram.ViewModels;
 using Telegram.Views.Wallet.Popups;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.System;
-using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;

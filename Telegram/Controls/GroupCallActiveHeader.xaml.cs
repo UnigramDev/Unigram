@@ -15,7 +15,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
