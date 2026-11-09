@@ -51,6 +51,34 @@ namespace winrt::Telegram::Native::implementation
         return float2(width * dpi, height * dpi);
     }
 
+    // A pattern shorter than the area is drawn larger rather than stretched, so it stays sharp.
+    // RenderSize is unaffected: it divides the same factor back out.
+    inline static float ComputeRasterizationScale(float height, double rasterizationScale, float minimumHeight)
+    {
+        if (rasterizationScale < 1)
+        {
+            rasterizationScale = 1;
+        }
+
+        if (height > 0 && minimumHeight > height * 0.25f)
+        {
+            rasterizationScale *= minimumHeight / (height * 0.25f);
+        }
+
+        if (rasterizationScale > 4)
+        {
+            rasterizationScale = 4;
+        }
+
+        return (float)rasterizationScale;
+    }
+
+    // Creation and Resize both size the surface here, so the two never round differently.
+    inline static winrt::Windows::Graphics::SizeInt32 ComputeSurfaceSize(float2 physical)
+    {
+        return { (int32_t)(physical.x + 0.5f), (int32_t)(physical.y + 0.5f) };
+    }
+
     struct ChatBackgroundPattern : ChatBackgroundPatternT<ChatBackgroundPattern>
     {
         ChatBackgroundPattern(ICompositionSurface surface)
@@ -65,13 +93,17 @@ namespace winrt::Telegram::Native::implementation
 
         // Must be constructed on the view's thread, which is where the redraw after a device
         // replacement is posted.
-        ChatBackgroundPattern(CompositionGraphicsDevice device, CompositionDrawingSurface surface, std::shared_ptr<const SvgPattern> svg, float rasterizationScale, float dpi, float intensity, bool negative, IVector<ChatBackgroundSymbol> patterns);
+        ChatBackgroundPattern(CompositionGraphicsDevice device, CompositionDrawingSurface surface, std::shared_ptr<const SvgPattern> svg, float rasterizationScale, float intensity, bool negative);
 
         ICompositionSurface Surface();
         float2 RenderSize();
         float2 RenderPhysicalSize();
         float2 NaturalSize();
         IVector<ChatBackgroundSymbol> Symbols();
+
+        // Must be called on the view's thread. Redraws into the same surface at the scale the new
+        // height needs; false when it cannot, which leaves a new pattern to be drawn instead.
+        bool Resize(double rasterizationScale, float minimumHeight);
 
         HRESULT Invalidate();
 
@@ -90,12 +122,14 @@ namespace winrt::Telegram::Native::implementation
         CompositionGraphicsDevice m_compositionDevice{ nullptr };
         winrt::UIDispatching::DispatcherQueue m_dispatcherQueue{ nullptr };
         std::shared_ptr<const SvgPattern> m_svg;
+        float m_rasterizationScale = 0;
         float m_dpi = 0;
         float m_intensity = 0;
         bool m_negative = false;
 
         winrt::event_token m_renderingDeviceReplaced;
 
+        void SetScale(float rasterizationScale);
         void OnRenderingDeviceReplaced(CompositionGraphicsDevice const&, RenderingDeviceReplacedEventArgs const&);
     };
 }

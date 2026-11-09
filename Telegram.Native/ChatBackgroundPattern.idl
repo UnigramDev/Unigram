@@ -17,5 +17,7 @@ namespace Telegram.Native
         Windows.Foundation.Numerics.Vector2 RenderPhysicalSize{ get; };
         Windows.Foundation.Numerics.Vector2 NaturalSize{ get; };
         Windows.Foundation.Collections.IVector<ChatBackgroundSymbol> Symbols{ get; };
+
+        Boolean Resize(Double rasterizationScale, Single minimumHeight);
     };
 }

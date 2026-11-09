@@ -932,43 +932,13 @@ namespace winrt::Telegram::Native::implementation
             return nullptr;
         }
 
-        auto imageWidth = svg->Width;
-        auto imageHeight = svg->Height;
-
-        if (rasterizationScale < 1)
-        {
-            rasterizationScale = 1;
-        }
-
-        // A pattern shorter than the area is drawn larger rather than stretched, so it stays sharp.
-        // RenderSize is unaffected: it divides the same factor back out.
-        if (imageHeight > 0 && minimumHeight > imageHeight * 0.25f)
-        {
-            rasterizationScale *= minimumHeight / (imageHeight * 0.25f);
-        }
-
-        if (rasterizationScale > 4)
-        {
-            rasterizationScale = 4;
-        }
-
-        float dpi = 0.25f * (float)rasterizationScale;
-
-        auto patterns = winrt::single_threaded_vector<ChatBackgroundSymbol>();
-
-        for (auto symbol : svg->Symbols)
-        {
-            symbol.Offset *= dpi;
-            symbol.Size *= dpi;
-            patterns.Append(symbol);
-        }
-
-        winrt::Windows::Foundation::Size imageSize(imageWidth * dpi, imageHeight * dpi);
+        auto scale = ComputeRasterizationScale(svg->Height, rasterizationScale, minimumHeight);
+        auto surfaceSize = ComputeSurfaceSize(ComputeRenderPhysicalSize(svg->Width, svg->Height, scale));
 
         try
         {
-            auto surface = m_compositionDevice.CreateDrawingSurface(imageSize, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
-            auto pattern = winrt::make_self<implementation::ChatBackgroundPattern>(m_compositionDevice, surface, svg, (float)rasterizationScale, dpi, intensity, negative, patterns);
+            auto surface = m_compositionDevice.CreateDrawingSurface2(surfaceSize, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
+            auto pattern = winrt::make_self<implementation::ChatBackgroundPattern>(m_compositionDevice, surface, svg, scale, intensity, negative);
 
             // An empty surface as the source of the background's effect blanks the fill under it
             // too, so no pattern at all is the better failure.

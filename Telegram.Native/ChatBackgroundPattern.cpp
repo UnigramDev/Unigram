@@ -11,20 +11,67 @@ using namespace winrt::UIXaml::Media;
 
 namespace winrt::Telegram::Native::implementation
 {
-    ChatBackgroundPattern::ChatBackgroundPattern(CompositionGraphicsDevice device, CompositionDrawingSurface surface, std::shared_ptr<const SvgPattern> svg, float rasterizationScale, float dpi, float intensity, bool negative, IVector<ChatBackgroundSymbol> patterns)
+    ChatBackgroundPattern::ChatBackgroundPattern(CompositionGraphicsDevice device, CompositionDrawingSurface surface, std::shared_ptr<const SvgPattern> svg, float rasterizationScale, float intensity, bool negative)
         : m_surface(surface)
-        , m_renderSize(ComputeRenderSize(svg->Width, svg->Height, rasterizationScale))
-        , m_renderPhysicalSize(ComputeRenderPhysicalSize(svg->Width, svg->Height, rasterizationScale))
+        , m_renderSize(0, 0)
+        , m_renderPhysicalSize(0, 0)
         , m_naturalSize(svg->Width, svg->Height)
-        , m_symbols(patterns)
         , m_compositionDevice(device)
         , m_dispatcherQueue(DispatcherQueue::GetForCurrentThread())
         , m_svg(std::move(svg))
-        , m_dpi(dpi)
         , m_intensity(intensity)
         , m_negative(negative)
     {
+        SetScale(rasterizationScale);
         m_renderingDeviceReplaced = m_compositionDevice.RenderingDeviceReplaced({ get_weak(), &ChatBackgroundPattern::OnRenderingDeviceReplaced });
+    }
+
+    void ChatBackgroundPattern::SetScale(float rasterizationScale)
+    {
+        m_rasterizationScale = rasterizationScale;
+        m_dpi = 0.25f * rasterizationScale;
+        m_renderSize = ComputeRenderSize(m_svg->Width, m_svg->Height, rasterizationScale);
+        m_renderPhysicalSize = ComputeRenderPhysicalSize(m_svg->Width, m_svg->Height, rasterizationScale);
+
+        auto symbols = winrt::single_threaded_vector<ChatBackgroundSymbol>();
+
+        for (auto symbol : m_svg->Symbols)
+        {
+            symbol.Offset *= m_dpi;
+            symbol.Size *= m_dpi;
+            symbols.Append(symbol);
+        }
+
+        // A new vector rather than the old one refilled: a brush may still be reading that one.
+        m_symbols = symbols;
+    }
+
+    bool ChatBackgroundPattern::Resize(double rasterizationScale, float minimumHeight)
+    {
+        auto surface = m_surface.try_as<CompositionDrawingSurface>();
+        if (m_closed || m_svg == nullptr || surface == nullptr)
+        {
+            return false;
+        }
+
+        auto scale = ComputeRasterizationScale(m_svg->Height, rasterizationScale, minimumHeight);
+        if (scale == m_rasterizationScale)
+        {
+            return true;
+        }
+
+        try
+        {
+            SetScale(scale);
+            surface.Resize(ComputeSurfaceSize(m_renderPhysicalSize));
+        }
+        catch (...)
+        {
+            // Throws while the rendering device is lost.
+            return false;
+        }
+
+        return SUCCEEDED(Invalidate());
     }
 
     void ChatBackgroundPattern::Close()

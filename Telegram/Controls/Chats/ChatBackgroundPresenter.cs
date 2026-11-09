@@ -485,7 +485,18 @@ namespace Telegram.Controls.Chats
                 }
             }
 
-            // Only the resolution changed: the pattern stays on screen until the sharper one replaces it.
+            // Only the resolution changed, and nothing is drawing: the pattern on screen is redrawn
+            // into its own surface, rather than a second one allocated for it.
+            if (redraw && _vector && _patternLoading is false && _pattern != null && height > 0 && _pattern.Resize(scale, height))
+            {
+                _rasterizationScale = scale;
+                _patternHeight = height;
+
+                UpdateTiledBrush(true);
+                return;
+            }
+
+            // The pattern stays on screen until the one replacing it is drawn.
             if (redraw is false || _pattern == null)
             {
                 UpdateTiledBrush(false);
