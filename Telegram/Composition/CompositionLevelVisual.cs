@@ -188,7 +188,7 @@ namespace Telegram.Composition
 
         // One template, instantiated by every StartAnimation. Re-inserting a key frame at a
         // progress that already holds one replaces it, and leaves the running instance alone.
-        private readonly PathKeyFrameAnimation _pathAnimation;
+        private PathKeyFrameAnimation _pathAnimation;
         private readonly TypedEventHandler<object, CompositionBatchCompletedEventArgs> _batchCompleted;
 
         private CompositionScopedBatch _batch;
@@ -240,6 +240,25 @@ namespace Telegram.Composition
         public void UpdateSpeedLevel(float newSpeedLevel)
         {
             _speedLevel = MathF.Max(_speedLevel, newSpeedLevel);
+        }
+
+        // A key frame animation rejects a path whose segment count differs from a frame it already
+        // holds, and a frame can never be removed, so a new count needs a new animation too. Call it
+        // only while generating a path that resets the morph, or the two key frames end up split
+        // across the old animation and the new one.
+        protected void ResizePoints(int count)
+        {
+            if (_points.Length == count)
+            {
+                return;
+            }
+
+            _points = new Vector2[count];
+
+            if (_shapeLayer != null)
+            {
+                _pathAnimation = _shapeLayer.Compositor.CreatePathKeyFrameAnimation();
+            }
         }
 
         protected float NextRandom()

@@ -324,13 +324,10 @@ namespace Telegram.Composition
         {
             var randomness = _minRandomness + (_maxRandomness - _minRandomness) * _speedLevel;
 
-            // A morph needs the same segments at both ends. Only a width change alters the count,
-            // and one of those always starts over from a new path.
-            var pointsCount = Math.Max(MinPointsCount, (int)MathF.Round(Size.X / PointSpacing) + 1);
-            if (_points.Length != pointsCount)
-            {
-                _points = new Vector2[pointsCount];
-            }
+            // Only a width change alters the count, and a width change always resets the morph.
+            ResizePoints(Math.Max(MinPointsCount, (int)MathF.Round(Size.X / PointSpacing) + 1));
+
+            var pointsCount = _points.Length;
 
             var segment = 1.0f / (float)(pointsCount - 1);
             var rangeStart = 1.0f / (1.0f + randomness / 10.0f);
