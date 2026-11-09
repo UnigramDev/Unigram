@@ -45,7 +45,7 @@ namespace Telegram.Controls.Messages
 {
     public partial class MessageBubbleHighlightOptions
     {
-        public MessageBubbleHighlightOptions(long messageId, TextQuote quote, int checklistTaskId, string pollOptionId, bool moveFocus = true, bool highlight = true)
+        public MessageBubbleHighlightOptions(long messageId, TextQuote quote, int checklistTaskId, string pollOptionId, bool moveFocus = true, bool highlight = true, bool hasUnreadMessages = false)
         {
             MessageId = messageId;
             Quote = quote;
@@ -53,6 +53,7 @@ namespace Telegram.Controls.Messages
             PollOptionId = pollOptionId;
             MoveFocus = moveFocus;
             Highlight = highlight;
+            HasUnreadMessages = hasUnreadMessages;
         }
 
         public MessageBubbleHighlightOptions(bool moveFocus = true, bool highlight = true)
@@ -72,6 +73,8 @@ namespace Telegram.Controls.Messages
         public bool MoveFocus { get; } = true;
 
         public bool Highlight { get; } = true;
+
+        public bool HasUnreadMessages { get; } = false;
     }
 
     public sealed partial class MessageBubble : ControlEx, IReactionsDelegate

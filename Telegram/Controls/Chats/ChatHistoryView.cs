@@ -823,6 +823,24 @@ namespace Telegram.Controls.Chats
 
             try
             {
+                if (options != null && options.HasUnreadMessages)
+                {
+                    if (!this.TryGetCacheRange(out var firstCacheIndex, out var lastCacheIndex))
+                    {
+                        return;
+                    }
+
+                    for (int i = firstCacheIndex; i <= lastCacheIndex; i++)
+                    {
+                        var message = Items[i] as MessageViewModel;
+                        if (message?.Content is MessageHeaderUnread)
+                        {
+                            selectorItem = ContainerFromIndex(i) as SelectorItem;
+                            break;
+                        }
+                    }
+                }
+
                 moved = selectorItem.Focus(FocusState.Keyboard);
             }
             catch (Exception ex)

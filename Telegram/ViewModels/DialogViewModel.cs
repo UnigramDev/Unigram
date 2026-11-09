@@ -1501,7 +1501,7 @@ namespace Telegram.ViewModels
 
                 if (Items.TryGetValue(GetKey(chat.Id, fromMessageId), out already))
                 {
-                    HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(fromMessageId, highlight, checklistTaskId, pollOptionId) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
+                    HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(fromMessageId, highlight, checklistTaskId, pollOptionId, hasUnreadMessages: slice.IsUnread) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
 
                     if (previousId.HasValue && !_repliesStack.Contains(previousId.Value))
                     {

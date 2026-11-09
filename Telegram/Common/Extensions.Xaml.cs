@@ -141,7 +141,7 @@ namespace Telegram.Common
 
         // Only ItemsStackPanel and ItemsWrapGrid track a realized range; any other panel has no
         // cache indices to walk, and the caller has nothing to do.
-        private static bool TryGetCacheRange(this ListViewBase listView, out int firstCacheIndex, out int lastCacheIndex)
+        public static bool TryGetCacheRange(this ListViewBase listView, out int firstCacheIndex, out int lastCacheIndex)
         {
             if (listView.ItemsPanelRoot is ItemsStackPanel stack)
             {
