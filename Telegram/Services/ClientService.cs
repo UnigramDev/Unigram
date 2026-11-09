@@ -46,6 +46,7 @@ namespace Telegram.Services
         Task<File> DownloadFileAsync(File file, int priority, long offset = 0, long limit = 0);
 
         void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30);
+        void AddFileToDownloads(File file, long chatId, long messageId, StorageFile destination, int priority = 30);
         void CancelDownloadFile(File file, bool onlyIfPending = false);
         bool IsDownloadFileCanceled(int fileId);
         bool IsDownloadFileImplicit(int fileId);

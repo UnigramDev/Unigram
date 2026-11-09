@@ -56,6 +56,7 @@ namespace Telegram.Services
     public interface IStorageService
     {
         Task SaveFileAsAsync(XamlRoot xamlRoot, File file);
+        Task SaveFileAsAsync(XamlRoot xamlRoot, File file, long chatId, long messageId);
 
         Task OpenFileAsync(File file);
 
@@ -64,6 +65,7 @@ namespace Telegram.Services
         Task CopyFilePathAsync(XamlRoot xamlRoot, File file);
 
         Task SaveFilesAsync(XamlRoot xamlRoot, IEnumerable<File> files);
+        Task SaveFilesAsync(XamlRoot xamlRoot, IEnumerable<(File File, long ChatId, long MessageId)> files);
 
         Task OpenFolderAsync(File file);
 
@@ -126,6 +128,60 @@ namespace Telegram.Services
                     // Save as copy is never linked back 
                     await cached.CopyAndReplaceAsync(picked);
                     _downloadFolder.MarkFromInternet(picked);
+                }
+            }
+            catch { }
+        }
+
+        public async Task SaveFileAsAsync(XamlRoot xamlRoot, File file, long chatId, long messageId)
+        {
+            // TODO: the current logic doesn't support Save as... before the file is downloaded
+            // This is because to download a file to a specific path we have to create a link
+            // in advance, while we don't want files saved as to be linked as permanent files.
+
+            // When saving a file as, we always want to retrieve the cached copy
+            //var cached = await _clientService.GetFileAsync(file);
+            //if (cached == null)
+            //{
+            //    return;
+            //}
+
+            var response = await _clientService.SendAsync(new GetSuggestedFileName(file.Id, string.Empty));
+            if (response is not Text text)
+            {
+                return;
+            }
+
+            try
+            {
+                var extension = Path.GetExtension(text.TextValue);
+
+                // FileSavePicker doesn't support no exension.
+                if (string.IsNullOrEmpty(extension))
+                {
+                    extension = ".dat";
+                }
+
+                var displayExtension = extension.TrimStart('.').ToUpper();
+                var picker = new FileSavePicker();
+                picker.FileTypeChoices.Add($"{displayExtension} File", new[] { extension });
+                picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                picker.SuggestedFileName = text.TextValue;
+
+                var destination = await picker.PickSaveFileAsync(xamlRoot);
+                if (destination != null)
+                {
+                    var cached = await _clientService.GetFileAsync(file);
+                    if (cached != null)
+                    {
+                        // Save as copy is never linked back 
+                        await cached.CopyAndReplaceAsync(destination);
+                        _downloadFolder.MarkFromInternet(destination);
+                    }
+                    else
+                    {
+                        _clientService.AddFileToDownloads(file, chatId, messageId, destination);
+                    }
                 }
             }
             catch { }
@@ -223,6 +279,48 @@ namespace Telegram.Services
                     var destination = await cached.CopyAsync(folder, text.TextValue, NameCollisionOption.GenerateUniqueName);
                     _downloadFolder.MarkFromInternet(destination);
                     options.ItemsToSelect.Add(destination);
+                }
+
+                await Launcher.LaunchFolderAsync(folder, options);
+            }
+            catch { }
+        }
+
+        public async Task SaveFilesAsync(XamlRoot xamlRoot, IEnumerable<(File File, long ChatId, long MessageId)> files)
+        {
+            try
+            {
+                var picker = new FolderPicker();
+
+                var folder = await picker.PickSingleFolderAsync(xamlRoot);
+                if (folder == null)
+                {
+                    return;
+                }
+
+                var options = new FolderLauncherOptions();
+
+                foreach (var file in files)
+                {
+                    // When saving a file as, we always want to retrieve the cached copy
+                    var response = await _clientService.SendAsync(new GetSuggestedFileName(file.File.Id, string.Empty));
+                    if (response is not Text text)
+                    {
+                        return;
+                    }
+
+                    var cached = await _clientService.GetFileAsync(file.File);
+                    if (cached != null)
+                    {
+                        var destination = await cached.CopyAsync(folder, text.TextValue, NameCollisionOption.GenerateUniqueName);
+                        _downloadFolder.MarkFromInternet(destination);
+                        options.ItemsToSelect.Add(destination);
+                    }
+                    else
+                    {
+                        var destination = await folder.CreateFileAsync(text.TextValue, CreationCollisionOption.GenerateUniqueName);
+                        _clientService.AddFileToDownloads(file.File, file.ChatId, file.MessageId, destination);
+                    }
                 }
 
                 await Launcher.LaunchFolderAsync(folder, options);

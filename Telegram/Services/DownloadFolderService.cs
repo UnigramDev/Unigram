@@ -62,6 +62,8 @@ namespace Telegram.Services
         /// </summary>
         Task<StorageFile> StageAsync(string uniqueId, string fileName);
 
+        void Stage(string uniqueId, StorageFile file);
+
         Task<StorageFile> GetStagedAsync(string uniqueId);
 
         /// <summary>
@@ -122,10 +124,15 @@ namespace Telegram.Services
             var file = await CreateAsync(fileName);
             if (file != null)
             {
-                AddOrReplace(Staged(uniqueId), file);
+                Stage(uniqueId, file);
             }
 
             return file;
+        }
+
+        public void Stage(string uniqueId, StorageFile file)
+        {
+            AddOrReplace(Staged(uniqueId), file);
         }
 
         public Task<StorageFile> GetStagedAsync(string uniqueId)

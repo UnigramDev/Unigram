@@ -293,7 +293,14 @@ namespace Telegram.Services
         {
             TrackExplicitDownload(file.Id);
 
-            Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
+            if (chatId != 0 && messageId != 0)
+            {
+                Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
+            }
+            else
+            {
+                Send(new DownloadFile(file.Id, priority, 0, 0, false));
+            }
 
             if (!_downloadFolder.IsSupported || !AppSettings.IsDownloadFolderEnabled || _downloadFolder.IsStaged(file.Remote.UniqueId) || await _downloadFolder.ContainsAsync(file.Remote.UniqueId))
             {
@@ -303,6 +310,35 @@ namespace Telegram.Services
             try
             {
                 await _downloadFolder.StageAsync(file.Remote.UniqueId, $"Unconfirmed {file.Id}.tdownload");
+            }
+            catch
+            {
+                _downloadFolder.Forget(file.Remote.UniqueId);
+            }
+        }
+
+        public async void AddFileToDownloads(File file, long chatId, long messageId, StorageFile destination, int priority = 30)
+        {
+            TrackExplicitDownload(file.Id);
+
+            if (chatId != 0 && messageId != 0)
+            {
+                Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
+            }
+            else
+            {
+                Send(new DownloadFile(file.Id, priority, 0, 0, false));
+            }
+
+            if (!_downloadFolder.IsSupported || !AppSettings.IsDownloadFolderEnabled || _downloadFolder.IsStaged(file.Remote.UniqueId) || await _downloadFolder.ContainsAsync(file.Remote.UniqueId))
+            {
+                return;
+            }
+
+            try
+            {
+                await destination.RenameAsync($"Unconfirmed {file.Id}.tdownload", NameCollisionOption.GenerateUniqueName);
+                _downloadFolder.Stage(file.Remote.UniqueId, destination);
             }
             catch
             {

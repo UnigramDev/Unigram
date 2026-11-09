@@ -3908,7 +3908,7 @@ namespace Telegram.Views
                 // Files
                 flyout.CreateFlyoutItem(MessageSaveAnimation_Loaded, ViewModel.SaveMessageAnimation, message, Strings.SaveToGIFs, Icons.Gif);
                 flyout.CreateFlyoutItem(MessageSaveSound_Loaded, ViewModel.SaveMessageNotificationSound, message, Strings.SaveForNotifications, Icons.MusicNote2);
-                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.SaveMessageMedia, message, Strings.SaveAs, Icons.SaveAs);
+                flyout.CreateFlyoutItem(MessageSaveMediaAs_Loaded, ViewModel.SaveMessageMedia, message, Strings.SaveAs, Icons.SaveAs);
                 flyout.CreateFlyoutItem(MessageOpenMedia_Loaded, ViewModel.OpenMessageWith, message, Strings.OpenWith, Icons.OpenWith);
                 flyout.CreateFlyoutItem(MessageOpenFolder_Loaded, ViewModel.OpenMessageFolder, message, Strings.ShowInFolder, Icons.FolderOpen);
 
@@ -4936,6 +4936,36 @@ namespace Telegram.Views
             if (file != null)
             {
                 return file.Local.IsDownloadingCompleted;
+            }
+
+            return false;
+        }
+
+        private bool MessageSaveMediaAs_Loaded(MessageViewModel message)
+        {
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
+            {
+                return false;
+            }
+
+            if (message.Content is MessageAlbum album)
+            {
+                foreach (var item in album.Messages)
+                {
+                    var temp = item.GetFile();
+                    if (temp != null && string.IsNullOrEmpty(temp.Remote.UniqueId))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            var file = message.GetFile();
+            if (file != null)
+            {
+                return !string.IsNullOrEmpty(file.Remote.UniqueId);
             }
 
             return false;
