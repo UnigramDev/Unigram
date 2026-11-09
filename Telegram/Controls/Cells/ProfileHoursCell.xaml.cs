@@ -121,19 +121,20 @@ namespace Telegram.Controls.Cells
             {
                 if (i == 0)
                 {
+                    string timeToday;
                     if (hours.Is24x7())
                     {
                         DateToday.Text = Strings.BusinessHoursProfileNowOpen;
                         DateToday.Foreground = BootStrapper.Current.Resources["SystemFillColorSuccessBrush"] as Brush;
 
-                        TimeToday.Text = Strings.BusinessHoursProfileFullOpen;
+                        timeToday = Strings.BusinessHoursProfileFullOpen;
                     }
                     else if (days[i].IsOpenAt(shifted.TimeOfDay))
                     {
                         DateToday.Text = Strings.BusinessHoursProfileNowOpen;
                         DateToday.Foreground = BootStrapper.Current.Resources["SystemFillColorSuccessBrush"] as Brush;
 
-                        TimeToday.Text = days[i].DescriptionAt(shifted.TimeOfDay);
+                        timeToday = days[i].DescriptionAt(shifted.TimeOfDay);
                     }
                     else
                     {
@@ -142,7 +143,7 @@ namespace Telegram.Controls.Cells
 
                         if (IsExpanded)
                         {
-                            TimeToday.Text = days[i].DescriptionAt(shifted.TimeOfDay);
+                            timeToday = days[i].DescriptionAt(shifted.TimeOfDay);
                         }
                         else
                         {
@@ -158,19 +159,26 @@ namespace Telegram.Controls.Cells
                                 var diff = opensPeriodTime < nowPeriodTime ? opensPeriodTime + (7 * 24 * 60 - nowPeriodTime) : opensPeriodTime - nowPeriodTime;
                                 if (diff < 60)
                                 {
-                                    TimeToday.Text = Locale.Declension(Strings.R.BusinessHoursProfileOpensInMinutes, diff);
+                                    timeToday = Locale.Declension(Strings.R.BusinessHoursProfileOpensInMinutes, diff);
                                 }
                                 else if (diff < 24 * 60)
                                 {
-                                    TimeToday.Text = Locale.Declension(Strings.R.BusinessHoursProfileOpensInHours, (int)Math.Ceiling(diff / 60f));
+                                    timeToday = Locale.Declension(Strings.R.BusinessHoursProfileOpensInHours, (int)Math.Ceiling(diff / 60f));
                                 }
                                 else
                                 {
-                                    TimeToday.Text = Locale.Declension(Strings.R.BusinessHoursProfileOpensInDays, (int)Math.Ceiling(diff / 60f / 24f));
+                                    timeToday = Locale.Declension(Strings.R.BusinessHoursProfileOpensInDays, (int)Math.Ceiling(diff / 60f / 24f));
                                 }
+                            }
+                            else
+                            {
+                                timeToday = string.Empty;
                             }
                         }
                     }
+
+                    TimeToday.Text = timeToday;
+                    BadgeLabel = timeToday;
                 }
                 else
                 {
