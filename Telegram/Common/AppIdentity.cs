@@ -5,6 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+// The shim BannedSymbols.WinUI.txt sends every other caller to.
+#pragma warning disable RS0030
+
 using Windows.ApplicationModel;
 // ProcessorArchitecture is aliased because System.Reflection has one of its own, and the runtime
 // Architecture because a bare Architecture binds to the property below before the type.

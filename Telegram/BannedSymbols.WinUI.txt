@@ -32,3 +32,11 @@ P:Microsoft.UI.Xaml.Window.Current;Always null outside UWP. WindowContext.Main o
 P:Microsoft.UI.Xaml.Window.CoreWindow;Always null outside UWP.
 P:Microsoft.UI.Xaml.Window.Dispatcher;Always null outside UWP. Use DispatcherQueue.
 P:Microsoft.UI.Xaml.DependencyObject.Dispatcher;Always null outside UWP. Use DispatcherQueue, which is beside it on every DependencyObject.
+
+# Package identity. This flavour also runs unpackaged, and there each of these throws 0x80073D54,
+# "The process has no package identity". The shims that answer for them - AppPaths, AppIdentity,
+# ApiInfo, SettingsStore - are the only files that suppress RS0030.
+
+P:Windows.ApplicationModel.Package.Current;Throws without package identity. AppPaths.InstalledPath for the payload, AppIdentity for Id and SignatureKind.
+P:Windows.Storage.ApplicationData.Current;Throws without package identity. AppPaths for the folders and their paths, SettingsStore.Local for LocalSettings.
+M:Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(System.Uri);Fails without package identity. Open a path under AppPaths.InstalledPath or AppPaths.LocalPath instead.

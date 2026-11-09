@@ -5,6 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+// The shim BannedSymbols.WinUI.txt sends every other caller to.
+#pragma warning disable RS0030
+
 using System;
 using System.IO;
 using System.Threading.Tasks;
