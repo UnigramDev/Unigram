@@ -990,12 +990,6 @@ namespace Telegram.Controls.Messages
         private void Flyout_Closed(object sender, object e)
         {
             _popup.IsOpen = false;
-
-            if (_bubble is FrameworkElement element && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
-            {
-                var selector = element.GetParent<SelectorItem>();
-                selector?.Focus(FocusState.Keyboard);
-            }
         }
 
         private void Reaction_Click(object sender, RoutedEventArgs e)
