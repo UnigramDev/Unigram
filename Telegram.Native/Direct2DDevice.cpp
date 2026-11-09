@@ -1376,30 +1376,34 @@ namespace winrt::Telegram::Native::implementation
 
         if (m_compositor)
         {
-            // If the composition device already exists, invalidate the rendering device
-            if (m_compositionDevice)
+            // Each on its own: a failure creating the second leaves the first set, and the retry
+            // must replace that one's rendering device rather than create it again.
+            for (auto device : { &m_compositionDevice, &m_textDevice })
             {
-                winrt::com_ptr<abi::ICompositionGraphicsDeviceInterop> compositionGraphicsDeviceInterop{ m_compositionDevice.as<abi::ICompositionGraphicsDeviceInterop>() };
-                result = compositionGraphicsDeviceInterop->SetRenderingDevice(m_d2dDevice.get());
-
-                // Each raises its own RenderingDeviceReplaced, the only signal its owner gets.
-                for (auto const& device : m_graphicsDevices)
+                if (*device)
                 {
-                    device.as<abi::ICompositionGraphicsDeviceInterop>()->SetRenderingDevice(m_d2dDevice.get());
+                    winrt::com_ptr<abi::ICompositionGraphicsDeviceInterop> compositionGraphicsDeviceInterop{ device->as<abi::ICompositionGraphicsDeviceInterop>() };
+                    result = compositionGraphicsDeviceInterop->SetRenderingDevice(m_d2dDevice.get());
                 }
-            }
-            else
-            {
-                auto compositorInterop = m_compositor.as<abi::ICompositorInterop>();
+                else
+                {
+                    auto compositorInterop = m_compositor.as<abi::ICompositorInterop>();
 #ifdef WINUI3
-                winrt::UIComposition::ICompositionGraphicsDevice deviceInterop{ nullptr };
-                ReturnIfFailed(result, compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), &deviceInterop));
+                    winrt::UIComposition::ICompositionGraphicsDevice deviceInterop{ nullptr };
+                    ReturnIfFailed(result, compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), &deviceInterop));
 #else
-                winrt::com_ptr<abi::ICompositionGraphicsDevice> deviceInterop;
-                ReturnIfFailed(result, compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), deviceInterop.put()));
+                    winrt::com_ptr<abi::ICompositionGraphicsDevice> deviceInterop;
+                    ReturnIfFailed(result, compositorInterop->CreateGraphicsDevice(m_d2dDevice.get(), deviceInterop.put()));
 #endif
 
-                m_compositionDevice = deviceInterop.as<CompositionGraphicsDevice>();
+                    *device = deviceInterop.as<CompositionGraphicsDevice>();
+                }
+            }
+
+            // Each raises its own RenderingDeviceReplaced, the only signal its owner gets.
+            for (auto const& device : m_graphicsDevices)
+            {
+                device.as<abi::ICompositionGraphicsDeviceInterop>()->SetRenderingDevice(m_d2dDevice.get());
             }
         }
 
@@ -1484,7 +1488,7 @@ namespace winrt::Telegram::Native::implementation
 
     winrt::Telegram::Native::DirectTextLayout Direct2DDevice::CreateLayout()
     {
-        auto layout = winrt::make_self<DirectTextLayout>(m_compositionDevice, m_dwriteFactory, m_fontCollection, m_systemCollection, hstring(m_monospaceFamily), m_fontChains);
+        auto layout = winrt::make_self<DirectTextLayout>(m_textDevice, m_dwriteFactory, m_fontCollection, m_systemCollection, hstring(m_monospaceFamily), m_fontChains);
         return layout.as<winrt::Telegram::Native::DirectTextLayout>();
     }
 

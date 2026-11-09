@@ -470,6 +470,10 @@ namespace winrt::Telegram::Native::implementation
         winrt::UIDispatching::DispatcherQueue m_dispatcherQueue{ nullptr };
         CompositionEffectFactory m_alphaMaskFactory;
         CompositionGraphicsDevice m_compositionDevice;
+        // Text is kept off m_compositionDevice: an atlas page is freed only once every surface on
+        // it is gone, and the wallpaper's surfaces live as long as the chat, so sharing pages with
+        // them pins text that has long been scrolled away.
+        CompositionGraphicsDevice m_textDevice{ nullptr };
         // Strong, under m_criticalSection: CompositionGraphicsDevice has no IWeakReferenceSource, and
         // make_weak on it faults.
         std::vector<CompositionGraphicsDevice> m_graphicsDevices;
