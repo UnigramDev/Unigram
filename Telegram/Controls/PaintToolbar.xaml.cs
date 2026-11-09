@@ -93,6 +93,7 @@ namespace Telegram.Controls
             Canvas.ColorPicked -= Canvas_ColorPicked;
             Entities.SelectionChanged -= Entities_SelectionChanged;
 
+            _suspended = true;
             _surface = null;
         }
 
