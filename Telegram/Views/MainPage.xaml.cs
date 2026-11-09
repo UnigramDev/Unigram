@@ -4626,6 +4626,11 @@ namespace Telegram.Views
                 }
             }
 
+            //if (AppSettings.Diagnostics.ShowMemoryUsage)
+            //{
+            //    flyout.CreateFlyoutItem(MenuItemDestroy, "Destroy", Icons.Bug);
+            //}
+
             if (flyout.Items.Count > 1)
             {
                 flyout.ShowAt(sender, FlyoutPlacementMode.Top);
@@ -4661,6 +4666,11 @@ namespace Telegram.Views
             }
 
             Root.Switch(LifetimeService.Current.Create());
+        }
+
+        private void MenuItemDestroy()
+        {
+            Root.TestDestroy();
         }
 
         private void ChatFolders_ItemClick(object sender, ItemClickEventArgs e)

@@ -1501,6 +1501,9 @@
     <Compile Include="Views\Create\NewBotPopup.xaml.cs">
       <DependentUpon>NewBotPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DebugPage.xaml.cs">
+      <DependentUpon>DebugPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Folders\Popups\RemoveFolderPopup.xaml.cs">
       <DependentUpon>RemoveFolderPopup.xaml</DependentUpon>
     </Compile>
@@ -4031,6 +4034,10 @@
     <Page Include="Views\Create\NewBotPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DebugPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Folders\Popups\RemoveFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -5,10 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using LinqToVisualTree;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
@@ -19,7 +15,6 @@ using Telegram.Views.Authorization;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Host
@@ -224,83 +219,83 @@ namespace Telegram.Views.Host
             }
         }
 
-        private void TestDestroy()
+        public void TestDestroy()
         {
             Destroy(_navigationService);
 
-            var frames = this.Descendants<Frame>().ToList();
+            //var frames = this.Descendants<Frame>().ToList();
 
-            foreach (var frame in frames)
-            {
-                if (frame.Content is MainPage main)
-                {
-                    main.LeakTest(true);
-                }
-                else if (frame.Content is Page page && page.Content is ChatView chat)
-                {
-                    chat.LeakTest(true);
-                }
-            }
+            //foreach (var frame in frames)
+            //{
+            //    if (frame.Content is MainPage main)
+            //    {
+            //        main.LeakTest(true);
+            //    }
+            //    else if (frame.Content is Page page && page.Content is ChatView chat)
+            //    {
+            //        chat.LeakTest(true);
+            //    }
+            //}
 
-            var butt = new RepeatButton();
-            butt.HorizontalAlignment = HorizontalAlignment.Center;
-            butt.Content = "GC";
-            butt.Click += (s, args) =>
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
-            };
+            //var butt = new RepeatButton();
+            //butt.HorizontalAlignment = HorizontalAlignment.Center;
+            //butt.Content = "GC";
+            //butt.Click += (s, args) =>
+            //{
+            //    GC.Collect();
+            //    GC.WaitForPendingFinalizers();
+            //    GC.Collect();
+            //};
 
-            var swit = new Button();
-            swit.HorizontalAlignment = HorizontalAlignment.Center;
-            swit.Content = "SW";
-            swit.Click += async (s, args) =>
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    Switch(_lifetime.ActiveItem);
-                    await Task.Delay(2000);
-                }
+            //var swit = new Button();
+            //swit.HorizontalAlignment = HorizontalAlignment.Center;
+            //swit.Content = "SW";
+            //swit.Click += async (s, args) =>
+            //{
+            //    for (int i = 0; i < 10; i++)
+            //    {
+            //        Switch(_lifetime.ActiveItem);
+            //        await Task.Delay(2000);
+            //    }
 
-                TestDestroy();
-            };
+            //    TestDestroy();
+            //};
 
-            var clin = new Button();
-            clin.HorizontalAlignment = HorizontalAlignment.Center;
-            clin.Content = "CL";
-            clin.Click += (s, args) =>
-            {
-                var butt = new RepeatButton();
-                butt.HorizontalAlignment = HorizontalAlignment.Center;
-                butt.Content = "GC";
-                butt.Click += (s, args) =>
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    GC.Collect();
-                };
+            //var clin = new Button();
+            //clin.HorizontalAlignment = HorizontalAlignment.Center;
+            //clin.Content = "CL";
+            //clin.Click += (s, args) =>
+            //{
+            //    var butt = new RepeatButton();
+            //    butt.HorizontalAlignment = HorizontalAlignment.Center;
+            //    butt.Content = "GC";
+            //    butt.Click += (s, args) =>
+            //    {
+            //        GC.Collect();
+            //        GC.WaitForPendingFinalizers();
+            //        GC.Collect();
+            //    };
 
-                Window.Content = butt;
-            };
+            //    Window.Content = butt;
+            //};
 
-            var rest = new Button();
-            rest.HorizontalAlignment = HorizontalAlignment.Center;
-            rest.Content = "RE";
-            rest.Click += (s, args) =>
-            {
-                Switch(_lifetime.ActiveItem);
-            };
+            //var rest = new Button();
+            //rest.HorizontalAlignment = HorizontalAlignment.Center;
+            //rest.Content = "RE";
+            //rest.Click += (s, args) =>
+            //{
+            //    Switch(_lifetime.ActiveItem);
+            //};
 
-            var panel = new StackPanel();
-            panel.VerticalAlignment = VerticalAlignment.Center;
-            panel.HorizontalAlignment = HorizontalAlignment.Center;
-            panel.Children.Add(butt);
-            panel.Children.Add(swit);
-            panel.Children.Add(clin);
-            panel.Children.Add(rest);
+            //var panel = new StackPanel();
+            //panel.VerticalAlignment = VerticalAlignment.Center;
+            //panel.HorizontalAlignment = HorizontalAlignment.Center;
+            //panel.Children.Add(butt);
+            //panel.Children.Add(swit);
+            //panel.Children.Add(clin);
+            //panel.Children.Add(rest);
 
-            Navigation.Child = panel;
+            Navigation.Child = new DebugPage();
             _navigationService = null;
         }
 
