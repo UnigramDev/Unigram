@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        #map {
+            position: absolute;
+            inset: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        // The pin is drawn by the app over the page, at its centre: the map only reports where
+        // its centre went, and the app decides what that point is.
+        var Picker = {
+            zoom: 15,
+            flySpeed: 2.4,
+
+            // Mapbox charges a geocoding request for each lookup, so one waits for the map to
+            // stay put rather than following every pan.
+            settleDelay: 500,
+            resolveDelay: 3000,
+
+            notify: function (message) {
+                window.chrome.webview.postMessage(JSON.stringify(message));
+            },
+
+            init: function (params) {
+                mapboxgl.accessToken = params.token;
+                Picker.geoToken = params.geo;
+                Picker.language = Picker.chooseLanguage(params.language);
+                Picker.cache = {};
+
+                Picker.map = new mapboxgl.Map({
+                    container: 'map',
+                    center: [params.longitude, params.latitude],
+                    zoom: Picker.zoom,
+                    config: {
+                        basemap: { lightPreset: params.dark ? 'night' : 'day' }
+                    }
+                });
+
+                Picker.map.on('movestart', function (e) {
+                    clearTimeout(Picker.settleId);
+                    clearTimeout(Picker.resolveId);
+                    Picker.resolving = null;
+                    Picker.notify({ event: 'move_start', user: !!e.originalEvent });
+                });
+
+                Picker.map.on('moveend', function () {
+                    Picker.settleId = setTimeout(function () {
+                        var center = Picker.map.getCenter();
+                        Picker.notify({ event: 'move_end', latitude: center.lat, longitude: center.lng });
+                        Picker.resolveId = setTimeout(function () {
+                            Picker.resolve(center.lat, center.lng);
+                        }, Picker.resolveDelay);
+                    }, Picker.settleDelay);
+                });
+
+                Picker.map.once('load', function () {
+                    Picker.notify({ event: 'loaded' });
+                });
+
+                Picker.resolve(params.latitude, params.longitude);
+            },
+
+            flyTo: function (latitude, longitude) {
+                Picker.map.flyTo({
+                    center: [longitude, latitude],
+                    zoom: Picker.zoom,
+                    speed: Picker.flySpeed
+                });
+            },
+
+            // https://docs.mapbox.com/api/search/geocoding/#language-coverage
+            languages: [
+                'de', 'en', 'es', 'fr', 'it', 'nl', 'pl',
+                'az', 'bn', 'ca', 'cs', 'da', 'el', 'fa', 'fi', 'ga', 'hu', 'id', 'is', 'ja', 'ka',
+                'km', 'ko', 'lt', 'lv', 'mn', 'pt', 'ro', 'sk', 'sq', 'sv', 'th', 'tl', 'uk', 'vi',
+                'zh', 'zh_Hans', 'zh_TW',
+                'ar', 'bs', 'gu', 'he', 'hi', 'kk', 'lo', 'my', 'nb', 'ru', 'sr', 'te', 'tk', 'tr',
+                'zh_Hant'
+            ],
+
+            // An unsupported language fails the whole request, so it falls back to English.
+            chooseLanguage: function (language) {
+                var wanted = (language || '').toLowerCase().replace('-', '_');
+                var find = function (value) {
+                    for (var i = 0; i < Picker.languages.length; i++) {
+                        if (Picker.languages[i].toLowerCase() == value) {
+                            return Picker.languages[i];
+                        }
+                    }
+                    return null;
+                };
+                return find(wanted) || find(wanted.split('_')[0]) || 'en';
+            },
+
+            resolve: function (latitude, longitude) {
+                var key = latitude.toFixed(4) + ',' + longitude.toFixed(4);
+                Picker.resolving = key;
+
+                var done = function (address) {
+                    Picker.cache[key] = address;
+                    if (Picker.resolving == key) {
+                        Picker.notify({ event: 'address', latitude: latitude, longitude: longitude, address: address });
+                    }
+                };
+
+                if (key in Picker.cache) {
+                    done(Picker.cache[key]);
+                    return;
+                }
+
+                var url = 'https://api.mapbox.com/search/geocode/v6/reverse'
+                    + '?longitude=' + longitude
+                    + '&latitude=' + latitude
+                    + '&language=' + Picker.language
+                    + '&access_token=' + encodeURIComponent(Picker.geoToken);
+
+                fetch(url).then(function (response) {
+                    return response.ok ? response.json() : null;
+                }).then(function (json) {
+                    done(Picker.compose(json));
+                }).catch(function () {
+                    Picker.notify({ event: 'address', latitude: latitude, longitude: longitude, address: '' });
+                });
+            },
+
+            // Neighbourhood, city, country: the street is too precise to name a place by.
+            compose: function (json) {
+                var feature = json && json.features && json.features[0];
+                var context = feature && feature.properties && feature.properties.context;
+                if (!context) {
+                    return '';
+                }
+
+                var names = [];
+                var add = function (keys) {
+                    for (var i = 0; i < keys.length; i++) {
+                        var value = context[keys[i]];
+                        if (value && value.name) {
+                            names.push(value.name);
+                            return;
+                        }
+                    }
+                };
+
+                add(['neighborhood']);
+                add(['place', 'region']);
+                add(['country']);
+                return names.join(', ');
+            }
+        };
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                Picker.notify({ event: 'escape' });
+            }
+        });
+
+        Picker.notify({ event: typeof mapboxgl === 'undefined' ? 'error' : 'ready' });
+    </script>
+</body>
+</html>

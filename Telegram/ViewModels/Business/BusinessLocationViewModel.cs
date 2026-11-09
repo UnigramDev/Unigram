@@ -67,7 +67,7 @@ namespace Telegram.ViewModels.Business
 
         public async void ChangeMap()
         {
-            var popup = new SendLocationPopup(Session);
+            var popup = new SendLocationPopup(Session, business: true);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)

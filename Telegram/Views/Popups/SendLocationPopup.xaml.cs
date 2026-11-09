@@ -5,27 +5,42 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.Web.WebView2.Core;
 using System;
+using System.Globalization;
+using System.IO;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Cells;
 using Telegram.Entities;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Data.Json;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
+using Windows.Storage;
+using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using JsonValue = Windows.Data.Json.JsonValue;
 
 namespace Telegram.Views.Popups
 {
     public sealed partial class SendLocationPopup : ModalPopup
     {
+        // The app config object that carries the Mapbox tokens: "maps" for the map itself, "geo"
+        // for the reverse geocoding that names the point under the pin, and "bmaps"/"bgeo" for
+        // the same when picking a business's address.
+        private const string MapsConfigKey = "tdesktop_config_map";
+
+        // The tokens only work from pages on this origin: Mapbox checks the referrer against it.
+        // Nothing resolves it, the page is served from memory by OnMapResourceRequested.
+        private const string MapHost = "desktop-app-resource";
+
         public SendLocationViewModel ViewModel => DataContext as SendLocationViewModel;
 
         private ShapeVisual _previewShimmer;
@@ -37,15 +52,28 @@ namespace Telegram.Views.Popups
 
         public InputMessageContent Media { get; private set; }
 
-        // Picking a story's venue, around where it starts.
+        // Picking a story's location, around where it starts.
         private readonly bool _story;
         private readonly Location _start;
 
         private PaintEntity _place;
 
+        // The interactive map, created only when asked for: every load is billed.
+        private WebView2 _mapView;
+        private string _mapToken;
+        private string _geoToken;
+
+        // The point under the pin, and its name once the geocoder has one.
+        private Location _center;
+        private string _centerAddress;
+        private bool _centerSelected;
+
+        // The map follows the device until it is moved by hand.
+        private bool _centerMoved;
+
         /// <summary>
-        /// Picks the venue a story's location shows, among those around <paramref name="start"/>,
-        /// or the device when it is null. <see cref="ApplyTo"/> hands it over.
+        /// Picks the place a story's location shows, starting at <paramref name="start"/>, or at
+        /// the device when it is null. <see cref="ApplyTo"/> hands it over.
         /// </summary>
         public SendLocationPopup(ISession session, Location start)
             : this(session)
@@ -56,13 +84,14 @@ namespace Telegram.Views.Popups
             PrimaryButtonText = Strings.Done;
             IsPrimaryButtonEnabled = false;
 
-            // Only the venues: neither the map nor the device's own location.
-            MapPresenter.Visibility = Visibility.Collapsed;
+            // A story names a place, which the device's own location does not have.
             CurrentLocationButton.Visibility = Visibility.Collapsed;
-            NearbyHeader.Visibility = Visibility.Collapsed;
+            SelectedLocationButton.Visibility = Visibility.Visible;
+            SelectedLocation.UpdateState(true, false, true);
         }
 
-        public SendLocationPopup(ISession session)
+        /// <param name="business">Picks a business's address, which has its own Mapbox tokens.</param>
+        public SendLocationPopup(ISession session, bool business = false)
         {
             InitializeComponent();
             DataContext = session.Resolve<SendLocationViewModel>();
@@ -88,6 +117,28 @@ namespace Telegram.Views.Popups
             CompositionPathParser.CreateThumbnail(16, 9, 0, out ShapeVisual visual);
             ElementCompositionPreview.SetElementChildVisual(MapShimmer, visual);
             _previewShimmer = visual;
+
+            if (TryGetMapTokens(session.ClientService, business, out _mapToken, out _geoToken) && ChromiumWebPresenter.IsSupported())
+            {
+                MapButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private static bool TryGetMapTokens(IClientService clientService, bool business, out string map, out string geo)
+        {
+            var config = clientService.Config?.GetNamedObject(MapsConfigKey);
+            if (config != null)
+            {
+                map = config.GetNamedString(business ? "bmaps" : "maps", null);
+                geo = config.GetNamedString(business ? "bgeo" : "geo", null);
+            }
+            else
+            {
+                map = null;
+                geo = null;
+            }
+
+            return !string.IsNullOrEmpty(map) && !string.IsNullOrEmpty(geo);
         }
 
         private void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
@@ -102,6 +153,8 @@ namespace Telegram.Views.Popups
                 _geolocator.PositionChanged -= OnPositionChanged;
                 _geolocator = null;
             }
+
+            CloseMap();
 
             CompositionPathParser.StopThumbnail(_previewShimmer);
             _previewShimmer = null;
@@ -119,14 +172,28 @@ namespace Telegram.Views.Popups
             }
         }
 
-        // Once, rather than following the device as a message's location does: the venues are
-        // the ones around where it starts, which setting it searches for.
+        // Once, rather than following the device as a message's location does: the story's
+        // place is wherever the pin is left, starting here.
         private async void FindStoryLocation()
         {
             var location = _start ?? await ViewModel.Session.Resolve<ILocationService>().GetPositionAsync(WindowContext.GetNavigationService(this));
-            if (location != null)
+            if (location == null)
             {
-                ViewModel.Location = location;
+                return;
+            }
+
+            ViewModel.Location = location;
+
+            if (_mapView == null)
+            {
+                Map.SetSource(ViewModel.ClientService, location, (int)MapPresenter.ActualWidth, (int)MapPresenter.ActualHeight, 0);
+                ShowPosition();
+
+                UpdateCenter(location, null);
+            }
+            else if (!_centerMoved)
+            {
+                FlyTo(location);
             }
         }
 
@@ -193,9 +260,24 @@ namespace Telegram.Views.Popups
                 point.Coordinate.Point.Position.Longitude,
                 point.Coordinate.Accuracy);
 
-            if (Media is InputMessageLocation input)
+            CurrentLocation.Address = string.Format(Strings.AccurateTo,
+                Locale.Declension(Strings.R.Meters, (int)point.Coordinate.Accuracy));
+
+            if (!_centerSelected)
             {
-                input.Location = ViewModel.Location;
+                CurrentLocation.UpdateState(true, true, true);
+                Media = new InputMessageLocation(ViewModel.Location);
+            }
+
+            // The static map stays under the interactive one, which only needs to be told once.
+            if (_mapView != null)
+            {
+                if (!_centerMoved)
+                {
+                    FlyTo(ViewModel.Location);
+                }
+
+                return;
             }
 
             if (_previewShimmer == null && (ViewModel?.Location.Latitude != point.Coordinate.Point.Position.Latitude || ViewModel?.Location.Longitude != point.Coordinate.Point.Position.Longitude))
@@ -206,7 +288,6 @@ namespace Telegram.Views.Popups
             }
 
             var latitude = point.Coordinate.Point.Position.Latitude;
-            var longitude = point.Coordinate.Point.Position.Longitude;
 
             var rasterization = XamlRoot.RasterizationScale;
 
@@ -220,16 +301,7 @@ namespace Telegram.Views.Popups
             var radius = (float)(accuracy / scale * pixels);
             if (radius != _accuracyRadius)
             {
-                if (_position.Scale == Vector3.Zero)
-                {
-                    var spring = _accuracy.Compositor.CreateSpringVector3Animation();
-                    spring.InitialValue = Vector3.Zero;
-                    spring.FinalValue = Vector3.One;
-                    spring.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-                    spring.DampingRatio = 0.6f;
-
-                    _position.StartAnimation("Scale", spring);
-                }
+                ShowPosition();
 
                 Accuracy.Width = radius * 2;
                 Accuracy.Height = radius * 2;
@@ -247,56 +319,54 @@ namespace Telegram.Views.Popups
             }
 
             Map.SetSource(ViewModel.ClientService, ViewModel.Location, width, height, 0);
+        }
 
-            CurrentLocation.Address = string.Format(Strings.AccurateTo,
-                Locale.Declension(Strings.R.Meters, (int)point.Coordinate.Accuracy));
-
-            if (ScrollingHost.SelectedItem == null)
+        private void ShowPosition()
+        {
+            if (_position.Scale == Vector3.Zero)
             {
-                CurrentLocation.UpdateState(true, true, true);
-                Media = new InputMessageLocation(ViewModel.Location);
+                var spring = _position.Compositor.CreateSpringVector3Animation();
+                spring.InitialValue = Vector3.Zero;
+                spring.FinalValue = Vector3.One;
+                spring.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                spring.DampingRatio = 0.6f;
+
+                _position.StartAnimation("Scale", spring);
             }
         }
 
         private void CurrentLocation_Click(object sender, RoutedEventArgs e)
         {
-            ScrollingHost.SelectedItem = null;
+            if (ViewModel.Location == null)
+            {
+                return;
+            }
+
+            _centerSelected = false;
+            SelectedLocation.UpdateState(false, true, true);
 
             CurrentLocation.UpdateState(true, true, true);
             Media = new InputMessageLocation(ViewModel.Location);
         }
 
-        #region Recycle
-
-        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        private void SelectedLocation_Click(object sender, RoutedEventArgs e)
         {
-            if (args.ItemContainer == null)
-            {
-                args.ItemContainer = new MultipleListViewItem(sender, false);
-                args.ItemContainer.Style = sender.ItemContainerStyle;
-                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
-            }
-
-            args.IsContainerPrepared = true;
+            SelectCenter();
         }
 
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void SelectCenter()
         {
-            if (args.InRecycleQueue)
+            if (_center == null)
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is VenueCell content && args.Item is Venue venue)
-            {
-                content.UpdateVenue(venue);
-                content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple
-                    && args.ItemContainer.IsSelected, false, true);
 
-                args.Handled = true;
-            }
+            _centerSelected = true;
+            CurrentLocation.UpdateState(false, true, true);
+            SelectedLocation.UpdateState(true, true, true);
+
+            Media = new InputMessageLocation(_center);
         }
-
-        #endregion
 
         private void Map_ImageOpened(object sender, RoutedEventArgs e)
         {
@@ -305,10 +375,275 @@ namespace Telegram.Views.Popups
             ElementCompositionPreview.SetElementChildVisual(MapShimmer, null);
         }
 
+        #region Map
+
+        private async void MapButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_mapView != null)
+            {
+                return;
+            }
+
+            MapButton.Visibility = Visibility.Collapsed;
+            Accuracy.Visibility = Visibility.Collapsed;
+
+            _mapView = new WebView2();
+            _mapView.WebMessageReceived += OnMapMessageReceived;
+
+            // Over the static map, which shows through until the tiles arrive, and under the pin.
+            MapPresenter.Children.Insert(1, _mapView);
+            MapPresenter.Constraint = new Size(4, 3);
+
+            ShowPosition();
+            ElementCompositionPreview.SetIsTranslationEnabled(Position, true);
+
+            var view = _mapView;
+
+            try
+            {
+                await view.EnsureCoreWebView2Async();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+
+            // Closed while it was being created.
+            if (_mapView != view)
+            {
+                return;
+            }
+
+            var core = view.CoreWebView2;
+            if (core == null)
+            {
+                CloseMap();
+                return;
+            }
+
+            core.Settings.IsStatusBarEnabled = false;
+            core.Settings.AreDefaultScriptDialogsEnabled = false;
+            core.Settings.AreDefaultContextMenusEnabled = AppSettings.Diagnostics.EnableWebViewDevTools;
+            core.Settings.AreDevToolsEnabled = AppSettings.Diagnostics.EnableWebViewDevTools;
+
+            core.NavigationStarting += OnMapNavigationStarting;
+            core.NewWindowRequested += OnMapNewWindowRequested;
+            core.WebResourceRequested += OnMapResourceRequested;
+            core.AddWebResourceRequestedFilter($"http://{MapHost}/*", CoreWebView2WebResourceContext.All);
+
+            core.Navigate($"http://{MapHost}/picker.html");
+        }
+
+        private void CloseMap()
+        {
+            var view = _mapView;
+            if (view == null)
+            {
+                return;
+            }
+
+            _mapView = null;
+
+            view.WebMessageReceived -= OnMapMessageReceived;
+
+            var core = view.CoreWebView2;
+            if (core != null)
+            {
+                core.NavigationStarting -= OnMapNavigationStarting;
+                core.NewWindowRequested -= OnMapNewWindowRequested;
+                core.WebResourceRequested -= OnMapResourceRequested;
+            }
+
+            MapPresenter.Children.Remove(view);
+            view.Close();
+        }
+
+        private async void OnMapResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
+        {
+            if (!Uri.TryCreate(args.Request.Uri, UriKind.Absolute, out Uri uri) || uri.AbsolutePath != "/picker.html")
+            {
+                args.Response = sender.Environment.CreateWebResourceResponse(null, 404, "Not Found", string.Empty);
+                return;
+            }
+
+            var deferral = args.GetDeferral();
+
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(Path.Combine(AppPaths.InstalledPath, "Assets", "Map", "picker.html"));
+                var stream = await file.OpenReadAsync();
+
+                args.Response = sender.Environment.CreateWebResourceResponse(stream, 200, "OK", "Content-Type: text/html; charset=utf-8");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                args.Response = sender.Environment.CreateWebResourceResponse(null, 500, "Internal Server Error", string.Empty);
+            }
+            finally
+            {
+                deferral.Complete();
+            }
+        }
+
+        private void OnMapNavigationStarting(CoreWebView2 sender, CoreWebView2NavigationStartingEventArgs args)
+        {
+            args.Cancel = !Uri.TryCreate(args.Uri, UriKind.Absolute, out Uri uri) || uri.Host != MapHost;
+        }
+
+        // The attribution links, which the map's terms require to work.
+        private async void OnMapNewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
+        {
+            args.Handled = true;
+
+            if (Uri.TryCreate(args.Uri, UriKind.Absolute, out Uri uri) && uri.Scheme == Uri.UriSchemeHttps)
+            {
+                await Launcher.LaunchUriAsync(uri);
+            }
+        }
+
+        private void OnMapMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+        {
+            if (sender != _mapView || !Uri.TryCreate(args.Source, UriKind.Absolute, out Uri source) || source.Host != MapHost)
+            {
+                return;
+            }
+
+            string message;
+            try
+            {
+                message = args.TryGetWebMessageAsString();
+            }
+            catch
+            {
+                return;
+            }
+
+            if (!JsonObject.TryParse(message, out JsonObject data))
+            {
+                return;
+            }
+
+            switch (data.GetNamedString("event", string.Empty))
+            {
+                case "ready":
+                    InitializeMap();
+                    break;
+                case "error":
+                    CloseMap();
+                    break;
+                case "escape":
+                    Hide();
+                    break;
+                case "move_start":
+                    if (data.GetNamedBoolean("user", false))
+                    {
+                        _centerMoved = true;
+                    }
+
+                    LiftPin(true);
+                    _centerAddress = null;
+                    SelectedLocation.Address = Strings.Loading;
+
+                    if (_story)
+                    {
+                        IsPrimaryButtonEnabled = false;
+                    }
+                    break;
+                case "move_end":
+                    LiftPin(false);
+                    UpdateCenter(ReadLocation(data), null);
+
+                    if (_centerMoved)
+                    {
+                        SelectCenter();
+                    }
+                    break;
+                case "address":
+                    UpdateCenter(ReadLocation(data), data.GetNamedString("address", string.Empty));
+                    break;
+            }
+        }
+
+        private void InitializeMap()
+        {
+            var location = _center ?? ViewModel.Location;
+
+            var json = new JsonObject
+            {
+                ["token"] = JsonValue.CreateStringValue(_mapToken),
+                ["geo"] = JsonValue.CreateStringValue(_geoToken),
+                ["language"] = JsonValue.CreateStringValue(LocaleService.Current.Id),
+                ["dark"] = JsonValue.CreateBooleanValue(ActualTheme == ElementTheme.Dark),
+                ["latitude"] = JsonValue.CreateNumberValue(location?.Latitude ?? 0),
+                ["longitude"] = JsonValue.CreateNumberValue(location?.Longitude ?? 0)
+            };
+
+            _ = _mapView?.CoreWebView2?.ExecuteScriptAsync($"Picker.init({json.Stringify()});");
+        }
+
+        private void FlyTo(Location location)
+        {
+            var latitude = location.Latitude.ToString(CultureInfo.InvariantCulture);
+            var longitude = location.Longitude.ToString(CultureInfo.InvariantCulture);
+
+            _ = _mapView?.CoreWebView2?.ExecuteScriptAsync($"Picker.flyTo({latitude}, {longitude});");
+        }
+
+        private static Location ReadLocation(JsonObject data)
+        {
+            return new Location(data.GetNamedNumber("latitude", 0), data.GetNamedNumber("longitude", 0), 0);
+        }
+
+        private void LiftPin(bool lift)
+        {
+            var animation = _position.Compositor.CreateVector3KeyFrameAnimation();
+            animation.InsertKeyFrame(1, new Vector3(0, lift ? -12 : 0, 0));
+            animation.Duration = TimeSpan.FromMilliseconds(200);
+
+            _position.StartAnimation("Translation", animation);
+        }
+
+        // Without a name from the geocoder, the point is named by its coordinates.
+        private void UpdateCenter(Location location, string address)
+        {
+            _center = location;
+            _centerAddress = string.IsNullOrEmpty(address)
+                ? string.Format(CultureInfo.InvariantCulture, "({0:F6}, {1:F6})", location.Latitude, location.Longitude)
+                : address;
+
+            // The geocoder runs a while after the map stops, so until then the cell waits for it.
+            if (address != null || _mapView == null)
+            {
+                SelectedLocation.Address = _centerAddress;
+            }
+
+            if (_centerSelected && Media is InputMessageLocation input)
+            {
+                input.Location = location;
+            }
+
+            SelectedLocationButton.Visibility = Visibility.Visible;
+
+            if (_story)
+            {
+                _place = new PaintEntity
+                {
+                    LocationTitle = _centerAddress,
+                    LocationLatitude = location.Latitude,
+                    LocationLongitude = location.Longitude
+                };
+
+                IsPrimaryButtonEnabled = address != null || _mapView == null;
+            }
+        }
+
+        #endregion
+
         #region Story
 
         /// <summary>
-        /// Writes the venue picked for a story into <paramref name="location"/>.
+        /// Writes the place picked for a story into <paramref name="location"/>.
         /// </summary>
         public void ApplyTo(PaintEntity location)
         {
@@ -320,35 +655,10 @@ namespace Telegram.Views.Popups
             location.LocationTitle = _place.LocationTitle;
             location.LocationLatitude = _place.LocationLatitude;
             location.LocationLongitude = _place.LocationLongitude;
-            location.LocationQueryId = _place.LocationQueryId;
-            location.LocationResultId = _place.LocationResultId;
+            location.LocationQueryId = 0;
+            location.LocationResultId = null;
         }
 
         #endregion
-
-        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count > 0 && e.AddedItems[0] is Venue venue)
-            {
-                CurrentLocation.UpdateState(false, true, true);
-                Media = new InputMessageVenue(venue);
-
-                if (_story)
-                {
-                    ViewModel.TryGetResult(venue, out long queryId, out string resultId);
-
-                    _place = new PaintEntity
-                    {
-                        LocationTitle = venue.Title,
-                        LocationLatitude = venue.Location.Latitude,
-                        LocationLongitude = venue.Location.Longitude,
-                        LocationQueryId = queryId,
-                        LocationResultId = resultId
-                    };
-
-                    IsPrimaryButtonEnabled = true;
-                }
-            }
-        }
     }
 }

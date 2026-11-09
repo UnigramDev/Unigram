@@ -60,8 +60,6 @@ namespace Telegram.Services
         /// have been granted already.
         /// </summary>
         Task<CurrentWeather> GetCurrentWeatherAsync(INavigationService navigation);
-
-        Task<GetVenuesResult> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null, string offset = null);
     }
 
     public partial class LocationService : ILocationService
@@ -225,50 +223,6 @@ namespace Telegram.Services
             }
 
             return true;
-        }
-
-        public async Task<GetVenuesResult> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null, string offset = null)
-        {
-            var results = new List<Venue>();
-
-            var option = _clientService.Options.VenueSearchBotUsername;
-            if (string.IsNullOrEmpty(option))
-            {
-                // TODO: use hardcoded bot?
-                return new GetVenuesResult(null, results);
-            }
-
-            var chat = await _clientService.SendAsync(new SearchPublicChat(option)) as Chat;
-            if (chat == null)
-            {
-                return new GetVenuesResult(null, results);
-            }
-
-
-            var user = _clientService.GetUser(chat);
-            if (user == null)
-            {
-                return new GetVenuesResult(null, results);
-            }
-
-            var response = await _clientService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude, 0), query ?? string.Empty, offset ?? string.Empty));
-            if (response is InlineQueryResults inlineResults)
-            {
-                var ids = new List<string>();
-
-                foreach (var item in inlineResults.Results)
-                {
-                    if (item is InlineQueryResultVenue venue)
-                    {
-                        results.Add(venue.Venue);
-                        ids.Add(venue.Id);
-                    }
-                }
-
-                return new GetVenuesResult(inlineResults.NextOffset, results, inlineResults.InlineQueryId, ids);
-            }
-
-            return new GetVenuesResult(null, results);
         }
     }
 }
