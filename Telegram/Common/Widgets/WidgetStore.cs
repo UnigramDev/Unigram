@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Windows.Data.Json;
-using Windows.Storage;
 
 namespace Telegram.Common.Widgets
 {
@@ -43,7 +42,7 @@ namespace Telegram.Common.Widgets
             {
                 if (!_sessions.TryGetValue(sessionId, out WidgetStore store))
                 {
-                    _sessions[sessionId] = store = new WidgetStore(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{sessionId}", "widgets"));
+                    _sessions[sessionId] = store = new WidgetStore(Path.Combine(AppPaths.LocalPath, $"{sessionId}", "widgets"));
                 }
 
                 return store;

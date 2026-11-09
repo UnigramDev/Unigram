@@ -19,7 +19,6 @@ using Telegram.Services.Wallet;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views.Wallet.Popups;
-using Windows.ApplicationModel;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.System;
@@ -298,7 +297,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (!_resourcesLoaded)
                 {
-                    WidgetView.LoadResources(Path.Combine(Package.Current.InstalledLocation.Path, "WidgetJS"));
+                    WidgetView.LoadResources(Path.Combine(AppPaths.InstalledPath, "WidgetJS"));
                     _resourcesLoaded = true;
                 }
             }
