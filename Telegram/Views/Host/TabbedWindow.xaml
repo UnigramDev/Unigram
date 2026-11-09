@@ -16,6 +16,20 @@
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       TabCloseRequested="OnTabCloseRequested">
+            <muxc:TabView.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Default">
+                            <StaticResource x:Key="TabViewItemHeaderBackgroundSelected"
+                                            ResourceKey="LayerFillColorDefaultBrush" />
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Light">
+                            <StaticResource x:Key="TabViewItemHeaderBackgroundSelected"
+                                            ResourceKey="LayerFillColorDefaultBrush" />
+                        </ResourceDictionary>
+                    </ResourceDictionary.ThemeDictionaries>
+                </ResourceDictionary>
+            </muxc:TabView.Resources>
             <muxc:TabView.TabStripHeader>
                 <Border x:Name="Header"
                         Background="Transparent">

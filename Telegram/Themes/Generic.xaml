@@ -5777,6 +5777,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ZoomBox">
                     <ContentPresenter x:Name="ContentPresenter"
+                                      Background="{TemplateBinding Background}"
                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"

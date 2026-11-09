@@ -9,7 +9,7 @@
              d:DesignHeight="300"
              d:DesignWidth="400">
 
-    <Grid Background="{ThemeResource TabViewItemHeaderBackgroundSelected}"
+    <Grid Background="{ThemeResource LayerFillColorDefaultBrush}"
           BorderBrush="{ThemeResource TabViewBorderBrush}"
           BorderThickness="0,0,0,1"
           Height="48">

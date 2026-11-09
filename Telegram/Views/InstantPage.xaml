@@ -250,7 +250,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -295,6 +295,7 @@
         </controls:TabbedPageHeader>
 
         <controls:ZoomBox x:Name="ZoomingHost"
+                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                           Grid.Row="1">
             <ListView x:Name="ScrollingHost"
                       SelectionMode="None"
