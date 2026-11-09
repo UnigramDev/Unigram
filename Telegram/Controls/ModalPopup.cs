@@ -912,10 +912,6 @@ namespace Telegram.Controls
                     args.Handled = true;
                 }
             }
-            else if (args.Key == VirtualKey.Escape)
-            {
-                args.Handled = CancelRequested();
-            }
         }
 
         /// <summary>
