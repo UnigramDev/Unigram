@@ -221,7 +221,10 @@ namespace Telegram.ViewModels
                     replyTo = new InputMessageReplyToMessage(replyToTopicMessage.MessageId, replyToTopicMessage.Quote, replyToTopicMessage.ChecklistTaskId, replyToTopicMessage.PollOptionId);
                 }
 
-                function = new SendInlineQueryResultMessage(chat.Id, topicId, replyTo, plan.ToOptions(), queryId, queryResult.GetId(), false);
+                var options = plan.ToOptions();
+                options.SendingId = Math.Max(options.SendingId, 1);
+
+                function = new SendInlineQueryResultMessage(chat.Id, topicId, replyTo, options, queryId, queryResult.GetId(), false);
             }
 
             var response = await ClientService.SendAsync(function);
