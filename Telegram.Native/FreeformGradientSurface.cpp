@@ -283,6 +283,11 @@ namespace winrt::Telegram::Native::implementation
 
     void FreeformGradientSurface::Next()
     {
+        if (m_timer.IsEnabled())
+        {
+            return;
+        }
+
         m_timer.Stop();
         m_easing = GetKeyFrames();
         m_index = 0;
