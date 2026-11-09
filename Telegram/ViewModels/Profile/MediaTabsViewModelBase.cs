@@ -212,6 +212,10 @@ namespace Telegram.ViewModels.Profile
         private void UpdateDeleteMessages(MediaCollection target, long chatId, HashSet<long> table)
         {
             //target.Cancel();
+            if (target == null)
+            {
+                return;
+            }
 
             for (int i = 0; i < target.Count; i++)
             {
