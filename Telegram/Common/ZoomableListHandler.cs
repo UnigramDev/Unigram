@@ -248,6 +248,11 @@ namespace Telegram.Common
 
             _popupPanel.DataContext = _listView.DataContext;
 
+            if (_popupPanel.DataContext == null)
+            {
+                return;
+            }
+
             if (item is Sticker sticker)
             {
                 _popupPanel.SetSticker(sticker);
