@@ -597,6 +597,11 @@ namespace Telegram.Views
             Handle(update.ChatId, ChatCellUpdate.UnreadMentionCount);
         }
 
+        public void Handle(UpdateMessageContainsUnreadPollVotes update)
+        {
+            Handle(update.ChatId, ChatCellUpdate.UnreadMentionCount);
+        }
+
         public async void Handle(UpdateSecretChat update)
         {
             var response = await _clientService.SendAsync(new CreateSecretChat(update.SecretChat.Id));
@@ -1518,6 +1523,7 @@ namespace Telegram.Views
                 .Subscribe<UpdateChatAction>(Handle)
                 .Subscribe<UpdateMessageMentionRead>(Handle)
                 .Subscribe<UpdateMessageUnreadReactions>(Handle)
+                .Subscribe<UpdateMessageContainsUnreadPollVotes>(Handle)
                 .Subscribe<UpdateUnreadChatCount>(Handle)
                 .Subscribe<UpdateChatUnreadTopicCount>(Handle)
                 .Subscribe<UpdateSecretChat>(Handle)
