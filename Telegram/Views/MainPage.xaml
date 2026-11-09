@@ -846,18 +846,29 @@
                                          SelectionChanged="Navigation_SelectionChanged"
                                          IsItemClickEnabled="True"
                                          ItemClick="Navigation_ItemClick"
-                                         HorizontalAlignment="Center"
+                                         HorizontalAlignment="Stretch"
                                          Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                          BorderThickness="1"
                                          CornerRadius="24"
+                                         MaxWidth="200"
                                          Height="48"
                                          Padding="0,0,8,0"
                                          Visibility="Collapsed">
+                        <controls:TopNavView.Template>
+                            <ControlTemplate TargetType="controls:TopNavView">
+                                <Grid>
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="{TemplateBinding CornerRadius}" />
+                                    <ItemsPresenter />
+                                </Grid>
+                            </ControlTemplate>
+                        </controls:TopNavView.Template>
                         <controls:TopNavView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0" />
+                                <controls:ProfileButtonsGrid />
                             </ItemsPanelTemplate>
                         </controls:TopNavView.ItemsPanel>
                         <controls:TopNavViewIconItem CornerRadius="24"
