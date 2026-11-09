@@ -544,7 +544,8 @@
                                             Width="44"
                                             Height="44"
                                             CornerRadius="4"
-                                            Margin="0,-3,0,-4" />
+                                            Margin="0,-3,0,-4"
+                                            IsTabStop="False" />
                     </controls:SettingsButton.Badge>
                 </controls:SettingsButton>
 
