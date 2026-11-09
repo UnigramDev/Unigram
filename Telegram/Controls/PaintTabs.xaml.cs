@@ -262,7 +262,7 @@ namespace Telegram.Controls
         {
             if (_clientService != null)
             {
-                FlyoutBase.ShowAttachedFlyout(StickerTab);
+                StickerFlyout.ShowAt(StickerTab, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
             }
         }
 
@@ -695,7 +695,7 @@ namespace Telegram.Controls
         {
             LeaveCropping();
 
-            FlyoutBase.ShowAttachedFlyout(ShapesTab);
+            ShapesFlyout.ShowAt(ShapesTab, FlyoutPlacementMode.Bottom, FlyoutShowMode.Transient);
             _toolbar.UpdateTools();
         }
 
