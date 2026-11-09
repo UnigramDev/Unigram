@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -69,15 +70,18 @@ namespace Telegram.Views.Popups
                 option = new ReportOption(textRequired.OptionId, option.Text);
             }
 
-            UpdateSelection(new ReportChatSelection(option, messageIds, text, response));
+            UpdateSelection(new ReportChatSelection(option, messageIds, text, response), out var focusTarget);
 
             IsEnabled = true;
+            VisualUtilities.QueueCallbackForCompositionRendered(() => focusTarget?.Focus(FocusState.Programmatic));
         }
 
-        private void UpdateSelection(ReportChatSelection selection)
+        private void UpdateSelection(ReportChatSelection selection, out Control focusTarget)
         {
             _selection = selection;
             Title.Text = selection.Option.Text;
+
+            focusTarget = null;
 
             if (_collapsed && selection.Result is not ReportChatResultMessagesRequired and not ReportChatResultOk)
             {
@@ -92,6 +96,8 @@ namespace Telegram.Views.Popups
 
                 Subtitle.Text = optionRequired.Title;
                 ScrollingHost.ItemsSource = optionRequired.Options;
+
+                focusTarget = ScrollingHost;
             }
             else if (selection.Result is ReportChatResultTextRequired textRequired)
             {
@@ -131,6 +137,8 @@ namespace Telegram.Views.Popups
                 {
                     TextInfo.Text = Strings.Report2CommentInfo;
                 }
+
+                focusTarget = Text;
             }
             else if (selection.Result is ReportChatResultMessagesRequired or ReportChatResultOk)
             {
@@ -189,7 +197,8 @@ namespace Telegram.Views.Popups
         {
             if (_history.TryPop(out ReportChatSelection selection))
             {
-                UpdateSelection(selection);
+                UpdateSelection(selection, out var focusTarget);
+                focusTarget?.Focus(FocusState.Programmatic);
             }
         }
 
