@@ -12,6 +12,7 @@ using Telegram.Native;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -132,7 +133,7 @@ namespace Telegram.Common
             catch { }
         }
 
-        public async void Bitmap(string path, int width = 0, int height = 0, long hashCode = 0)
+        public async void Bitmap(string path, int width = 0, int height = 0, long hashCode = 0, XamlRoot xamlRoot = null)
         {
             var generation = ++_generation;
 
@@ -143,14 +144,10 @@ namespace Telegram.Common
                     Recycle(generation, hashCode);
                 }
 
-                var bitmapSource = new BitmapImage
-                {
-                    DecodePixelType = DecodePixelType.Logical
-                };
+                var bitmapSource = new BitmapImage();
 
                 // TODO: implement
-                bitmapSource.DecodePixelWidth = width;
-                bitmapSource.DecodePixelHeight = height;
+                SetDecodeSize(bitmapSource, width, height, xamlRoot);
 
                 using (var stream = await OpenReadAsync(path))
                 {
@@ -172,7 +169,7 @@ namespace Telegram.Common
             catch { }
         }
 
-        public async void Bitmap(byte[] bytes, int width = 0, int height = 0, long hashCode = 0)
+        public async void Bitmap(byte[] bytes, int width = 0, int height = 0, long hashCode = 0, XamlRoot xamlRoot = null)
         {
             var generation = ++_generation;
 
@@ -183,14 +180,10 @@ namespace Telegram.Common
                     Recycle(generation, hashCode);
                 }
 
-                var bitmapSource = new BitmapImage
-                {
-                    DecodePixelType = DecodePixelType.Logical
-                };
+                var bitmapSource = new BitmapImage();
 
                 // TODO: implement
-                bitmapSource.DecodePixelWidth = width;
-                bitmapSource.DecodePixelHeight = height;
+                SetDecodeSize(bitmapSource, width, height, xamlRoot);
 
                 using (var stream = new InMemoryRandomAccessStream())
                 {
@@ -212,6 +205,23 @@ namespace Telegram.Common
         public void Recycle()
         {
             Recycle(++_generation, 0);
+        }
+
+        internal static void SetDecodeSize(BitmapImage bitmap, int width, int height, XamlRoot xamlRoot)
+        {
+#if WINUI3
+            // Not DecodePixelType.Logical: a stream decodes once, as soon as it is read, and a bitmap
+            // that reaches no live tree by then resolves a logical size against a root that always
+            // reports a scale of 1. The natural size of a logical decode is divided by that same 1.
+            var scale = xamlRoot?.RasterizationScale ?? 1;
+
+            bitmap.DecodePixelWidth = (int)Math.Round(width * scale);
+            bitmap.DecodePixelHeight = (int)Math.Round(height * scale);
+#else
+            bitmap.DecodePixelType = DecodePixelType.Logical;
+            bitmap.DecodePixelWidth = width;
+            bitmap.DecodePixelHeight = height;
+#endif
         }
 
         private static string _localFolder;

@@ -723,7 +723,7 @@ namespace Telegram.Views.Popups
 
         private async void LoadThumbnail(Grid root, StorageMedia storage)
         {
-            var source = await _thumbnails.GetAsync(storage);
+            var source = await _thumbnails.GetAsync(storage, XamlRoot);
 
             // The container may have been recycled onto another item, or torn down entirely,
             // while the decode was in flight.
@@ -2159,7 +2159,7 @@ namespace Telegram.Views.Popups
         /// Returns null when there is no preview to show, and caches that so a file that cannot be
         /// decoded is not retried on every realization.
         /// </summary>
-        public Task<ImageSource> GetAsync(StorageMedia media)
+        public Task<ImageSource> GetAsync(StorageMedia media, XamlRoot xamlRoot)
         {
             if (_cache.TryGetValue(media, out var cached))
             {
@@ -2173,13 +2173,13 @@ namespace Telegram.Views.Popups
                 return pending;
             }
 
-            var task = DecodeAsync(media);
+            var task = DecodeAsync(media, xamlRoot);
             _inflight[media] = task;
 
             return task;
         }
 
-        private async Task<ImageSource> DecodeAsync(StorageMedia media)
+        private async Task<ImageSource> DecodeAsync(StorageMedia media, XamlRoot xamlRoot)
         {
             ImageSource source = null;
 
@@ -2207,11 +2207,8 @@ namespace Telegram.Views.Popups
                     }
                     else
                     {
-                        var preview = new BitmapImage
-                        {
-                            DecodePixelWidth = 300,
-                            DecodePixelType = DecodePixelType.Logical
-                        };
+                        var preview = new BitmapImage();
+                        ThumbnailController.SetDecodeSize(preview, 300, 0, xamlRoot);
 
                         using var stream = await media.File.OpenReadAsync();
                         await preview.SetSourceAsync(stream);

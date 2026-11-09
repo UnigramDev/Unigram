@@ -340,7 +340,7 @@ namespace Telegram.Controls.Messages.Content
                 _textureId = photoSize.Photo.Id;
 
                 _textureController ??= new ThumbnailController(Texture);
-                _textureController.Bitmap(photoSize.Photo.Local.Path, width, height, _textureId);
+                _textureController.Bitmap(photoSize.Photo.Local.Path, width, height, _textureId, XamlRoot);
             }
             else
             {

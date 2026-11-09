@@ -259,7 +259,7 @@ namespace Telegram.Controls.Messages
                     var width = (int)(photoSize.Width * ratio);
                     var height = (int)(photoSize.Height * ratio);
 
-                    _thumbnailController.Bitmap(photoSize.Photo.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
+                    _thumbnailController.Bitmap(photoSize.Photo.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id), XamlRoot);
                 }
             }
             else
@@ -299,7 +299,7 @@ namespace Telegram.Controls.Messages
                     var width = (int)(thumbnail.Width * ratio);
                     var height = (int)(thumbnail.Height * ratio);
 
-                    _thumbnailController.Bitmap(thumbnail.File.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
+                    _thumbnailController.Bitmap(thumbnail.File.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id), XamlRoot);
                 }
             }
             else
@@ -339,7 +339,7 @@ namespace Telegram.Controls.Messages
                     var width = (int)(thumbnail.Width * ratio);
                     var height = (int)(thumbnail.Height * ratio);
 
-                    _thumbnailController.Bitmap(thumbnail.Data, width, height, hashCode);
+                    _thumbnailController.Bitmap(thumbnail.Data, width, height, hashCode, XamlRoot);
                 }
             }
             else

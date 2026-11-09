@@ -96,7 +96,7 @@ namespace Telegram.Controls.Messages.Content
                 var height = (int)(small.Height * ratio);
 
                 _thumbnailController ??= new ThumbnailController(Texture);
-                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
+                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id), XamlRoot);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

@@ -198,7 +198,7 @@ namespace Telegram.Controls
                 };
                 _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
 
-                _thumbnailController.Bitmap(file.Local.Path, width, height, file.Id /*HashCode.Combine(message.ChatId, message.Id)*/);
+                _thumbnailController.Bitmap(file.Local.Path, width, height, file.Id /*HashCode.Combine(message.ChatId, message.Id)*/, XamlRoot);
                 UpdateThumbnailState(true);
             }
             else
@@ -218,7 +218,7 @@ namespace Telegram.Controls
                     };
                     _thumbnailController ??= new ThumbnailController(_thumbnailTexture);
 
-                    _thumbnailController.Bitmap(minithumbnail.Data, minithumbnail.Width, minithumbnail.Height, file.Id);
+                    _thumbnailController.Bitmap(minithumbnail.Data, minithumbnail.Width, minithumbnail.Height, file.Id, XamlRoot);
                     UpdateThumbnailState(true);
                 }
                 else

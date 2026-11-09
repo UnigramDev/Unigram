@@ -424,6 +424,7 @@ namespace Telegram.Controls
             private readonly ThumbnailController _controller;
 
             private readonly DispatcherQueue _dispatcherQueue;
+            private XamlRoot _xamlRoot;
 
             private readonly HashSet<ProfilePicture> _pictures = new();
 
@@ -487,6 +488,8 @@ namespace Telegram.Controls
 
             public void Load(ProfilePicture picture)
             {
+                _xamlRoot = picture.XamlRoot;
+
                 _pictures.Add(picture);
                 picture.Invalidate(_source);
 
@@ -516,7 +519,7 @@ namespace Telegram.Controls
             {
                 if (photo.Photo.Local.IsDownloadingCompleted)
                 {
-                    _controller.Bitmap(photo.Photo.Local.Path, side, side, photo.Id);
+                    _controller.Bitmap(photo.Photo.Local.Path, side, side, photo.Id, _xamlRoot);
                     Invalidate(_texture);
 
                     return;
