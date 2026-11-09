@@ -213,16 +213,11 @@ namespace Telegram.Controls
             {
                 var child = Children[i];
 
-                if (child.Visibility == Visibility.Collapsed)
-                {
-                    continue;
-                }
-
                 child.Measure(constraint);
 
                 var desired = child.DesiredSize;
 
-                if (any)
+                if (any && desired.Height > 0)
                 {
                     height += Spacing;
                 }
@@ -245,19 +240,14 @@ namespace Telegram.Controls
             {
                 var child = Children[i];
 
-                if (child.Visibility == Visibility.Collapsed)
-                {
-                    continue;
-                }
-
-                if (any)
-                {
-                    y += Spacing;
-                }
-
                 // DesiredSize carries the child's own margin and Arrange takes it back out, so a
                 // row that wants one composes with the spacing rather than fighting it.
                 var height = child.DesiredSize.Height;
+
+                if (any && height > 0)
+                {
+                    y += Spacing;
+                }
 
                 child.Arrange(new Rect(0, y, finalSize.Width, height));
 
