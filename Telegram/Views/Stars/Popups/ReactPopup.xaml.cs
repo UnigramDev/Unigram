@@ -41,7 +41,7 @@ namespace Telegram.Views.Stars.Popups
 
         private bool _loaded;
 
-        private ModalPopup _balance;
+        private ToastPopup _balance;
 
         public ReactPopup(IClientService clientService, MessageViewModel message)
         {
@@ -94,18 +94,19 @@ namespace Telegram.Views.Stars.Popups
             content.Style = BootStrapper.Current.Resources["CaptionTextBlockStyle"] as Style;
             content.Margin = new Thickness(0, -8, 0, -6);
 
-            var popup = new ModalPopup
+            var popup = new ToastPopup
             {
+                PreferredPlacement = ToastPlacementMode.Top,
                 Content = content,
-                ContentMinWidth = 0,
-                ContentMinHeight = 0,
+                //ContentMinWidth = 0,
+                //ContentMinHeight = 0,
                 IsLightDismissEnabled = false,
                 RequestedTheme = ElementTheme.Dark
             };
 
             AutomationProperties.SetName(popup, "title");
 
-            _ = popup.ShowAsync(XamlRoot);
+            popup.IsOpen = true;
             _balance = popup;
         }
 
@@ -117,7 +118,7 @@ namespace Telegram.Views.Stars.Popups
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            _balance?.Hide();
+            _balance?.IsOpen = false;
         }
 
         private void StarCountSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -313,7 +314,7 @@ namespace Telegram.Views.Stars.Popups
                 }
             }
 
-            flyout.ShowAt(Alias, FlyoutPlacementMode.TopEdgeAlignedLeft);
+            flyout.ShowAt(Alias, FlyoutPlacementMode.TopEdgeAlignedLeft, animation: MenuFlyoutAnimation.Overlap);
         }
     }
 
