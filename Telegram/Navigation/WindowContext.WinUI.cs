@@ -59,6 +59,12 @@ namespace Telegram.Navigation
         private RectInt32 _maximizeRegion;
         private RectInt32 _closeRegion;
 
+        // What UWP hands to SetPreferredMinSize: logical pixels of the client area.
+        private Size _minSize = new(320, 500);
+        private uint _minSizeDpi;
+
+        private bool _layoutSavePending;
+
         private CaptionButtons _pressedButton;
 
         private bool _consolidated;
@@ -579,13 +585,57 @@ namespace Telegram.Navigation
                 _content.InvalidateCaptionRegions();
             }
 
+            if (args.DidSizeChange)
+            {
+                UpdateMinSize();
+            }
+
             // Every step of a drag rather than its end, which only WM_EXITSIZEMOVE would say: the
             // store only writes once it has gone quiet. Full screen and compact overlay are not
             // where the window lives, and their bounds would be restored as if they were.
-            if ((args.DidPositionChange || args.DidSizeChange) && sender.Presenter.Kind == AppWindowPresenterKind.Overlapped)
+            if ((args.DidPositionChange || args.DidSizeChange) && !_layoutSavePending && sender.Presenter.Kind == AppWindowPresenterKind.Overlapped)
+            {
+                _layoutSavePending = true;
+                _window.DispatcherQueue.TryEnqueue(SaveLayout);
+            }
+        }
+
+        /// <summary>
+        /// Queued rather than run from the change: entering full screen resizes the window to the
+        /// monitor while the presenter still reads Overlapped, and changes the presenter only after.
+        /// By the time this runs it has, whoever asked for full screen.
+        /// </summary>
+        private void SaveLayout()
+        {
+            _layoutSavePending = false;
+
+            if (_window.AppWindow.Presenter.Kind == AppWindowPresenterKind.Overlapped)
             {
                 WindowLayout.Save(_handle, _persistedId);
             }
+        }
+
+        /// <summary>
+        /// The presenter's minimum is the whole window in physical pixels, invisible resize borders
+        /// included, and it keeps the same number of pixels when the window moves to a monitor with
+        /// another scale, so it is worked out again for each one. Only a restored window has the
+        /// frame the minimum applies to; any other state waits for the size change that ends it.
+        /// </summary>
+        private void UpdateMinSize()
+        {
+            var dpi = Win32.GetDpiForWindow(_handle);
+            if (dpi == 0 || dpi == _minSizeDpi || _window.AppWindow.Presenter is not OverlappedPresenter { State: OverlappedPresenterState.Restored } presenter)
+            {
+                return;
+            }
+
+            var size = _window.AppWindow.Size;
+            var client = _window.AppWindow.ClientSize;
+            var scale = dpi / 96.0;
+
+            _minSizeDpi = dpi;
+            presenter.PreferredMinimumWidth = (int)Math.Ceiling(_minSize.Width * scale) + size.Width - client.Width;
+            presenter.PreferredMinimumHeight = (int)Math.Ceiling(_minSize.Height * scale) + size.Height - client.Height;
         }
 
         /// <summary>
@@ -947,6 +997,10 @@ namespace Telegram.Navigation
         partial void SetHostContent(UIElement content)
         {
             _window.Content = content;
+
+            _minSize = content is WindowPresenter { Content: RichTextWindow } ? new Size(468, 500) : new Size(320, 500);
+            _minSizeDpi = 0;
+            UpdateMinSize();
 
             // What hands the root's TitleBarElement to SetTitleBar: nothing else does until a popup
             // has opened and closed, so without it the window has no drag region.
