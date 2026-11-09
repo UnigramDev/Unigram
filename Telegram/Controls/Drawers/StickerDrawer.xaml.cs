@@ -267,6 +267,9 @@ namespace Telegram.Controls.Drawers
                         if (sticker.StickerValue != null && _itemIdToSelector.TryGetValue(sticker, out SelectorItem selector) && selector.ContentTemplateRoot is Grid content)
                         {
                             var animation = content.Children[0] as AnimatedImage;
+#if WINUI3
+                            animation.AtlasGroup = AtlasGroup.Stickers;
+#endif
                             animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
                         }
                     }
@@ -308,6 +311,9 @@ namespace Telegram.Controls.Drawers
             if (sticker?.StickerValue != null)
             {
                 var animation = content.Children[0] as AnimatedImage;
+#if WINUI3
+                animation.AtlasGroup = AtlasGroup.Stickers;
+#endif
                 animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
             }
             else
@@ -363,6 +369,9 @@ namespace Telegram.Controls.Drawers
                 }
                 else if (content?.Children[0] is AnimatedImage animated)
                 {
+#if WINUI3
+                    animated.AtlasGroup = AtlasGroup.Stickers;
+#endif
                     animated.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, sticker);
                 }
 

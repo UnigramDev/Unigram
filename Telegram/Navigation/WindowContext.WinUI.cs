@@ -101,6 +101,7 @@ namespace Telegram.Navigation
             if (IsInMainView)
             {
                 TaskbarButton.OnMainWindowCreated(_handle);
+                window.SetAtlasSizeHint(1024);
 
                 // Once is enough: the override holds for the thread, and every window runs on this one.
                 var scaling = AppSettings.Appearance.Scaling;

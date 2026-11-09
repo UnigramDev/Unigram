@@ -178,6 +178,10 @@ namespace Telegram.Views.Popups
             var animated = content.Children[0] as AnimatedImage;
             using (animated.BeginBatchUpdate())
             {
+#if WINUI3
+                animated.AtlasGroup = AtlasGroup.Stickers;
+#endif
+
                 if (sticker.FullType is StickerFullTypeCustomEmoji)
                 {
                     animated.FrameSize = new Size(40, 40);

@@ -40,6 +40,11 @@ namespace Telegram.Common
             _maxHeight = maxHeight;
         }
 
+#if WINUI3
+        /// <summary>Applies to the bitmaps loaded after it is set.</summary>
+        public AtlasGroup AtlasGroup { get; set; }
+#endif
+
         public async void Blur(string path, float amount, long hashCode = 0)
         {
             var generation = ++_generation;
@@ -145,6 +150,9 @@ namespace Telegram.Common
                 }
 
                 var bitmapSource = new BitmapImage();
+#if WINUI3
+                bitmapSource.SetAtlasGroup(AtlasGroup);
+#endif
 
                 // TODO: implement
                 SetDecodeSize(bitmapSource, width, height, xamlRoot);
@@ -181,6 +189,9 @@ namespace Telegram.Common
                 }
 
                 var bitmapSource = new BitmapImage();
+#if WINUI3
+                bitmapSource.SetAtlasGroup(AtlasGroup);
+#endif
 
                 // TODO: implement
                 SetDecodeSize(bitmapSource, width, height, xamlRoot);

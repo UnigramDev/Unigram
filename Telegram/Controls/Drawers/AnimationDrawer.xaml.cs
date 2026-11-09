@@ -174,6 +174,9 @@ namespace Telegram.Controls.Drawers
             }
 
             var animated = content.Child as AnimatedImage;
+#if WINUI3
+            animated.AtlasGroup = AtlasGroup.Stickers;
+#endif
             animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
 
             args.Handled = true;

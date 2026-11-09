@@ -1420,6 +1420,9 @@ namespace Telegram.Views
             {
                 LogoBasic.Visibility = Visibility.Collapsed;
                 LogoEmoji.Visibility = Visibility.Visible;
+#if WINUI3
+                LogoEmoji.AtlasGroup = AtlasGroup.EmojiStatus;
+#endif
                 LogoEmoji.Source = new CustomEmojiFileSource(_clientService, user.EmojiStatus.Type);
 
                 if (user.EmojiStatus.Type is EmojiStatusTypeUpgradedGift upgradedGift)

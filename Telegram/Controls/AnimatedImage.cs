@@ -489,6 +489,26 @@ namespace Telegram.Controls
 
         #endregion
 
+#if WINUI3
+        #region AtlasGroup
+
+        private AtlasGroup _atlasGroup = AtlasGroup.AnimatedImage;
+        public AtlasGroup AtlasGroup
+        {
+            get => _atlasGroup;
+            set
+            {
+                if (_atlasGroup != value)
+                {
+                    _atlasGroup = value;
+                    Load();
+                }
+            }
+        }
+
+        #endregion
+#endif
+
         #region Stretch
 
         public Stretch Stretch
@@ -523,7 +543,13 @@ namespace Telegram.Controls
                     return null;
                 }
 
-                return new AnimatedImagePresentation(Source, width, height, scale, LimitFps, LoopCount, AutoPlay, IsCachingEnabled, resize, VisualUtilities.IsInPopupTree(this));
+                return new AnimatedImagePresentation(Source, width, height, scale, LimitFps, LoopCount, AutoPlay, IsCachingEnabled, resize, VisualUtilities.IsInPopupTree(this))
+#if WINUI3
+                {
+                    AtlasGroup = _atlasGroup
+                }
+#endif
+                ;
             }
 
             return null;
@@ -1565,7 +1591,11 @@ namespace Telegram.Controls
 
             if (_bitmap == null)
             {
+#if WINUI3
+                Volatile.Write(ref _bitmap, new AnimatedImageBitmap(_loader.GetBitmaps(_presentation.AtlasGroup), width, height));
+#else
                 Volatile.Write(ref _bitmap, new AnimatedImageBitmap(_loader.Bitmaps, width, height));
+#endif
             }
 
             _activated = _loader.Window.IsActive;
@@ -2752,7 +2782,13 @@ namespace Telegram.Controls
         }
     }
 
-    public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, double RasterizationScale, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled, AnimatedImageResizeMode ResizeMode, bool IsPopup);
+    public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, double RasterizationScale, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled, AnimatedImageResizeMode ResizeMode, bool IsPopup)
+    {
+#if WINUI3
+        // Part of the key, so a presenter's bitmap is in the group of every image showing it.
+        public AtlasGroup AtlasGroup { get; init; }
+#endif
+    }
 
     public partial class AnimatedImageLoader
     {
@@ -3388,11 +3424,34 @@ namespace Telegram.Controls
             }
 
             Buffers.Clear();
+#if WINUI3
+            foreach (var bitmaps in _bitmapPools.Values)
+            {
+                bitmaps.Clear();
+            }
+#else
             Bitmaps.Clear();
+#endif
         }
 
+#if WINUI3
+        // A pool per group, because a recycled bitmap keeps the group its surface was created in.
+        private readonly Dictionary<AtlasGroup, BitmapRecyclePool> _bitmapPools = new();
+
+        /// <summary>The bitmaps this window's presenters in <paramref name="group"/> copy their frames into.</summary>
+        public BitmapRecyclePool GetBitmaps(AtlasGroup group)
+        {
+            if (_bitmapPools.TryGetValue(group, out var bitmaps))
+            {
+                return bitmaps;
+            }
+
+            return _bitmapPools[group] = new BitmapRecyclePool(group);
+        }
+#else
         /// <summary>The bitmaps this window's presenters copy their frames into.</summary>
         public BitmapRecyclePool Bitmaps { get; } = new();
+#endif
 
         /// <summary>
         /// Recycles the bitmap every presenter shows its frames in, so a panel scroll reuses a
@@ -3424,6 +3483,15 @@ namespace Telegram.Controls
 
             private readonly record struct Entry(WriteableBitmap Bitmap, ulong Expires);
 
+#if WINUI3
+            private readonly AtlasGroup _group;
+
+            public BitmapRecyclePool(AtlasGroup group)
+            {
+                _group = group;
+            }
+#endif
+
             public WriteableBitmap Rent(int width, int height)
             {
                 var size = new SizeInt32 { Width = width, Height = height };
@@ -3448,7 +3516,13 @@ namespace Telegram.Controls
                     return bitmap;
                 }
 
+#if WINUI3
+                var created = new WriteableBitmap(width, height);
+                created.SetAtlasGroup(_group);
+                return created;
+#else
                 return new WriteableBitmap(width, height);
+#endif
             }
 
             public void Return(WriteableBitmap bitmap)

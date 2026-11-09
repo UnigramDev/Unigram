@@ -446,6 +446,9 @@ namespace Telegram.Controls
                 };
 
                 _controller = new ThumbnailController(_texture);
+#if WINUI3
+                _controller.AtlasGroup = AtlasGroup.ProfilePicture;
+#endif
 
                 _dispatcherQueue = loader.DispatcherQueue;
                 IsCachingEnabled = true;
@@ -463,6 +466,9 @@ namespace Telegram.Controls
                 };
 
                 _controller = new ThumbnailController(_texture);
+#if WINUI3
+                _controller.AtlasGroup = AtlasGroup.ProfilePicture;
+#endif
 
                 _dispatcherQueue = dispatcherQueue;
                 IsCachingEnabled = false;

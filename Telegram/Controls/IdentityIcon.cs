@@ -6,6 +6,9 @@
 //
 
 using System.Runtime.CompilerServices;
+#if WINUI3
+using Telegram.Common;
+#endif
 using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Streams;
@@ -117,6 +120,9 @@ namespace Telegram.Controls
                     UnloadTemplateChild(ref Icon);
 
                     LoadTemplateChild(ref Status);
+#if WINUI3
+                    Status.AtlasGroup = AtlasGroup.EmojiStatus;
+#endif
                     Status.Source = new CustomEmojiFileSource(clientService, emojiStatus.Type);
 
                     if (emojiStatus.Type is EmojiStatusTypeUpgradedGift upgraded)
@@ -165,6 +171,9 @@ namespace Telegram.Controls
                 UnloadTemplateChild(ref Icon);
 
                 LoadTemplateChild(ref Status);
+#if WINUI3
+                Status.AtlasGroup = AtlasGroup.EmojiStatus;
+#endif
                 Status.Source = new CustomEmojiFileSource(clientService, emojiStatus.Type);
 
                 if (emojiStatus.Type is EmojiStatusTypeUpgradedGift upgraded)
