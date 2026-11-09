@@ -198,6 +198,9 @@ namespace Telegram.Services.Calls
             }
         }
 
+        // Still true once the call is ending, which is not a reason to look like it is connecting.
+        public bool IsConnected => _state > VoipState.Ready || (_state == VoipState.Ready && _readyState == VoipReadyState.Established);
+
         public VoipAudioState RemoteAudioState => _remoteAudioState;
         public VoipVideoState RemoteVideoState => _remoteVideoState;
 

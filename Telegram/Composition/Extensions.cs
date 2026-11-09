@@ -189,7 +189,9 @@ namespace Telegram.Composition
         // Every caller is on the UI thread and none of them keeps the buffer past the call.
         private static SmoothPoint[] _smoothPoints = Array.Empty<SmoothPoint>();
 
-        private static SmoothPoint[] ToSmoothPoints(Vector2[] points, float smoothness)
+        // An open curve clamps its neighbours at the ends: wrapping around turns the end tangents
+        // outwards, and the curve overshoots the edge of the bar in a diagonal beak.
+        private static SmoothPoint[] ToSmoothPoints(Vector2[] points, float smoothness, bool clampEnds = false)
         {
             if (_smoothPoints.Length < points.Length)
             {
@@ -199,9 +201,10 @@ namespace Telegram.Composition
             for (int index = 0; index < points.Length; index++)
             {
                 var prevIndex = index - 1;
-                var prev = points[prevIndex >= 0 ? prevIndex : points.Length + prevIndex];
+                var nextIndex = index + 1;
+                var prev = points[prevIndex >= 0 ? prevIndex : clampEnds ? 0 : points.Length + prevIndex];
                 var curr = points[index];
-                var next = points[(index + 1) % points.Length];
+                var next = points[nextIndex < points.Length ? nextIndex : clampEnds ? index : 0];
 
                 var dx = next.X - prev.X;
                 var dy = -next.Y + prev.Y;
@@ -238,7 +241,7 @@ namespace Telegram.Composition
 
         public static CompositionPath CreateSmoothCurve(this Compositor compositor, Vector2[] points, float length, float smoothness, bool curve = false)
         {
-            var smoothPoints = ToSmoothPoints(points, smoothness);
+            var smoothPoints = ToSmoothPoints(points, smoothness, clampEnds: curve);
 
             CanvasGeometry result;
             using (var builder = new CanvasPathBuilder(null))

@@ -28,8 +28,8 @@ namespace Telegram.Composition
     /// </remarks>
     public abstract partial class CompositionLevelVisual
     {
-        private const float Decay = 0.9f;
-        private const float DecayRate = 30f;
+        private readonly float _decay;
+        private readonly float _decayRate;
 
         private readonly DispatcherQueue _dispatcherQueue;
 
@@ -53,9 +53,11 @@ namespace Telegram.Composition
 
         private bool _animating;
 
-        protected CompositionLevelVisual(float maxLevel)
+        protected CompositionLevelVisual(float maxLevel, float decay = 0.9f, float decayRate = 30f)
         {
             _maxLevel = maxLevel;
+            _decay = decay;
+            _decayRate = decayRate;
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             _applyLevel = ApplyLevel;
         }
@@ -99,7 +101,7 @@ namespace Telegram.Composition
 
             _timestamp = timestamp;
 
-            var level = _audioLevel + (_presentationAudioLevel - _audioLevel) * MathF.Pow(Decay, DecayRate * elapsed);
+            var level = _audioLevel + (_presentationAudioLevel - _audioLevel) * MathF.Pow(_decay, _decayRate * elapsed);
             _presentationAudioLevel = level;
 
             if (MathF.Abs(level - _lastLevel) > 0.01f)
@@ -182,7 +184,7 @@ namespace Telegram.Composition
 
         // The generated points, held rather than returned: a shape rebuilds its path a few times a
         // second and the array never outlives the CreateSmoothCurve call that copies it.
-        protected readonly Vector2[] _points;
+        protected Vector2[] _points;
 
         // One template, instantiated by every StartAnimation. Re-inserting a key frame at a
         // progress that already holds one replaces it, and leaves the running instance alone.
@@ -191,12 +193,23 @@ namespace Telegram.Composition
 
         private CompositionScopedBatch _batch;
 
+        // Path read back after a morph is neither of the paths it was given, so where the last one
+        // ended is kept here for the next to start from.
+        private CompositionPath _morphTarget;
+
         private readonly float _minSpeed;
         private readonly float _maxSpeed;
 
         protected float _speedLevel;
 
         private bool _animating;
+
+        protected bool IsAnimating => _animating;
+
+        /// <summary>
+        /// Null leaves the morph on the compositor's default easing.
+        /// </summary>
+        protected CompositionEasingFunction MorphEasing { get; set; }
 
         protected CompositionMorphShape(CompositionSpriteShape shape, Vector2 size, int pointsCount, float minSpeed, float maxSpeed)
         {
@@ -246,6 +259,10 @@ namespace Telegram.Composition
         {
             _animating = false;
             _shapeLayer?.StopAnimation("Path");
+
+            // Its completion is still on its way, and a restart before it lands would have the
+            // handler release the new batch and chain a second morph.
+            ReleaseBatch();
         }
 
         public void Clear()
@@ -262,11 +279,22 @@ namespace Telegram.Composition
 
             if (ShouldResetPath)
             {
-                _shapeLayer.Path = CreateNextPath();
+                _morphTarget = CreateNextPath();
+                _shapeLayer.Path = _morphTarget;
             }
 
-            _pathAnimation.InsertKeyFrame(0, _shapeLayer.Path);
-            _pathAnimation.InsertKeyFrame(1, CreateNextPath());
+            _pathAnimation.InsertKeyFrame(0, _morphTarget);
+            _morphTarget = CreateNextPath();
+
+            if (MorphEasing != null)
+            {
+                _pathAnimation.InsertKeyFrame(1, _morphTarget, MorphEasing);
+            }
+            else
+            {
+                _pathAnimation.InsertKeyFrame(1, _morphTarget);
+            }
+
             _pathAnimation.Duration = TimeSpan.FromSeconds(1 / (_minSpeed + (_maxSpeed - _minSpeed) * _speedLevel));
 
             // Composition reports completion per batch and not per animation, so the morph chains
@@ -285,19 +313,23 @@ namespace Telegram.Composition
 
         private void OnBatchCompleted(object sender, CompositionBatchCompletedEventArgs args)
         {
-            // Held in a field rather than taken from the sender: a scoped batch is single use, and
-            // this is the only place that can release the one that just finished.
+            ReleaseBatch();
+            AnimateToNewShape();
+        }
+
+        // Held in a field rather than taken from the sender: a scoped batch is single use, and
+        // nothing else can release it.
+        private void ReleaseBatch()
+        {
             if (_batch != null)
             {
                 _batch.Completed -= _batchCompleted;
                 _batch.Dispose();
                 _batch = null;
             }
-
-            AnimateToNewShape();
         }
 
-        protected virtual bool ShouldResetPath => _shapeLayer.Path == null;
+        protected virtual bool ShouldResetPath => _morphTarget == null;
 
         protected virtual void OnPathAnimated()
         {

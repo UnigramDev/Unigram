@@ -5,8 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Numerics;
-using Telegram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -16,16 +16,34 @@ namespace Telegram.Composition
 {
     public partial class CompositionCurveVisual : CompositionLevelVisual
     {
+        internal const float BarHeight = 40;
+
+        // How far each layer rests below the one in front. The back layer rests at twice this, so
+        // past 8 it would rest lower than where a voice takes it.
+        private const float LayerGap = 4;
+
+        private const double ColorTransitionDuration = 0.3;
+
         private readonly ContainerVisual _visual;
+        private readonly SpriteVisual _solid;
 
         private readonly CompositionCurveShape _smallCurve;
         private readonly CompositionCurveShape _mediumCurve;
         private readonly CompositionCurveShape _largeCurve;
 
-        private readonly CompositionLinearGradientBrush _gradient;
+        private readonly CompositionColorGradientStop _startStop;
+        private readonly CompositionColorGradientStop _endStop;
+
+        // One template for both stops: StartAnimation instantiates it, so re-inserting the key
+        // frame for the second stop leaves the first one's running instance alone.
+        private readonly ColorKeyFrameAnimation _colorAnimation;
+        private readonly CompositionEasingFunction _colorEasing;
+
+        private Color _startColor;
+        private Color _endColor;
 
         public CompositionCurveVisual(UIElement element, float width, float height, float maxLevel)
-            : base(maxLevel)
+            : base(maxLevel, decay: 0.93f, decayRate: 60f)
         {
             var compositor = ElementComposition.GetElementVisual(element).Compositor;
 
@@ -54,20 +72,36 @@ namespace Telegram.Composition
             mediumVisual.Shapes.Add(mediumShape);
             largeVisual.Shapes.Add(largeShape);
 
-            _smallCurve = new CompositionCurveShape(smallShape, size, 8, 1, 1.3f, 0.9f, 3.2f, 0, 0);
-            _mediumCurve = new CompositionCurveShape(mediumShape, size, 8, 1.2f, 1.5f, 1, 4.4f, 0.1f, 0.55f);
-            _largeCurve = new CompositionCurveShape(largeShape, size, 8, 1, 1.7f, 1, 5.8f, 0.1f, 1.0f);
+            _smallCurve = new CompositionCurveShape(smallShape, size, 1, 1.3f, 0.9f, 3.2f, 0, 0);
+            _mediumCurve = new CompositionCurveShape(mediumShape, size, 1.2f, 1.5f, 1, 4.4f, LayerGap, 8.8f);
+            _largeCurve = new CompositionCurveShape(largeShape, size, 1.2f, 1.7f, 1, 5.8f, LayerGap * 2, 16);
 
-            _gradient = compositor.CreateLinearGradientBrush();
-            _gradient.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.Red));
-            _gradient.ColorStops.Add(compositor.CreateColorGradientStop(1, Colors.Blue));
+            _startStop = compositor.CreateColorGradientStop(0, default);
+            _endStop = compositor.CreateColorGradientStop(1, default);
 
-            _smallCurve.FillBrush = _gradient;
-            _mediumCurve.FillBrush = _gradient;
-            _largeCurve.FillBrush = _gradient;
+            _colorEasing = compositor.CreateLinearEasingFunction();
+            _colorAnimation = compositor.CreateColorKeyFrameAnimation();
+            _colorAnimation.InterpolationColorSpace = CompositionColorSpace.Rgb;
+            _colorAnimation.Duration = TimeSpan.FromSeconds(ColorTransitionDuration);
+
+            var gradient = compositor.CreateLinearGradientBrush();
+            gradient.ColorStops.Add(_startStop);
+            gradient.ColorStops.Add(_endStop);
+
+            // The gradient runs over twice the width of the bar, so only its first half is visible.
+            gradient.EndPoint = new Vector2(2, 0);
+
+            _smallCurve.FillBrush = gradient;
+            _mediumCurve.FillBrush = gradient;
+            _largeCurve.FillBrush = gradient;
+
+            _solid = compositor.CreateSpriteVisual();
+            _solid.Brush = gradient;
+            _solid.IsVisible = false;
 
             _visual = compositor.CreateContainerVisual();
             _visual.Size = new Vector2(width, height);
+            _visual.Children.InsertAtTop(_solid);
             _visual.Children.InsertAtTop(smallVisual);
             _visual.Children.InsertAtTop(mediumVisual);
             _visual.Children.InsertAtTop(largeVisual);
@@ -89,14 +123,45 @@ namespace Telegram.Composition
             _largeCurve.SetLevel(level);
         }
 
-        public void SetColorStops(params uint[] colorStops)
+        public void SetColorStops(Color start, Color end, bool animated)
         {
-            _gradient.ColorStops.Clear();
-
-            for (int i = 0; i < colorStops.Length; i++)
+            if (start == _startColor && end == _endColor)
             {
-                _gradient.ColorStops.Add(_gradient.Compositor.CreateColorGradientStop(i / (colorStops.Length - 1f), ColorEx.FromHex(colorStops[i])));
+                return;
             }
+
+            _startColor = start;
+            _endColor = end;
+
+            SetStopColor(_startStop, start, animated);
+            SetStopColor(_endStop, end, animated);
+        }
+
+        private void SetStopColor(CompositionColorGradientStop stop, Color color, bool animated)
+        {
+            if (animated)
+            {
+                // No key frame at 0, so an interrupted transition continues from what is on screen.
+                _colorAnimation.InsertKeyFrame(1, color, _colorEasing);
+                stop.StartAnimation("Color", _colorAnimation);
+            }
+            else
+            {
+                // A write does not override a running animation, which would land on its old target.
+                stop.StopAnimation("Color");
+                stop.Color = color;
+            }
+        }
+
+        /// <summary>
+        /// A still bar in place of the curves, for when animations are off to save energy.
+        /// </summary>
+        public void ShowSolid()
+        {
+            StopAnimating();
+            Clear();
+
+            _solid.IsVisible = true;
         }
 
         public Vector2 ActualSize
@@ -113,7 +178,18 @@ namespace Telegram.Composition
                 {
                     child.Size = value;
                 }
+
+                _solid.Size = new Vector2(value.X, BarHeight);
+
+                _smallCurve.RestartIfResized();
+                _mediumCurve.RestartIfResized();
+                _largeCurve.RestartIfResized();
             }
+        }
+
+        protected override void OnStartAnimating(bool immediately)
+        {
+            _solid.IsVisible = false;
         }
 
         protected override void UpdateShapesState(bool animating)
@@ -137,11 +213,25 @@ namespace Telegram.Composition
             _smallCurve.Clear();
             _mediumCurve.Clear();
             _largeCurve.Clear();
+
+            _solid.IsVisible = false;
         }
     }
 
     public partial class CompositionCurveShape : CompositionMorphShape
     {
+        private const float Amplitude = 20;
+
+        // Spacing and not a count, so that a wide bar gets more waves instead of flatter ones.
+        private const float PointSpacing = 160;
+        private const int MinPointsCount = 6;
+
+        private const float SpeedMultiplier = 0.85f;
+
+        // Levels arrive every 100ms, so each animation lands as the next one comes in. Any longer
+        // and every sample restarts one that has not arrived, which only adds lag to the smoothing.
+        private const double LevelInterval = 0.1;
+
         private readonly float _smoothness;
 
         private readonly float _minRandomness;
@@ -151,31 +241,55 @@ namespace Telegram.Composition
         private readonly float _maxOffset;
 
         private readonly ScalarKeyFrameAnimation _levelAnimation;
+        private readonly CompositionEasingFunction _levelEasing;
 
-        // The curve is built before the header knows how wide it is, so the first path it gets is
-        // degenerate. Keeping the width the last path was built at is what forces a rebuild once a
-        // real one arrives - Path is not null by then, so it cannot be the test.
+        // A path is built for one width, so the width the last one was built at is what tells a
+        // morph to start over from a path that fits.
         private float _lastWidth;
 
-        public CompositionCurveShape(CompositionSpriteShape shape, Vector2 size, int pointsCount, float minRandomness, float maxRandomness, float minSpeed, float maxSpeed, float minOffset, float maxOffset)
-            : base(shape, size, pointsCount, minSpeed, maxSpeed)
+        public CompositionCurveShape(CompositionSpriteShape shape, Vector2 size, float minRandomness, float maxRandomness, float minSpeed, float maxSpeed, float minOffset, float maxOffset)
+            : base(shape, size, MinPointsCount, minSpeed * SpeedMultiplier, maxSpeed * SpeedMultiplier)
         {
             _minRandomness = minRandomness;
             _maxRandomness = maxRandomness;
             _minOffset = minOffset;
             _maxOffset = maxOffset;
 
-            _smoothness = 0.35f;
+            _smoothness = 0.5f;
 
-            _levelAnimation = shape.Compositor.CreateScalarKeyFrameAnimation();
+            var compositor = shape.Compositor;
+
+            MorphEasing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.42f, 0), new Vector2(0.58f, 1));
+
+            _levelEasing = compositor.CreateLinearEasingFunction();
+            _levelAnimation = compositor.CreateScalarKeyFrameAnimation();
+            _levelAnimation.Duration = TimeSpan.FromSeconds(LevelInterval);
+
+            shape.Offset = new Vector2(0, minOffset);
         }
 
         public void SetLevel(float level)
         {
+            if (_maxOffset == 0)
+            {
+                return;
+            }
+
             var lv = _minOffset + (_maxOffset - _minOffset) * level;
 
-            _levelAnimation.InsertKeyFrame(1, lv * 12.0f);
+            _levelAnimation.InsertKeyFrame(1, lv, _levelEasing);
             _shape.StartAnimation("Offset.Y", _levelAnimation);
+        }
+
+        // The morph in flight was built for the old width, and would leave the end of a wider bar
+        // uncovered until it finished.
+        public void RestartIfResized()
+        {
+            if (IsAnimating && _lastWidth != Size.X)
+            {
+                StopAnimating();
+                StartAnimating();
+            }
         }
 
         public CompositionBrush FillBrush
@@ -193,7 +307,7 @@ namespace Telegram.Composition
             base.StartAnimating();
         }
 
-        protected override bool ShouldResetPath => _shapeLayer.Path == null || _lastWidth == 0;
+        protected override bool ShouldResetPath => base.ShouldResetPath || _lastWidth != Size.X;
 
         protected override void OnPathAnimated()
         {
@@ -210,7 +324,14 @@ namespace Telegram.Composition
         {
             var randomness = _minRandomness + (_maxRandomness - _minRandomness) * _speedLevel;
 
-            var pointsCount = _points.Length;
+            // A morph needs the same segments at both ends. Only a width change alters the count,
+            // and one of those always starts over from a new path.
+            var pointsCount = Math.Max(MinPointsCount, (int)MathF.Round(Size.X / PointSpacing) + 1);
+            if (_points.Length != pointsCount)
+            {
+                _points = new Vector2[pointsCount];
+            }
+
             var segment = 1.0f / (float)(pointsCount - 1);
             var rangeStart = 1.0f / (1.0f + randomness / 10.0f);
 
@@ -242,7 +363,7 @@ namespace Telegram.Composition
                     randomXDelta = segment - segment * randPointOffset;
                 }
 
-                _points[i] = new Vector2((pointX + randomXDelta) * Size.X, 40 + pointY * 12);
+                _points[i] = new Vector2((pointX + randomXDelta) * Size.X, CompositionCurveVisual.BarHeight + pointY * Amplitude);
             }
         }
     }
