@@ -43,7 +43,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:RichLeafView">
-                    <Grid>
+                    <Grid x:Name="LayoutRoot">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="AppearanceStates">
                                 <VisualState x:Name="Paragraph" />
@@ -165,6 +165,16 @@
                                 </VisualState>
                                 <!--  Captions, and a cell's text, are body text in the sent message.  -->
                                 <VisualState x:Name="Caption" />
+                                <VisualState x:Name="TableCaption">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.TextAlignment"
+                                                Value="Center" />
+                                        <Setter Target="Placeholder.TextAlignment"
+                                                Value="Center" />
+                                        <Setter Target="LayoutRoot.Margin"
+                                                Value="0,0,0,4" />
+                                    </VisualState.Setters>
+                                </VisualState>
                                 <!--  The hint is the credit's colour, faded, at body weight.  -->
                                 <VisualState x:Name="QuoteCredit">
                                     <VisualState.Setters>

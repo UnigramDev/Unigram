@@ -705,7 +705,7 @@ namespace Telegram.Controls.RichEditor
                 Layout(table);
             }
 
-            Owner.BindLeaf(Caption, table.Caption, RichLeafAppearance.Caption, Owner.GetCaptionPlaceholder(table.Caption, Strings.ArticleTableTitleHint));
+            Owner.BindLeaf(Caption, table.Caption, RichLeafAppearance.TableCaption, Owner.GetCaptionPlaceholder(table.Caption, Strings.ArticleTableTitleHint));
         }
 
         /// <summary>

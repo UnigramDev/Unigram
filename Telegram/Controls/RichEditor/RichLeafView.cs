@@ -35,6 +35,7 @@ namespace Telegram.Controls.RichEditor
         Preformatted,
         Footer,
         Caption,
+        TableCaption,
         QuoteCredit,
         PullQuote,
         PullQuoteCredit,

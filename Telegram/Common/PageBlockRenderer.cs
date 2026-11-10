@@ -830,10 +830,12 @@ namespace Telegram.Common
             var textBlock = CreateTextBlock(adjustLineEnding);
 
             SetAutoFontSize(textBlock, false);
+            ApplyTextStyle(textBlock, block, caption);
+
+            // After the style: the paragraphs take the alignment there is when the text arrives.
             textBlock.SetText(clientService, text);
             SetQuoteSource(textBlock, text);
 
-            ApplyTextStyle(textBlock, block, caption);
             return textBlock as FrameworkElement;
         }
 
@@ -935,6 +937,10 @@ namespace Telegram.Common
                     break;
                 case PageBlockDetails:
                     textBlock.IsTextSelectionEnabled = false;
+                    break;
+                case PageBlockTable:
+                    textBlock.TextAlignment = TextAlignment.Center;
+                    element.Margin = new Thickness(0, 0, 0, 4);
                     break;
                 case PageBlockSectionHeading heading:
                     textBlock.FontSize = 24 - ((heading.Size - 1) * 2);
