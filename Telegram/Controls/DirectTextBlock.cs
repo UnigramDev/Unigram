@@ -80,13 +80,6 @@ namespace Telegram.Controls
         private SpriteVisual _visual;
         private CompositionSurfaceBrush _brush;
 
-        // Where the text sits inside the block. The layout lays out in a box of its own width,
-        // so a block arranged wider than its text has room to give away: right to left it
-        // belongs before the text, centred it is split, and left to right there is none.
-        //
-        // Everything the layout answers is in its own coordinates, so this is added on the way
-        // out and taken off on the way in - and it is zero for almost every text there is.
-        private double _contentLeft;
         private CompositionDrawingSurface _surface;
 
         // What the surface was drawn for. Anything here moving means drawing it again.
@@ -1162,7 +1155,7 @@ namespace Telegram.Controls
                 }
             }
 
-            _spoilerPresenter.Arrange(FromLayout(_spoilerBounds));
+            _spoilerPresenter.Arrange(_spoilerBounds);
 
             var visual = ElementCompositionPreview.GetElementVisual(_spoilerPresenter);
             visual.Clip = visual.Compositor.CreateGeometricClip(visual.Compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreatePath(builder))));
@@ -1288,14 +1281,14 @@ namespace Telegram.Controls
 
             if (_selecting)
             {
-                Select(_selectionStart, Layout().HitTest(ToLayout(point), out _));
+                Select(_selectionStart, Layout().HitTest(point, out _));
                 e.Handled = true;
                 return;
             }
 
             // On the text, not merely nearest it: the space past the end of a line is not the
             // link that line ends with.
-            var position = Layout().HitTestContent(ToLayout(point), out var inside);
+            var position = Layout().HitTestContent(point, out var inside);
             var link = inside ? LinkAt(position) : -1;
 
             UpdateToolTip(link, point);
@@ -1474,7 +1467,7 @@ namespace Telegram.Controls
         private void OnTapped(object sender, TappedRoutedEventArgs e)
         {
             var point = e.GetPosition(this);
-            var position = Layout().HitTestContent(ToLayout(point), out var inside);
+            var position = Layout().HitTestContent(point, out var inside);
 
             if (!inside)
             {
@@ -1508,7 +1501,7 @@ namespace Telegram.Controls
             if (_selectable && point.Properties.IsLeftButtonPressed)
             {
                 _selecting = true;
-                _selectionStart = Layout().HitTest(ToLayout(point.Position), out _);
+                _selectionStart = Layout().HitTest(point.Position, out _);
 
                 Select(_selectionStart, _selectionStart);
                 CapturePointer(e.Pointer);
@@ -1584,7 +1577,7 @@ namespace Telegram.Controls
                     : -1;
             }
 
-            return (float)(Layout().ContentEnd().X + _contentLeft);
+            return (float)Layout().ContentEnd().X;
         }
 
         public void ClearSelection()
@@ -2183,10 +2176,7 @@ namespace Telegram.Controls
                     continue;
                 }
 
-                // Through the offset like every other rectangle that leaves the layout: the
-                // shimmer hangs off this element rather than off the container the text is
-                // drawn in, so nothing else moves it.
-                var line = FromLayout(lines[i]);
+                var line = lines[i];
                 var rect = new Rect(line.X - 2, line.Y, line.Width + 4, line.Height);
 
                 if (count > 0 && !rect.IntersectsOrTouches(last))
@@ -2790,7 +2780,7 @@ namespace Telegram.Controls
         /// </summary>
         public TextEntityClickEventArgs GetEntityFromPoint(Point point)
         {
-            var position = Layout().HitTestContent(ToLayout(point), out var inside);
+            var position = Layout().HitTestContent(point, out var inside);
             return GetEntity(inside ? LinkAt(position) : -1);
         }
 
@@ -3069,7 +3059,7 @@ namespace Telegram.Controls
         {
             return _links == null || index < 0 || index >= _links.Count
                 ? null
-                : FromLayout(Layout().Ranges(_links[index].Offset, _links[index].Length));
+                : Layout().Ranges(_links[index].Offset, _links[index].Length);
         }
 
         /// <summary>
@@ -3105,13 +3095,13 @@ namespace Telegram.Controls
 
         // The layout's own answers, for the peer: which rectangles a range covers, and how many
         // characters each line holds.
-        public Rect[] GetRangeRectangles(int start, int end) => FromLayout(Layout().Ranges(start, end - start));
+        public Rect[] GetRangeRectangles(int start, int end) => Layout().Ranges(start, end - start);
 
         /// <summary>One rectangle per line of [<paramref name="start"/>, <paramref name="end"/>), for a shape drawn down them.</summary>
-        public Rect[] GetRangeLines(int start, int end) => FromLayout(Layout().Lines(start, end - start));
+        public Rect[] GetRangeLines(int start, int end) => Layout().Lines(start, end - start);
 
         /// <summary>Where a caret before <paramref name="offset"/> goes: zero wide, the height of its line.</summary>
-        public Rect GetCaretRectangle(int offset) => FromLayout(Layout().Caret(offset));
+        public Rect GetCaretRectangle(int offset) => Layout().Caret(offset);
 
         /// <summary>
         /// The rectangles covering [<paramref name="from"/>, <paramref name="to"/>) of the
@@ -3126,7 +3116,7 @@ namespace Telegram.Controls
             to = Math.Min(SourceToRendered(to - _offset), ContentLength);
 
             return to > from
-                ? FromLayout(Layout().Lines(from, to - from))
+                ? Layout().Lines(from, to - from)
                 : null;
         }
 
@@ -3168,7 +3158,7 @@ namespace Telegram.Controls
             // The nearest position, whether or not the point is on the text: a drag through
             // the space past the end of a line belongs to that line, and answering with the
             // start or the end of the whole text is what made it jump.
-            var position = Layout().HitTest(ToLayout(point), out _);
+            var position = Layout().HitTest(point, out _);
 
             return position < 0
                 ? 0
@@ -3341,7 +3331,7 @@ namespace Telegram.Controls
                         ? rects[0].Y + (rects[0].Height - _emojiSize) / 2
                         : rects[0].Y;
 
-                    _emoji[i].Arrange(FromLayout(new Rect(rects[0].X, y, _emojiSize, _emojiSize)));
+                    _emoji[i].Arrange(new Rect(rects[0].X, y, _emojiSize, _emojiSize));
                 }
                 else
                 {
@@ -3357,7 +3347,7 @@ namespace Telegram.Controls
                 var size = _buttons[i].DesiredSize;
 
                 _buttons[i].Arrange(rects?.Length > 0
-                    ? FromLayout(new Rect(rects[0].X, rects[0].Y, size.Width, size.Height))
+                    ? new Rect(rects[0].X, rects[0].Y, size.Width, size.Height)
                     : new Rect(0, 0, 0, 0));
             }
 
@@ -3499,8 +3489,6 @@ namespace Telegram.Controls
                     _visual.IsVisible = false;
                 }
 
-                // An empty line still has a caret, which sits where the line would start.
-                _contentLeft = ContentLeft(size.Width, 0);
                 return;
             }
 
@@ -3538,66 +3526,11 @@ namespace Telegram.Controls
             var pixels = surface.SizeInt32;
             _visual.Size = new Vector2((float)(pixels.Width / scale), (float)(pixels.Height / scale));
 
-            // What the layout actually drew, which is what the text takes: the surface is
-            // rounded up from it so that a recycled block redraws without resizing one.
-            var content = Layout().RenderedPixels;
-
-            // The room the block was given over what the text takes, handed to whichever side
-            // the text reads from. Here, because this is where the size it is measured against
-            // is known and where the visual it moves is sized.
-            _contentLeft = ContentLeft(size.Width, content.Width / scale);
-            _root.Offset = new Vector3((float)_contentLeft, 0, 0);
-
-            // The text moved, so everything drawn around it has to follow.
+            // The arrange may have laid the text out again, so everything drawn around it has to
+            // follow.
             UpdateMarked();
             UpdateSelection();
             UpdateQueryHighlight();
-        }
-
-        // A point the caller gave, in the layout's coordinates; a rectangle the layout gave, in
-        // the caller's. Both are the identity for the text that starts where the block does,
-        // which is nearly all of it.
-        private Point ToLayout(Point point)
-        {
-            return _contentLeft > 0
-                ? new Point(point.X - _contentLeft, point.Y)
-                : point;
-        }
-
-        private Rect FromLayout(Rect rect)
-        {
-            return _contentLeft > 0
-                ? new Rect(rect.X + _contentLeft, rect.Y, rect.Width, rect.Height)
-                : rect;
-        }
-
-        private Rect[] FromLayout(Rect[] rects)
-        {
-            for (int i = 0; i < rects?.Length && _contentLeft > 0; i++)
-            {
-                rects[i] = FromLayout(rects[i]);
-            }
-
-            return rects;
-        }
-
-        private double ContentLeft(double width, double content)
-        {
-            // No content is a line of no width, centred or against the far edge like any other.
-            if (width <= content)
-            {
-                return 0;
-            }
-
-            return TextAlignment switch
-            {
-                TextAlignment.Center => (width - content) / 2,
-                TextAlignment.Right => width - content,
-                TextAlignment.Left => 0,
-                // What is left is the default, where the direction decides: the near edge is
-                // the far one when the text reads the other way.
-                _ => _rightToLeft ? width - content : 0
-            };
         }
 
         /// <summary>
