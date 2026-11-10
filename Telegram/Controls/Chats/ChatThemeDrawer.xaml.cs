@@ -237,12 +237,8 @@ namespace Telegram.Controls.Chats
 
         private async void Wallpaper_Click(object sender, RoutedEventArgs e)
         {
-            var tsc = new TaskCompletionSource<object>();
-
-            var confirm = await _viewModel.ShowPopupAsync(new BackgroundsPopup(tsc), _viewModel.Chat.Id);
-            var delayed = await tsc.Task;
-
-            if (delayed is bool close && close)
+            var confirm = await _viewModel.ShowPopupAsync(new BackgroundsPopup(), _viewModel.Chat.Id);
+            if (confirm == ContentDialogResult.Primary)
             {
                 ThemeSelected?.Invoke(this, new ChatThemeSelectedEventArgs(true));
             }

@@ -18,18 +18,13 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class BackgroundsPopup : ContentPopup
+    public sealed partial class BackgroundsPopup : ModalPopup
     {
         public SettingsBackgroundsViewModel ViewModel => DataContext as SettingsBackgroundsViewModel;
 
-        private readonly TaskCompletionSource<object> _task;
-        private bool _ignoreClosing;
-
-        public BackgroundsPopup(TaskCompletionSource<object> task)
+        public BackgroundsPopup()
         {
             InitializeComponent();
-
-            _task = task;
 
             Title = Strings.ChatBackground;
         }
@@ -102,30 +97,11 @@ namespace Telegram.Views.Popups
 
         private async void Change(Task<ContentDialogResult> task)
         {
-            _ignoreClosing = true;
-            Hide();
-
-            _ignoreClosing = false;
-
             var confirm = await task;
-            if (confirm != ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary)
             {
-                await this.ShowQueuedAsync(XamlRoot);
+                Hide(ContentDialogResult.Primary);
             }
-            else
-            {
-                _task.SetResult(true);
-            }
-        }
-
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
-        {
-            if (_ignoreClosing)
-            {
-                return;
-            }
-
-            _task.TrySetResult(false);
         }
     }
 }

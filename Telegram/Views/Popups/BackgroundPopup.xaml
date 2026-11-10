@@ -1,20 +1,19 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.BackgroundPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:common="using:Telegram.Common"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:chats="using:Telegram.Controls.Chats"
-                       xmlns:messages="using:Telegram.Controls.Messages"
-                       xmlns:media="using:Telegram.Controls.Media"
-                       mc:Ignorable="d"
-                       VerticalContentAlignment="Stretch"
-                       Padding="0"
-                       ContentMaxHeight="640"
-                       Closing="OnClosing">
+﻿<controls:ModalPopup x:Class="Telegram.Views.Popups.BackgroundPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:common="using:Telegram.Common"
+                     xmlns:controls="using:Telegram.Controls"
+                     xmlns:chats="using:Telegram.Controls.Chats"
+                     xmlns:messages="using:Telegram.Controls.Messages"
+                     xmlns:media="using:Telegram.Controls.Media"
+                     mc:Ignorable="d"
+                     VerticalContentAlignment="Stretch"
+                     Padding="0"
+                     ContentMaxHeight="640">
 
-    <ContentDialog.Resources>
+    <controls:ModalPopup.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
@@ -581,7 +580,7 @@
                 </Setter>
             </Style>
         </ResourceDictionary>
-    </ContentDialog.Resources>
+    </controls:ModalPopup.Resources>
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -873,4 +872,4 @@
                                  Margin="24,12,12,0"
                                  Grid.Row="1" />
     </Grid>
-</controls:ContentPopup>
+</controls:ModalPopup>

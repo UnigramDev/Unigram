@@ -133,14 +133,7 @@ namespace Telegram.ViewModels.Settings
                 {
                     await file.CopyAsync(await AppPaths.GetTemporaryFolderAsync(), Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
 
-                    var tsc = new TaskCompletionSource<object>();
-                    await ShowPopupAsync(new BackgroundPopup(NavigationService, tsc), new BackgroundParameters(Constants.WallpaperLocalFileName, _chatId));
-
-                    var delayed = await tsc.Task;
-                    var confirm = delayed is bool close && close
-                        ? ContentDialogResult.Primary
-                        : ContentDialogResult.Secondary;
-
+                    var confirm = await ShowPopupAsync(new BackgroundPopup(NavigationService), new BackgroundParameters(Constants.WallpaperLocalFileName, _chatId));
                     if (confirm == ContentDialogResult.Primary && refresh)
                     {
                         await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
@@ -161,14 +154,7 @@ namespace Telegram.ViewModels.Settings
 
         public async Task<ContentDialogResult> ChangeToColorAsync(bool refresh)
         {
-            var tsc = new TaskCompletionSource<object>();
-            await ShowPopupAsync(new BackgroundPopup(NavigationService, tsc), new BackgroundParameters(Constants.WallpaperColorFileName, _chatId));
-
-            var delayed = await tsc.Task;
-            var confirm = delayed is bool close && close
-                ? ContentDialogResult.Primary
-                : ContentDialogResult.Secondary;
-
+            var confirm = await ShowPopupAsync(new BackgroundPopup(NavigationService), new BackgroundParameters(Constants.WallpaperColorFileName, _chatId));
             if (confirm == ContentDialogResult.Primary && refresh)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
@@ -184,14 +170,7 @@ namespace Telegram.ViewModels.Settings
 
         public async Task<ContentDialogResult> ChangeAsync(Background background, bool refresh)
         {
-            var tsc = new TaskCompletionSource<object>();
-            await ShowPopupAsync(new BackgroundPopup(NavigationService, tsc), new BackgroundParameters(background, _chatId));
-
-            var delayed = await tsc.Task;
-            var confirm = delayed is bool close && close
-                ? ContentDialogResult.Primary
-                : ContentDialogResult.Secondary;
-
+            var confirm = await ShowPopupAsync(new BackgroundPopup(NavigationService), new BackgroundParameters(background, _chatId));
             if (confirm == ContentDialogResult.Primary && refresh)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);

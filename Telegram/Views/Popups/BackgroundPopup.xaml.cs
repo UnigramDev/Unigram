@@ -24,18 +24,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class BackgroundPopup : ContentPopup, IBackgroundDelegate
+    public sealed partial class BackgroundPopup : ModalPopup, IBackgroundDelegate
     {
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
-
-        private readonly TaskCompletionSource<object> _task;
-        private bool _ignoreClosing;
-
-        public BackgroundPopup(INavigationService navigationService, TaskCompletionSource<object> task)
-            : this(navigationService)
-        {
-            _task = task;
-        }
 
         private readonly MessageBubbleBackgroundCoordinator _background;
 
@@ -280,7 +271,7 @@ namespace Telegram.Views.Popups
             _updatePending = false;
 
             var background = ViewModel.Item;
-            if (background != null && IsConnected)
+            if (background != null && !IsDisconnected)
             {
                 Preview.XamlRoot ??= XamlRoot;
 
@@ -362,8 +353,6 @@ namespace Telegram.Views.Popups
 
         private void Primary_Click(object sender, RoutedEventArgs e)
         {
-            _task?.TrySetResult(true);
-
             Hide(ContentDialogResult.Primary);
             ViewModel.Done(true);
         }
@@ -372,35 +361,12 @@ namespace Telegram.Views.Popups
         {
             if (ViewModel.IsPremium is false && ViewModel.IsPremiumAvailable)
             {
-                await ShowPromoAsync();
+                await ViewModel.NavigationService.ShowPromoAsync(new PremiumSourceFeature(new PremiumFeatureBackgroundForBoth()));
                 return;
             }
-
-            _task?.TrySetResult(true);
 
             Hide(ContentDialogResult.Primary);
             ViewModel.Done(false);
-        }
-
-        private async Task ShowPromoAsync()
-        {
-            _ignoreClosing = true;
-            Hide();
-
-            _ignoreClosing = false;
-
-            await ViewModel.NavigationService.ShowPromoAsync(new PremiumSourceFeature(new PremiumFeatureBackgroundForBoth()));
-            await this.ShowQueuedAsync(XamlRoot);
-        }
-
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
-        {
-            if (_ignoreClosing)
-            {
-                return;
-            }
-
-            _task?.TrySetResult(false);
         }
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
