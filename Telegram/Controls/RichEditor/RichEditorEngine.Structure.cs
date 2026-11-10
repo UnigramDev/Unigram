@@ -606,6 +606,38 @@ namespace Telegram.Controls.RichEditor
             return true;
         }
 
+        /// <summary>
+        /// Up from the document's first block when that is not a line of text - a table, media,
+        /// a quote, a list: a new line before it, which nothing else reaches. False when there is
+        /// a line there already, or the caret is not in that block.
+        /// </summary>
+        public bool PrependLineBeforeFirst()
+        {
+            var blocks = _document.Blocks;
+            var root = _node ?? _focus.Leaf?.Owner;
+
+            while (root?.Parent != null)
+            {
+                root = root.Parent;
+            }
+
+            if (blocks.Count == 0 || !ReferenceEquals(root, blocks[0]) || blocks[0] is RichParagraphBlock)
+            {
+                return false;
+            }
+
+            var paragraph = new RichParagraphBlock(RichBlockKind.Paragraph);
+
+            BeginChange();
+            blocks.Insert(0, paragraph);
+            _node = null;
+            EndChange();
+
+            SetCaretInternal(new RichPosition(paragraph.Text, 0));
+            Raise(RichEditorChanges.Selection, null);
+            return true;
+        }
+
         public void SetDetailsOpen(RichDetailsBlock details, bool open)
         {
             if (details.IsOpen == open)

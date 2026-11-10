@@ -1623,6 +1623,14 @@ namespace Telegram.Controls.RichEditor
                     return true;
                 }
 
+                // Up out of a table, media or anything else that starts the document and is not
+                // a line of text: a line before it, or nothing could be written above it.
+                if (direction < 0 && !extend && _engine.PrependLineBeforeFirst())
+                {
+                    _goalX = goal;
+                    return true;
+                }
+
                 // Nothing further that way: to the very start or end, as a text box does on its
                 // first and last line.
                 _engine.MoveToDocumentEdge(direction, extend);
