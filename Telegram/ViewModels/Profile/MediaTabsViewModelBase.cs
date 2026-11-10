@@ -356,7 +356,7 @@ namespace Telegram.ViewModels.Profile
             // otherwise; that has to hold for the upgraded group's messages it covers too.
             var revoke = popup.Revoke || chat.Type is ChatTypeSupergroup;
 
-            foreach (var group in messages.GroupBy(x => x.ChatId))
+            foreach (var group in updated.GroupBy(x => x.ChatId))
             {
                 ClientService.Send(new DeleteMessages(group.Key, group.Select(x => x.Id).ToVector(), revoke));
             }
@@ -375,7 +375,7 @@ namespace Telegram.ViewModels.Profile
             {
                 foreach (var sender in popup.ReportSpam)
                 {
-                    var messageIds = messages
+                    var messageIds = updated
                         .Where(x => x.ChatId == chat.Id && x.SenderId.AreTheSame(sender))
                         .Select(x => x.Id)
                         .ToVector();
