@@ -560,11 +560,12 @@ namespace Telegram.Common
         }
 
         // A table takes the width its content needs: the columns get their natural widths when
-        // they fit, share out what there is when they do not, and the ScrollViewer comes into
-        // play once the columns cannot be squeezed to fit without wrapping their text narrower
-        // than a reader can follow. Nothing under the ScrollViewer can decide this, as it
-        // measures the grid with an infinite width, so the panel that sees the real constraint
-        // resolves the columns and hands the grid absolute widths.
+        // they fit, and the rest of the bubble when it is wider for something else, share out
+        // what there is when they do not, and the ScrollViewer comes into play once the columns
+        // cannot be squeezed to fit without wrapping their text narrower than a reader can
+        // follow. Nothing under the ScrollViewer can decide this, as it measures the grid with an
+        // infinite width, so the panel that sees the real constraint resolves the columns and
+        // hands them to the grid.
         private sealed partial class TableRoot : Panel
         {
             public readonly struct Cell
@@ -622,7 +623,7 @@ namespace Telegram.Common
                 // The grid's margin is inside the ScrollViewer, so that a scrolled table's borders
                 // are not cut at the viewport's edge: the columns share what is left of the room.
                 var margin = _resolver.Snap(_grid.Margin.Left) + _resolver.Snap(_grid.Margin.Right);
-                var total = _resolver.Resolve(Math.Max(0, availableSize.Width - margin)) + margin;
+                var total = _resolver.Resolve(Math.Max(0, availableSize.Width - margin), false) + margin;
 
                 _resolver.Apply(_grid, _scroll);
 
@@ -634,6 +635,8 @@ namespace Telegram.Common
                 return new Size(width, _scroll.DesiredSize.Height);
             }
 
+            // Measured, a table asks only for its content's width, so one alone does not widen its
+            // bubble; arranged wider, beside a longer line, the grid's star columns fill the room.
             protected override Size ArrangeOverride(Size finalSize)
             {
                 Children[0].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));

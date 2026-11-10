@@ -643,7 +643,7 @@ namespace Telegram.Controls.RichEditor
                     MeasureCells();
                 }
 
-                _resolver.Resolve(availableSize.Width);
+                _resolver.Resolve(availableSize.Width, true);
                 _resolver.Apply(Cells, Scroller);
             }
 

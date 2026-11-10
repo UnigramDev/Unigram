@@ -14,10 +14,11 @@ namespace Telegram.Common
 {
     /// <summary>
     /// The widths of a table's columns in the room it is given: natural widths when they fit,
-    /// the room shared out when they do not, and wider than the room, for the caller to scroll,
-    /// once they cannot be squeezed without wrapping their text narrower than a reader can
-    /// follow. Fed each cell's narrowest and natural width, which do not depend on the room, so
-    /// a new width resolves again without measuring any text.
+    /// or all of it when asked to stretch, the room shared out when they do not, and wider than
+    /// the room, for the caller to scroll, once they cannot be squeezed without wrapping their
+    /// text narrower than a reader can follow. Fed each cell's narrowest and natural width,
+    /// which do not depend on the room, so a new width resolves again without measuring any
+    /// text.
     /// </summary>
     public sealed class TableColumns
     {
@@ -64,6 +65,7 @@ namespace Telegram.Common
 
         // A measure pass offers the same width again and again: answered from the last time.
         private double _resolvedFor = double.NaN;
+        private bool _resolvedStretched;
         private double _total;
 
         /// <param name="slop">Room a column gets over what its text measured, for a caller that
@@ -171,13 +173,17 @@ namespace Telegram.Common
             return Math.Ceiling(value * _scale) / _scale;
         }
 
-        /// <summary>The columns in <paramref name="available"/>, and how wide they come to.</summary>
-        public double Resolve(double available)
+        /// <summary>
+        /// The columns in <paramref name="available"/>, and how wide they come to. With
+        /// <paramref name="stretch"/>, columns that fit are widened to fill all of it.
+        /// </summary>
+        public double Resolve(double available, bool stretch)
         {
-            if (available != _resolvedFor)
+            if (available != _resolvedFor || stretch != _resolvedStretched)
             {
                 _resolvedFor = available;
-                _total = ResolveCore(available);
+                _resolvedStretched = stretch;
+                _total = ResolveCore(available, stretch);
             }
 
             return _total;
@@ -191,14 +197,25 @@ namespace Telegram.Common
         {
             var definitions = grid.ColumnDefinitions;
 
+            // Columns that fit are stars weighted by their width, each its width at the least: the
+            // grid measured in exactly that width gives each its width, and arranged wider it
+            // shares the rest out itself. Nothing above it can widen them once it is arranged,
+            // as a column width set in arrange invalidates measure and the layout never settles.
+            var unit = IsScrollable ? GridUnitType.Pixel : GridUnitType.Star;
+
             for (int i = 0; i < _count && i < definitions.Count; i++)
             {
                 var definition = definitions[i];
 
                 // Assigning invalidates the layout of the grid, so only where it moved.
-                if (!definition.Width.IsAbsolute || definition.Width.Value != _widths[i])
+                if (definition.Width.GridUnitType != unit || definition.Width.Value != _widths[i])
                 {
-                    definition.Width = new GridLength(_widths[i]);
+                    definition.Width = new GridLength(_widths[i], unit);
+                }
+
+                if (definition.MinWidth != _widths[i])
+                {
+                    definition.MinWidth = _widths[i];
                 }
             }
 
@@ -217,7 +234,7 @@ namespace Telegram.Common
         }
 
         // The three outcomes: natural widths, squeezed to fit, or scrolling.
-        private double ResolveCore(double available)
+        private double ResolveCore(double available, bool stretch)
         {
             var totalMax = 0d;
 
@@ -226,11 +243,26 @@ namespace Telegram.Common
                 totalMax += _max[i];
             }
 
-            // It fits unwrapped: the table is as wide as its content and no wider.
+            // It fits unwrapped: the table is as wide as its content, or stretched to the room
+            // with the spare shared in proportion to each column's content, so the columns keep
+            // the proportions their text gave them.
             if (double.IsInfinity(available) || totalMax <= available)
             {
-                Array.Copy(_max, _widths, _count);
                 IsScrollable = false;
+
+                if (stretch && totalMax > 0 && totalMax < available)
+                {
+                    var ratio = available / totalMax;
+
+                    for (int i = 0; i < _count; i++)
+                    {
+                        _widths[i] = _max[i] * ratio;
+                    }
+
+                    return Fill(available);
+                }
+
+                Array.Copy(_max, _widths, _count);
                 return totalMax;
             }
 
@@ -299,6 +331,12 @@ namespace Telegram.Common
                 }
             }
 
+            IsScrollable = false;
+            return Fill(available);
+        }
+
+        private double Fill(double available)
+        {
             // Snapped down onto the pixel grid so the columns still add up to something the
             // room can hold, with the rounding left over going to the widest column, the one
             // most likely to still be wrapping.
@@ -323,7 +361,6 @@ namespace Telegram.Common
                 _widths[widest] += total - used;
             }
 
-            IsScrollable = false;
             return total;
         }
 
