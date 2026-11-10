@@ -92,12 +92,14 @@ namespace Telegram.Controls.Cells
         protected override void OnLoaded()
         {
             _strokeBrush?.Register();
+            _deliveredStrokeBrush?.Register();
             _selectionStrokeBrush?.Register();
         }
 
         protected override void OnUnloaded()
         {
             _strokeBrush?.Unregister();
+            _deliveredStrokeBrush?.Unregister();
             _selectionStrokeBrush?.Unregister();
         }
 
@@ -2484,10 +2486,10 @@ namespace Telegram.Controls.Cells
         private float _trimStart;
 
         private CompositionGeometry _line1;
-        private CompositionShape _shape1;
+        private CompositionSpriteShape _shape1;
 
         private CompositionGeometry _line2;
-        private CompositionShape _shape2;
+        private CompositionSpriteShape _shape2;
 
         private CompositionShape _pending;
         private CompositionShape _failed;
@@ -2515,6 +2517,27 @@ namespace Telegram.Controls.Cells
         private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
             _strokeBrush?.PropertyChanged(newValue, IsConnected);
+            _deliveredStrokeBrush?.PropertyChanged(newValue, IsConnected);
+        }
+
+        #endregion
+
+        #region DeliveredStroke
+
+        // Delivered messages are drawn with a dimmed variant of Stroke, so that the full
+        // strength double tick is unmistakably "read" without introducing a theme key.
+        private const double DeliveredStrokeOpacity = 0.45;
+
+        private CompositionColorSource _deliveredStrokeBrush;
+
+        private CompositionColorBrush GetTicksBrush(bool read)
+        {
+            if (read)
+            {
+                return _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
+            }
+
+            return _deliveredStrokeBrush ??= new CompositionColorSource(Stroke, IsConnected, DeliveredStrokeOpacity);
         }
 
         #endregion
@@ -2722,6 +2745,10 @@ namespace Telegram.Controls.Cells
                 }
 
                 RemoveAdditionalVisuals(true);
+
+                var brush = GetTicksBrush(state == MessageTicksState.Read);
+                _shape1.StrokeBrush = brush;
+                _shape2.StrokeBrush = brush;
 
                 if (animate)
                 {
