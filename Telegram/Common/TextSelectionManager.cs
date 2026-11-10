@@ -168,6 +168,7 @@ namespace Telegram.Common
             if (_handleContextMenu)
             {
                 _root.ContextRequested += OnContextRequested;
+                _root.ProcessKeyboardAccelerators += OnProcessKeyboardAccelerators;
             }
         }
 
@@ -190,11 +191,28 @@ namespace Telegram.Common
 
             if (HasSelection)
             {
-                flyout.CreateFlyoutItem(CopySelectionToClipboard, Strings.Copy, Icons.Copy);
+                flyout.CreateFlyoutItem(CopySelectionToClipboard, Strings.Copy, Icons.Copy, key: VirtualKey.C, modifiers: VirtualKeyModifiers.Control);
             }
 
-            flyout.CreateFlyoutItem(SelectAll, Strings.SelectAll);
+            flyout.CreateFlyoutItem(SelectAll, Strings.SelectAll, key: VirtualKey.A, modifiers: VirtualKeyModifiers.Control);
             flyout.ShowAt(sender, args);
+        }
+
+        private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
+        {
+            if (args.Key == VirtualKey.C && args.Modifiers == VirtualKeyModifiers.Control)
+            {
+                if (HasSelection)
+                {
+                    CopySelectionToClipboard();
+                    args.Handled = true;
+                }
+            }
+            else if (args.Key == VirtualKey.A && args.Modifiers == VirtualKeyModifiers.Control)
+            {
+                SelectAll();
+                args.Handled = true;
+            }
         }
 
         public void Detach()
@@ -221,6 +239,7 @@ namespace Telegram.Common
             _root.RemoveHandler(UIElement.PointerReleasedEvent, _pointerReleased);
             _root.RemoveHandler(UIElement.PointerCaptureLostEvent, _pointerCaptureLost);
             _root.ContextRequested -= OnContextRequested;
+            _root.ProcessKeyboardAccelerators -= OnProcessKeyboardAccelerators;
             _owner.KeyDown -= OnKeyDown;
             _owner.Unloaded -= OnUnloaded;
 

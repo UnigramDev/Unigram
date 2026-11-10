@@ -105,7 +105,7 @@ namespace Telegram.Views.Popups
             _fromLanguage = fromLanguage;
             _contentProtected = contentProtected;
 
-            _textSelectionManager = new TextSelectionManager(this, Block, handleContextMenu: true);
+            _textSelectionManager = new TextSelectionManager(this, RichBlock, handleContextMenu: true);
 
             Title = Strings.AutomaticTranslation;
             PrimaryButtonText = Strings.Close;

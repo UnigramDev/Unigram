@@ -77,7 +77,7 @@ namespace Telegram.Views
             // so the manager finds them itself and the page needs no per-block wiring.
             // Rooted at the list rather than the page so the header and footer chrome
             // stay outside the selection.
-            _textSelectionManager ??= new TextSelectionManager(this, ScrollingHost, handleContextMenu: true);
+            _textSelectionManager ??= new TextSelectionManager(this, ScrollingHost.ItemsPanelRoot, handleContextMenu: true);
 
             _window = WindowContext.ForXamlRoot(this);
 
