@@ -241,6 +241,7 @@
 
                                 <local:MessageFooter x:Name="Footer"
                                                      Stroke="{ThemeResource MessageSubtleLabelBrush}"
+                                                     ReadStroke="{ThemeResource MessageSubtleTickReadBrush}"
                                                      VerticalAlignment="Bottom"
                                                      HorizontalAlignment="Right"
                                                      Margin="4,0,4,4"

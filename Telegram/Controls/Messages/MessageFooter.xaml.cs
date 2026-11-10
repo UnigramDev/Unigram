@@ -56,6 +56,7 @@ namespace Telegram.Controls.Messages
         protected override void OnLoaded()
         {
             _strokeBrush?.Register();
+            _readStrokeBrush?.Register();
 
             if (_message?.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed)
             {
@@ -66,6 +67,7 @@ namespace Telegram.Controls.Messages
         protected override void OnUnloaded()
         {
             _strokeBrush?.Unregister();
+            _readStrokeBrush?.Unregister();
         }
 
         #region InitializeComponent
@@ -590,10 +592,10 @@ namespace Telegram.Controls.Messages
         private float _trimStart;
 
         private CompositionGeometry _line1;
-        private CompositionShape _shape1;
+        private CompositionSpriteShape _shape1;
 
         private CompositionGeometry _line2;
-        private CompositionShape _shape2;
+        private CompositionSpriteShape _shape2;
 
         private CompositionShape _pending;
         private CompositionShape _failed;
@@ -624,6 +626,49 @@ namespace Telegram.Controls.Messages
         }
 
         #endregion
+
+        #region ReadStroke
+
+        private CompositionColorSource _readStrokeBrush;
+
+        /// <summary>
+        /// The colour of the double tick once the message has been read. Null falls back to
+        /// <see cref="Stroke"/>, which is what the single tick always paints with.
+        /// </summary>
+        public Brush ReadStroke
+        {
+            get => (Brush)GetValue(ReadStrokeProperty);
+            set => SetValue(ReadStrokeProperty, value);
+        }
+
+        public static readonly DependencyProperty ReadStrokeProperty =
+            DependencyProperty.Register("ReadStroke", typeof(Brush), typeof(MessageFooter), new PropertyMetadata(null, OnReadStrokeChanged));
+
+        private static void OnReadStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((MessageFooter)d).OnReadStrokeChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
+
+        private void OnReadStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            _readStrokeBrush?.PropertyChanged(newValue, IsConnected);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// The compositor brush the two ticks paint with, which is the only thing that tells a
+        /// read message apart from a sent one.
+        /// </summary>
+        private CompositionColorBrush GetTicksBrush(bool read)
+        {
+            if (read && ReadStroke != null)
+            {
+                return _readStrokeBrush ??= new CompositionColorSource(ReadStroke, IsConnected);
+            }
+
+            return _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
+        }
 
         private void InitializePending()
         {
@@ -828,6 +873,10 @@ namespace Telegram.Controls.Messages
                 }
 
                 RemoveAdditionalVisuals(true);
+
+                var brush = GetTicksBrush(state == MessageTicksState.Read);
+                _shape1.StrokeBrush = brush;
+                _shape2.StrokeBrush = brush;
 
                 if (animate)
                 {

@@ -17,14 +17,21 @@ namespace Telegram.Composition
     public partial class CompositionColorSource
     {
         private readonly CompositionColorBrush _brush;
+        private readonly double _opacity;
 
         private SolidColorBrush _newValue;
         private long _token;
 
         public static implicit operator CompositionColorBrush(CompositionColorSource d) => d._brush;
 
-        public CompositionColorSource(Brush value, bool connected)
+        /// <param name="opacity">
+        /// Multiplied with the alpha channel of the source brush, so that a second source can
+        /// track the same themed brush while rendering a dimmed variant of it.
+        /// </param>
+        public CompositionColorSource(Brush value, bool connected, double opacity = 1)
         {
+            _opacity = opacity;
+
             if (value is SolidColorBrush newValue)
             {
                 if (connected && _token == 0)
@@ -33,7 +40,7 @@ namespace Telegram.Composition
                 }
 
                 _newValue = newValue;
-                _brush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
+                _brush = BootStrapper.Current.Compositor.CreateColorBrush(Apply(newValue.Color));
             }
             else
             {
@@ -55,7 +62,7 @@ namespace Telegram.Composition
             }
 
             _newValue = newValue;
-            _brush.Color = newValue.Color;
+            _brush.Color = Apply(newValue.Color);
 
             if (connected)
             {
@@ -71,7 +78,17 @@ namespace Telegram.Composition
                 return;
             }
 
-            _brush.Color = newValue.Color;
+            _brush.Color = Apply(newValue.Color);
+        }
+
+        private Color Apply(Color color)
+        {
+            if (_opacity >= 1)
+            {
+                return color;
+            }
+
+            return Color.FromArgb((byte)(color.A * _opacity), color.R, color.G, color.B);
         }
 
         public void Register()
