@@ -11122,6 +11122,7 @@
     <!-- new from translations.telegram.org -->
 
     <string name="AccDescrChatInfo">Chat info</string>
+    <string name="AccDescrChatPinned">Pinned</string>
     <string name="AccDescrCustomEmoji2">Custom emoji</string>
     <string name="AccDescrExitFullScreen">Exit full screen</string>
     <string name="AccDescrExitMiniPlayer">Exit mini player</string>

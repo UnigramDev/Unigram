@@ -625,6 +625,13 @@ namespace Telegram.Controls.Cells
                 }
             }
 
+            var position = chat.GetPosition(_chatList);
+            if (position?.IsPinned ?? false)
+            {
+                builder.Append(Strings.AccDescrChatPinned);
+                builder.Append(", ");
+            }
+
             if (chat.UnreadCount > 0)
             {
                 builder.Append(Locale.Declension(Strings.R.NewMessages, chat.UnreadCount));
