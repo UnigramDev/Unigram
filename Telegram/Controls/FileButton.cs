@@ -301,20 +301,20 @@ namespace Telegram.Controls
                     value = Math.Clamp(value, 0.05, 1);
                 }
 
-                if (_shouldEnqueueProgress || !_templateApplied || IsDisconnected)
+                if (_shouldEnqueueProgress)
                 {
                     _enqueuedProgress = value;
                 }
-                else
+                else if (_templateApplied)
                 {
                     ProgressBar ??= GetTemplateChild(nameof(ProgressBar)) as ProgressBarRing;
                     ProgressBar.Value = value;
-                }
 
-                if (AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
-                {
-                    var peer = FrameworkElementAutomationPeer.FromElement(this);
-                    peer?.RaisePropertyChangedEvent(ValuePatternIdentifiers.ValueProperty, _progress, value);
+                    if (IsConnected && AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
+                    {
+                        var peer = FrameworkElementAutomationPeer.FromElement(this);
+                        peer?.RaisePropertyChangedEvent(ValuePatternIdentifiers.ValueProperty, _progress, value);
+                    }
                 }
 
                 _progress = value;
