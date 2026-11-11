@@ -898,6 +898,16 @@ namespace Telegram.Controls.RichEditor
         {
             var data = e.DataView;
 
+            var media = data.Contains(StandardDataFormats.StorageItems) || data.Contains(StandardDataFormats.Bitmap);
+            if (!media && !data.Contains(StandardDataFormats.Text))
+            {
+                return;
+            }
+
+            // Before the first await: the event bubbles on as soon as this handler yields, and a
+            // page that takes drops itself would handle the same files again.
+            e.Handled = true;
+
             if (HitTest(e.GetPosition(Surface), out RichPosition position, out RichBlock node))
             {
                 if (node != null)
@@ -912,28 +922,25 @@ namespace Telegram.Controls.RichEditor
 
             Focus(FocusState.Pointer);
 
-            if (data.Contains(StandardDataFormats.StorageItems) || data.Contains(StandardDataFormats.Bitmap))
+            if (media)
             {
                 PasteRequested?.Invoke(this, new RichPasteRequestedEventArgs(data));
                 return;
             }
 
-            if (data.Contains(StandardDataFormats.Text))
-            {
-                var deferral = e.GetDeferral();
+            var deferral = e.GetDeferral();
 
-                try
-                {
-                    InsertPlainText(await data.GetTextAsync());
-                }
-                catch
-                {
-                    // The source went away before handing the text over.
-                }
-                finally
-                {
-                    deferral.Complete();
-                }
+            try
+            {
+                InsertPlainText(await data.GetTextAsync());
+            }
+            catch
+            {
+                // The source went away before handing the text over.
+            }
+            finally
+            {
+                deferral.Complete();
             }
         }
 
