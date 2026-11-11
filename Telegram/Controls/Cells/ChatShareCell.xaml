@@ -13,6 +13,8 @@
                 Value="Stretch" />
         <Setter Property="Padding"
                 Value="0,6" />
+        <Setter Property="IsTabStop"
+                Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ChatShareCell">
