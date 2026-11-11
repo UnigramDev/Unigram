@@ -48,7 +48,7 @@
                             <TextBlock Text="{Binding Key}"
                                        Style="{StaticResource BaseTextBlockStyle}"
                                        FontWeight="SemiBold"
-                                       Margin="0,16,0,6" />
+                                       Margin="24,16,24,6" />
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
