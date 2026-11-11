@@ -82,9 +82,11 @@ namespace Telegram.Controls.Stories
             _groupCall.TotalStarCountChanged += OnTotalStarCountChanged;
             _groupCall.Changed += OnChanged;
 
-            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(activeStories.Session);
+            var emojiDrawer = EmojiDrawerViewModel.Create(activeStories.Session);
+            EmojiPanel.DataContext = emojiDrawer;
             MessageField.CustomEmoji = CustomEmoji;
-            MessageField.DataContext = EmojiPanel.DataContext;
+            MessageField.DataContext = emojiDrawer;
+            MessageField.ViewModel = emojiDrawer;
 
             _minimumStarCount = _groupCall.PaidMessageStarCount;
             UpdateStars(_groupCall.PaidMessageStarCount);

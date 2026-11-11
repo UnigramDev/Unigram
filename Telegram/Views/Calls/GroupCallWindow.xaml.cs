@@ -119,9 +119,11 @@ namespace Telegram.Views.Calls
 
             _messages = new ObservableCollection<GroupCallMessage>(_call.Messages);
             MessagesHost.ItemsSource = _messages;
-            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(_call.ClientService.Session);
+            var emojiDrawer = EmojiDrawerViewModel.Create(_call.ClientService.Session);
+            EmojiPanel.DataContext = emojiDrawer;
             MessageField.CustomEmoji = CustomEmoji;
-            MessageField.DataContext = EmojiPanel.DataContext;
+            MessageField.DataContext = emojiDrawer;
+            MessageField.ViewModel = emojiDrawer;
             MessageField.MaxLength = (int)_call.ClientService.Options.GroupCallMessageTextLengthMax;
             MessageReactions.Initialize(_call.ClientService);
 

@@ -95,6 +95,12 @@ namespace Telegram.Controls.RichEditor
                 {
                     _clientService = value;
                     Editor?.Initialize(value, _engine);
+
+                    if (_settings == null && value != null)
+                    {
+                        _settings = value.Session.Settings;
+                        UpdateSuggestions();
+                    }
                 }
             }
         }
