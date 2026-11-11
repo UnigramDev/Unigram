@@ -3556,7 +3556,12 @@ namespace Telegram.Views
                     var title = content.FindName("TitleLabel") as TextBlock;
                     title.Text = user.FullName();
 
-                    var photo = content.Children[0] as ProfilePicture;
+                    var active = content.Children[0] as Border;
+                    active.Visibility = session.IsActive
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+
+                    var photo = content.Children[1] as ProfilePicture;
                     photo.Source = ProfilePictureSource.User(session.ClientService, user);
 
                     var identity = content.FindName("Identity") as IdentityIcon;
@@ -4589,7 +4594,12 @@ namespace Telegram.Views
                 var title = content.FindName("TitleLabel") as TextBlock;
                 title.Text = user.FullName();
 
-                var photo = content.Children[0] as ProfilePicture;
+                var active = content.Children[0] as Border;
+                active.Visibility = session.IsActive
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                var photo = content.Children[1] as ProfilePicture;
                 photo.Source = ProfilePictureSource.User(session.ClientService, user);
 
                 var identity = content.FindName("Identity") as IdentityIcon;
