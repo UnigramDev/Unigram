@@ -27,7 +27,7 @@
          the generated Main leaves no room. Everything else about that Main is reproduced there
          verbatim. The constant is what turns the generated one off. -->
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
     <!-- The Windows App SDK's own floor - it still ships projections for 17763, and a restore at
          this minimum resolves. The three other flavours say 18362 because that is what UWP XAML
          supports. -->
@@ -134,7 +134,7 @@
   -->
   <PropertyGroup>
     <WinUISourceDir>$(BaseIntermediateOutputPath)src\</WinUISourceDir>
-    <WinUIRewriter>$(MSBuildThisFileDirectory)..\Telegram.WinUI.Rewriter\bin\$(Configuration)\net10.0\Telegram.WinUI.Rewriter.dll</WinUIRewriter>
+    <WinUIRewriter>$(MSBuildThisFileDirectory)..\Telegram.WinUI.Rewriter\bin\$(Configuration)\net11.0\Telegram.WinUI.Rewriter.dll</WinUIRewriter>
   </PropertyGroup>
 
   <!-- Before MarkupCompilePass1, which reads the patched files. The output directory is trimmed of

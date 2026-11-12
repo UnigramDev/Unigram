@@ -31,7 +31,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <RootNamespace>Telegram</RootNamespace>
     <AssemblyName>Telegram</AssemblyName>
@@ -233,7 +233,7 @@
     </Reference>
     <!-- Dropped against Telegram.csproj: Microsoft.NETCore.UniversalWindowsPlatform, System.Memory,
          System.ValueTuple, Microsoft.Bcl.HashCode, PolySharp, System.Text.Json,
-         System.Threading.Channels (all in-box on net10.0, and NU1510 for the last two), and
+         System.Threading.Channels (all in-box on net11.0, and NU1510 for the last two), and
          System.Reflection.Metadata, which nothing in the app references. -->
   </ItemGroup>
 

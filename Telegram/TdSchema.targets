@@ -21,7 +21,7 @@
   <PropertyGroup>
     <TdSchemaMode Condition="'$(TdSchemaMode)' == ''">MSBuild</TdSchemaMode>
     <TdSchemaSource>$(MSBuildThisFileDirectory)..\Libraries\tdjson\td_api.tl</TdSchemaSource>
-    <TdSchemaCliDir>$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\bin\$(Configuration)\net10.0</TdSchemaCliDir>
+    <TdSchemaCliDir>$(MSBuildThisFileDirectory)..\Telegram.Generators.Cli\bin\$(Configuration)\net11.0</TdSchemaCliDir>
     <TdSchemaCli>$(TdSchemaCliDir)\Telegram.Generators.Cli.dll</TdSchemaCli>
     <TdSchemaEmitter>$(TdSchemaCliDir)\Telegram.Generators.dll</TdSchemaEmitter>
   </PropertyGroup>

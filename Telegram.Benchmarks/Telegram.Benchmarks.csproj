@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- One project, two hosts. net10.0 is the desktop console with BenchmarkDotNet; the UWP target
+  <!-- One project, two hosts. net11.0 is the desktop console with BenchmarkDotNet; the UWP target
        runs the same Suite.cs under the UWP runtime so the two can be compared row for row. -->
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net10.0-windows10.0.26100.0</TargetFrameworks>
+    <TargetFrameworks>net11.0;net11.0-windows10.0.26100.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
@@ -29,11 +29,11 @@
     <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net11.0'">
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' != 'net10.0'">
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net11.0'">
     <OutputType>WinExe</OutputType>
     <UseUwp>true</UseUwp>
     <DefineConstants>$(DefineConstants);UWP</DefineConstants>
@@ -50,15 +50,15 @@
   </PropertyGroup>
 
   <!-- BenchmarkDotNet spawns processes and emits IL, so it exists only on the desktop host. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
     <PackageReference Include="BenchmarkDotNet" Version="*" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Uwp\**" />
-    <Compile Remove="ParseBenchmarks.cs" Condition="'$(TargetFramework)' != 'net10.0'" />
-    <Compile Remove="Program.cs" Condition="'$(TargetFramework)' != 'net10.0'" />
-    <Compile Include="Uwp\**\*.cs" Condition="'$(TargetFramework)' != 'net10.0'" />
+    <Compile Remove="ParseBenchmarks.cs" Condition="'$(TargetFramework)' != 'net11.0'" />
+    <Compile Remove="Program.cs" Condition="'$(TargetFramework)' != 'net11.0'" />
+    <Compile Include="Uwp\**\*.cs" Condition="'$(TargetFramework)' != 'net11.0'" />
   </ItemGroup>
 
   <!-- One-shot emitters, run with `dotnet run tools\GenCorpus.cs`. Not part of the build. -->
@@ -93,7 +93,7 @@
   </ItemGroup>
 
   <!-- The UWP host loads tdjson from its own package, the way the app does. -->
-  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'net11.0'">
     <Content Include="..\Libraries\tdjson\x64-uwp\*.dll" Link="%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

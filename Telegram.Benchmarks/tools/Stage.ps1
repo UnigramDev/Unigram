@@ -1,5 +1,5 @@
 # Stage the AOT publish output as a loose-file UWP package layout.
-$publish = 'C:\Source\Telegram\Telegram.Benchmarks\bin\Release\net10.0-windows10.0.26100.0\win-x64\publish'
+$publish = 'C:\Source\Telegram\Telegram.Benchmarks\bin\Release\net11.0-windows10.0.26100.0\win-x64\publish'
 $source  = 'C:\Source\Telegram\Telegram.Benchmarks\Uwp'
 
 # Assets at the layout root, so the manifest paths need no rewriting.

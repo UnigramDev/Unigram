@@ -5,7 +5,7 @@
   A legacy UWP project rather than a target framework of Telegram.Benchmarks, because this project
   format cannot multi-target and the SDK-style one cannot reach UseDotNetNativeToolchain. It also
   resolves System.Text.Json's netstandard2.0 asset, which is the one the app really runs and is not
-  the same code as the net10.0 asset the other two hosts get.
+  the same code as the net11.0 asset the other two hosts get.
 
   Build with MSBuild, not the dotnet CLI:
     msbuild Telegram.Benchmarks.NetNative.csproj /p:Configuration=Release /p:Platform=x64 /restore
