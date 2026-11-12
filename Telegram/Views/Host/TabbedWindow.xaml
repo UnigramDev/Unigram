@@ -11,8 +11,10 @@
                         d:DesignWidth="400">
 
     <Grid>
+        <!-- On WinUI the style's Hidden placement arrives after TabView's own accelerators enter the tree, which leaves a "Ctrl+F4" tooltip over the whole window. -->
         <muxc:TabView x:Name="Navigation"
                       IsAddTabButtonVisible="False"
+                      KeyboardAcceleratorPlacementMode="Hidden"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       TabCloseRequested="OnTabCloseRequested">
