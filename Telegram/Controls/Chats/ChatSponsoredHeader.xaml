@@ -58,6 +58,7 @@
                                   Background="{TemplateBinding Background}"
                                   BorderBrush="{TemplateBinding BorderBrush}"
                                   BorderThickness="{TemplateBinding BorderThickness}"
+                                  CornerRadius="{TemplateBinding CornerRadius}"
                                   Content="{TemplateBinding Content}"
                                   ContentTransitions="{TemplateBinding ContentTransitions}"
                                   ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -77,7 +78,8 @@
             <ColumnDefinition />
             <ColumnDefinition Width="48" />
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+        <Border x:Name="Thickness"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="0,0,0,1"
                 Grid.ColumnSpan="2"
                 Grid.RowSpan="2" />

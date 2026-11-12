@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Chats
 {
-    public sealed partial class ChatJoinRequestsHeader : HyperlinkButton
+    public sealed partial class ChatJoinRequestsHeader : HyperlinkButton, ISlidePanelChild
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -81,6 +81,8 @@ namespace Telegram.Controls.Chats
 
         private SlidePanel.SlideState _collapsed;
 
+        public SlidePanel.SlideState SlideState => _collapsed;
+
         public void ShowHide(bool show)
         {
             if (_collapsed != show)
@@ -90,6 +92,41 @@ namespace Telegram.Controls.Chats
 
             _collapsed.IsVisible = show;
             _chatView.UpdateMessagesHeaderPadding();
+        }
+
+        private bool _isFirst;
+        public bool IsFirst
+        {
+            get => _isFirst;
+            set
+            {
+                if (_isFirst != value)
+                {
+                    UpdateAttach(_isFirst = value, _isLast);
+                }
+            }
+        }
+
+        private bool _isLast;
+        public bool IsLast
+        {
+            get => _isLast;
+            set
+            {
+                if (_isLast != value)
+                {
+                    UpdateAttach(_isFirst, _isLast = value);
+                }
+            }
+        }
+
+        private void UpdateAttach(bool first, bool last)
+        {
+            var radiusTop = first ? 16 : 0;
+            var radiusBottom = last ? 16 : 0;
+
+            CornerRadius = new CornerRadius(radiusTop, radiusTop, radiusBottom, radiusBottom);
+            Thickness.Opacity = last ? 0 : 1;
         }
     }
 }

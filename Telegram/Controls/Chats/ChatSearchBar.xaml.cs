@@ -34,14 +34,18 @@ namespace Telegram.Controls.Chats
 
         private readonly EventDebouncer<TextChangedEventArgs> _debouncer;
 
+        private readonly ThemeShadowEx _islandShadow;
+
         public ChatSearchBar()
         {
             InitializeComponent();
 
+            _islandShadow = new ThemeShadowEx(IslandShadow, Constants.BubbleElevation);
+
             if (ApiInfo.CanCreateThemeShadow)
             {
-                ListAutocomplete.Shadow = new ThemeShadow();
-                ListAutocomplete.Translation = new Vector3(0, 0, 32);
+                RootAutocomplete.Shadow = new ThemeShadow();
+                RootAutocomplete.Translation = new Vector3(0, 0, 32);
             }
 
             ListAutocomplete.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnAutocompleteChanged);
@@ -112,19 +116,12 @@ namespace Telegram.Controls.Chats
 
             ShowHideSavedTags(show);
 
-            var visual = ElementComposition.GetElementVisual(TopPanel);
-            var header = ElementComposition.GetElementVisual(_viewHeader);
-            var clipper = ElementComposition.GetElementVisual(_viewClipperOuter);
-            clipper.Clip = null; //visual.Compositor.CreateInsetClip();
-
-            ElementCompositionPreview.SetIsTranslationEnabled(_viewClipperOuter, true);
+            // The chat hides its own header and the headers under it as this shows.
+            var visual = ElementComposition.GetElementVisual(Island);
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                visual.Clip = null;
-                visual.Offset = new Vector3();
-
                 if (_collapsed)
                 {
                     DataContext = null;
@@ -137,34 +134,12 @@ namespace Telegram.Controls.Chats
                 }
             };
 
-            var height = _viewClipperOuter.ActualSize.Y - _viewDate.ActualSize.Y;
-            Logger.Info(height);
+            var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity.Duration = Constants.FastAnimation;
 
-            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(show ? 1 : 0, height - 48);
-            clip.InsertKeyFrame(show ? 0 : 1, -48);
-            clip.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
-
-            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 1 : 0, new Vector3(0, -height, 0));
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3());
-            offset.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
-
-            //clipper.Clip.StartAnimation("TopInset", clip);
-            clipper.StartAnimation("Translation", offset);
-
-            var opacity1 = visual.Compositor.CreateScalarKeyFrameAnimation();
-            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
-            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
-            opacity1.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
-
-            var opacity2 = visual.Compositor.CreateScalarKeyFrameAnimation();
-            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
-            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
-            opacity2.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
-
-            visual.StartAnimation("Opacity", opacity1);
-            //header.StartAnimation("Opacity", opacity2);
+            visual.StartAnimation("Opacity", opacity);
 
             batch.End();
         }
@@ -182,49 +157,6 @@ namespace Telegram.Controls.Chats
             Field.PlaceholderText = show
                 ? Strings.SavedTagSearchHint
                 : Strings.Search;
-
-            var visual = ElementComposition.GetElementVisual(SecondaryRoot);
-            var visual1 = ElementComposition.GetElementVisual(TagsRoot);
-            var date = ElementComposition.GetElementVisual(_viewDate);
-            visual1.Clip = visual.Compositor.CreateInsetClip();
-            visual.Clip = visual.Compositor.CreateInsetClip();
-
-            ElementCompositionPreview.SetIsTranslationEnabled(SecondaryRoot, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(_viewDate, true);
-
-            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                visual.Clip = null;
-                //visual.Offset = new Vector3();
-            };
-
-            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(show ? 0 : 1, 48);
-            clip.InsertKeyFrame(show ? 1 : 0, -48);
-            clip.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
-
-            var clip1 = visual.Compositor.CreateScalarKeyFrameAnimation();
-            clip1.InsertKeyFrame(show ? 0 : 1, 48);
-            clip1.InsertKeyFrame(show ? 1 : 0, 0);
-            clip1.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
-
-            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -48, 0));
-            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
-
-            var translation = visual.Compositor.CreateVector3KeyFrameAnimation();
-            translation.InsertKeyFrame(show ? 0 : 1, new Vector3(0, 0, 0));
-            translation.InsertKeyFrame(show ? 1 : 0, new Vector3(0, 48, 0));
-            translation.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
-
-            visual1.Clip.StartAnimation("TopInset", clip1);
-            visual.Clip.StartAnimation("TopInset", clip);
-            visual.StartAnimation("Translation", offset);
-            date.StartAnimation("Translation", translation);
-
-            batch.End();
         }
 
         #region Recycle
@@ -282,9 +214,11 @@ namespace Telegram.Controls.Chats
         private object ConvertTag(SavedMessagesTags tags)
         {
             Tags.UpdateMessageReactions(ViewModel, tags);
-            Tags.Visibility = tags?.Tags.Count > 0
+            TagsRoot.Visibility = tags?.Tags.Count > 0
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            UpdateAutocompleteCard();
             return null;
         }
 
@@ -448,17 +382,6 @@ namespace Telegram.Controls.Chats
             return true;
         }
 
-        private UIElement _viewHeader;
-        private UIElement _viewClipperOuter;
-        private UIElement _viewDate;
-
-        public void InitializeParent(UIElement header, UIElement clipperOuter, UIElement date)
-        {
-            _viewHeader = header;
-            _viewClipperOuter = clipperOuter;
-            _viewDate = date;
-        }
-
         private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             //var visible = e.NewSize.Width > 0 && e.NewSize.Height >= 2;
@@ -468,12 +391,14 @@ namespace Telegram.Controls.Chats
 
         private void OnGotFocus(object sender, RoutedEventArgs e)
         {
-            RootAutocomplete.Visibility = Visibility.Visible;
+            AutocompleteSlot.Visibility = Visibility.Visible;
+            UpdateAutocompleteCard();
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
-            RootAutocomplete.Visibility = Visibility.Collapsed;
+            AutocompleteSlot.Visibility = Visibility.Collapsed;
+            UpdateAutocompleteCard();
         }
 
         private INotifyCollectionChanged _autocomplete;
@@ -520,7 +445,7 @@ namespace Telegram.Controls.Chats
         private void UpdateAutocomplete()
         {
             var count = ListAutocomplete.ItemsSource is ICollection collection ? collection.Count : 0;
-            var height = Math.Min(ListAutocomplete.MaxHeight, count * AutocompleteRowHeight + ListAutocomplete.BorderThickness.Top + ListAutocomplete.BorderThickness.Bottom);
+            var height = Math.Min(ListAutocomplete.MaxHeight, count * AutocompleteRowHeight);
 
             // An incremental source adds one item at a time, and each row is a layout pass.
             if (ListAutocomplete.Height == height)
@@ -535,7 +460,35 @@ namespace Telegram.Controls.Chats
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            Field.CornerRadius = new CornerRadius(4, 4, visible ? 0 : 4, visible ? 0 : 4);
+            UpdateAutocompleteCard();
+        }
+
+        // The tags stay at the top of the card while the rows scroll under them.
+        private void UpdateAutocompleteCard()
+        {
+            var tags = TagsRoot.Visibility == Visibility.Visible;
+            var rows = ListAutocomplete.Visibility == Visibility.Visible;
+            var visible = tags || rows;
+
+            TagsDivider.Visibility = tags && rows
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            RootAutocomplete.Visibility = visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            // Shown only while the field has focus, which collapses the slot otherwise.
+            visible &= AutocompleteSlot.Visibility == Visibility.Visible;
+
+            // The field's bottom corners meet the card's square top while it shows, and the buttons
+            // at either end of the field follow its corners on their outer side.
+            var bottom = visible ? 0 : 16;
+            var button = visible ? 4 : 16;
+
+            Field.CornerRadius = new CornerRadius(16, 16, bottom, bottom);
+            QueryButton.CornerRadius = new CornerRadius(16, 4, 4, button);
+            DeleteButton.CornerRadius = new CornerRadius(4, 16, button, 4);
         }
 
         // The two templates are different heights, and neither is measured here: a member row is the

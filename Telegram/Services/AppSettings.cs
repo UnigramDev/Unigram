@@ -21,6 +21,13 @@ namespace Telegram.Services
         Miles
     }
 
+    public enum ForumTabsPosition
+    {
+        Top,
+        Left,
+        Bottom
+    }
+
     // One store, one process, no per-instance state -- so there is nothing for a Current to
     // disambiguate, and every read saves a null check.
     public static partial class AppSettings
@@ -200,11 +207,14 @@ namespace Telegram.Services
             set => _local.AddOrUpdateValue(ref _useLeftTabsForChats, "IsLeftTabsEnabled", value);
         }
 
-        private static bool? _useLeftTabsForForums;
-        public static bool UseLeftTabsForForums
+        // Falls back to UseLeftTabsForForums, the bool this replaced, so the choice survives the upgrade.
+        private static int? _forumTabsPosition;
+        public static ForumTabsPosition ForumTabsPosition
         {
-            get => _useLeftTabsForForums ??= _local.GetValueOrDefault("UseLeftTabsForForums", false);
-            set => _local.AddOrUpdateValue(ref _useLeftTabsForForums, "UseLeftTabsForForums", value);
+            get => (ForumTabsPosition)(_forumTabsPosition ??= _local.TryGet("ForumTabsPosition", out int value)
+                ? value
+                : (int)(_local.GetValueOrDefault("UseLeftTabsForForums", false) ? ForumTabsPosition.Left : ForumTabsPosition.Top));
+            set => _local.AddOrUpdateValue(ref _forumTabsPosition, "ForumTabsPosition", (int)value);
         }
 
         private static bool? _swipeToShare;

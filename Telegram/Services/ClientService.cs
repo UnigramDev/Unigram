@@ -2165,7 +2165,7 @@ namespace Telegram.Services
         {
             if (TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                return supergroup.HasForumTabs || supergroup.IsDirectMessagesGroup;
+                return supergroup.HasForumTabs || supergroup.HasForumSidebar || supergroup.IsDirectMessagesGroup;
             }
 
             return false;

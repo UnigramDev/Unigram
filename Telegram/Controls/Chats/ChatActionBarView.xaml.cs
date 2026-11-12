@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {
-    public sealed partial class ChatActionBarView : UserControl
+    public sealed partial class ChatActionBarView : UserControl, ISlidePanelChild
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -158,6 +158,8 @@ namespace Telegram.Controls.Chats
 
         private SlidePanel.SlideState _collapsed;
 
+        public SlidePanel.SlideState SlideState => _collapsed;
+
         private void ShowHide(bool show)
         {
             if (_collapsed != show)
@@ -177,6 +179,41 @@ namespace Telegram.Controls.Chats
             }
 
             yield return RemoveButton;
+        }
+
+        private bool _isFirst;
+        public bool IsFirst
+        {
+            get => _isFirst;
+            set
+            {
+                if (_isFirst != value)
+                {
+                    UpdateAttach(_isFirst = value, _isLast);
+                }
+            }
+        }
+
+        private bool _isLast;
+        public bool IsLast
+        {
+            get => _isLast;
+            set
+            {
+                if (_isLast != value)
+                {
+                    UpdateAttach(_isFirst, _isLast = value);
+                }
+            }
+        }
+
+        private void UpdateAttach(bool first, bool last)
+        {
+            var radiusTop = first ? 16 : 0;
+            var radiusBottom = last ? 16 : 0;
+
+            ActionBar.CornerRadius = new CornerRadius(radiusTop, radiusTop, radiusBottom, radiusBottom);
+            Thickness.Opacity = last ? 0 : 1;
         }
     }
 }

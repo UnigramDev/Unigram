@@ -271,6 +271,11 @@ namespace Telegram.Controls.Media
 
         public const string Pin = "\uE840";
         public const string PinOff = "\uE77A";
+        public const string PinList = "\uF7B4";
+        public const string PanelTopText = "\uF7B5";
+        public const string PanelLeftText = "\uF7B6";
+        public const string PanelBottomText = "\uF7B7";
+        public const string PanelRightText = "\uF7B8";
         public const string Eye = "\uE9A7";
         public const string EyeOff = "\uE9A6";
 

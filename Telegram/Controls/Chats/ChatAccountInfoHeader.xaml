@@ -15,12 +15,14 @@
       Padding="0"
       Margin="0">
 
-    <Grid Background="Transparent">
+    <Grid x:Name="ActionBar"
+          Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+        <Border x:Name="Thickness"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="0,0,0,1"
                 Grid.ColumnSpan="2"
                 Grid.RowSpan="2" />

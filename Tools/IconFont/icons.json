@@ -716,6 +716,11 @@
     {"name": "ic_fluent_hd_off_20_regular", "code": "F7B1", "src": "fluent:hd_off_20_regular"},
     {"name": "tl_fluent_arrow_forward_14_filled", "code": "F7B2", "src": "icons/tl_fluent_arrow_forward_14_filled.svg"},
     {"name": "tl_fluent_arrow_story_14_filled", "code": "F7B3", "src": "icons/tl_fluent_arrow_story_14_filled.svg"},
+    {"name": "tl_fluent_pin_list_20_regular", "code": "F7B4", "src": "icons/tl_fluent_pin_list_20_regular.svg"},
+    {"name": "tl_fluent_panel_top_text_20_regular", "code": "F7B5", "src": "icons/tl_fluent_panel_top_text_20_regular.svg"},
+    {"name": "tl_fluent_panel_left_text_20_regular", "code": "F7B6", "src": "icons/tl_fluent_panel_left_text_20_regular.svg"},
+    {"name": "tl_fluent_panel_bottom_text_20_regular", "code": "F7B7", "src": "icons/tl_fluent_panel_bottom_text_20_regular.svg"},
+    {"name": "tl_fluent_panel_right_text_20_regular", "code": "F7B8", "src": "icons/tl_fluent_panel_right_text_20_regular.svg"},
     {"name": "uE6000", "code": "E6000", "src": "icons/uE6000.svg"}
   ]
 }

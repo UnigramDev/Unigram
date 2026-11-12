@@ -19,7 +19,8 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="48" />
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+        <Border x:Name="Thickness"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="0,0,0,1"
                 Grid.ColumnSpan="4" />
 
@@ -36,20 +37,21 @@
         </StackPanel>
 
         <controls:SettingsButton x:Name="ToggleButton"
-                              Click="Toggle_Click"
-                              Background="{StaticResource AccentButtonBackground}"
-                              Content="{CustomResource VoipChatJoin}"
-                              Style="{StaticResource PillButtonStyle}"
-                              Typography.NumeralAlignment="Tabular"
-                              FontWeight="SemiBold"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Center"
-                              Margin="0,0,0,0"
-                              Grid.Column="2" />
+                                 Click="Toggle_Click"
+                                 Background="{StaticResource AccentButtonBackground}"
+                                 Content="{CustomResource VoipChatJoin}"
+                                 Style="{StaticResource PillButtonStyle}"
+                                 Typography.NumeralAlignment="Tabular"
+                                 FontWeight="SemiBold"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,0,0"
+                                 Grid.Column="2" />
 
         <controls:GlyphButton x:Name="MenuButton"
                               Glyph="&#xE9E9;"
                               Click="Menu_ContextRequested"
+                              CornerRadius="20"
                               Grid.Column="3" />
     </Grid>
 </UserControl>

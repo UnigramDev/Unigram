@@ -16,7 +16,8 @@
             <ColumnDefinition />
             <ColumnDefinition Width="48" />
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+        <Border x:Name="Thickness"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="0,0,0,1"
                 Grid.ColumnSpan="2" />
 
@@ -55,6 +56,7 @@
                              Visibility="Collapsed"
                              Click="Menu_ContextRequested"
                              Height="32"
+                             CornerRadius="12"
                              Grid.Column="1" />
 
         <controls:GlyphButton x:Name="HideButton"
@@ -62,6 +64,7 @@
                               Click="Hide_Click"
                               Glyph="&#xE711;"
                               Height="32"
+                              CornerRadius="12"
                               Grid.Column="1" />
     </Grid>
 </UserControl>

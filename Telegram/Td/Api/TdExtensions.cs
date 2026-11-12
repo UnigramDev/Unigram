@@ -30,6 +30,13 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Td.Api
 {
+    public enum ForumLayout
+    {
+        None,
+        Tabs,
+        Sidebar
+    }
+
     public static class TdExtensions
     {
         // A date-time entity is described by the same format string bots use:
@@ -4353,33 +4360,45 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static bool HasForumTabs(this Chat chat, IClientService clientService, out bool isForum)
+        public static ForumLayout GetForumLayout(this Chat chat, IClientService clientService, out bool isForum)
         {
             if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
+                if (supergroup.HasForumSidebar)
+                {
+                    isForum = true;
+                    return ForumLayout.Sidebar;
+                }
+
                 if (supergroup.HasForumTabs || (supergroup.IsForum && !chat.ViewAsTopics && AppSettings.Diagnostics.ForumTabsDebug))
                 {
                     isForum = true;
-                    return true;
+                    return ForumLayout.Tabs;
                 }
 
                 if (supergroup.IsDirectMessagesGroup)
                 {
                     isForum = false;
-                    return supergroup.IsAdministeredDirectMessagesGroup;
+                    return supergroup.IsAdministeredDirectMessagesGroup ? ForumLayout.Tabs : ForumLayout.None;
                 }
             }
             else if (clientService.TryGetUser(chat, out User user))
             {
+                if (user.Type is UserTypeBot { HasTopicSidebar: true })
+                {
+                    isForum = true;
+                    return ForumLayout.Sidebar;
+                }
+
                 if (user.Type is UserTypeBot { HasTopics: true })
                 {
                     isForum = true;
-                    return true;
+                    return ForumLayout.Tabs;
                 }
             }
 
             isForum = false;
-            return false;
+            return ForumLayout.None;
         }
 
         public static bool CanSendVoiceNotes(this Chat chat, IClientService clientService)

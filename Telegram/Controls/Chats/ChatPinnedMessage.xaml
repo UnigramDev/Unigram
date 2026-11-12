@@ -23,6 +23,7 @@
     <HyperlinkButton.Template>
         <ControlTemplate TargetType="HyperlinkButton">
             <Grid x:Name="RootGrid"
+                  CornerRadius="{TemplateBinding CornerRadius}"
                   Padding="{TemplateBinding Padding}">
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="CommonStates">
@@ -77,7 +78,8 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+        <Border x:Name="Thickness"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="0,0,0,1"
                 Margin="-12,0,0,0"
                 Grid.ColumnSpan="4" />
@@ -138,8 +140,9 @@
                                              AutoFontSize="False">
                     <Paragraph>
                         <Run x:Name="ServiceLabel1"
-                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel1"
-                                                                                               Foreground="{ThemeResource MessageForegroundBrush}" />
+                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" />
+                        <Span x:Name="MessageLabel1"
+                              Foreground="{ThemeResource MessageForegroundBrush}" />
                     </Paragraph>
                 </controls:FormattedTextBlock>
                 <controls:FormattedTextBlock x:Name="TextLabel2"
@@ -154,8 +157,9 @@
                                              AutoFontSize="False">
                     <Paragraph>
                         <Run x:Name="ServiceLabel2"
-                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel2"
-                                                                                               Foreground="{ThemeResource MessageForegroundBrush}" />
+                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" />
+                        <Span x:Name="MessageLabel2"
+                              Foreground="{ThemeResource MessageForegroundBrush}" />
                     </Paragraph>
                 </controls:FormattedTextBlock>
             </Grid>
@@ -165,19 +169,21 @@
                               Click="HideButton_Click"
                               AutomationProperties.Name="{CustomResource UnpinMessageAlertTitle}"
                               Glyph="&#xE711;"
+                              CornerRadius="20"
                               Grid.Column="3" />
         <controls:GlyphButton x:Name="ListButton"
                               Click="ListButton_Click"
                               AutomationProperties.Name="{CustomResource AccPinnedMessagesList}"
-                              Glyph="&#xEA37;"
+                              Glyph="&#xF7B4;"
+                              CornerRadius="20"
                               Grid.Column="3" />
 
         <controls:SettingsButton x:Name="ActionButton"
-                              Click="ActionButton_Click"
-                              Style="{StaticResource PillButtonStyle}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Center"
-                              Margin="0,0,12,0"
-                              Grid.Column="3" />
+                                 Click="ActionButton_Click"
+                                 Style="{StaticResource PillButtonStyle}"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,12,0"
+                                 Grid.Column="3" />
     </Grid>
 </local:MessageReferenceBase>

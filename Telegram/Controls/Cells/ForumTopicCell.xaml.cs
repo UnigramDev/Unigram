@@ -39,7 +39,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ForumTopicCell : ControlEx, IForumTopicDelegate
+    public sealed partial class ForumTopicCell : ControlEx2, IForumTopicDelegate
     {
         private bool _selected;
 
@@ -96,6 +96,7 @@ namespace Telegram.Controls.Cells
         private Grid IconRoot;
         private XamlPath IconPath;
         private TextBlock IconText;
+        private XamlPath AllTopics;
 
         private bool _templateApplied;
 
@@ -142,10 +143,32 @@ namespace Telegram.Controls.Cells
 
             if (_topic != null && _chat != null)
             {
-                return UpdateAutomation(_viewModel.ClientService, _topic, _chat, _topic.LastMessage);
+                return UpdateAutomation(_viewModel.ClientService, _topic, _chat, GetLastMessage(_topic));
             }
 
             return null;
+        }
+
+        // Topic 0 is the "All Messages" row a topic list outside the chat list opens with. It
+        // stands for the whole chat, so it previews the chat's own last message.
+        private bool IsAllMessages(ForumTopic topic)
+        {
+            return topic.Info.ForumTopicId == 0 && _chat != null;
+        }
+
+        private string GetName(ForumTopic topic)
+        {
+            return IsAllMessages(topic) ? Strings.TopicsPanelAllMessages : topic.Info.Name;
+        }
+
+        private Message GetLastMessage(ForumTopic topic)
+        {
+            return IsAllMessages(topic) ? _chat.LastMessage : topic.LastMessage;
+        }
+
+        private long GetLastReadOutboxMessageId(ForumTopic topic)
+        {
+            return IsAllMessages(topic) ? _chat.LastReadOutboxMessageId : topic.LastReadOutboxMessageId;
         }
 
         private string UpdateAutomation(IClientService clientService, ForumTopic topic, Chat chat, Message message)
@@ -153,7 +176,7 @@ namespace Telegram.Controls.Cells
             var builder = new StringBuilder();
 
             {
-                builder.Append(topic.Info.Name);
+                builder.Append(GetName(topic));
                 builder.Append(", ");
             }
 
@@ -245,7 +268,7 @@ namespace Telegram.Controls.Cells
             }
 
             _draft = draft;
-            UpdateMessageState(topic.LastReadOutboxMessageId, topic, topic.DraftMessage, topic.LastMessage, topic.LastMessage?.SendingState);
+            UpdateForumTopicReadOutbox(topic);
             TimeLabel.Text = UpdateTimeLabel(topic);
 
             UpdateBriefLabel(UpdateBriefLabel(topic, out MinithumbnailId thumbnail));
@@ -282,7 +305,8 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            UpdateMessageState(topic.LastReadOutboxMessageId, topic, topic.DraftMessage, topic.LastMessage, topic.LastMessage?.SendingState);
+            var lastMessage = GetLastMessage(topic);
+            UpdateMessageState(GetLastReadOutboxMessageId(topic), topic, topic.DraftMessage, lastMessage, lastMessage?.SendingState);
         }
 
         public void UpdateChatIsMarkedAsUnread(Chat chat)
@@ -341,7 +365,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            TitleLabel.Text = topic.Info.Name;
+            TitleLabel.Text = GetName(topic);
         }
 
         public static Color[] ServerSupportedColors = new Color[6]
@@ -428,9 +452,24 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
+            if (topic.Info.ForumTopicId == 0)
+            {
+                LoadTemplateChild(ref AllTopics);
+                AllTopics.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AllTopics?.Visibility = Visibility.Collapsed;
+            }
+
             if (topic.Info.IsGeneral || topic.Info.Icon.CustomEmojiId != 0)
             {
                 TypeIcon.SetStatus(_viewModel.ClientService, topic.Info.Icon);
+                IconRoot.Visibility = Visibility.Collapsed;
+            }
+            else if (topic.Info.ForumTopicId == 0)
+            {
+                TypeIcon.ClearStatus();
                 IconRoot.Visibility = Visibility.Collapsed;
             }
             else
@@ -559,7 +598,7 @@ namespace Telegram.Controls.Cells
             thumbnail = null;
 
             var draft = topic.DraftMessage;
-            var topMessage = topic.LastMessage;
+            var topMessage = GetLastMessage(topic);
 
             if (draft != null)
             {
@@ -586,7 +625,7 @@ namespace Telegram.Controls.Cells
                 return string.Format("{0}: \u200B​​​", Strings.Draft);
             }
 
-            var message = topic.LastMessage;
+            var message = GetLastMessage(topic);
             if (message == null)
             {
                 if (topic.LastReadOutboxMessageId != 0 || topic.LastReadInboxMessageId != 0)
@@ -679,7 +718,7 @@ namespace Telegram.Controls.Cells
 
         private string UpdateTimeLabel(ForumTopic topic)
         {
-            var lastMessage = topic.LastMessage;
+            var lastMessage = GetLastMessage(topic);
             if (lastMessage != null)
             {
                 if (topic.Info.IsClosed)

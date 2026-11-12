@@ -44,7 +44,7 @@
             <Setter Property="Padding"
                     Value="0,3,6,6" />
             <Setter Property="CornerRadius"
-                    Value="{ThemeResource ControlCornerRadius}" />
+                    Value="16" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -270,8 +270,20 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Border Canvas.ZIndex="1"
-                Grid.Row="1">
+        <!-- An island in the chat header's place, with its margin, height and shape. The card is a
+             sibling of TopPanel rather than its parent, so its corners do not clip the autocomplete
+             hanging below the field. -->
+        <Grid x:Name="Island"
+              Margin="8,8,8,0"
+              Canvas.ZIndex="1"
+              Grid.Row="1">
+            <Rectangle x:Name="IslandShadow"
+                       RadiusX="24"
+                       RadiusY="24" />
+            <Border x:Name="ClipperBackground"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                    CornerRadius="24" />
+
             <Grid x:Name="TopPanel"
                   Height="{StaticResource TelegramToolBarHeight}"
                   Background="Transparent">
@@ -305,32 +317,57 @@
                                              Style="{StaticResource Test}"
                                              Grid.ColumnSpan="3" />
 
-                    <Border x:Name="RootAutocomplete"
+                    <!-- Hangs below the field, tall enough for the tags and the list at its MaxHeight. -->
+                    <Border x:Name="AutocompleteSlot"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom"
-                            Height="320"
-                            Margin="0,0,0,-320"
+                            Height="400"
+                            Margin="0,0,0,-400"
                             Grid.ColumnSpan="3">
-                        <controls:TextListView x:Name="ListAutocomplete"
-                                               ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
-                                               ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
-                                               ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
-                                               Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                                               BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                                               BorderThickness="1,0,1,1"
-                                               CornerRadius="0,0,8,8"
-                                               AllowFocusOnInteraction="False"
-                                               IsItemClickEnabled="True"
-                                               SizeChanged="Autocomplete_SizeChanged"
-                                               ItemClick="Autocomplete_ItemClick"
-                                               ContainerContentChanging="OnContainerContentChanging"
-                                               VerticalAlignment="Top"
-                                               MaxHeight="320"
-                                               Grid.Row="3">
-                            <ListView.ItemContainerTransitions>
-                                <TransitionCollection />
-                            </ListView.ItemContainerTransitions>
-                        </controls:TextListView>
+                        <!-- Inherited: neither a tag nor a row may take focus from the field, whose losing it closes the card. -->
+                        <Grid x:Name="RootAutocomplete"
+                              Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                              BorderThickness="1,0,1,1"
+                              CornerRadius="0,0,16,16"
+                              AllowFocusOnInteraction="False"
+                              VerticalAlignment="Top">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid x:Name="TagsRoot"
+                                  Visibility="Collapsed">
+                                <Border x:Name="TagsDivider"
+                                        BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                        BorderThickness="0,0,0,1" />
+
+                                <ScrollViewer HorizontalScrollMode="Auto"
+                                              HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollMode="Disabled"
+                                              VerticalScrollBarVisibility="Disabled">
+                                    <messages:SavedMessagesTagsPanel x:Name="Tags"
+                                                                     Tag="{x:Bind ConvertTag(ViewModel.Dialog.SavedMessagesTags), Mode=OneWay}"
+                                                                     Margin="12" />
+                                </ScrollViewer>
+                            </Grid>
+
+                            <controls:TextListView x:Name="ListAutocomplete"
+                                                   ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
+                                                   ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                                                   ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
+                                                   IsItemClickEnabled="True"
+                                                   SizeChanged="Autocomplete_SizeChanged"
+                                                   ItemClick="Autocomplete_ItemClick"
+                                                   ContainerContentChanging="OnContainerContentChanging"
+                                                   VerticalAlignment="Top"
+                                                   MaxHeight="320"
+                                                   Grid.Row="1">
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection />
+                                </ListView.ItemContainerTransitions>
+                            </controls:TextListView>
+                        </Grid>
                     </Border>
 
                     <TextBlock x:Name="SelectedItemLabel"
@@ -375,7 +412,7 @@
                         FontSize="20"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                         BorderThickness="1,1,0,1"
-                        CornerRadius="4,0,0,4"
+                        CornerRadius="16,0,0,16"
                         Padding="4"
                         Height="32"
                         Margin="8,0,0,0" />
@@ -387,7 +424,7 @@
                         Content="&#xE0E5;"
                         FontSize="20"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        CornerRadius="0,4,4,0"
+                        CornerRadius="0,16,16,0"
                         Padding="4"
                         Height="32"
                         Margin="0,0,4,0"
@@ -409,6 +446,7 @@
                                           AutomationProperties.Name="{CustomResource AccDescrSearchByUser}"
                                           ToolTipService.ToolTip="{CustomResource AccDescrSearchByUser}"
                                           FontSize="{StaticResource GlyphMediumFontSize}"
+                                          CornerRadius="24"
                                           Margin="0,0,-4,0" />
                     <controls:GlyphButton Click="{x:Bind ViewModel.Dialog.JumpDate}"
                                           Glyph="&#xE787;"
@@ -416,35 +454,16 @@
                                           AutomationProperties.Name="{CustomResource JumpToDate}"
                                           ToolTipService.ToolTip="{CustomResource JumpToDate}"
                                           FontSize="{StaticResource GlyphMediumFontSize}"
+                                          CornerRadius="24"
                                           Margin="0,0,-4,0"
                                           Grid.Column="1" />
 
                     <controls:GlyphButton Click="Close_Click"
                                           Glyph="&#xE711;"
                                           AutomationProperties.Name="{CustomResource AccDescrCloseSearch}"
+                                          CornerRadius="24"
                                           Grid.Column="2" />
                 </Grid>
-            </Grid>
-        </Border>
-
-        <Grid x:Name="SecondaryRoot"
-              Grid.Row="2">
-            <Border x:Name="ClipperBackground"
-                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                    Margin="0,-48,0,0" />
-
-            <Grid x:Name="TagsRoot">
-                <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                        BorderThickness="0,0,0,1" />
-
-                <ScrollViewer HorizontalScrollMode="Auto"
-                              HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollMode="Disabled"
-                              VerticalScrollBarVisibility="Disabled">
-                    <messages:SavedMessagesTagsPanel x:Name="Tags"
-                                                     Tag="{x:Bind ConvertTag(ViewModel.Dialog.SavedMessagesTags), Mode=OneWay}"
-                                                     Margin="12" />
-                </ScrollViewer>
             </Grid>
         </Grid>
     </Grid>

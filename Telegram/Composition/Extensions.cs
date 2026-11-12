@@ -147,12 +147,69 @@ namespace Telegram.Composition
 
             if (freeze && surface.TryGetPartner(out var partner))
             {
+                // Component by component: the vector spelling came out <0, 0> on .NET Native in
+                // CompositionDustVisual, and freezing an empty surface throws.
+                var scale = (float)source.XamlRoot.RasterizationScale;
+
                 partner.SetStretch(CompositionStretch.Fill);
-                partner.SetRealizationSize(sourceSize * (float)source.XamlRoot.RasterizationScale);
+                partner.SetRealizationSize(new Vector2(sourceSize.X * scale, sourceSize.Y * scale));
                 partner.Freeze();
             }
 
             return surfaceBrush;
+        }
+
+        /// <summary>
+        /// A still copy of what <paramref name="source"/> shows now, which stays as it is while the
+        /// element changes. False where the platform cannot freeze a visual surface, or when the
+        /// element has no size yet.
+        /// </summary>
+        public static bool TryCreateFrozenVisual(this Compositor compositor, UIElement source, out SpriteVisual visual)
+        {
+            visual = null;
+
+            var size = source.ActualSize;
+            var scale = source.XamlRoot?.RasterizationScale ?? 0;
+
+            if (size.X < 1 || size.Y < 1 || scale < 1)
+            {
+                return false;
+            }
+
+            var surface = compositor.CreateVisualSurface();
+            surface.SourceVisual = ElementComposition.GetElementVisual(source);
+            surface.SourceOffset = Vector2.Zero;
+            surface.SourceSize = size;
+
+            if (!surface.TryGetPartner(out var partner))
+            {
+                surface.Dispose();
+                return false;
+            }
+
+            var factor = (float)scale;
+
+            partner.SetStretch(CompositionStretch.Fill);
+            partner.SetRealizationSize(new Vector2(size.X * factor, size.Y * factor));
+
+            // The .NET Native stub drops the setter's HRESULT, so a rejected size only shows on the
+            // way back - and Freeze throws on an empty surface.
+            var applied = partner.GetRealizationSize();
+            if (applied.X < 1 || applied.Y < 1)
+            {
+                surface.Dispose();
+                return false;
+            }
+
+            partner.Freeze();
+
+            var brush = compositor.CreateSurfaceBrush(surface);
+            brush.Stretch = CompositionStretch.Fill;
+
+            visual = compositor.CreateSpriteVisual();
+            visual.Brush = brush;
+            visual.Size = size;
+            return true;
         }
 
         public static CompositionBrush CreateRedirectBrush(this Compositor compositor, Visual source, Vector2 sourceOffset, Vector2 sourceSize)

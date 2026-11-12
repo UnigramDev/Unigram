@@ -543,10 +543,17 @@
 
         <Grid x:Name="Header"
               Height="{StaticResource NavigationViewTopPaneHeight}"
+              Margin="8,8,8,0"
               Grid.ColumnSpan="2"
               Canvas.ZIndex="3">
-            <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                    BorderThickness="0,0,0,1" />
+            <Rectangle x:Name="HeaderShadow"
+                       RadiusX="24"
+                       RadiusY="24" />
+            <Border Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                    BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                    BorderThickness="0"
+                    CornerRadius="24" />
+
             <Grid x:Name="HeaderLeft"
                   HorizontalAlignment="Left"
                   Padding="0,0,12,0"
@@ -559,7 +566,7 @@
                                      RenderTransformOrigin="0.5,0.5"
                                      Width="48"
                                      Height="48"
-                                     Margin="4,0,-8,0"
+                                     Margin="-4,0,-8,0"
                                      CornerRadius="20"
                                      Glyph="&#xe93e;">
                     <Button.RenderTransform>
@@ -649,7 +656,7 @@
                                     HorizontalContentAlignment="Stretch"
                                     VerticalContentAlignment="Stretch"
                                     BorderThickness="0"
-                                    CornerRadius="0"
+                                    CornerRadius="24"
                                     Padding="92,0,0,0">
                 <Grid Background="Transparent"
                       VerticalAlignment="Center"
@@ -721,6 +728,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid x:Name="SecondaryOptions">
                     <Grid.ColumnDefinitions>
@@ -732,9 +740,9 @@
                                           Visibility="Collapsed"
                                           Click="{x:Bind ViewModel.VideoCall}"
                                           Glyph="&#xE714;"
-                                          FontSize="20"
                                           AutomationProperties.Name="{CustomResource VideoCall}"
                                           ToolTipService.ToolTip="{CustomResource VideoCall}"
+                                          CornerRadius="20"
                                           Margin="0,0,-4,0" />
 
                     <controls:GlyphButton x:Name="Call"
@@ -743,6 +751,7 @@
                                           Glyph="&#xE717;"
                                           AutomationProperties.Name="{CustomResource Call}"
                                           ToolTipService.ToolTip="{CustomResource Call}"
+                                          CornerRadius="20"
                                           Margin="0,0,-4,0"
                                           Grid.Column="1" />
 
@@ -751,12 +760,26 @@
                                           Glyph="&#xE721;"
                                           AutomationProperties.Name="{CustomResource Search}"
                                           ToolTipService.ToolTip="{CustomResource Search}"
+                                          CornerRadius="20"
                                           Margin="0,0,-4,0"
                                           Grid.Column="2" />
 
                 </Grid>
+                <!-- Outside SecondaryOptions, which narrow windows hide, so an open sidebar can always be closed. -->
+                <controls:GlyphToggleButton x:Name="ForumSidebarButton"
+                                            Click="ForumSidebar_Click"
+                                            Glyph="&#xF7B8;"
+                                            CheckedGlyph="&#xF7B8;"
+                                            CheckedForeground="{ThemeResource MessageHeaderForegroundBrush}"
+                                            IsOneWay="False"
+                                            Visibility="Collapsed"
+                                            AutomationProperties.Name="{CustomResource Topics}"
+                                            ToolTipService.ToolTip="{CustomResource Topics}"
+                                            Margin="0,0,-4,0"
+                                            Grid.Column="1" />
                 <controls:MoreButton Click="Menu_ContextRequested"
-                                     Grid.Column="1" />
+                                     CornerRadius="20"
+                                     Grid.Column="2" />
             </Grid>
         </Grid>
 
@@ -770,12 +793,13 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition x:Name="KeyboardPlaceholder"
                                Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Padding="0,0,0,8"
                   VerticalAlignment="Bottom"
-                  Grid.RowSpan="4">
+                  Grid.RowSpan="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="Show" />
                     <ColumnDefinition x:Name="Hide"
@@ -787,7 +811,10 @@
 
             <controls:SlidePanel x:Name="ClipperOuter"
                                  SizeChanged="ClipperOuter_SizeChanged"
+                                 CardBackground="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                 CardCornerRadius="16"
                                  VerticalAlignment="Top"
+                                 Margin="8,0"
                                  Canvas.ZIndex="2"
                                  Grid.Row="2">
                 <Border x:Name="ClipperOuterPadding" />
@@ -802,9 +829,6 @@
                 <chats:ChatActionBarView x:Name="ActionBar"
                                          Visibility="Collapsed"
                                          Canvas.ZIndex="1" />
-                <chats:ChatTranslateBar x:Name="TranslateHeader"
-                                        Visibility="Collapsed"
-                                        Canvas.ZIndex="1" />
                 <chats:ChatConnectedBotHeader x:Name="ConnectedBot"
                                               Visibility="Collapsed"
                                               Canvas.ZIndex="1" />
@@ -812,10 +836,16 @@
                                          Click="Reply_Click"
                                          Visibility="Collapsed"
                                          Canvas.ZIndex="1" />
+                <chats:ChatTranslateBar x:Name="TranslateHeader"
+                                        Visibility="Collapsed"
+                                        Canvas.ZIndex="1" />
 
                 <chats:ChatAccountInfoHeader x:Name="AccountInfoHeader"
                                              Visibility="Collapsed"
                                              Canvas.ZIndex="1" />
+                <chats:ChatSponsoredHeader x:Name="Sponsored"
+                                           Visibility="Collapsed"
+                                           Canvas.ZIndex="1" />
 
                 <Grid x:Name="Clipper">
                     <Grid.RowDefinitions>
@@ -830,12 +860,12 @@
                             40: join request
                             32: translate
                             -->
-                    <Border x:Name="ClipperBackground"
-                            Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                            Margin="-64,-248,0,0" />
-
-                    <chats:ChatSponsoredHeader x:Name="Sponsored"
-                                               Visibility="Collapsed" />
+                    <Border x:Name="ClipperScrim">
+                        <Border.Background>
+                            <media:LinearGaussianBrush StartPoint="0,1"
+                                                       EndPoint="0,0" />
+                        </Border.Background>
+                    </Border>
                 </Grid>
 
                 <StackPanel x:Name="DateHeaderRelative"
@@ -1196,7 +1226,7 @@
                     Height="64"
                     Margin="0,-8,0,0"
                     VerticalAlignment="Bottom"
-                    Grid.Row="3"
+                    Grid.Row="4"
                     Grid.RowSpan="2">
                 <Border.Background>
                     <media:LinearGaussianBrush />
@@ -1211,7 +1241,7 @@
                           HorizontalScrollMode="Disabled"
                           Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                           Visibility="Collapsed"
-                          Grid.Row="4">
+                          Grid.Row="5">
                 <controls:ReplyMarkupPanel x:Name="ReplyMarkup"
                                            AllowFocusOnInteraction="False"
                                            ButtonClick="ReplyMarkup_ButtonClick"
@@ -1224,15 +1254,15 @@
                                    MaxWidth="664"
                                    Canvas.ZIndex="3"
                                    Grid.Row="2"
-                                   Grid.RowSpan="2" />
+                                   Grid.RowSpan="3" />
 
             <!-- Input pane -->
             <Border x:Name="Separator"
                     Margin="12,0"
-                    Grid.Row="3" />
+                    Grid.Row="4" />
 
             <Grid x:Name="Footer"
-                  Grid.Row="3">
+                  Grid.Row="4">
                 <Rectangle x:Name="ShadowCaster"
                            RadiusX="24"
                            RadiusY="24" />
@@ -1685,34 +1715,40 @@
             </Grid>
         </Grid>
 
-        <controls:GlyphToggleButton x:Name="ForumModeButton"
-                                    Click="ForumMode_Click"
-                                    Glyph="&#xEAB5;"
-                                    CheckedGlyph="&#xEAB5;"
-                                    CheckedForeground="{ThemeResource MessageHeaderForegroundBrush}"
-                                    IsOneWay="False"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Width="72"
-                                    Height="40"
-                                    Visibility="Collapsed"
-                                    Grid.Row="1"
-                                    Grid.RowSpan="2"
-                                    Grid.ColumnSpan="2"
-                                    Canvas.ZIndex="1" />
-
+        <!-- The tabs on every edge. Bottom moves it into RootGrid's row between the messages and the composer. -->
         <views:ForumView x:Name="ForumNavigation"
                          ItemClick="ForumNavigation_ItemClick"
+                         ModeClick="ForumMode_Click"
                          HorizontalAlignment="Left"
                          Visibility="Collapsed"
-                         Grid.Row="1"
-                         Grid.RowSpan="2" />
-
-        <views:ForumView x:Name="ForumNavigationHorizontal"
-                         ItemClick="ForumNavigation_ItemClick"
-                         Visibility="Collapsed"
-                         Grid.ColumnSpan="2"
                          Grid.Row="1" />
+
+        <!-- Holds the frozen copy of the tabs leaving one edge while the live ones enter another. -->
+        <Border x:Name="ForumSnapshotHost"
+                IsHitTestVisible="False"
+                Grid.Row="1"
+                Grid.RowSpan="2"
+                Grid.ColumnSpan="2" />
+
+        <Border x:Name="ForumSidebarSmoke"
+                x:Load="False"
+                Background="{ThemeResource SmokeFillColorDefaultBrush}"
+                Tapped="ForumSidebarSmoke_Tapped"
+                Visibility="Collapsed"
+                AutomationProperties.AccessibilityView="Raw"
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="2"
+                Canvas.ZIndex="4" />
+
+        <views:ForumView x:Name="ForumSidebar"
+                         x:Load="False"
+                         ItemClick="ForumNavigation_ItemClick"
+                         BackRequested="ForumSidebar_BackRequested"
+                         HorizontalAlignment="Right"
+                         Visibility="Collapsed"
+                         Grid.RowSpan="3"
+                         Grid.Column="1"
+                         Canvas.ZIndex="4" />
 
         <chats:ChatSearchBar x:Name="SearchMask"
                              Visibility="Collapsed"

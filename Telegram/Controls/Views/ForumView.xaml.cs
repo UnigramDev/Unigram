@@ -28,7 +28,9 @@ namespace Telegram.Controls.Views
     {
         List,
         Vertical,
-        Horizontal
+        Horizontal,
+        Bottom,
+        Sidebar
     }
 
     public partial record ForumViewItemClickEventArgs(object ClickedItem, bool FromSelection);
@@ -59,69 +61,104 @@ namespace Telegram.Controls.Views
 
         private ForumViewType _type;
 
+        private ThemeShadowEx _islandShadow;
+
+        /// <summary>
+        /// Lays the view out as <paramref name="type"/>. Vertical, Horizontal and Bottom can be
+        /// switched between on a live view once its <see cref="ViewModel"/> is cleared, so no
+        /// container realized for one layout survives into the other.
+        /// </summary>
         public void UpdateType(ForumViewType type)
         {
             _type = type;
+            _itemToSelector.Clear();
+
+            var horizontal = IsHorizontal;
 
             ScrollingHost.ItemTemplate = type switch
             {
                 ForumViewType.Vertical => VerticalTemplate,
-                ForumViewType.Horizontal => HorizontalTemplate,
+                ForumViewType.Horizontal or ForumViewType.Bottom => HorizontalTemplate,
                 _ => ListTemplate
             };
 
             ScrollingHost.ItemsPanel = type switch
             {
                 ForumViewType.Vertical => VerticalPanelTemplate,
-                ForumViewType.Horizontal => HorizontalPanelTemplate,
+                ForumViewType.Horizontal or ForumViewType.Bottom => HorizontalPanelTemplate,
                 _ => ListPanelTemplate
             };
 
-            ScrollingHost.Orientation = type == ForumViewType.Horizontal ? Orientation.Horizontal : Orientation.Vertical;
+            ScrollingHost.Orientation = horizontal ? Orientation.Horizontal : Orientation.Vertical;
+
+            // Docked on any edge, the tabs are a card of their own.
+            var island = type is ForumViewType.Vertical or ForumViewType.Horizontal or ForumViewType.Bottom;
+            if (island && IslandBackgroundRoot == null)
+            {
+                FindName(nameof(IslandShadow));
+                FindName(nameof(IslandBackgroundRoot));
+                _islandShadow = new ThemeShadowEx(IslandShadow, Constants.BubbleElevation);
+            }
+
+            IslandShadow?.Visibility = island ? Visibility.Visible : Visibility.Collapsed;
+            IslandBackgroundRoot?.Visibility = island ? Visibility.Visible : Visibility.Collapsed;
+
+            if (island)
+            {
+                if (ModeButton == null)
+                {
+                    FindName(nameof(ModeButton));
+                }
+
+                // The edge a click moves the tabs to.
+                ModeButton.Glyph = type switch
+                {
+                    ForumViewType.Vertical => Icons.PanelBottomText,
+                    ForumViewType.Bottom => Icons.PanelTopText,
+                    _ => Icons.PanelLeftText
+                };
+
+                ModeButton.Width = horizontal ? 40 : 72;
+                ModeButton.Height = 32;
+            }
+
+            ModeButton?.Visibility = island ? Visibility.Visible : Visibility.Collapsed;
 
             if (type == ForumViewType.Vertical)
             {
-                ScrollingHost.Margin = new Thickness(0, 40, 0, 0);
+                ScrollingHost.Margin = new Thickness(0, 32, 0, 0);
 
                 BackgroundRoot.Visibility = Visibility.Collapsed;
-                VerticalBackgroundRoot.Visibility = Visibility.Visible;
                 Header.Visibility = Visibility.Collapsed;
 
                 Width = 72;
+                Height = double.NaN;
             }
-            else if (type == ForumViewType.Horizontal)
+            else if (horizontal)
             {
-                ScrollingHost.Margin = new Thickness(72, 0, 0, 0);
+                ScrollingHost.Margin = new Thickness(40, 0, 0, 0);
 
-                BackgroundRoot.Background = null;
-                BackgroundRoot.CornerRadius = new CornerRadius(0);
-                BackgroundRoot.BorderThickness = new Thickness(0, 0, 0, 1);
+                BackgroundRoot.Visibility = Visibility.Collapsed;
                 Header.Visibility = Visibility.Collapsed;
 
-                Height = 40;
+                Width = double.NaN;
+                Height = 32;
+            }
+            else if (type == ForumViewType.Sidebar)
+            {
+                // The card's brush is translucent and needs the window's backdrop behind it,
+                // which a view floating over a chat does not have.
+                FindName(nameof(DrawerBackgroundRoot));
+                BackgroundRoot.Visibility = Visibility.Collapsed;
             }
 
-            ScrollViewer.SetHorizontalScrollBarVisibility(ScrollingHost, type == ForumViewType.Horizontal ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Disabled);
-            ScrollViewer.SetHorizontalScrollMode(ScrollingHost, type == ForumViewType.Horizontal ? ScrollMode.Auto : ScrollMode.Disabled);
+            ScrollViewer.SetHorizontalScrollBarVisibility(ScrollingHost, horizontal ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Disabled);
+            ScrollViewer.SetHorizontalScrollMode(ScrollingHost, horizontal ? ScrollMode.Auto : ScrollMode.Disabled);
             ScrollViewer.SetVerticalScrollBarVisibility(ScrollingHost, type == ForumViewType.Vertical ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Auto);
-            ScrollViewer.SetVerticalScrollMode(ScrollingHost, type == ForumViewType.Horizontal ? ScrollMode.Disabled : ScrollMode.Auto);
+            ScrollViewer.SetVerticalScrollMode(ScrollingHost, horizontal ? ScrollMode.Disabled : ScrollMode.Auto);
         }
 
-        public void AnimateWidth(bool collapse, TimeSpan duration)
-        {
-            var visual = ElementComposition.GetElementVisual(BackgroundRoot);
-            visual.Clip ??= visual.Compositor.CreateInsetClip();
-
-            var inset = _type == ForumViewType.Horizontal ? 72 : 40;
-            var property = _type == ForumViewType.Horizontal ? "LeftInset" : "TopInset";
-
-            var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
-            animation.InsertKeyFrame(collapse ? 1 : 0, inset);
-            animation.InsertKeyFrame(collapse ? 0 : 1, 0);
-            animation.Duration = duration;
-
-            visual.Clip.StartAnimation(property, animation);
-        }
+        private bool IsHorizontal => _type is ForumViewType.Horizontal or ForumViewType.Bottom;
 
         public void Scroll(int offset, bool navigate)
         {
@@ -229,7 +266,8 @@ namespace Telegram.Controls.Views
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            if (args.ItemContainer == null)
+            // A recycled container keeps the template and style of the layout it was made for.
+            if (args.ItemContainer == null || args.ItemContainer.ContentTemplate != sender.ItemTemplate)
             {
                 if (_type == ForumViewType.Vertical)
                 {
@@ -240,7 +278,7 @@ namespace Telegram.Controls.Views
                         MinHeight = 0
                     };
                 }
-                else if (_type == ForumViewType.Horizontal)
+                else if (IsHorizontal)
                 {
                     args.ItemContainer = new TopNavViewItem
                     {
@@ -504,7 +542,8 @@ namespace Telegram.Controls.Views
                     return;
                 }
 
-                var first = _type == ForumViewType.List ? 0 : 1;
+                // Skips the "All" entry, which every list but the chat list's opens with.
+                var first = ViewModel.IsChatList ? 0 : 1;
 
                 var index = items.IndexOf(topic);
                 var compare = items[index > first ? index - 1 : index + 1];
@@ -651,8 +690,30 @@ namespace Telegram.Controls.Views
             ItemClick?.Invoke(this, new ForumViewItemClickEventArgs(e.ClickedItem, true));
         }
 
+        /// <summary>
+        /// Raised by the back button instead of closing the chat list's topic list, for a view
+        /// hosted anywhere else.
+        /// </summary>
+        public event EventHandler BackRequested;
+
+        /// <summary>
+        /// Raised when the button that moves docked tabs to the next edge is clicked.
+        /// </summary>
+        public event RoutedEventHandler ModeClick;
+
+        private void ModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            ModeClick?.Invoke(this, e);
+        }
+
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
+            if (BackRequested != null)
+            {
+                BackRequested(this, EventArgs.Empty);
+                return;
+            }
+
             var mainPage = this.GetParent<MainPage>();
             mainPage?.HideTopicList();
         }

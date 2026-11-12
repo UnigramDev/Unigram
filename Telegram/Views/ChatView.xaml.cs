@@ -132,6 +132,9 @@ namespace Telegram.Views
 
         private bool _needActivation = true;
 
+        private readonly ThemeShadowEx _headerShadow;
+        private readonly ThemeShadowEx _footerShadow;
+
         public ChatView()
         {
             InitializeComponent();
@@ -294,10 +297,32 @@ namespace Telegram.Views
             {
                 _shadow = new ThemeShadow();
 
-                ShadowCaster.Shadow = _shadow;
-                ShadowCaster.Translation = new Vector3(0, 0, Constants.BubbleElevation);
+                //ShadowCaster.Shadow = _shadow;
+                //ShadowCaster.Translation = new Vector3(0, 0, Constants.BubbleElevation);
             }
+
+            _footerShadow = new ThemeShadowEx(ShadowCaster, Constants.BubbleElevation);
+            _headerShadow = new ThemeShadowEx(HeaderShadow, Constants.BubbleElevation);
+
+            ClipperOuter.LeadingSpacing = IslandSpacing;
+
+            // The forum tabs, the banner and search all move the headers, and they can overlap, so
+            // each animates its own share here and the panel takes the sum.
+            var compositor = BootStrapper.Current.Compositor;
+
+            _clipperTranslation = compositor.CreatePropertySet();
+            _clipperTranslation.InsertVector3("Forum", Vector3.Zero);
+            _clipperTranslation.InsertScalar("Banner", 0);
+            _clipperTranslation.InsertScalar("Search", 0);
+
+            var clipperTranslation = compositor.CreateExpressionAnimation("Vector3(p.Forum.X, p.Forum.Y + p.Banner + p.Search, 0)");
+            clipperTranslation.SetReferenceParameter("p", _clipperTranslation);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(ClipperOuter, true);
+            ElementComposition.GetElementVisual(ClipperOuter).StartAnimation("Translation", clipperTranslation);
         }
+
+        private readonly CompositionPropertySet _clipperTranslation;
 
         ~ChatView()
         {
@@ -332,7 +357,6 @@ namespace Telegram.Views
 
         private void OnNavigatedTo()
         {
-            SearchMask.InitializeParent(Header, ClipperOuter, DateHeaderRelative);
             GroupCall.InitializeParent(this);
             JoinRequests.InitializeParent(this);
             TranslateHeader.InitializeParent(this);
@@ -393,13 +417,11 @@ namespace Telegram.Views
             else
             {
                 var header = ElementComposition.GetElementVisual(Header);
-                var clipper = ElementComposition.GetElementVisual(ClipperOuter);
 
                 ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
-                ElementCompositionPreview.SetIsTranslationEnabled(ClipperOuter, true);
 
                 header.StartAnimation("Translation.Y", translate);
-                clipper.StartAnimation("Translation.Y", translate);
+                _clipperTranslation.StartAnimation("Banner", translate);
             }
         }
 
@@ -416,10 +438,9 @@ namespace Telegram.Views
             else
             {
                 var header = ElementComposition.GetElementVisual(Header);
-                var clipper = ElementComposition.GetElementVisual(ClipperOuter);
 
                 header.Properties.InsertVector3("Translation", Vector3.Zero);
-                clipper.Properties.InsertVector3("Translation", Vector3.Zero);
+                _clipperTranslation.InsertScalar("Banner", 0);
             }
         }
 
@@ -800,6 +821,10 @@ namespace Telegram.Views
             CheckMessageBoxEmpty();
 
             SearchMask?.Update(ViewModel.Search);
+
+            // A chat opened again comes with a new view model, which has none of the last one's
+            // search and raises no change for it.
+            ShowHideSearch(ViewModel.Search != null, false);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
             ViewModel.Items.AttachChanged = OnAttachChanged;
@@ -1226,12 +1251,13 @@ namespace Telegram.Views
             else if (e.PropertyName.Equals(nameof(ViewModel.Search)))
             {
                 SearchMask.Update(ViewModel.Search);
+                ShowHideSearch(ViewModel.Search != null, true);
 
-                if (_forumCollapsed == ForumViewType.Horizontal && ViewModel.Search != null)
+                if (_forumPlacement == ForumPlacement.Top && ViewModel.Search != null)
                 {
-                    ShowHideForumTopics(ForumViewType.List);
+                    ShowHideForumTopics(ForumPlacement.None);
                 }
-                else if (_forumCollapsed == ForumViewType.List && ViewModel.Search == null)
+                else if (_forumPlacement == ForumPlacement.None && ViewModel.Search == null)
                 {
                     UpdateForumTopics(ViewModel.Chat);
                 }
@@ -1328,6 +1354,16 @@ namespace Telegram.Views
             ViewVisibleMessages();
 
             TrySetFocusState(FocusState.Programmatic, true);
+
+            //var control = FindBackgroundControl();
+            //if (control == null)
+            //{
+            //    return;
+            //}
+
+            //var visual = ElementComposition.GetElementVisual(control);
+            //var top = visual.Compositor.CreateRedirectVisual(control, Vector2.Zero, Vector2.Zero);
+            //top.sourc
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -1436,7 +1472,6 @@ namespace Telegram.Views
             ActionBar = null;
             TranslateHeader = null;
             Clipper = null;
-            ClipperBackground = null;
             PinnedMessage = null;
             DateHeaderRelative = null;
             DateHeaderPanel = null;
@@ -1804,6 +1839,13 @@ namespace Telegram.Views
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
+            if (_forumSidebarOpen)
+            {
+                CloseForumSidebar();
+                args.Handled = true;
+                return;
+            }
+
             if (args.Key != VirtualKey.Escape)
             {
                 if (ViewModel.IsSelectionEnabled)
@@ -1843,7 +1885,7 @@ namespace Telegram.Views
                     args.Handled = true;
                 }
 
-                if (ViewModel.TopicId != null && _forumCollapsed != ForumViewType.List)
+                if (ViewModel.TopicId != null && _forumPlacement != ForumPlacement.None)
                 {
                     ViewModel.NavigationService.NavigateToChat(ViewModel.Chat, force: false);
                     args.Handled = true;
@@ -2655,23 +2697,11 @@ namespace Telegram.Views
 
             textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
 
-            if (messages.Clip is InsetClip messagesClip)
-            {
-                messagesClip.LeftInset = -72;
-                messagesClip.TopInset = -44 + value;
-                messagesClip.BottomInset = int.MinValue;
-            }
-            else
-            {
-                messages.Clip = textArea.Compositor.CreateInsetClip(-72, -44 + value, 0, int.MinValue);
-            }
-
             var batch = composer.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 textArea.Clip = null;
                 composer.Clip = null;
-                //messages.Clip = null;
                 composer.Offset = new Vector3();
                 messages.Offset = new Vector3();
 
@@ -2691,11 +2721,6 @@ namespace Telegram.Views
 
                 UpdateTextAreaRadius();
             };
-
-            var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
-            animClip2.InsertKeyFrame(0, show ? -44 : -44 + value);
-            animClip2.InsertKeyFrame(1, show ? -44 + value : -44);
-            animClip2.Duration = Constants.FastAnimation;
 
             var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
             animClip3.InsertKeyFrame(0, new Vector2(0, show ? value : 0));
@@ -2718,8 +2743,6 @@ namespace Telegram.Views
             fade2.Duration = Constants.FastAnimation;
 
             rect.StartAnimation("Offset", animClip3);
-
-            messages.Clip.StartAnimation("TopInset", animClip2);
             messages.StartAnimation("Offset", anim1);
 
             textMain.StartAnimation("Opacity", fade1);
@@ -2798,7 +2821,7 @@ namespace Telegram.Views
             {
                 flyout.CreateFlyoutItem(ViewModel.Report, Strings.ReportChat, Icons.ErrorCircle);
             }
-            if (supergroup != null && supergroup.IsForum && !chat.ViewAsTopics && (ViewModel.Type == DialogType.History && !supergroup.HasForumTabs))
+            if (supergroup != null && supergroup.IsForum && !chat.ViewAsTopics && (ViewModel.Type == DialogType.History && !supergroup.HasForumTabs && !supergroup.HasForumSidebar))
             {
                 flyout.CreateFlyoutItem(ViewModel.ViewAsTopics, Strings.TopicViewAsTopics, Icons.ChatEmpty);
 
@@ -5773,43 +5796,112 @@ namespace Telegram.Views
                 RemoveMessageEffect();
             }
 
+            _forumSidebarOpen = false;
             UpdateForumTopics(chat);
         }
 
         private void UpdateForumTopics(Chat chat)
         {
-            if (ViewModel.Type is DialogType.History or DialogType.Thread && chat.HasForumTabs(ViewModel.ClientService, out bool forum))
+            var layout = ForumLayout.None;
+            var forum = false;
+
+            if (ViewModel.Type is DialogType.History or DialogType.Thread)
             {
-                if (_forumViewModel == null || _forumViewModel.IsForum != forum)
+                layout = chat.GetForumLayout(ViewModel.ClientService, out forum);
+            }
+
+            ForumSidebarButton.Visibility = layout == ForumLayout.Sidebar
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            var placement = layout switch
+            {
+                ForumLayout.Tabs => ToPlacement(AppSettings.ForumTabsPosition),
+                ForumLayout.Sidebar when _forumSidebarOpen => ForumPlacement.Sidebar,
+                _ => ForumPlacement.None
+            };
+
+            if (placement == ForumPlacement.None)
+            {
+                ShowHideForumTopics(ForumPlacement.None);
+                return;
+            }
+
+            if (_forumViewModel == null || _forumViewModel.IsForum != forum)
+            {
+                _forumViewModel = new TopicListViewModel(ViewModel.ClientService, ViewModel.Settings, ViewModel.Aggregator, null, false, forum);
+                _forumViewModel.NavigationService = ViewModel.NavigationService;
+                _forumViewModel.Dispatcher = ViewModel.Dispatcher;
+
+                // ShowHideForumTopics only hands the model over when the placement changes.
+                if (_forumPlacement == placement)
                 {
-                    _forumViewModel = new TopicListViewModel(ViewModel.ClientService, ViewModel.Settings, ViewModel.Aggregator, null, false, forum);
-                    _forumViewModel.NavigationService = ViewModel.NavigationService;
-                    _forumViewModel.Dispatcher = ViewModel.Dispatcher;
-
-                    ForumNavigation.UpdateType(ForumViewType.Vertical);
-                    ForumNavigationHorizontal.UpdateType(ForumViewType.Horizontal);
-
-                    if (_forumCollapsed == ForumViewType.Vertical)
-                    {
-                        _forumViewModel.Delegate = ForumNavigation;
-                        ForumNavigation.ViewModel = _forumViewModel;
-                    }
-                    else if (_forumCollapsed == ForumViewType.Horizontal)
-                    {
-                        _forumViewModel.Delegate = ForumNavigationHorizontal;
-                        ForumNavigationHorizontal.ViewModel = _forumViewModel;
-                    }
+                    var view = placement == ForumPlacement.Sidebar ? ForumSidebar : ForumNavigation;
+                    _forumViewModel.Delegate = view;
+                    view.ViewModel = _forumViewModel;
                 }
+            }
 
-                _forumViewModel.SetChat(chat);
-                _forumViewModel.SelectedItem = ViewModel.TopicId;
-                _forumViewModel.Delegate?.SetSelectedItem(_forumViewModel.Items.GetItem(ViewModel.TopicId));
+            _forumViewModel.SetChat(chat);
+            _forumViewModel.SelectedItem = ViewModel.TopicId;
+            _forumViewModel.Delegate?.SetSelectedItem(_forumViewModel.Items.GetItem(ViewModel.TopicId));
 
-                ShowHideForumTopics(AppSettings.UseLeftTabsForForums ? ForumViewType.Vertical : ForumViewType.Horizontal);
+            ShowHideForumTopics(placement);
+        }
+
+        private bool _searchShown;
+
+        // The search bar is an island in the header's place, so the header fades out under it and
+        // the headers below fade as they go up behind it.
+        private void ShowHideSearch(bool show, bool animate)
+        {
+            if (_searchShown == show)
+            {
+                return;
+            }
+
+            _searchShown = show;
+
+            Header.IsHitTestVisible = !show;
+            ClipperOuter.IsHitTestVisible = !show;
+
+            var header = ElementComposition.GetElementVisual(Header);
+            var clipper = ElementComposition.GetElementVisual(ClipperOuter);
+            var compositor = clipper.Compositor;
+
+            // The top tabs leave with search on their own animation, and take their padding with
+            // them, so it is no part of this one.
+            var height = ClipperOuter.ActualSize.Y - DateHeaderRelative.ActualSize.Y - ClipperOuterPadding.ActualSize.Y
+                + (ClipperOuter.IsEmpty ? 0 : (float)ClipperOuter.LeadingSpacing);
+
+            var offset = show ? -height : 0;
+            var opacity = show ? 0 : 1;
+
+            if (animate)
+            {
+                // From wherever an interrupted transition left them.
+                var slide = compositor.CreateScalarKeyFrameAnimation();
+                slide.InsertKeyFrame(1, offset);
+                slide.Duration = Constants.FastAnimation;
+
+                var fade = compositor.CreateScalarKeyFrameAnimation();
+                fade.InsertKeyFrame(1, opacity);
+                fade.Duration = Constants.FastAnimation;
+
+                _clipperTranslation.StartAnimation("Search", slide);
+                header.StartAnimation("Opacity", fade);
+                clipper.StartAnimation("Opacity", fade);
             }
             else
             {
-                ShowHideForumTopics(ForumViewType.List);
+                _clipperTranslation.StopAnimation("Search");
+                _clipperTranslation.InsertScalar("Search", offset);
+
+                header.StopAnimation("Opacity");
+                header.Opacity = opacity;
+
+                clipper.StopAnimation("Opacity");
+                clipper.Opacity = opacity;
             }
         }
 
@@ -6587,12 +6679,11 @@ namespace Telegram.Views
             ComposerHeader.Visibility = Visibility.Visible;
 
             var composer = ElementComposition.GetElementVisual(ComposerHeader);
-            var messages = ElementComposition.GetElementVisual(Messages);
             var messagesRoot = ElementComposition.GetElementVisual(MessagesRoot);
             var textArea = ElementComposition.GetElementVisual(TextArea);
 
             var value = show ? 48 : 0;
-            var width = Math.Max(0, TextAreaRadius > 0 ? ActualSize.X - 24 : ActualSize.X);
+            var width = Math.Max(0, TextAreaRadius > 0 ? ActualSize.X - 16 : ActualSize.X);
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
             rect.CornerRadius = new Vector2(AppSettings.Appearance.CornerRadius);
@@ -6600,17 +6691,6 @@ namespace Telegram.Views
             rect.Offset = new Vector2(0, value);
 
             textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
-
-            if (messages.Clip is InsetClip messagesClip)
-            {
-                messagesClip.LeftInset = -72;
-                messagesClip.TopInset = -44 + value;
-                messagesClip.BottomInset = int.MinValue;
-            }
-            else
-            {
-                messages.Clip = textArea.Compositor.CreateInsetClip(-72, -44 + value, 0, int.MinValue);
-            }
 
             composer.Clip = textArea.Compositor.CreateInsetClip(0, 0, 0, value);
 
@@ -6627,7 +6707,6 @@ namespace Telegram.Views
             {
                 textArea.Clip = null;
                 composer.Clip = null;
-                //messages.Clip = null;
                 composer.Offset = new Vector3();
                 messagesRoot.Properties.InsertVector3("Translation", Vector3.Zero);
 
@@ -6657,16 +6736,10 @@ namespace Telegram.Views
             animClip.InsertKeyFrame(1, show ? 0 : 48);
             animClip.Duration = Constants.FastAnimation;
 
-            var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
-            animClip2.InsertKeyFrame(0, show ? -44 : -44 + 48);
-            animClip2.InsertKeyFrame(1, show ? -44 + 48 : -44);
-            animClip2.Duration = Constants.FastAnimation;
-
             rect.StartAnimation("Offset.Y", animClip);
 
             if (!sendout)
             {
-                messages.Clip.StartAnimation("TopInset", animClip2);
                 messagesRoot.StartAnimation("Translation.Y", animClip);
             }
 
@@ -6903,10 +6976,10 @@ namespace Telegram.Views
             {
                 Footer.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth =
                     AppSettings.IsAdaptiveWideEnabled ? 1000 : double.PositiveInfinity;
-                Footer.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
-                InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
+                Footer.Margin = Separator.Margin = new Thickness(8, 0, 8, 8);
+                InlinePanel.Margin = new Thickness(8, 0, 8, -radius);
                 InlineShadow.Margin = new Thickness(0, 0, 0, -radius);
-                ReplyMarkupPanel.Margin = new Thickness(12, -8 - radius, 12, 8);
+                ReplyMarkupPanel.Margin = new Thickness(8, -8 - radius, 8, 8);
             }
             else
             {
@@ -6929,18 +7002,6 @@ namespace Telegram.Views
             else
             {
                 stickyPhoto.Clip = stickyPhoto.Compositor.CreateInsetClip(0, 0, 0, -radius);
-            }
-
-            var messages = ElementComposition.GetElementVisual(Messages);
-            if (messages.Clip is InsetClip messagesClip)
-            {
-                messagesClip.LeftInset = -72;
-                messagesClip.TopInset = -44;
-                messagesClip.BottomInset = int.MinValue;
-            }
-            else
-            {
-                messages.Clip = messages.Compositor.CreateInsetClip(-72, -44, 0, int.MinValue);
             }
         }
 
@@ -7849,10 +7910,9 @@ namespace Telegram.Views
 
         private void ClipperOuter_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var width = ForumNavigation.ActualWidth;
             var height = e.NewSize.Height - DateHeaderRelative.ActualHeight;
 
-            ClipperBackground.Margin = new Thickness(-width, -height - 48, -72, 0);
+            ClipperScrim.Margin = new Thickness(-8, -height - 64, -8, -8);
             //UpdateMessagesHeaderPadding();
         }
 
@@ -7911,7 +7971,8 @@ namespace Telegram.Views
             + PinnedMessage.AnimatedHeight
             + AccountInfoHeader.AnimatedHeight
             + Sponsored.AnimatedHeight
-            + (_forumCollapsed == ForumViewType.Horizontal ? 40 : 0)
+            + (_forumPlacement == ForumPlacement.Top ? ForumIslandHeight : 0)
+            + (ClipperOuter.IsEmpty ? 0 : (float)ClipperOuter.LeadingSpacing)
             : 0;
 
         public bool HasMessagesPadding => _messagesHeaderRootPadding > 0;
@@ -7990,26 +8051,18 @@ namespace Telegram.Views
                 if (animate)
                 {
                     var visual = ElementComposition.GetElementVisual(MessagesRoot);
-                    visual.Clip = visual.Compositor.CreateInsetClip(0, -padding, 0, int.MinValue);
 
                     var offset = visual.Compositor.CreateScalarKeyFrameAnimation();
                     offset.InsertKeyFrame(0, diff);
                     offset.InsertKeyFrame(1, 0);
                     offset.Duration = Constants.FastAnimation;
 
-                    //var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
-                    //clip.InsertKeyFrame(0, -32);
-                    //clip.InsertKeyFrame(1, -32 + padding);
-                    //clip.Duration = Constants.FastAnimation;
-
                     visual.StartAnimation("Translation.Y", offset);
-                    //visual.Clip.StartAnimation("BottomInset", clip);
                 }
                 else
                 {
                     ElementCompositionPreview.SetIsTranslationEnabled(MessagesRoot, true);
                     var visual = ElementComposition.GetElementVisual(MessagesRoot);
-                    visual.Clip = visual.Compositor.CreateInsetClip(0, -padding, 0, int.MinValue);
                     visual.Properties.InsertVector3("Translation", Vector3.Zero);
                 }
             }
@@ -8063,201 +8116,280 @@ namespace Telegram.Views
             ViewModel.NavigationService.NavigateToChat(message.Chat, topic: message.TopicId, force: false);
         }
 
+        private enum ForumPlacement
+        {
+            None,
+            Top,
+            Left,
+            Bottom,
+            Sidebar
+        }
+
+        // Between two islands: the header, the headers under it, the forum tabs and the composer.
+        private const float IslandSpacing = 6;
+
+        // Between an island and the side of the chat it rests against.
+        private const float IslandMargin = 8;
+
+        private const float ForumTabsHeight = 32;
+        private const float ForumTabsWidth = 72;
+        private const float ForumSidebarWidth = 320;
+
+        // What the top or bottom tabs take from the messages: the island and the gap beside it.
+        private const float ForumIslandHeight = ForumTabsHeight + IslandSpacing;
+
+        // Where the left card ends, which is where the messages start.
+        private const float ForumLeftWidth = IslandMargin + ForumTabsWidth;
+
+        // How far the headers move aside for the left card: its width and the gap after it, as both
+        // already sit IslandMargin from the side.
+        private const float ForumLeftInset = ForumTabsWidth + IslandSpacing;
+
+        private ForumPlacement _forumPlacement;
+
+        // The edge ForumNavigation is laid out for. It outlives the placement, because hidden tabs
+        // keep their layout until they are shown on another edge.
+        private ForumPlacement _forumDockedAt;
+
+        private SpriteVisual _forumSnapshot;
+
+        private static bool IsDocked(ForumPlacement placement)
+        {
+            return placement is ForumPlacement.Top or ForumPlacement.Left or ForumPlacement.Bottom;
+        }
+
+        private static ForumPlacement ToPlacement(ForumTabsPosition position)
+        {
+            return position switch
+            {
+                ForumTabsPosition.Left => ForumPlacement.Left,
+                ForumTabsPosition.Bottom => ForumPlacement.Bottom,
+                _ => ForumPlacement.Top
+            };
+        }
+
         private void ForumMode_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is ToggleButton button)
+            var position = AppSettings.ForumTabsPosition switch
             {
-                if (button.IsChecked == false)
-                {
-                    AppSettings.UseLeftTabsForForums = false;
-                    ShowHideForumTopics(ForumViewType.Horizontal);
-                }
-                else if (button.IsChecked == true)
-                {
-                    AppSettings.UseLeftTabsForForums = true;
-                    ShowHideForumTopics(ForumViewType.Vertical);
-                }
+                ForumTabsPosition.Top => ForumTabsPosition.Left,
+                ForumTabsPosition.Left => ForumTabsPosition.Bottom,
+                _ => ForumTabsPosition.Top
+            };
+
+            AppSettings.ForumTabsPosition = position;
+            ShowHideForumTopics(ToPlacement(position));
+        }
+
+        // Open for one visit to one chat: UpdateChat closes it, and opening a topic is a visit.
+        private bool _forumSidebarOpen;
+
+        private void ForumSidebar_Click(object sender, RoutedEventArgs e)
+        {
+            _forumSidebarOpen = !_forumSidebarOpen;
+            UpdateForumTopics(ViewModel.Chat);
+        }
+
+        private void ForumSidebarSmoke_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            CloseForumSidebar();
+        }
+
+        private void ForumSidebar_BackRequested(object sender, EventArgs e)
+        {
+            CloseForumSidebar();
+        }
+
+        private void CloseForumSidebar()
+        {
+            if (_forumSidebarOpen)
+            {
+                _forumSidebarOpen = false;
+                UpdateForumTopics(ViewModel.Chat);
             }
         }
 
-        private ForumViewType _forumCollapsed = ForumViewType.List;
+        // Bumped by every call, so one still waiting for its snapshot gives way to whatever came
+        // after it.
+        private int _forumTransition;
 
-        private void ShowHideForumTopics(ForumViewType type)
+        private async void ShowHideForumTopics(ForumPlacement placement)
         {
-            if (_forumCollapsed == type)
+            var transition = ++_forumTransition;
+
+            var previous = _forumPlacement;
+            if (previous == placement)
             {
                 return;
             }
 
-            ElementCompositionPreview.SetIsTranslationEnabled(ForumNavigationHorizontal, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(ForumNavigation, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(ClipperOuter, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(DateHeaderRelative, true);
-
-            var hori = type == ForumViewType.Horizontal;
-            var vert = type == ForumViewType.Vertical;
-
-            var collaped = _forumCollapsed == ForumViewType.List;
-
-            var changingHori = hori || _forumCollapsed == ForumViewType.Horizontal;
-            var changingVert = vert || _forumCollapsed == ForumViewType.Vertical;
-
-            ForumNavigationHorizontal.Visibility = changingHori ? Visibility.Visible : Visibility.Collapsed;
-            ForumNavigation.Visibility = changingVert ? Visibility.Visible : Visibility.Collapsed;
-            ForumModeButton.Visibility = type != ForumViewType.List ? Visibility.Visible : Visibility.Collapsed;
-            ForumModeButton.IsChecked = type == ForumViewType.Vertical;
-
-            if (hori)
-            {
-                _forumViewModel.Delegate = ForumNavigationHorizontal;
-                ForumNavigationHorizontal.ViewModel = _forumViewModel;
-            }
-            else if (vert)
-            {
-                _forumViewModel.Delegate = ForumNavigation;
-                ForumNavigation.ViewModel = _forumViewModel;
-            }
-            else
-            {
-                _forumViewModel.Delegate = null;
-            }
-
-            ClipperOuterPadding.Height = changingHori ? 40 : 0;
-
-            Header.Children[0].Visibility = type != ForumViewType.Horizontal
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            var docked = IsDocked(placement);
+            var wasDocked = IsDocked(previous);
 
             var compositor = BootStrapper.Current.Compositor;
 
-            var horizont = ElementComposition.GetElementVisual(ForumNavigationHorizontal);
-            var vertical = ElementComposition.GetElementVisual(ForumNavigation);
-            var header = ElementComposition.GetElementVisual(ClipperOuter);
-            var dateHeader = ElementComposition.GetElementVisual(DateHeaderRelative);
-
-            var textArea = ElementComposition.GetElementVisual(TextArea);
-            var buttons = ElementComposition.GetElementVisual(ButtonsRoot);
-            var delete = ElementComposition.GetElementVisual(ButtonDelete);
-            var forward = ElementComposition.GetElementVisual(ButtonForward);
-            var footer = ElementComposition.GetElementVisual(ChatFooter);
-
-            horizont.Clip ??= compositor.CreateInsetClip();
-            vertical.Clip ??= compositor.CreateInsetClip();
-
-            var hheight = 40;
-            var vwidth = 72;
-
-            void Complete()
+            // Moving the tabs to another edge re-templates the one view that shows them, so the tabs
+            // on their way out are a frozen copy taken before it changes. Where the platform cannot
+            // freeze a surface they just go.
+            SpriteVisual snapshot = null;
+            if (docked && wasDocked && IsLoaded && compositor.TryCreateFrozenVisual(ForumNavigation, out snapshot))
             {
-                if (_forumCollapsed == ForumViewType.List)
+                var origin = ForumNavigation.TransformToVisual(ForumSnapshotHost).TransformPoint(new Point());
+                snapshot.Offset = new Vector3((float)origin.X, (float)origin.Y, 0);
+
+                // The picture is only taken on the next frame: re-templated before then, the tabs
+                // would leave already in their new shape. Nothing has changed yet, so a call that
+                // comes in meanwhile starts from the placement still on screen.
+                await VisualUtilities.WaitForCompositionRenderedAsync();
+
+                if (transition != _forumTransition || LayoutRoot == null)
                 {
-                    _forumViewModel.SetChat(null);
+                    DisposeForumSnapshot(snapshot);
+                    return;
                 }
 
-                if (_forumCollapsed != ForumViewType.Vertical)
-                {
-                    ForumNavigation.ViewModel = null;
-                    ForumNavigation.Visibility = Visibility.Collapsed;
-                }
+                RemoveForumSnapshot();
 
-                if (_forumCollapsed != ForumViewType.Horizontal)
-                {
-                    ForumNavigationHorizontal.ViewModel = null;
-                    ForumNavigationHorizontal.Visibility = Visibility.Collapsed;
-                }
-
-                ClipperOuterPadding.Height = _forumCollapsed == ForumViewType.Horizontal ? 40 : 0;
-
-                buttons.Properties.InsertVector3("Translation", Vector3.Zero);
-                header.Properties.InsertVector3("Translation", Vector3.Zero);
-                delete.Properties.InsertVector3("Translation", Vector3.Zero);
-                forward.Properties.InsertVector3("Translation", Vector3.Zero);
-                footer.Clip = null;
-                textArea.Clip = null;
-
-                UpdateTextAreaRadius();
-
-                Grid.SetColumn(RootGrid, 1);
+                _forumSnapshot = snapshot;
+                ElementCompositionPreview.SetElementChildVisual(ForumSnapshotHost, snapshot);
             }
+
+            _forumPlacement = placement;
+
+            if (docked)
+            {
+                DockForumNavigation(placement);
+
+                ForumNavigation.Visibility = Visibility.Visible;
+                _forumViewModel.Delegate = ForumNavigation;
+                ForumNavigation.ViewModel = _forumViewModel;
+            }
+            else if (placement == ForumPlacement.Sidebar)
+            {
+                if (ForumSidebar == null)
+                {
+                    FindName(nameof(ForumSidebarSmoke));
+                    FindName(nameof(ForumSidebar));
+                    ForumSidebar.Width = ForumSidebarWidth;
+                    ForumSidebar.UpdateType(ForumViewType.Sidebar);
+                }
+
+                ForumSidebarSmoke.Visibility = Visibility.Visible;
+                ForumSidebar.Visibility = Visibility.Visible;
+                _forumViewModel.Delegate = ForumSidebar;
+                ForumSidebar.ViewModel = _forumViewModel;
+                ForumSidebar.UpdateChat(_forumViewModel.Chat);
+            }
+            else
+            {
+                _forumViewModel?.Delegate = null;
+            }
+
+            ForumSidebarButton.IsChecked = placement == ForumPlacement.Sidebar;
+
+            var top = placement == ForumPlacement.Top;
+            var wasTop = previous == ForumPlacement.Top;
+            var left = placement == ForumPlacement.Left;
+            var wasLeft = previous == ForumPlacement.Left;
+
+            ClipperOuterPadding.Height = top || wasTop ? ForumIslandHeight : 0;
+
+            UpdateForumLeftInset(left);
 
             if (IsLoaded is false)
             {
-                _forumCollapsed = type;
                 UpdateMessagesHeaderPadding();
-
-                Complete();
+                CompleteForumTransition();
                 return;
             }
 
             var duration = TimeSpan.FromSeconds(.25);
-            //var anim = compositor.CreateScalarKeyFrameAnimation();
-            //duration = anim.Duration;
 
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
+            batch.Completed += OnForumTransitionCompleted;
+
+            var bottom = placement == ForumPlacement.Bottom;
+            var wasBottom = previous == ForumPlacement.Bottom;
+
+            // The row closes now so the messages can slide down into it, which leaves the tabs to
+            // make their exit from the foot of the messages' row - the same place on screen.
+            if (wasBottom && !docked)
             {
-                Complete();
-            };
-
-            Grid.SetColumn(RootGrid, vert ? 1 : 0);
-
-            var hoffset = compositor.CreateScalarKeyFrameAnimation();
-            hoffset.InsertKeyFrame(hori ? 0 : 1, -hheight);
-            hoffset.InsertKeyFrame(hori ? 1 : 0, 0);
-            hoffset.Duration = duration;
-
-            var hclip = compositor.CreateScalarKeyFrameAnimation();
-            hclip.InsertKeyFrame(hori ? 0 : 1, hheight);
-            hclip.InsertKeyFrame(hori ? 1 : 0, 0);
-            hclip.Duration = duration;
-
-            var voffset = compositor.CreateScalarKeyFrameAnimation();
-            voffset.InsertKeyFrame(vert ? 0 : 1, -vwidth);
-            voffset.InsertKeyFrame(vert ? 1 : 0, 0);
-            voffset.Duration = duration;
-
-            var vclip = compositor.CreateScalarKeyFrameAnimation();
-            vclip.InsertKeyFrame(vert ? 0 : 1, vwidth);
-            vclip.InsertKeyFrame(vert ? 1 : 0, 0);
-            vclip.Duration = duration;
-
-            var headerOffsetFrom = new Vector3();
-            var headerOffsetTo = new Vector3();
-
-            if (vert || _forumCollapsed == ForumViewType.Vertical)
-            {
-                headerOffsetFrom.X = vert ? -vwidth : vwidth;
+                Grid.SetRow(ForumNavigation, 2);
+                ForumNavigation.VerticalAlignment = VerticalAlignment.Bottom;
             }
 
-            if (hori || _forumCollapsed == ForumViewType.Horizontal)
+            if (bottom != wasBottom)
             {
-                headerOffsetFrom.Y = hori ? -hheight : 0;
-                headerOffsetTo.Y = hori ? 0 : -hheight;
+                AnimateForumBottomRow(bottom, duration);
             }
 
-            var headerOffset = compositor.CreateVector3KeyFrameAnimation();
-            //headerOffset.InsertKeyFrame(hori ? 0 : 1, new Vector3(0, -hheight, 0));
-            //headerOffset.InsertKeyFrame(hori ? 1 : 0, new Vector3(-vwidth, 0, 0));
-            headerOffset.InsertKeyFrame(0, headerOffsetFrom);
-            headerOffset.InsertKeyFrame(1, headerOffsetTo);
-            headerOffset.Duration = duration;
-
-            var dateHeaderOffset = compositor.CreateScalarKeyFrameAnimation();
-            dateHeaderOffset.InsertKeyFrame(0, vert ? 36 : -36);
-            dateHeaderOffset.InsertKeyFrame(1, 0);
-            dateHeaderOffset.Duration = duration;
-
-            horizont.StartAnimation("Translation.Y", hoffset);
-            horizont.Clip.StartAnimation("TopInset", hclip);
-
-            vertical.StartAnimation("Translation.X", voffset);
-            vertical.Clip.StartAnimation("LeftInset", vclip);
-
-            header.StartAnimation("Translation", headerOffset);
-            dateHeader.StartAnimation("Translation.X", dateHeaderOffset);
-
-            if (changingVert)
+            if (snapshot != null)
             {
+                AnimateForumEdge(snapshot, "Offset", snapshot.Offset, previous, false, duration);
+            }
+            else if (wasDocked && !docked)
+            {
+                AnimateForumEdge(ForumNavigation, previous, false, duration);
+            }
+
+            if (docked)
+            {
+                AnimateForumEdge(ForumNavigation, placement, true, duration);
+            }
+
+            if (placement == ForumPlacement.Sidebar || previous == ForumPlacement.Sidebar)
+            {
+                var show = placement == ForumPlacement.Sidebar;
+
+                var fade = compositor.CreateScalarKeyFrameAnimation();
+                fade.InsertKeyFrame(0, show ? 0 : 1);
+                fade.InsertKeyFrame(1, show ? 1 : 0);
+                fade.Duration = duration;
+
+                // On the way out neither takes input, so the chat underneath answers at once.
+                ForumSidebarSmoke.IsHitTestVisible = show;
+                ForumSidebar.IsHitTestVisible = show;
+
+                ElementComposition.GetElementVisual(ForumSidebarSmoke).StartAnimation("Opacity", fade);
+                AnimateForumEdge(ForumSidebar, ForumPlacement.Sidebar, show, duration);
+            }
+
+            if (top || wasTop || left || wasLeft)
+            {
+                var headerFrom = Vector3.Zero;
+                var headerTo = Vector3.Zero;
+
+                if (left || wasLeft)
+                {
+                    headerFrom.X = left ? -ForumLeftInset : ForumLeftInset;
+                }
+
+                if (top || wasTop)
+                {
+                    headerFrom.Y = top ? -ForumIslandHeight : 0;
+                    headerTo.Y = top ? 0 : -ForumIslandHeight;
+                }
+
+                var headerOffset = compositor.CreateVector3KeyFrameAnimation();
+                headerOffset.InsertKeyFrame(0, headerFrom);
+                headerOffset.InsertKeyFrame(1, headerTo);
+                headerOffset.Duration = duration;
+
+                _clipperTranslation.StartAnimation("Forum", headerOffset);
+            }
+
+            if (left || wasLeft)
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(DateHeaderRelative, true);
+
+                var dateHeaderOffset = compositor.CreateScalarKeyFrameAnimation();
+                dateHeaderOffset.InsertKeyFrame(0, left ? ForumLeftInset / 2 : -ForumLeftInset / 2);
+                dateHeaderOffset.InsertKeyFrame(1, 0);
+                dateHeaderOffset.Duration = duration;
+
+                ElementComposition.GetElementVisual(DateHeaderRelative).StartAnimation("Translation.X", dateHeaderOffset);
+
                 Messages.ForEach(container =>
                 {
                     if (container is ChatHistoryViewItem item && item.TypeName != ChatHistoryViewItemType.Outgoing)
@@ -8266,9 +8398,9 @@ namespace Telegram.Views
 
                         var visual = ElementComposition.GetElementVisual(container);
 
-                        var offset = item.TypeName == ChatHistoryViewItemType.Incoming ? 72 : 36;
+                        var offset = item.TypeName == ChatHistoryViewItemType.Incoming ? ForumLeftWidth : ForumLeftWidth / 2;
                         var translation = compositor.CreateScalarKeyFrameAnimation();
-                        translation.InsertKeyFrame(0, vert ? -offset : offset);
+                        translation.InsertKeyFrame(0, left ? -offset : offset);
                         translation.InsertKeyFrame(1, 0);
                         translation.Duration = duration;
 
@@ -8277,7 +8409,7 @@ namespace Telegram.Views
                 });
 
                 var translation = compositor.CreateScalarKeyFrameAnimation();
-                translation.InsertKeyFrame(0, vert ? 72 : -72);
+                translation.InsertKeyFrame(0, left ? ForumLeftInset : -ForumLeftInset);
                 translation.InsertKeyFrame(1, 0);
                 translation.Duration = duration;
 
@@ -8288,22 +8420,265 @@ namespace Telegram.Views
                     var visual = ElementComposition.GetElementVisual(element);
                     visual.StartAnimation("Translation.X", translation);
                 }
-
-                ChatFooterAnimateWidth(vert, duration);
-                ManagePanelAnimateWidth(vert, duration);
-                TextAreaAnimateWidth(vert, duration);
-            }
-
-            if (!collaped)
-            {
-                ForumNavigation.AnimateWidth(hori, duration);
-                ForumNavigationHorizontal.AnimateWidth(vert, duration);
             }
 
             batch.End();
 
-            _forumCollapsed = type;
             UpdateMessagesHeaderPadding();
+        }
+
+        // The left tabs float over the messages' row, so the messages and the headers make room
+        // for them while the composer under them keeps its width.
+        private void UpdateForumLeftInset(bool left)
+        {
+            var messages = left ? ForumLeftWidth : 0;
+            var headers = left ? ForumLeftInset : 0;
+
+            MessagesRoot.Padding = new Thickness(messages, 0, 0, 0);
+            MessagesOverlay.Padding = new Thickness(messages, 0, 0, 0);
+            ClipperOuter.Margin = new Thickness(IslandMargin + headers, 0, IslandMargin, 0);
+        }
+
+        private void DockForumNavigation(ForumPlacement edge)
+        {
+            var bottom = edge == ForumPlacement.Bottom;
+            var left = edge == ForumPlacement.Left;
+
+            if (_forumDockedAt != edge)
+            {
+                _forumDockedAt = edge;
+
+                ForumNavigation.ViewModel = null;
+                ForumNavigation.UpdateType(edge switch
+                {
+                    ForumPlacement.Left => ForumViewType.Vertical,
+                    ForumPlacement.Bottom => ForumViewType.Bottom,
+                    _ => ForumViewType.Horizontal
+                });
+
+                // Under the messages the tabs need a row of their own, and on the left they float
+                // over the messages' row and stop above the composer: only RootGrid has those rows.
+                var inner = bottom || left;
+                var host = inner ? RootGrid : LayoutRoot;
+                var other = inner ? LayoutRoot : RootGrid;
+
+                if (!host.Children.Contains(ForumNavigation))
+                {
+                    other.Children.Remove(ForumNavigation);
+                    host.Children.Insert(host.Children.IndexOf(inner ? Separator : ForumSnapshotHost), ForumNavigation);
+                }
+            }
+
+            // Applied even on the same edge: tabs shown again while their exit is still playing
+            // have not been put back in their row yet.
+            ForumNavigation.VerticalAlignment = VerticalAlignment.Stretch;
+            ForumNavigation.Margin = edge switch
+            {
+                ForumPlacement.Top => new Thickness(IslandMargin, IslandSpacing, IslandMargin, 0),
+                ForumPlacement.Bottom => new Thickness(IslandMargin, 0, IslandMargin, IslandSpacing),
+                ForumPlacement.Left => new Thickness(IslandMargin, IslandSpacing, 0, IslandSpacing),
+                _ => new Thickness()
+            };
+
+            Grid.SetRow(ForumNavigation, bottom ? 3 : left ? 2 : 1);
+            Grid.SetColumnSpan(ForumNavigation, edge == ForumPlacement.Top ? 2 : 1);
+
+            ForumNavigation.HorizontalAlignment = left
+                ? HorizontalAlignment.Left
+                : HorizontalAlignment.Stretch;
+        }
+
+        // Opening or closing the row under the messages moves everything resting on their bottom
+        // edge in one frame. Each of those starts back where it was and slides the rest of the way.
+        private void AnimateForumBottomRow(bool show, TimeSpan duration)
+        {
+            var compositor = BootStrapper.Current.Compositor;
+            var height = ForumIslandHeight;
+
+            var translation = compositor.CreateScalarKeyFrameAnimation();
+            translation.InsertKeyFrame(0, show ? height : -height);
+            translation.InsertKeyFrame(1, 0);
+            translation.Duration = duration;
+
+            Messages.ForEach(container =>
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(container, true);
+                ElementComposition.GetElementVisual(container).StartAnimation("Translation.Y", translation);
+            });
+
+            ElementCompositionPreview.SetIsTranslationEnabled(MessagesStickyPhoto, true);
+            ElementComposition.GetElementVisual(MessagesStickyPhoto).StartAnimation("Translation.Y", translation);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Arrows, true);
+            ElementComposition.GetElementVisual(Arrows).StartAnimation("Translation.Y", translation);
+        }
+
+        private static void AnimateForumEdge(UIElement element, ForumPlacement edge, bool show, TimeSpan duration)
+        {
+            ElementCompositionPreview.SetIsTranslationEnabled(element, true);
+            AnimateForumEdge(ElementComposition.GetElementVisual(element), "Translation", Vector3.Zero, edge, show, duration);
+        }
+
+        // The docked tabs float, so they slide and fade; the sidebar slides off the right edge and is
+        // clipped there, so that on its way it never shows anywhere it does not at rest.
+        private static void AnimateForumEdge(Visual visual, string property, Vector3 rest, ForumPlacement edge, bool show, TimeSpan duration)
+        {
+            switch (edge)
+            {
+                case ForumPlacement.Top:
+                    AnimateForumIsland(visual, property + ".Y", rest.Y, -ForumIslandHeight, show, duration);
+                    return;
+                case ForumPlacement.Bottom:
+                    AnimateForumIsland(visual, property + ".Y", rest.Y, ForumIslandHeight, show, duration);
+                    return;
+                case ForumPlacement.Left:
+                    AnimateForumIsland(visual, property + ".X", rest.X, -ForumLeftWidth, show, duration);
+                    return;
+            }
+
+            var size = ForumSidebarWidth;
+            var origin = rest.X;
+
+            var compositor = visual.Compositor;
+
+            var clip = compositor.CreateInsetClip();
+            visual.Clip = clip;
+
+            var slide = compositor.CreateScalarKeyFrameAnimation();
+            slide.InsertKeyFrame(0, origin + (show ? size : 0));
+            slide.InsertKeyFrame(1, origin + (show ? 0 : size));
+            slide.Duration = duration;
+
+            var reveal = compositor.CreateScalarKeyFrameAnimation();
+            reveal.InsertKeyFrame(0, show ? size : 0);
+            reveal.InsertKeyFrame(1, show ? 0 : size);
+            reveal.Duration = duration;
+
+            visual.StartAnimation(property + ".X", slide);
+            clip.StartAnimation("RightInset", reveal);
+        }
+
+        // A docked bar is a card with a shadow of its own, which a clip at its edge would cut off,
+        // so it fades as it slides.
+        private static void AnimateForumIsland(Visual visual, string property, float origin, float distance, bool show, TimeSpan duration)
+        {
+            var compositor = visual.Compositor;
+
+            visual.Clip = null;
+
+            var slide = compositor.CreateScalarKeyFrameAnimation();
+            slide.InsertKeyFrame(0, origin + (show ? distance : 0));
+            slide.InsertKeyFrame(1, origin + (show ? 0 : distance));
+            slide.Duration = duration;
+
+            var fade = compositor.CreateScalarKeyFrameAnimation();
+            fade.InsertKeyFrame(0, show ? 0 : 1);
+            fade.InsertKeyFrame(1, show ? 1 : 0);
+            fade.Duration = duration;
+
+            visual.StartAnimation(property, slide);
+            visual.StartAnimation("Opacity", fade);
+        }
+
+        private void OnForumTransitionCompleted(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (sender is CompositionScopedBatch batch)
+            {
+                batch.Completed -= OnForumTransitionCompleted;
+            }
+
+            CompleteForumTransition();
+        }
+
+        private void CompleteForumTransition()
+        {
+            // The page can be torn down, on an account switch, before the animation ends.
+            if (LayoutRoot == null)
+            {
+                return;
+            }
+
+            RemoveForumSnapshot();
+
+            var placement = _forumPlacement;
+            if (placement == ForumPlacement.None)
+            {
+                _forumViewModel?.SetChat(null);
+            }
+
+            ResetForumEdge(ForumNavigation);
+
+            if (!IsDocked(placement))
+            {
+                ForumNavigation.ViewModel = null;
+                ForumNavigation.Visibility = Visibility.Collapsed;
+
+                if (_forumDockedAt == ForumPlacement.Bottom)
+                {
+                    Grid.SetRow(ForumNavigation, 3);
+                    ForumNavigation.VerticalAlignment = VerticalAlignment.Stretch;
+                }
+            }
+
+            if (ForumSidebar != null)
+            {
+                ResetForumEdge(ForumSidebar);
+
+                var open = placement == ForumPlacement.Sidebar;
+
+                // Shown without an animation, after one that faded it out, the layer would stay at 0.
+                ElementComposition.GetElementVisual(ForumSidebarSmoke).Opacity = open ? 1 : 0;
+
+                ForumSidebarSmoke.IsHitTestVisible = open;
+                ForumSidebar.IsHitTestVisible = open;
+
+                if (!open)
+                {
+                    ForumSidebar.ViewModel = null;
+                    ForumSidebar.Visibility = Visibility.Collapsed;
+                    ForumSidebarSmoke.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            ClipperOuterPadding.Height = placement == ForumPlacement.Top ? ForumIslandHeight : 0;
+
+            _clipperTranslation.InsertVector3("Forum", Vector3.Zero);
+        }
+
+        private static void ResetForumEdge(UIElement element)
+        {
+            var visual = ElementComposition.GetElementVisual(element);
+            visual.Properties.InsertVector3("Translation", Vector3.Zero);
+            visual.Clip = null;
+            visual.Opacity = 1;
+        }
+
+        private void RemoveForumSnapshot()
+        {
+            if (_forumSnapshot == null)
+            {
+                return;
+            }
+
+            ElementCompositionPreview.SetElementChildVisual(ForumSnapshotHost, null);
+
+            DisposeForumSnapshot(_forumSnapshot);
+            _forumSnapshot = null;
+        }
+
+        private static void DisposeForumSnapshot(SpriteVisual snapshot)
+        {
+            if (snapshot.Brush is CompositionSurfaceBrush brush)
+            {
+                if (brush.Surface is CompositionVisualSurface surface)
+                {
+                    surface.Dispose();
+                }
+
+                brush.Dispose();
+            }
+
+            snapshot.Dispose();
         }
 
         private IEnumerable<UIElement> GetAnimatableVisuals()
@@ -8323,17 +8698,17 @@ namespace Telegram.Views
                 yield return visual;
             }
 
-            foreach (var visual in TranslateHeader.GetAnimatableVisuals())
-            {
-                yield return visual;
-            }
-
             foreach (var visual in ConnectedBot.GetAnimatableVisuals())
             {
                 yield return visual;
             }
 
             foreach (var visual in PinnedMessage.GetAnimatableVisuals())
+            {
+                yield return visual;
+            }
+
+            foreach (var visual in TranslateHeader.GetAnimatableVisuals())
             {
                 yield return visual;
             }
@@ -8347,141 +8722,6 @@ namespace Telegram.Views
             {
                 yield return visual;
             }
-        }
-
-        private void ChatFooterAnimateWidth(bool collapse, TimeSpan duration)
-        {
-            ElementCompositionPreview.SetIsTranslationEnabled(ChatFooter, true);
-
-            var radius = new Vector2((float)TextAreaRadius);
-            var width = collapse ? ActualSize.X - 24 - 72 : ActualSize.X - 24;
-            var margin = (width - (ActualSize.X - 24)) / 2;
-
-            // 12,0,12,8
-            Footer.Margin = new Thickness(12 + margin, 0, 12 + margin, 8);
-
-            var visual = ElementComposition.GetElementVisual(ChatFooter);
-
-            if (ApiInfo.CanCreateRectangleClip)
-            {
-                var clipLeft = visual.Compositor.CreateScalarKeyFrameAnimation();
-                clipLeft.InsertKeyFrame(0, collapse ? 0 : 36);
-                clipLeft.InsertKeyFrame(1, collapse ? 36 : 0);
-                clipLeft.Duration = duration;
-
-                var clipRight = visual.Compositor.CreateScalarKeyFrameAnimation();
-                clipRight.InsertKeyFrame(0, collapse ? ActualSize.X - 24 : ActualSize.X - 24 - 36);
-                clipRight.InsertKeyFrame(1, collapse ? ActualSize.X - 24 - 36 : ActualSize.X - 24);
-                clipRight.Duration = duration;
-
-                visual.Clip = visual.Compositor.CreateRectangleClip(0, 0, ActualSize.X - 24, ChatFooter.ActualSize.Y, radius, radius, radius, radius);
-                visual.Clip.StartAnimation("Left", clipLeft);
-                visual.Clip.StartAnimation("Right", clipRight);
-            }
-            else
-            {
-                // TODO: alternative animation
-            }
-
-            var translation = visual.Compositor.CreateScalarKeyFrameAnimation();
-            translation.InsertKeyFrame(0, collapse ? -36 : 36);
-            translation.InsertKeyFrame(1, 0);
-            translation.Duration = duration;
-
-            visual.StartAnimation("Translation.X", translation);
-        }
-
-        private void ManagePanelAnimateWidth(bool collapse, TimeSpan duration)
-        {
-            ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(ButtonDelete, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(ButtonForward, true);
-
-            var radius = new Vector2((float)TextAreaRadius);
-            var width = collapse ? ActualSize.X - 24 - 72 : ActualSize.X - 24;
-            var margin = (width - (ActualSize.X - 24)) / 2;
-
-            // 12,0,12,8
-            Footer.Margin = new Thickness(12 + 0, 0, 12 + margin + margin, 8);
-
-            var delete = ElementComposition.GetElementVisual(ButtonDelete);
-            var forward = ElementComposition.GetElementVisual(ButtonForward);
-            var visual = ElementComposition.GetElementVisual(ManagePanel);
-
-            if (ApiInfo.CanCreateRectangleClip)
-            {
-                var clipRight = visual.Compositor.CreateScalarKeyFrameAnimation();
-                clipRight.InsertKeyFrame(0, collapse ? ActualSize.X - 24 : ActualSize.X - 24 - 72);
-                clipRight.InsertKeyFrame(1, collapse ? ActualSize.X - 24 - 72 : ActualSize.X - 24);
-                clipRight.Duration = duration;
-
-                visual.Clip = visual.Compositor.CreateRectangleClip(0, 0, ActualSize.X - 24, ManagePanel.ActualSize.Y, radius, radius, radius, radius);
-                visual.Clip.StartAnimation("Right", clipRight);
-            }
-            else
-            {
-                // TODO: alternative animation
-            }
-
-            var translation = visual.Compositor.CreateScalarKeyFrameAnimation();
-            translation.InsertKeyFrame(0, collapse ? -72 : 72);
-            translation.InsertKeyFrame(1, 0);
-            translation.Duration = duration;
-
-            var button = visual.Compositor.CreateScalarKeyFrameAnimation();
-            button.InsertKeyFrame(0, collapse ? 0 : -72);
-            button.InsertKeyFrame(1, collapse ? -72 : 0);
-            button.Duration = duration;
-
-            delete.StartAnimation("Translation.X", button);
-            forward.StartAnimation("Translation.X", button);
-            visual.StartAnimation("Translation.X", translation);
-        }
-
-        private void TextAreaAnimateWidth(bool collapse, TimeSpan duration)
-        {
-            ElementCompositionPreview.SetIsTranslationEnabled(TextArea, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(ButtonsRoot, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(ButtonDelete, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(ButtonForward, true);
-
-            var radius = new Vector2((float)TextAreaRadius);
-            var width = collapse ? ActualSize.X - 24 - 72 : ActualSize.X - 24;
-            var margin = (width - (ActualSize.X - 24)) / 2;
-
-            // 12,0,12,8
-            Footer.Margin = new Thickness(12 + 0, 0, 12 + margin + margin, 8);
-
-            var delete = ElementComposition.GetElementVisual(ButtonsRoot);
-            var visual = ElementComposition.GetElementVisual(TextArea);
-
-            var translation = visual.Compositor.CreateScalarKeyFrameAnimation();
-            translation.InsertKeyFrame(0, collapse ? -72 : 72);
-            translation.InsertKeyFrame(1, 0);
-            translation.Duration = duration;
-
-            var button = visual.Compositor.CreateScalarKeyFrameAnimation();
-            button.InsertKeyFrame(0, collapse ? 0 : -72);
-            button.InsertKeyFrame(1, collapse ? -72 : 0);
-            button.Duration = duration;
-
-            if (ApiInfo.CanCreateRectangleClip)
-            {
-                var clipRight = visual.Compositor.CreateScalarKeyFrameAnimation();
-                clipRight.InsertKeyFrame(0, collapse ? ActualSize.X - 24 : ActualSize.X - 24 - 72);
-                clipRight.InsertKeyFrame(1, collapse ? ActualSize.X - 24 - 72 : ActualSize.X - 24);
-                clipRight.Duration = duration;
-
-                visual.Clip = visual.Compositor.CreateRectangleClip(0, 0, ActualSize.X - 24, TextArea.ActualSize.Y, radius, radius, radius, radius);
-                visual.Clip.StartAnimation("Right", clipRight);
-            }
-            else
-            {
-                // TODO: alternative animation
-            }
-
-            delete.StartAnimation("Translation.X", button);
-            visual.StartAnimation("Translation.X", translation);
         }
 
         private void ForumTopic_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -211,8 +211,8 @@ namespace Telegram.Controls.Cells
                 var first = index == 1;
                 var last = index == items.Count - 1 || !items[index + 1].IsPinned;
 
-                var radiusBefore = !first ? 0 : 4;
-                var radiusAfter = !last ? 0 : 4;
+                var radiusBefore = !first ? 0 : 12;
+                var radiusAfter = !last ? 0 : 12;
 
                 if (_vertical)
                 {
@@ -224,6 +224,12 @@ namespace Telegram.Controls.Cells
                 }
                 else
                 {
+                    var marginBefore = !first ? -12 : -8;
+                    var marginAfter = !last ? -12 : -8;
+
+                    PinnedBackground.Height = 24;
+                    PinnedBackground.Width = double.NaN;
+                    PinnedBackground.Margin = new Thickness(marginBefore, 6, marginAfter, 4);
                     PinnedBackground.CornerRadius = new CornerRadius(radiusBefore, radiusAfter, radiusAfter, radiusBefore);
                 }
 

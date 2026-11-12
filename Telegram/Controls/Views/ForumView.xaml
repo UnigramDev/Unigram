@@ -25,7 +25,7 @@
                 <Control.Template>
                     <ControlTemplate TargetType="cells:ForumTopicVerticalCell">
                         <Grid Background="Transparent"
-                              Height="40">
+                              Height="32">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup>
                                     <VisualState x:Name="Normal" />
@@ -369,13 +369,31 @@
                 BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
                 BackgroundSizing="OuterBorderEdge"
                 Grid.RowSpan="2" />
-        <Border x:Name="VerticalBackgroundRoot"
-                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                BorderThickness="0,0,1,0"
-                BackgroundSizing="InnerBorderEdge"
-                Visibility="Collapsed"
+        <Border x:Name="DrawerBackgroundRoot"
+                x:Load="False"
+                Background="{ThemeResource PageSubHeaderBackgroundSolidBrush}"
+                CornerRadius="8,0,0,8"
                 Grid.RowSpan="2" />
+        <Rectangle x:Name="IslandShadow"
+                   x:Load="False"
+                   RadiusX="16"
+                   RadiusY="16"
+                   Grid.RowSpan="2" />
+        <Border x:Name="IslandBackgroundRoot"
+                x:Load="False"
+                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                CornerRadius="16"
+                Grid.RowSpan="2" />
+
+        <!-- In the corner the docked layouts leave free of ScrollingHost. -->
+        <controls:GlyphToggleButton x:Name="ModeButton"
+                                    x:Load="False"
+                                    Click="ModeButton_Click"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    CornerRadius="12"
+                                    Grid.RowSpan="2"
+                                    Canvas.ZIndex="1" />
 
         <Grid x:Name="Header"
               Height="{StaticResource NavigationViewTopPaneHeight}"

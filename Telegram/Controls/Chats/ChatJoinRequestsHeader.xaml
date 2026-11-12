@@ -20,6 +20,7 @@
     <HyperlinkButton.Template>
         <ControlTemplate TargetType="HyperlinkButton">
             <Grid x:Name="RootGrid"
+                  CornerRadius="{TemplateBinding CornerRadius}"
                   Padding="{TemplateBinding Padding}">
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="CommonStates">
@@ -73,7 +74,8 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+        <Border x:Name="Thickness"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="0,0,0,1"
                 Grid.ColumnSpan="3" />
 

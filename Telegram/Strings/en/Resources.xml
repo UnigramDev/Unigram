@@ -12379,6 +12379,7 @@
     <string name="TopicsLayoutInfo">Choose how topics appear for all members.</string>
     <string name="TopicsLayoutList">List</string>
     <string name="TopicsLayoutTabs">Tabs</string>
+    <string name="TopicsPanelAllMessages">All Messages</string>
     <string name="TopicsTitle">Topics</string>
     <string name="TopicsEnabled">Enabled</string>
     <string name="TopicsDisabled">Disabled</string>

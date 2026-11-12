@@ -36,6 +36,8 @@ namespace Telegram.ViewModels
 
         public bool IsForum => _forum;
 
+        public bool IsChatList => _chatList;
+
         public TopicListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, bool chatList, bool forum)
             : base(clientService, settingsService, aggregator)
         {
@@ -421,7 +423,7 @@ namespace Telegram.ViewModels
 
                 if (_forum)
                 {
-                    Aggregator.Subscribe<UpdateForumTopicInfo>(this, Handle)
+                    var subscription = Aggregator.Subscribe<UpdateForumTopicInfo>(this, Handle)
                         .Subscribe<UpdateForumTopicReadInbox>(Handle)
                         .Subscribe<UpdateForumTopicReadOutbox>(Handle)
                         .Subscribe<UpdateForumTopicUnreadMentionCount>(Handle)
@@ -430,6 +432,13 @@ namespace Telegram.ViewModels
                         .Subscribe<UpdateForumTopicNotificationSettings>(Handle)
                         .Subscribe<UpdateForumTopicDraftMessage>(Handle)
                         .Subscribe<UpdateChatAction>(Handle);
+
+                    // The "All Messages" row previews the chat's own last message.
+                    if (!_chatList)
+                    {
+                        subscription.Subscribe<UpdateChatLastMessage>(Handle)
+                            .Subscribe<UpdateChatReadOutbox>(Handle);
+                    }
                 }
                 else
                 {
@@ -457,6 +466,22 @@ namespace Telegram.ViewModels
             if (update.ChatId == Chat?.Id && update.TopicId is MessageTopicForum topicForum)
             {
                 BeginOnUIThread(() => Delegate?.HandleForumTopic(topicForum.ForumTopicId, (cell, topic) => cell.UpdateForumTopicActions(topic, ClientService.GetChatActions(update.ChatId, update.TopicId))));
+            }
+        }
+
+        private void Handle(UpdateChatLastMessage update)
+        {
+            if (update.ChatId == Chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.HandleForumTopic(0, (cell, topic) => cell.UpdateForumTopicLastMessage(topic)));
+            }
+        }
+
+        private void Handle(UpdateChatReadOutbox update)
+        {
+            if (update.ChatId == Chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.HandleForumTopic(0, (cell, topic) => cell.UpdateForumTopicReadOutbox(topic)));
             }
         }
 
