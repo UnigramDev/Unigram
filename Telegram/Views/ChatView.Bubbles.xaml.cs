@@ -780,7 +780,7 @@ namespace Telegram.Views
                     PinnedMessage.UpdateMessage(ViewModel.Chat, ViewModel.CreateMessage(message), false, 0, 1, false);
                 }
             }
-            else if (ViewModel.PinnedMessages.Count > 0)
+            else if (ViewModel.PinnedMessages.Count > 0 && Messages.ShouldViewMessage)
             {
                 // TODO: Find a way to reuse this for topics too
                 if (firstVisibleId == _viewMessagesFirstVisibleId || lastVisibleId == _viewMessagesLastVisibleId)
