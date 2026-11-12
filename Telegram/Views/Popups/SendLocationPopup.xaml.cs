@@ -21,6 +21,7 @@ using Telegram.ViewModels;
 using Windows.Data.Json;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
+using Windows.Globalization;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Composition;
@@ -60,6 +61,7 @@ namespace Telegram.Views.Popups
 
         // The interactive map, created only when asked for: every load is billed.
         private WebView2 _mapView;
+        private bool _mapInitialized;
         private string _mapToken;
         private string _geoToken;
 
@@ -218,9 +220,14 @@ namespace Telegram.Views.Popups
                     _geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
                     _geolocator.PositionChanged += OnPositionChanged;
 
+                    // PositionChanged is not raised for a position that was already known.
                     try
                     {
-                        await _geolocator.GetGeopositionAsync();
+                        var position = await _geolocator.GetGeopositionAsync();
+                        if (_geolocator != null)
+                        {
+                            UpdateLocation(position);
+                        }
                     }
                     catch
                     {
@@ -443,6 +450,7 @@ namespace Telegram.Views.Popups
             }
 
             _mapView = null;
+            _mapInitialized = false;
 
             view.WebMessageReceived -= OnMapMessageReceived;
 
@@ -569,21 +577,41 @@ namespace Telegram.Views.Popups
         {
             var location = _center ?? ViewModel.Location;
 
+            // Without a fix the page frames this country instead.
+            string region;
+            try
+            {
+                region = new GeographicRegion().CodeTwoLetter;
+            }
+            catch
+            {
+                region = string.Empty;
+            }
+
             var json = new JsonObject
             {
                 ["token"] = JsonValue.CreateStringValue(_mapToken),
                 ["geo"] = JsonValue.CreateStringValue(_geoToken),
                 ["language"] = JsonValue.CreateStringValue(LocaleService.Current.Id),
                 ["dark"] = JsonValue.CreateBooleanValue(ActualTheme == ElementTheme.Dark),
-                ["latitude"] = JsonValue.CreateNumberValue(location?.Latitude ?? 0),
-                ["longitude"] = JsonValue.CreateNumberValue(location?.Longitude ?? 0)
+                ["region"] = JsonValue.CreateStringValue(region),
+                ["latitude"] = location != null ? JsonValue.CreateNumberValue(location.Latitude) : JsonValue.CreateNullValue(),
+                ["longitude"] = location != null ? JsonValue.CreateNumberValue(location.Longitude) : JsonValue.CreateNullValue()
             };
 
+            _mapInitialized = true;
             _ = _mapView?.CoreWebView2?.ExecuteScriptAsync($"Picker.init({json.Stringify()});");
         }
 
+        // Before the page is initialized there is no map to move: InitializeMap reads the latest
+        // location when it runs.
         private void FlyTo(Location location)
         {
+            if (!_mapInitialized)
+            {
+                return;
+            }
+
             var latitude = location.Latitude.ToString(CultureInfo.InvariantCulture);
             var longitude = location.Longitude.ToString(CultureInfo.InvariantCulture);
 
