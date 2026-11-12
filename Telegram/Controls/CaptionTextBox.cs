@@ -173,6 +173,8 @@ namespace Telegram.Controls
         }
 
         // Added and taken away rather than cleared: the page's own list may be there as well.
+        // It goes in front of that list, because screen readers follow only the first element
+        // ControllerFor names.
         private ListViewBase _flyoutList;
 
         void EmojiFlyout_Opened(object sender, object args)
@@ -180,7 +182,7 @@ namespace Telegram.Controls
             if (ChatTextFlyout.Elevate(sender) is ChatTextFlyout presenter)
             {
                 _flyoutList = presenter.ControlledList;
-                AutomationProperties.GetControlledPeers(this).Add(_flyoutList);
+                AutomationProperties.GetControlledPeers(this).Insert(0, _flyoutList);
             }
         }
 

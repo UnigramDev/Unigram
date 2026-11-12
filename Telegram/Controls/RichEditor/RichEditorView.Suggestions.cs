@@ -183,7 +183,8 @@ namespace Telegram.Controls.RichEditor
         }
 
         // Added and taken away rather than cleared: a page's own list, the mentions under a
-        // caption, may be there as well.
+        // caption, may be there as well. It goes in front of that list, because screen readers
+        // follow only the first element ControllerFor names.
         private ListViewBase _suggestionList;
 
         private void OnSuggestionsOpened(object sender, object e)
@@ -193,7 +194,7 @@ namespace Telegram.Controls.RichEditor
                 RemoveSuggestionPeer();
 
                 _suggestionList = presenter.ControlledList;
-                AutomationProperties.GetControlledPeers(this).Add(_suggestionList);
+                AutomationProperties.GetControlledPeers(this).Insert(0, _suggestionList);
             }
         }
 
