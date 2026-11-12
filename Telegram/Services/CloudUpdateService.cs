@@ -407,7 +407,7 @@ namespace Telegram.Services
 
             if (_chatId == null)
             {
-                var chat = await _clientService.SendAsync(GetUpdatesChat()) as Chat;
+                var chat = await GetUpdatesChatAsync();
                 if (chat != null)
                 {
                     _chatId = chat.Id;
@@ -517,19 +517,19 @@ namespace Telegram.Services
             return next;
         }
 
-        private static Function GetUpdatesChat()
+        private async Task<Chat> GetUpdatesChatAsync()
         {
 #if UNPACKAGED
             // A private channel can only be found, never resolved: TDLib knows it, and holds the
-            // access hash every request to it needs, only when this account is a member. So
-            // membership is what decides who gets these updates.
-            if (!ApiInfo.HasPackageIdentity)
+            // access hash every request to it needs, only when this account is a member. Every
+            // other account updates from the public channel.
+            if (!ApiInfo.HasPackageIdentity && await _clientService.SendAsync(new GetChat(Constants.UnpackagedUpdatesChatId)) is Chat chat)
             {
-                return new GetChat(Constants.UnpackagedUpdatesChatId);
+                return chat;
             }
 #endif
 
-            return new SearchPublicChat(Constants.AppChannel);
+            return await _clientService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
         }
 
         private static bool TryParseFileName(string fileName, out Version version)
