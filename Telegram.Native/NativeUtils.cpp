@@ -20,6 +20,14 @@
 #include <detours.h>
 #include <dxgi1_4.h>
 
+// Both headers declare everything for desktop apps only, and the UWP flavour builds as a Store app.
+#pragma push_macro("WINAPI_FAMILY")
+#undef WINAPI_FAMILY
+#define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
+#include <winternl.h>
+#include <d3dkmthk.h>
+#pragma pop_macro("WINAPI_FAMILY")
+
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 
@@ -988,6 +996,16 @@ namespace winrt::Telegram::Native::implementation
             }
         }
 
+        typedef NTSTATUS(APIENTRY* pD3DKMTQueryStatistics)(_In_ CONST D3DKMT_QUERYSTATISTICS*);
+
+        static const LibraryInstance gdi32(L"Gdi32.dll");
+        static const auto queryStatistics = gdi32.GetMethod<pD3DKMTQueryStatistics>("D3DKMTQueryStatistics");
+
+        if (queryStatistics == nullptr)
+        {
+            return;
+        }
+
         // Every window's thread polls this, and a factory goes stale when an adapter is added,
         // removed or reset.
         static winrt::slim_mutex lock;
@@ -1005,33 +1023,52 @@ namespace winrt::Telegram::Native::implementation
             }
         }
 
+        // These are the numbers IDXGIAdapter3::QueryVideoMemoryInfo returns, read from the kernel's
+        // statistics instead: the DXGI call wakes a powered-down hybrid discrete GPU, which blocks
+        // for half a second or more, every tick, on an adapter the app may not even be using.
+        auto querySegmentGroup = [](LUID luid, D3DKMT_MEMORY_SEGMENT_GROUP group, D3DKMT_QUERYSTATISTICS& query)
+        {
+            query = {};
+            query.Type = D3DKMT_QUERYSTATISTICS_PROCESS_SEGMENT_GROUP;
+            query.AdapterLuid = luid;
+            query.hProcess = GetCurrentProcess();
+            query.QueryProcessSegmentGroup = group;
+
+            // Fails on an adapter the process never opened a device on.
+            return NT_SUCCESS(queryStatistics(&query));
+        };
+
         winrt::com_ptr<IDXGIAdapter1> adapter;
 
         for (UINT i = 0; SUCCEEDED(factory->EnumAdapters1(i, adapter.put())); ++i)
         {
-            auto adapter3 = adapter.try_as<IDXGIAdapter3>();
+            DXGI_ADAPTER_DESC1 desc;
+            HRESULT hr = adapter->GetDesc1(&desc);
             adapter = nullptr;
 
-            DXGI_QUERY_VIDEO_MEMORY_INFO local;
-            DXGI_QUERY_VIDEO_MEMORY_INFO nonLocal;
+            D3DKMT_QUERYSTATISTICS local;
+            D3DKMT_QUERYSTATISTICS nonLocal;
 
-            if (adapter3 == nullptr
-                || FAILED(adapter3->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &local))
-                || FAILED(adapter3->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_NON_LOCAL, &nonLocal)))
+            if (FAILED(hr)
+                || !querySegmentGroup(desc.AdapterLuid, D3DKMT_MEMORY_SEGMENT_GROUP_LOCAL, local)
+                || !querySegmentGroup(desc.AdapterLuid, D3DKMT_MEMORY_SEGMENT_GROUP_NON_LOCAL, nonLocal))
             {
                 continue;
             }
 
+            auto const& localInfo = local.QueryResult.ProcessSegmentGroupInformation;
+            auto const& nonLocalInfo = nonLocal.QueryResult.ProcessSegmentGroupInformation;
+
             // An integrated GPU and WARP report system memory as their local group and no
             // non-local one at all: that local usage is RAM, not VRAM.
-            if (nonLocal.Budget != 0)
+            if (nonLocalInfo.Budget != 0)
             {
-                dedicatedVideo += local.CurrentUsage;
-                sharedVideo += nonLocal.CurrentUsage;
+                dedicatedVideo += localInfo.Usage;
+                sharedVideo += nonLocalInfo.Usage;
             }
             else
             {
-                sharedVideo += local.CurrentUsage;
+                sharedVideo += localInfo.Usage;
             }
         }
     }
