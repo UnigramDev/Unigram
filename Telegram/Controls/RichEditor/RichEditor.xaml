@@ -226,6 +226,7 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <TextBlock x:Name="Placeholder"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                    TextWrapping="Wrap"
                                    IsHitTestVisible="False"
@@ -1146,6 +1147,7 @@
                                 Padding="{TemplateBinding Padding}"
                                 IsHitTestVisible="False">
                             <TextBlock x:Name="InlinePlaceholder"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                        FontSize="{TemplateBinding FontSize}"
                                        TextWrapping="NoWrap"
