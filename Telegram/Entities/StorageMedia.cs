@@ -271,7 +271,9 @@ namespace Telegram.Entities
 
                     try
                     {
-                        media = await CreateAsync(files[index]);
+                        // Off the UI thread: a brokered file's first call blocks cross-apartment, and on
+                        // the WinUI STA that wait dispatches input, which XAML fail-fasts on in Loaded.
+                        media = await Task.Run(() => CreateAsync(files[index]));
                     }
                     catch (Exception ex)
                     {
