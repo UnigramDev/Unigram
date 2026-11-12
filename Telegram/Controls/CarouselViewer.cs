@@ -93,6 +93,7 @@ namespace Telegram.Controls
                 _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
                 _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
                 _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
             }
         }
 
@@ -103,15 +104,26 @@ namespace Telegram.Controls
                 _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
                 _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
                 _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered -= OnCustomAnimationStateEntered;
             }
         }
+
+        // A notch of a mouse wheel.
+        private const int WheelDelta = 120;
+
+        // How long the wheel must have been still for the next delta to start a new gesture.
+        private const ulong WheelGestureGap = 100;
+
+        private int _wheelAccumulated;
+        private ulong _wheelLast;
+        private bool _wheelConsumed;
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
             // TODO: I don't understand how to use VisualInteractionSource
             // for vertical pointer wheel + horizontal position source
 
-            if (_interactionSource?.PositionXSourceMode != InteractionSourceMode.EnabledWithInertia || IsScrolling)
+            if (_interactionSource?.PositionXSourceMode != InteractionSourceMode.EnabledWithInertia)
             {
                 return;
             }
@@ -124,14 +136,62 @@ namespace Telegram.Controls
                 return;
             }
 
-            var direction = point.Properties.MouseWheelDelta > 0
+            var delta = point.Properties.MouseWheelDelta;
+            if (delta == 0)
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            var now = Logger.TickCount;
+            var gesture = now - _wheelLast >= WheelGestureGap;
+
+            _wheelLast = now;
+
+            if (delta % WheelDelta == 0)
+            {
+                // A mouse wheel: every notch is a step of its own.
+                _wheelAccumulated = 0;
+                _wheelConsumed = false;
+
+                if (IsScrolling)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                // A precision touchpad sends a stream of small deltas, inertia included, for a
+                // single swipe: add them up to one notch and then ignore the rest of the stream,
+                // or one swipe would page through several items.
+                if (gesture || Math.Sign(delta) != Math.Sign(_wheelAccumulated))
+                {
+                    _wheelAccumulated = 0;
+                    _wheelConsumed = false;
+                }
+
+                if (_wheelConsumed)
+                {
+                    return;
+                }
+
+                _wheelAccumulated += delta;
+
+                if (Math.Abs(_wheelAccumulated) < WheelDelta || IsScrolling || !IsIdle)
+                {
+                    return;
+                }
+
+                _wheelConsumed = true;
+            }
+
+            var direction = delta > 0
                 ? CarouselDirection.Previous
                 : CarouselDirection.Next;
 
             ViewChanging?.Invoke(this, new CarouselViewChangingEventArgs(direction));
             ChangeView(direction);
-
-            e.Handled = true;
         }
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
@@ -233,6 +293,20 @@ namespace Telegram.Controls
 
         public bool IsScrolling => Logger.TickCount - _scrolling < 100;
 
+        /// <summary>
+        /// False while a finger, a touchpad, inertia or an animation is moving the elements.
+        /// </summary>
+        public bool IsIdle => _isIdle;
+
+        /// <summary>
+        /// A property set whose "Progress" scalar says how far the elements have moved from
+        /// the current one: -1 is all the way to the previous element, 1 to the next one. It
+        /// is animated on the compositor, following the finger or touchpad while dragging, the
+        /// inertia after it, and the animation of <see cref="ChangeView"/>, so other visuals
+        /// can move in step with the elements. Null until the control has loaded.
+        /// </summary>
+        public CompositionPropertySet ProgressProperties => _progress;
+
         public FrameworkElement CurrentElement => _elements[1];
 
         public FrameworkElement GetElement(CarouselDirection direction)
@@ -313,6 +387,8 @@ namespace Telegram.Controls
         private bool _canGoNext;
 
         private CarouselDirection _viewChanged;
+
+        private bool _isIdle = true;
 
         private void ConfigureInteractionTracker()
         {
@@ -441,8 +517,15 @@ namespace Telegram.Controls
             visual1.Visual.StartAnimation("Translation.X", offset1);
         }
 
+        private void OnCustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
+        {
+            _isIdle = false;
+        }
+
         private void OnInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
         {
+            _isIdle = false;
+
             if (args.ModifiedRestingPosition?.X is float position)
             {
                 if (_canGoNext && position.AlmostEquals(sender.MaxPosition.X))
@@ -467,6 +550,8 @@ namespace Telegram.Controls
             //_tracker.TryUpdatePosition(Vector3.Zero);
             //ConfigureAnimations(0);
 
+            _isIdle = true;
+
             if (_viewChanged != CarouselDirection.None)
             {
                 ViewChanged?.Invoke(this, new CarouselViewChangedEventArgs(_viewChanged));
@@ -476,6 +561,7 @@ namespace Telegram.Controls
 
         private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
+            _isIdle = false;
             ConfigureAnimations(_restingValue);
         }
 
