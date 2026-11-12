@@ -5,24 +5,23 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
-using Windows.Foundation;
+using Telegram.Navigation;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    [TemplatePart(Name = "Canvas", Type = typeof(CanvasAnimatedControl))]
     public partial class ConfettiView : Control
     {
-        private CanvasAnimatedControl Canvas;
-        private readonly string CanvasPartName = "Canvas";
-
-        public static Color[] _colors = new Color[]
+        private static readonly Color[] _colors = new Color[]
         {
             Color.FromArgb(0xFF, 0x2C, 0xBC, 0xE8),
             Color.FromArgb(0xFF, 0x9E, 0x04, 0xD0),
@@ -32,131 +31,229 @@ namespace Telegram.Controls
             Color.FromArgb(0xFF, 0x59, 0xB8, 0x6C)
         };
 
-        private const int _fallParticlesCount = 30;//(SharedConfig.getDevicePerfomanceClass() == 0 ? 20 : 30);
-        private const int _particlesCount = 60; //(SharedConfig.getDevicePerfomanceClass() == 0 ? 50 : 60);
-        private int _fallingDownCount;
-        private readonly long lastUpdateTime;
+        private const int _fallParticlesCount = 30;
+        private const int _particlesCount = 60;
+
+        // Circles are 4-5 px in radius and strips 4-7 px in half-length, so every particle draws
+        // from a handful of geometries shared across the view.
+        private const int _minTypeSize = 4;
+        private const int _maxTypeSize = 7;
+
         private readonly List<Particle> _particles = new(_particlesCount + _fallParticlesCount);
-        private readonly object _particlesLock = new();
+        private readonly Stack<Particle> _pool = new(_particlesCount + _fallParticlesCount);
+        private readonly Random _random = new();
+
+        private ShapeVisual _visual;
+        private CompositionColorBrush[] _brushes;
+        private CompositionEllipseGeometry[] _circles;
+        private CompositionRoundedRectangleGeometry[] _strips;
+
+        private Vector2 _size;
+        private int _fallingDownCount;
         private float _speedCoef = 1.0f;
         private bool _started;
+        private bool _spawned;
         private bool _startedFall;
-
-        private readonly Random _random = new();
+        private bool _rendering;
+        private long _lastTimestamp;
 
         public ConfettiView()
         {
-            DefaultStyleKey = typeof(ConfettiView);
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
-
-        public float CanvasWidth => (float)(Canvas?.Size.Width ?? 0);
-        public float CanvasHeight => (float)(Canvas?.Size.Height ?? 0);
 
         public event EventHandler Completed;
-
-        protected override void OnApplyTemplate()
-        {
-            var canvas = GetTemplateChild(CanvasPartName) as CanvasAnimatedControl;
-            if (canvas == null)
-            {
-                return;
-            }
-
-            Canvas = canvas;
-            Canvas.Loaded += OnLoaded;
-            Canvas.Unloaded += OnUnloaded;
-            //Canvas.CreateResources += OnCreateResources;
-            Canvas.Draw += OnDraw;
-
-            base.OnApplyTemplate();
-        }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (_started)
             {
-                Start();
+                StartRendering();
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Canvas.Loaded -= OnLoaded;
-            Canvas.Unloaded -= OnUnloaded;
-            //Canvas.CreateResources -= OnCreateResources;
-            Canvas.Draw -= OnDraw;
-            Canvas.RemoveFromVisualTree();
-            Canvas = null;
-        }
-
-        private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
-        {
-            lock (_particlesLock)
-            {
-                if (_started is false)
-                {
-                    sender.Paused = true;
-                    return;
-                }
-
-                int i = (int)args.Timing.ElapsedTime.TotalMilliseconds;
-                if (i > 18)
-                {
-                    //i = 16;
-                }
-
-                for (int j = 0; j < _particles.Count; j++)
-                {
-                    _particles[j].Draw(args);
-
-                    if (_particles[j].Update(i))
-                    {
-                        _particles.RemoveAt(j);
-                        j--;
-                    }
-                }
-
-                if (_fallingDownCount >= _particlesCount / 2 && _speedCoef > 0.2f)
-                {
-                    StartFall();
-
-                    _speedCoef -= i / 16.0f * 0.15f;
-
-                    if (_speedCoef < 0.2f)
-                    {
-                        _speedCoef = 0.2f;
-                    }
-                }
-
-                if (_particles.Count > 0)
-                {
-                    //invalidate();
-                    return;
-                }
-
-                _started = false;
-                Completed?.Invoke(this, EventArgs.Empty);
-            }
+            StopRendering();
         }
 
         public void Start()
         {
-            lock (_particlesLock)
+            EnsureVisual();
+
+            for (int i = 0; i < _particles.Count; i++)
             {
-                _particles.Clear();
-                _started = true;
-                _startedFall = false;
-                _fallingDownCount = 0;
-                _speedCoef = 1.0f;
+                Recycle(_particles[i]);
+            }
+
+            _particles.Clear();
+            _started = true;
+            _spawned = false;
+            _startedFall = false;
+            _fallingDownCount = 0;
+            _speedCoef = 1.0f;
+
+            StartRendering();
+        }
+
+        private void StartRendering()
+        {
+            if (_rendering)
+            {
+                return;
+            }
+
+            _rendering = true;
+            _lastTimestamp = 0;
+
+            CompositionTarget.Rendering += OnRendering;
+        }
+
+        private void StopRendering()
+        {
+            if (_rendering)
+            {
+                _rendering = false;
+                CompositionTarget.Rendering -= OnRendering;
+            }
+        }
+
+        private void OnRendering(object sender, object e)
+        {
+            // Start usually runs right after x:Load, before the first layout pass, and the particles
+            // are placed relative to the size, so spawning waits for one.
+            if (!_spawned)
+            {
+                _size = ActualSize;
+
+                if (_size.X <= 0 || _size.Y <= 0)
+                {
+                    return;
+                }
+
+                _spawned = true;
 
                 for (int i = 0; i < _particlesCount; i++)
                 {
                     _particles.Add(CreateParticle(false));
                 }
-
-                //invalidate();
-                Canvas?.Paused = false;
             }
+            else
+            {
+                _size = ActualSize;
+            }
+
+            var timestamp = Stopwatch.GetTimestamp();
+
+            // The motion constants are tuned per 16 ms step. A stall is clamped instead of replayed,
+            // or every particle would jump past the bottom at once.
+            var elapsed = _lastTimestamp == 0
+                ? 0
+                : MathF.Min((timestamp - _lastTimestamp) * 1000f / Stopwatch.Frequency, 50);
+
+            _lastTimestamp = timestamp;
+
+            for (int j = 0; j < _particles.Count; j++)
+            {
+                var particle = _particles[j];
+
+                if (particle.Update(elapsed))
+                {
+                    Recycle(particle);
+
+                    _particles.RemoveAt(j);
+                    j--;
+                }
+                else
+                {
+                    particle.Apply();
+                }
+            }
+
+            if (_fallingDownCount >= _particlesCount / 2 && _speedCoef > 0.2f)
+            {
+                StartFall();
+
+                _speedCoef -= elapsed / 16.0f * 0.15f;
+
+                if (_speedCoef < 0.2f)
+                {
+                    _speedCoef = 0.2f;
+                }
+            }
+
+            if (_particles.Count > 0)
+            {
+                return;
+            }
+
+            _started = false;
+
+            StopRendering();
+            Completed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void EnsureVisual()
+        {
+            if (_visual != null)
+            {
+                return;
+            }
+
+            var compositor = BootStrapper.Current.Compositor;
+
+            _brushes = new CompositionColorBrush[_colors.Length];
+            _circles = new CompositionEllipseGeometry[_maxTypeSize - _minTypeSize + 1];
+            _strips = new CompositionRoundedRectangleGeometry[_maxTypeSize - _minTypeSize + 1];
+
+            for (int i = 0; i < _colors.Length; i++)
+            {
+                _brushes[i] = compositor.CreateColorBrush(_colors[i]);
+            }
+
+            _visual = compositor.CreateShapeVisual();
+            _visual.RelativeSizeAdjustment = Vector2.One;
+
+            ElementComposition.SetElementChildVisual(this, _visual);
+        }
+
+        private CompositionGeometry GetGeometry(byte type, byte typeSize)
+        {
+            var index = typeSize - _minTypeSize;
+
+            if (type == 0)
+            {
+                if (_circles[index] == null)
+                {
+                    var circle = _visual.Compositor.CreateEllipseGeometry();
+                    circle.Radius = new Vector2(typeSize);
+
+                    _circles[index] = circle;
+                }
+
+                return _circles[index];
+            }
+
+            if (_strips[index] == null)
+            {
+                // Centred on the origin so the shape's offset is the particle's position and its
+                // rotation turns about the middle of the strip.
+                var strip = _visual.Compositor.CreateRoundedRectangleGeometry();
+                strip.Offset = new Vector2(-typeSize, -2);
+                strip.Size = new Vector2(typeSize * 2, 4);
+                strip.CornerRadius = new Vector2(2);
+
+                _strips[index] = strip;
+            }
+
+            return _strips[index];
+        }
+
+        private void Recycle(Particle particle)
+        {
+            _visual.Shapes.Remove(particle.Shape);
+            _pool.Push(particle);
         }
 
         private void StartFall()
@@ -176,13 +273,16 @@ namespace Telegram.Controls
 
         private Particle CreateParticle(bool falling)
         {
-            Particle particle = new(this)
-            {
-                colorType = (byte)NextInt(_colors.Length),
-                type = (byte)NextInt(2),
-                side = (byte)NextInt(2),
-                finishedStart = (byte)(NextInt(2) + 1)
-            };
+            var particle = _pool.Count > 0
+                ? _pool.Pop()
+                : new Particle(this, _visual.Compositor.CreateSpriteShape());
+
+            particle.Reset();
+            particle.colorType = (byte)NextInt(_colors.Length);
+            particle.type = (byte)NextInt(2);
+            particle.side = (byte)NextInt(2);
+            particle.finishedStart = (byte)(NextInt(2) + 1);
+
             if (particle.type == 0)
             {
                 particle.typeSize = (byte)(int)(NextFloat() * 2.0f + 4.0f);
@@ -191,23 +291,24 @@ namespace Telegram.Controls
             {
                 particle.typeSize = (byte)(int)(NextFloat() * 4.0f + 4.0f);
             }
+
             if (falling)
             {
-                particle.y = -NextFloat() * CanvasHeight * 1.2f;
-                particle.x = 5.0f + NextInt((int)(CanvasWidth - 10.0f));
+                particle.y = -NextFloat() * _size.Y * 1.2f;
+                particle.x = 5.0f + NextInt((int)(_size.X - 10.0f));
                 particle.xFinished = particle.finishedStart;
             }
             else
             {
                 int dp = NextInt(10) + 4;
-                int measuredHeight = (int)(CanvasHeight / 4);
+                int measuredHeight = (int)(_size.Y / 4);
                 if (particle.side == 0)
                 {
                     particle.x = -dp;
                 }
                 else
                 {
-                    particle.x = CanvasWidth + dp;
+                    particle.x = _size.X + dp;
                 }
 
                 int i = 1;
@@ -219,6 +320,12 @@ namespace Telegram.Controls
                 particle.moveY = -(4.0f + NextFloat() * 4.0f);
                 particle.y = measuredHeight / 2 + NextInt(measuredHeight * 2);
             }
+
+            particle.Shape.Geometry = GetGeometry(particle.type, particle.typeSize);
+            particle.Shape.FillBrush = _brushes[particle.colorType];
+            particle.Apply();
+
+            _visual.Shapes.Add(particle.Shape);
             return particle;
         }
 
@@ -226,11 +333,13 @@ namespace Telegram.Controls
         {
             private readonly ConfettiView _confetti;
 
+            public readonly CompositionSpriteShape Shape;
+
             public byte colorType;
             public byte finishedStart;
             public float moveX;
             public float moveY;
-            public short rotation;
+            public float rotation;
             public byte side;
             public byte type;
             public byte typeSize;
@@ -238,35 +347,35 @@ namespace Telegram.Controls
             public byte xFinished;
             public float y;
 
-            public Particle(ConfettiView confetti)
+            public Particle(ConfettiView confetti, CompositionSpriteShape shape)
             {
                 _confetti = confetti;
+                Shape = shape;
             }
 
-            public void Draw(CanvasAnimatedDrawEventArgs canvas)
+            public void Reset()
             {
-                if (type == 0)
-                {
-                    canvas.DrawingSession.FillCircle(x, y, typeSize, _colors[colorType]);
-                    return;
-                }
-
-                static Rect Rect(double x1, double y1, double x2, double y2)
-                {
-                    return new Rect(x1, y1, x2 - x1, y2 - y1);
-                }
-
-                var rect = Rect(x - typeSize, y - 2.0f, x + typeSize, y + 2.0f);
-                canvas.DrawingSession.Transform = Matrix3x2.CreateRotation(DegreeToRadian(rotation), new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2).ToVector2());
-                canvas.DrawingSession.FillRoundedRectangle(rect, 2.0f, 2.0f, _colors[colorType]);
-                canvas.DrawingSession.Transform = Matrix3x2.Identity;
+                moveX = 0;
+                moveY = 0;
+                rotation = 0;
+                xFinished = 0;
             }
 
-            public bool Update(int i)
+            public void Apply()
             {
-                float coefficient = _confetti.CanvasWidth / 360f;
+                Shape.Offset = new Vector2(x, y);
 
-                float f = i / 16.0f;
+                if (type == 1)
+                {
+                    Shape.RotationAngleInDegrees = rotation;
+                }
+            }
+
+            public bool Update(float elapsed)
+            {
+                float coefficient = _confetti._size.X / 360f;
+
+                float f = elapsed / 16.0f;
                 float f2 = x;
                 float f3 = moveX;
                 x = f2 + f3 * f * coefficient;
@@ -329,19 +438,14 @@ namespace Telegram.Controls
 
                 if (type == 1)
                 {
-                    rotation = (short)(int)(rotation + f * 10.0f);
+                    rotation += f * 10.0f;
                     if (rotation > 360)
                     {
                         rotation -= 360;
                     }
                 }
 
-                if (y >= _confetti.CanvasHeight)
-                {
-                    return true;
-                }
-
-                return false;
+                return y >= _confetti._size.Y;
             }
         }
 
@@ -353,11 +457,6 @@ namespace Telegram.Controls
         private int NextInt(int max)
         {
             return _random.Next(max);
-        }
-
-        public static float DegreeToRadian(float angle)
-        {
-            return (float)Math.PI * angle / 180.0f;
         }
     }
 }
