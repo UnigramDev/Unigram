@@ -448,7 +448,8 @@
                                           FontSize="{StaticResource GlyphMediumFontSize}"
                                           CornerRadius="24"
                                           Margin="0,0,-4,0" />
-                    <controls:GlyphButton Click="{x:Bind ViewModel.Dialog.JumpDate}"
+                    <controls:GlyphButton x:Name="JumpDate"
+                                          Click="{x:Bind ViewModel.Dialog.JumpDate}"
                                           Glyph="&#xE787;"
                                           AllowFocusOnInteraction="False"
                                           AutomationProperties.Name="{CustomResource JumpToDate}"
@@ -458,7 +459,8 @@
                                           Margin="0,0,-4,0"
                                           Grid.Column="1" />
 
-                    <controls:GlyphButton Click="Close_Click"
+                    <controls:GlyphButton x:Name="CloseButton"
+                                          Click="Close_Click"
                                           Glyph="&#xE711;"
                                           AutomationProperties.Name="{CustomResource AccDescrCloseSearch}"
                                           CornerRadius="24"

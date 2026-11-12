@@ -304,7 +304,7 @@ namespace Telegram.Views
             _footerShadow = new ThemeShadowEx(ShadowCaster, Constants.BubbleElevation);
             _headerShadow = new ThemeShadowEx(HeaderShadow, Constants.BubbleElevation);
 
-            ClipperOuter.LeadingSpacing = IslandSpacing;
+            UpdateIslands(AppSettings.Appearance.CornerRadius, AppSettings.IsAdaptiveWideEnabled);
 
             // The forum tabs, the banner and search all move the headers, and they can overlap, so
             // each animates its own share here and the panel takes the sum.
@@ -6929,6 +6929,10 @@ namespace Telegram.Views
         private void UpdateTextAreaRadius(bool force = true)
         {
             var radius = AppSettings.Appearance.CornerRadius;
+
+            // Ahead of the early-out, which adaptive width would not get past on its own.
+            UpdateIslands(radius, AppSettings.IsAdaptiveWideEnabled);
+
             if (radius == _textAreaRadius && !force)
             {
                 return;
@@ -6936,28 +6940,42 @@ namespace Telegram.Views
 
             _textAreaRadius = radius;
 
-            var min = Math.Max(4, radius - 4);
-            var max = ComposerHeader.Visibility == Visibility.Visible ? 4 : min;
-
             ShadowCaster.RadiusX = InlineShadow.RadiusX = radius;
             ShadowCaster.RadiusY = InlineShadow.RadiusY = radius;
+            _footerShadow.Invalidate();
 
             InlineShadow.Height = radius * 2;
 
-            ButtonAttach.CornerRadius = new CornerRadius(_sideMenuCollapsed == SideButton.None ? max : 4, 4, 4, _sideMenuCollapsed == SideButton.None ? min : 4);
-            ButtonFeedback.CornerRadius = new CornerRadius(min, 4, 4, min);
-            ButtonGift.CornerRadius = new CornerRadius(4, min, min, 4);
-            btnVoiceMessage.CornerRadius = new CornerRadius(4, max, min, 4);
-            btnSendMessage.CornerRadius = new CornerRadius(4, max, min, 4);
-            btnEdit.CornerRadius = new CornerRadius(4, max, min, 4);
-            ButtonDelete.CornerRadius = new CornerRadius(4, min, min, 4);
-            ButtonManage.CornerRadius = new CornerRadius(min, 4, 4, min);
-            ComposerHeaderReference.CornerRadius = new CornerRadius(4, min, 4, 4);
+            // Every button here is the composer's 48 tall, so with its radius they are round at the
+            // default of 24.
+            var button = new CornerRadius(Math.Max(4, radius));
 
-            ComposerHeaderCancel.CornerRadius =
-                ButtonMaximize.CornerRadius = new CornerRadius(4, min, 4, 4);
-            ButtonEditor.CornerRadius =
-                ButtonClear.CornerRadius = new CornerRadius(min, 4, 4, 4);
+            ButtonAttach.CornerRadius =
+                ButtonEditor.CornerRadius =
+                ButtonClear.CornerRadius =
+                ButtonScheduled.CornerRadius =
+                ButtonSilent.CornerRadius =
+                ButtonTimer.CornerRadius =
+                ButtonCommands.CornerRadius =
+                ButtonMarkup.CornerRadius =
+                ButtonSuggest.CornerRadius =
+                ButtonStickers.CornerRadius =
+                btnVoiceMessage.CornerRadius =
+                btnSendMessage.CornerRadius =
+                btnEdit.CornerRadius =
+                ButtonMaximize.CornerRadius =
+                ComposerHeaderCancel.CornerRadius =
+                ButtonFeedback.CornerRadius =
+                ButtonGift.CornerRadius =
+                ButtonManage.CornerRadius =
+                ButtonForward.CornerRadius =
+                ButtonDelete.CornerRadius = button;
+
+            // The quoted message is a strip, not a button, and a full radius would make it a pill. Its
+            // left side carries the accent line, so it keeps a quote's 4 there.
+            var reference = Math.Max(4, radius - 4);
+            ComposerHeaderReference.CornerRadius = new CornerRadius(4, reference, reference, 4);
+
             TextRoot.CornerRadius =
                 ChatFooter.CornerRadius =
                 ChatRecord.CornerRadius =
@@ -6972,28 +6990,6 @@ namespace Telegram.Views
             ReplyMarkupPanel.CornerRadius = new CornerRadius(0, 0, radius, radius);
             ReplyMarkupPanel.Padding = new Thickness(0, radius, 0, 0);
 
-            if (radius > 0)
-            {
-                Footer.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth =
-                    AppSettings.IsAdaptiveWideEnabled ? 1000 : double.PositiveInfinity;
-                Footer.Margin = Separator.Margin = new Thickness(8, 0, 8, 8);
-                InlinePanel.Margin = new Thickness(8, 0, 8, -radius);
-                InlineShadow.Margin = new Thickness(0, 0, 0, -radius);
-                ReplyMarkupPanel.Margin = new Thickness(8, -8 - radius, 8, 8);
-            }
-            else
-            {
-                Footer.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth =
-                    AppSettings.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
-                Footer.Margin = Separator.Margin = new Thickness();
-                InlinePanel.Margin = new Thickness();
-                InlineShadow.Margin = new Thickness();
-                ReplyMarkupPanel.Margin = new Thickness();
-            }
-
-            MessagesStickyPhoto.MaxWidth =
-                AppSettings.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
-
             var stickyPhoto = ElementComposition.GetElementVisual(MessagesStickyPhoto);
             if (stickyPhoto.Clip is InsetClip stickyPhotoClip)
             {
@@ -7003,6 +6999,92 @@ namespace Telegram.Views
             {
                 stickyPhoto.Clip = stickyPhoto.Compositor.CreateInsetClip(0, 0, 0, -radius);
             }
+        }
+
+        private int _islandsRadius = -1;
+        private bool _islandsAdaptive;
+
+        // Between an island and the side of the chat it rests against.
+        private float _islandMargin = 8;
+
+        // Between two islands: the header, the headers under it, the forum tabs and the composer.
+        private float _islandSpacing = 6;
+
+        // The islands take the composer's radius, which they are drawn for at its default of 24:
+        // the header and the search bar take it as it is, the cards that are 32 tall or stack
+        // headers take at most 16, and what sits inside a card takes its radius less the inset.
+        // At 0 they close up into one flat surface, without the gaps and the shadows.
+        private void UpdateIslands(int radius, bool adaptive)
+        {
+            if (radius == _islandsRadius && adaptive == _islandsAdaptive)
+            {
+                return;
+            }
+
+            _islandsRadius = radius;
+            _islandsAdaptive = adaptive;
+
+            var merged = radius == 0;
+            var card = Math.Min(radius, 16);
+            var button = new CornerRadius(Math.Max(4, radius - 4));
+
+            _islandMargin = merged ? 0 : 8;
+            _islandSpacing = merged ? 0 : 6;
+
+            var margin = _islandMargin;
+
+            // The column the messages are laid out in, which every island but the left tabs keeps to.
+            var width = adaptive ? 1024 - 2 * margin : double.PositiveInfinity;
+
+            Header.Margin = new Thickness(margin, margin, margin, 0);
+            Header.MaxWidth = width;
+            HeaderCard.CornerRadius = new CornerRadius(radius);
+            HeaderShadow.RadiusX = HeaderShadow.RadiusY = radius;
+            _headerShadow.IsVisible = !merged;
+            _headerShadow.Invalidate();
+
+            Profile.CornerRadius = new CornerRadius(radius);
+            BackButton.CornerRadius =
+                VideoCall.CornerRadius =
+                Call.CornerRadius =
+                SearchOption.CornerRadius =
+                ForumSidebarButton.CornerRadius =
+                HeaderMore.CornerRadius = button;
+
+            ClipperOuter.MaxWidth = width;
+            ClipperOuter.LeadingSpacing = _islandSpacing;
+            ClipperOuter.CardCornerRadius = card;
+            ClipperOuter.IsCardShadowVisible = !merged;
+            UpdateForumLeftInset(_forumPlacement == ForumPlacement.Left);
+            UpdateClipperScrim();
+
+            ForumNavigation.UpdateIslandRadius(card);
+
+            if (IsDocked(_forumDockedAt))
+            {
+                UpdateForumNavigationMargin(_forumDockedAt);
+            }
+
+            if (_forumPlacement == ForumPlacement.Top)
+            {
+                ClipperOuterPadding.Height = ForumIslandHeight;
+            }
+
+            SearchMask.UpdateIsland(radius, margin, width);
+
+            Footer.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth = width;
+            Footer.Margin = Separator.Margin = new Thickness(margin, 0, margin, margin);
+            _footerShadow.IsVisible = !merged;
+
+            // It spans the composer's rows, and asking them for more than the composer takes would
+            // grow them: 64 from the bottom, so it reaches up past the 48 and the margin under it.
+            LinearCaster.Margin = new Thickness(0, margin - 16, 0, 0);
+
+            InlinePanel.Margin = new Thickness(margin, 0, margin, -radius);
+            InlineShadow.Margin = new Thickness(0, 0, 0, -radius);
+            ReplyMarkupPanel.Margin = new Thickness(margin, -margin - radius, margin, margin);
+
+            MessagesStickyPhoto.MaxWidth = adaptive ? 1024 : double.PositiveInfinity;
         }
 
         public void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection)
@@ -7910,10 +7992,16 @@ namespace Telegram.Views
 
         private void ClipperOuter_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var height = e.NewSize.Height - DateHeaderRelative.ActualHeight;
+            UpdateClipperScrim();
+        }
 
-            ClipperScrim.Margin = new Thickness(-8, -height - 64, -8, -8);
-            //UpdateMessagesHeaderPadding();
+        // Up behind the headers and the header, to the top of the chat.
+        private void UpdateClipperScrim()
+        {
+            var height = ClipperOuter.ActualSize.Y - DateHeaderRelative.ActualSize.Y;
+            var top = height + Header.ActualSize.Y + _islandMargin + _islandSpacing;
+
+            ClipperScrim.Margin = new Thickness(-_islandMargin, -top, -_islandMargin, -8);
         }
 
         private readonly Visual _messagesVisual;
@@ -8125,25 +8213,19 @@ namespace Telegram.Views
             Sidebar
         }
 
-        // Between two islands: the header, the headers under it, the forum tabs and the composer.
-        private const float IslandSpacing = 6;
-
-        // Between an island and the side of the chat it rests against.
-        private const float IslandMargin = 8;
-
         private const float ForumTabsHeight = 32;
         private const float ForumTabsWidth = 72;
         private const float ForumSidebarWidth = 320;
 
         // What the top or bottom tabs take from the messages: the island and the gap beside it.
-        private const float ForumIslandHeight = ForumTabsHeight + IslandSpacing;
+        private float ForumIslandHeight => ForumTabsHeight + _islandSpacing;
 
         // Where the left card ends, which is where the messages start.
-        private const float ForumLeftWidth = IslandMargin + ForumTabsWidth;
+        private float ForumLeftWidth => _islandMargin + ForumTabsWidth;
 
         // How far the headers move aside for the left card: its width and the gap after it, as both
-        // already sit IslandMargin from the side.
-        private const float ForumLeftInset = ForumTabsWidth + IslandSpacing;
+        // already sit the margin from the side.
+        private float ForumLeftInset => ForumTabsWidth + _islandSpacing;
 
         private ForumPlacement _forumPlacement;
 
@@ -8436,7 +8518,7 @@ namespace Telegram.Views
 
             MessagesRoot.Padding = new Thickness(messages, 0, 0, 0);
             MessagesOverlay.Padding = new Thickness(messages, 0, 0, 0);
-            ClipperOuter.Margin = new Thickness(IslandMargin + headers, 0, IslandMargin, 0);
+            ClipperOuter.Margin = new Thickness(_islandMargin + headers, 0, _islandMargin, 0);
         }
 
         private void DockForumNavigation(ForumPlacement edge)
@@ -8472,13 +8554,7 @@ namespace Telegram.Views
             // Applied even on the same edge: tabs shown again while their exit is still playing
             // have not been put back in their row yet.
             ForumNavigation.VerticalAlignment = VerticalAlignment.Stretch;
-            ForumNavigation.Margin = edge switch
-            {
-                ForumPlacement.Top => new Thickness(IslandMargin, IslandSpacing, IslandMargin, 0),
-                ForumPlacement.Bottom => new Thickness(IslandMargin, 0, IslandMargin, IslandSpacing),
-                ForumPlacement.Left => new Thickness(IslandMargin, IslandSpacing, 0, IslandSpacing),
-                _ => new Thickness()
-            };
+            UpdateForumNavigationMargin(edge);
 
             Grid.SetRow(ForumNavigation, bottom ? 3 : left ? 2 : 1);
             Grid.SetColumnSpan(ForumNavigation, edge == ForumPlacement.Top ? 2 : 1);
@@ -8486,6 +8562,22 @@ namespace Telegram.Views
             ForumNavigation.HorizontalAlignment = left
                 ? HorizontalAlignment.Left
                 : HorizontalAlignment.Stretch;
+        }
+
+        // The left tabs stay at the side of the chat, the others keep to the messages' column.
+        private void UpdateForumNavigationMargin(ForumPlacement edge)
+        {
+            ForumNavigation.Margin = edge switch
+            {
+                ForumPlacement.Top => new Thickness(_islandMargin, _islandSpacing, _islandMargin, 0),
+                ForumPlacement.Bottom => new Thickness(_islandMargin, 0, _islandMargin, _islandSpacing),
+                ForumPlacement.Left => new Thickness(_islandMargin, _islandSpacing, 0, _islandSpacing),
+                _ => new Thickness()
+            };
+
+            ForumNavigation.MaxWidth = edge == ForumPlacement.Left || !_islandsAdaptive
+                ? double.PositiveInfinity
+                : 1024 - 2 * _islandMargin;
         }
 
         // Opening or closing the row under the messages moves everything resting on their bottom
@@ -8513,7 +8605,7 @@ namespace Telegram.Views
             ElementComposition.GetElementVisual(Arrows).StartAnimation("Translation.Y", translation);
         }
 
-        private static void AnimateForumEdge(UIElement element, ForumPlacement edge, bool show, TimeSpan duration)
+        private void AnimateForumEdge(UIElement element, ForumPlacement edge, bool show, TimeSpan duration)
         {
             ElementCompositionPreview.SetIsTranslationEnabled(element, true);
             AnimateForumEdge(ElementComposition.GetElementVisual(element), "Translation", Vector3.Zero, edge, show, duration);
@@ -8521,7 +8613,7 @@ namespace Telegram.Views
 
         // The docked tabs float, so they slide and fade; the sidebar slides off the right edge and is
         // clipped there, so that on its way it never shows anywhere it does not at rest.
-        private static void AnimateForumEdge(Visual visual, string property, Vector3 rest, ForumPlacement edge, bool show, TimeSpan duration)
+        private void AnimateForumEdge(Visual visual, string property, Vector3 rest, ForumPlacement edge, bool show, TimeSpan duration)
         {
             switch (edge)
             {

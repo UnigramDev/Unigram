@@ -120,6 +120,8 @@ namespace Telegram.Controls.Views
 
                 ModeButton.Width = horizontal ? 40 : 72;
                 ModeButton.Height = 32;
+
+                UpdateIsland();
             }
 
             ModeButton?.Visibility = island ? Visibility.Visible : Visibility.Collapsed;
@@ -156,6 +158,36 @@ namespace Telegram.Controls.Views
             ScrollViewer.SetHorizontalScrollMode(ScrollingHost, horizontal ? ScrollMode.Auto : ScrollMode.Disabled);
             ScrollViewer.SetVerticalScrollBarVisibility(ScrollingHost, type == ForumViewType.Vertical ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Auto);
             ScrollViewer.SetVerticalScrollMode(ScrollingHost, horizontal ? ScrollMode.Disabled : ScrollMode.Auto);
+        }
+
+        private double _islandRadius = 16;
+
+        /// <summary>
+        /// The radius of the card the docked layouts sit on. At 0 the card is flush with what is
+        /// around it, so it drops its shadow.
+        /// </summary>
+        public void UpdateIslandRadius(double radius)
+        {
+            _islandRadius = radius;
+            UpdateIsland();
+        }
+
+        private void UpdateIsland()
+        {
+            if (IslandBackgroundRoot == null || ModeButton == null)
+            {
+                return;
+            }
+
+            var merged = _islandRadius == 0;
+
+            IslandShadow.RadiusX = IslandShadow.RadiusY = _islandRadius;
+            IslandBackgroundRoot.CornerRadius = new CornerRadius(_islandRadius);
+
+            _islandShadow.IsVisible = !merged;
+            _islandShadow.Invalidate();
+
+            ModeButton.CornerRadius = new CornerRadius(Math.Max(4, _islandRadius - 4));
         }
 
         private bool IsHorizontal => _type is ForumViewType.Horizontal or ForumViewType.Bottom;

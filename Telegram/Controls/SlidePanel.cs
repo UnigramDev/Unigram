@@ -28,6 +28,12 @@ namespace Telegram.Controls
         bool IsLast { get; set; }
 
         /// <summary>
+        /// The radius of the card the child sits on, which its own shape follows where it is the
+        /// first or the last.
+        /// </summary>
+        double CardRadius { get; set; }
+
+        /// <summary>
         /// Whether the child is shown or on its way to being shown, which its Visibility cannot
         /// say: that stays Visible until a child sliding out has finished.
         /// </summary>
@@ -319,7 +325,30 @@ namespace Telegram.Controls
         /// opens and closes it along with that child. It moves the children by composition and
         /// is left out of the measured size, so whatever is sized from the panel does not cover it.
         /// </summary>
-        public double LeadingSpacing { get; set; }
+        public double LeadingSpacing
+        {
+            get => _leadingSpacing;
+            set
+            {
+                if (_leadingSpacing == value)
+                {
+                    return;
+                }
+
+                _leadingSpacing = value;
+
+                // The stacking expressions took the old value as a parameter, so every one of them
+                // is started again on the next measure.
+                for (int i = 0; i < _spacings.Length; i++)
+                {
+                    _spacings[i] = -1;
+                }
+
+                InvalidateMeasure();
+            }
+        }
+
+        private double _leadingSpacing;
 
         // The card the children that implement ISlidePanelChild sit on: one surface rather than
         // one per child, so the backdrop is blurred once and there is no seam where two meet. Its
@@ -393,8 +422,32 @@ namespace Telegram.Controls
             get => _cardCornerRadius;
             set
             {
+                if (_cardCornerRadius == value)
+                {
+                    return;
+                }
+
                 _cardCornerRadius = value;
                 _cardGeometry.CornerRadius = new Vector2((float)value);
+
+                if (_cardShadow != null)
+                {
+                    _cardShadow.Brush = ThemeShadowEx.CreateBrush(_cardShadow.Compositor, Constants.BubbleElevation, ActualTheme, (float)value, (float)value);
+                }
+
+                // The children take it from the next measure.
+                InvalidateMeasure();
+            }
+        }
+
+        private bool _isCardShadowVisible = true;
+        public bool IsCardShadowVisible
+        {
+            get => _isCardShadowVisible;
+            set
+            {
+                _isCardShadowVisible = value;
+                _cardShadow?.IsVisible = value && _cardFirst != null;
             }
         }
 
@@ -577,7 +630,7 @@ namespace Telegram.Controls
             _cardGeometry.StartAnimation("Size", _cardSizeAnimation);
             card.StartAnimation("Opacity", _cardOpacityAnimation);
 
-            _cardShadow.IsVisible = true;
+            _cardShadow.IsVisible = _isCardShadowVisible;
             _cardShadow.StartAnimation("Offset", _cardShadowOffsetAnimation);
             _cardShadow.StartAnimation("Size", _cardShadowSizeAnimation);
             _cardShadow.StartAnimation("Opacity", _cardOpacityAnimation);
@@ -617,6 +670,9 @@ namespace Telegram.Controls
                 var element = Children[i];
                 if (element is ISlidePanelChild child && element.Visibility == Visibility.Visible)
                 {
+                    // A hidden child takes it when it shows, which measures the panel again.
+                    child.CardRadius = _cardCornerRadius;
+
                     first ??= child;
                     last = child;
                 }

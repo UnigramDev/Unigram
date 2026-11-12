@@ -549,7 +549,8 @@
             <Rectangle x:Name="HeaderShadow"
                        RadiusX="24"
                        RadiusY="24" />
-            <Border Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+            <Border x:Name="HeaderCard"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                     BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                     BorderThickness="0"
                     CornerRadius="24" />
@@ -777,7 +778,8 @@
                                             ToolTipService.ToolTip="{CustomResource Topics}"
                                             Margin="0,0,-4,0"
                                             Grid.Column="1" />
-                <controls:MoreButton Click="Menu_ContextRequested"
+                <controls:MoreButton x:Name="HeaderMore"
+                                     Click="Menu_ContextRequested"
                                      CornerRadius="20"
                                      Grid.Column="2" />
             </Grid>

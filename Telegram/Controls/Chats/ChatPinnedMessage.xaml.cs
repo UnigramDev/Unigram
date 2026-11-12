@@ -314,10 +314,24 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        private double _cardRadius = 16;
+        public double CardRadius
+        {
+            get => _cardRadius;
+            set
+            {
+                if (_cardRadius != value)
+                {
+                    _cardRadius = value;
+                    UpdateAttach(_isFirst, _isLast);
+                }
+            }
+        }
+
         private void UpdateAttach(bool first, bool last)
         {
-            var radiusTop = first ? 16 : 0;
-            var radiusBottom = last ? 16 : 0;
+            var radiusTop = first ? _cardRadius : 0;
+            var radiusBottom = last ? _cardRadius : 0;
 
             CornerRadius = new CornerRadius(radiusTop, radiusTop, radiusBottom, radiusBottom);
             Thickness.Opacity = last ? 0 : 1;

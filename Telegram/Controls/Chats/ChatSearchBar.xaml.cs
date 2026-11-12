@@ -483,12 +483,46 @@ namespace Telegram.Controls.Chats
 
             // The field's bottom corners meet the card's square top while it shows, and the buttons
             // at either end of the field follow its corners on their outer side.
-            var bottom = visible ? 0 : 16;
-            var button = visible ? 4 : 16;
+            var radius = _fieldRadius;
+            var bottom = visible ? 0 : radius;
+            var button = visible ? 4 : radius;
 
-            Field.CornerRadius = new CornerRadius(16, 16, bottom, bottom);
-            QueryButton.CornerRadius = new CornerRadius(16, 4, 4, button);
-            DeleteButton.CornerRadius = new CornerRadius(4, 16, button, 4);
+            Field.CornerRadius = new CornerRadius(radius, radius, bottom, bottom);
+            QueryButton.CornerRadius = new CornerRadius(radius, 4, 4, button);
+            DeleteButton.CornerRadius = new CornerRadius(4, radius, button, 4);
+        }
+
+        private double _fieldRadius = 16;
+
+        /// <summary>
+        /// Shapes the island after the chat header it stands in for: <paramref name="radius"/> for
+        /// the card and the buttons on it, and the same less the 8 the field is inset by for the
+        /// field and what hangs off it. At 0 the island is flush with the edges, without its shadow.
+        /// </summary>
+        public void UpdateIsland(double radius, double margin, double maxWidth)
+        {
+            var merged = radius == 0;
+
+            Island.Margin = new Thickness(margin, margin, margin, 0);
+            Island.MaxWidth = maxWidth;
+
+            ClipperBackground.CornerRadius = new CornerRadius(radius);
+
+            IslandShadow.RadiusX = IslandShadow.RadiusY = radius;
+            _islandShadow.IsVisible = !merged;
+            _islandShadow.Invalidate();
+
+            FilterByMember.CornerRadius =
+                JumpDate.CornerRadius =
+                CloseButton.CornerRadius = new CornerRadius(radius);
+
+            _fieldRadius = Math.Max(4, radius - 8);
+
+            SearchPrevious.CornerRadius = new CornerRadius(_fieldRadius, 0, 0, _fieldRadius);
+            SearchNext.CornerRadius = new CornerRadius(0, _fieldRadius, _fieldRadius, 0);
+            RootAutocomplete.CornerRadius = new CornerRadius(0, 0, _fieldRadius, _fieldRadius);
+
+            UpdateAutocompleteCard();
         }
 
         // The two templates are different heights, and neither is measured here: a member row is the
