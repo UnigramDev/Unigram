@@ -124,6 +124,13 @@ namespace Telegram.Services
             set => _local.AddOrUpdateValue(ref _isAdaptiveWideEnabled, "IsAdaptiveWideEnabled", value);
         }
 
+        private static bool? _isDockedLayoutEnabled;
+        public static bool IsDockedLayoutEnabled
+        {
+            get => _isDockedLayoutEnabled ??= _local.GetValueOrDefault("IsDockedLayoutEnabled", false);
+            set => _local.AddOrUpdateValue(ref _isDockedLayoutEnabled, "IsDockedLayoutEnabled", value);
+        }
+
         private static bool? _areSmoothTransitionsEnabled;
         public static bool AreSmoothTransitionsEnabled
         {

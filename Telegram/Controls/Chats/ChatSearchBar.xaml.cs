@@ -499,17 +499,17 @@ namespace Telegram.Controls.Chats
         /// the card and the buttons on it, and the same less the 8 the field is inset by for the
         /// field and what hangs off it. At 0 the island is flush with the edges, without its shadow.
         /// </summary>
-        public void UpdateIsland(double radius, double margin, double maxWidth)
+        public void UpdateIsland(double radius, bool docked, double margin, double maxWidth)
         {
-            var merged = radius == 0;
+            var surface = docked ? 0 : radius;
 
             Island.Margin = new Thickness(margin, margin, margin, 0);
             Island.MaxWidth = maxWidth;
 
-            ClipperBackground.CornerRadius = new CornerRadius(radius);
+            ClipperBackground.CornerRadius = new CornerRadius(surface);
 
-            IslandShadow.RadiusX = IslandShadow.RadiusY = radius;
-            _islandShadow.IsVisible = !merged;
+            IslandShadow.RadiusX = IslandShadow.RadiusY = surface;
+            _islandShadow.IsVisible = !docked;
             _islandShadow.Invalidate();
 
             FilterByMember.CornerRadius =

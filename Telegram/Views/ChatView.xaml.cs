@@ -2691,7 +2691,7 @@ namespace Telegram.Views
             var value1 = TextArea.ActualSize.Y;
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-            rect.CornerRadius = new Vector2(AppSettings.Appearance.CornerRadius);
+            rect.CornerRadius = new Vector2((float)TextAreaRadius);
             rect.Size = TextArea.ActualSize;
             rect.Offset = new Vector2(0, value);
 
@@ -6686,7 +6686,7 @@ namespace Telegram.Views
             var width = Math.Max(0, TextAreaRadius > 0 ? ActualSize.X - 16 : ActualSize.X);
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-            rect.CornerRadius = new Vector2(AppSettings.Appearance.CornerRadius);
+            rect.CornerRadius = new Vector2((float)TextAreaRadius);
             rect.Size = new Vector2(width, 192 + 48);
             rect.Offset = new Vector2(0, value);
 
@@ -6933,18 +6933,22 @@ namespace Telegram.Views
             // Ahead of the early-out, which adaptive width would not get past on its own.
             UpdateIslands(radius, AppSettings.IsAdaptiveWideEnabled);
 
-            if (radius == _textAreaRadius && !force)
+            // Docked, the composer is flush with the sides of the chat, and only its buttons keep the radius.
+            var surface = _islandsDocked ? 0 : radius;
+
+            if (surface == _textAreaRadius && radius == _textAreaButtonRadius && !force)
             {
                 return;
             }
 
-            _textAreaRadius = radius;
+            _textAreaRadius = surface;
+            _textAreaButtonRadius = radius;
 
-            ShadowCaster.RadiusX = InlineShadow.RadiusX = radius;
-            ShadowCaster.RadiusY = InlineShadow.RadiusY = radius;
+            ShadowCaster.RadiusX = InlineShadow.RadiusX = surface;
+            ShadowCaster.RadiusY = InlineShadow.RadiusY = surface;
             _footerShadow.Invalidate();
 
-            InlineShadow.Height = radius * 2;
+            InlineShadow.Height = surface * 2;
 
             // Every button here is the composer's 48 tall, so with its radius they are round at the
             // default of 24.
@@ -6980,28 +6984,31 @@ namespace Telegram.Views
                 ChatFooter.CornerRadius =
                 ChatRecord.CornerRadius =
                 ManagePanel.CornerRadius =
-                ButtonAction.CornerRadius = new CornerRadius(radius);
+                ButtonAction.CornerRadius = new CornerRadius(surface);
 
-            ListAutocomplete.CornerRadius = InlineCaster.CornerRadius = new CornerRadius(radius, radius, 0, 0);
-            ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
+            ListAutocomplete.CornerRadius = InlineCaster.CornerRadius = new CornerRadius(surface, surface, 0, 0);
+            ListAutocomplete.Padding = new Thickness(0, 0, 0, surface);
 
-            ListInline?.UpdateCornerRadius(radius);
+            ListInline?.UpdateCornerRadius(surface);
 
-            ReplyMarkupPanel.CornerRadius = new CornerRadius(0, 0, radius, radius);
-            ReplyMarkupPanel.Padding = new Thickness(0, radius, 0, 0);
+            ReplyMarkupPanel.CornerRadius = new CornerRadius(0, 0, surface, surface);
+            ReplyMarkupPanel.Padding = new Thickness(0, surface, 0, 0);
 
             var stickyPhoto = ElementComposition.GetElementVisual(MessagesStickyPhoto);
             if (stickyPhoto.Clip is InsetClip stickyPhotoClip)
             {
-                stickyPhotoClip.BottomInset = -radius;
+                stickyPhotoClip.BottomInset = -surface;
             }
             else
             {
-                stickyPhoto.Clip = stickyPhoto.Compositor.CreateInsetClip(0, 0, 0, -radius);
+                stickyPhoto.Clip = stickyPhoto.Compositor.CreateInsetClip(0, 0, 0, -surface);
             }
         }
 
+        private double _textAreaButtonRadius = double.NaN;
+
         private int _islandsRadius = -1;
+        private bool _islandsDocked;
         private bool _islandsAdaptive;
 
         // Between an island and the side of the chat it rests against.
@@ -7013,19 +7020,23 @@ namespace Telegram.Views
         // The islands take the composer's radius, which they are drawn for at its default of 24:
         // the header and the search bar take it as it is, the cards that are 32 tall or stack
         // headers take at most 16, and what sits inside a card takes its radius less the inset.
-        // At 0 they close up into one flat surface, without the gaps and the shadows.
+        // Docked, or at 0, they close up into one flat surface, without the gaps and the shadows,
+        // and only the buttons on them keep the radius.
         private void UpdateIslands(int radius, bool adaptive)
         {
-            if (radius == _islandsRadius && adaptive == _islandsAdaptive)
+            var merged = radius == 0 || AppSettings.IsDockedLayoutEnabled;
+
+            if (radius == _islandsRadius && merged == _islandsDocked && adaptive == _islandsAdaptive)
             {
                 return;
             }
 
             _islandsRadius = radius;
+            _islandsDocked = merged;
             _islandsAdaptive = adaptive;
 
-            var merged = radius == 0;
-            var card = Math.Min(radius, 16);
+            var surface = merged ? 0 : radius;
+            var card = Math.Min(surface, 16);
             var button = new CornerRadius(Math.Max(4, radius - 4));
 
             _islandMargin = merged ? 0 : 8;
@@ -7038,8 +7049,8 @@ namespace Telegram.Views
 
             Header.Margin = new Thickness(margin, margin, margin, 0);
             Header.MaxWidth = width;
-            HeaderCard.CornerRadius = new CornerRadius(radius);
-            HeaderShadow.RadiusX = HeaderShadow.RadiusY = radius;
+            HeaderCard.CornerRadius = new CornerRadius(surface);
+            HeaderShadow.RadiusX = HeaderShadow.RadiusY = surface;
             _headerShadow.IsVisible = !merged;
             _headerShadow.Invalidate();
 
@@ -7058,7 +7069,7 @@ namespace Telegram.Views
             UpdateForumLeftInset(_forumPlacement == ForumPlacement.Left);
             UpdateClipperScrim();
 
-            ForumNavigation.UpdateIslandRadius(card);
+            ForumNavigation.UpdateIslandRadius(card, button.TopLeft);
 
             if (IsDocked(_forumDockedAt))
             {
@@ -7070,7 +7081,7 @@ namespace Telegram.Views
                 ClipperOuterPadding.Height = ForumIslandHeight;
             }
 
-            SearchMask.UpdateIsland(radius, margin, width);
+            SearchMask.UpdateIsland(radius, merged, margin, width);
 
             Footer.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth = width;
             Footer.Margin = Separator.Margin = new Thickness(margin, 0, margin, margin);
@@ -7080,9 +7091,9 @@ namespace Telegram.Views
             // grow them: 64 from the bottom, so it reaches up past the 48 and the margin under it.
             LinearCaster.Margin = new Thickness(0, margin - 16, 0, 0);
 
-            InlinePanel.Margin = new Thickness(margin, 0, margin, -radius);
-            InlineShadow.Margin = new Thickness(0, 0, 0, -radius);
-            ReplyMarkupPanel.Margin = new Thickness(margin, -margin - radius, margin, margin);
+            InlinePanel.Margin = new Thickness(margin, 0, margin, -surface);
+            InlineShadow.Margin = new Thickness(0, 0, 0, -surface);
+            ReplyMarkupPanel.Margin = new Thickness(margin, -margin - surface, margin, margin);
 
             MessagesStickyPhoto.MaxWidth = adaptive ? 1024 : double.PositiveInfinity;
         }
@@ -7849,7 +7860,7 @@ namespace Telegram.Views
 
         private void InlineBotResults_Loaded(object sender, RoutedEventArgs e)
         {
-            ListInline.UpdateCornerRadius(AppSettings.Appearance.CornerRadius);
+            ListInline.UpdateCornerRadius(TextAreaRadius);
             ListInline.MaxHeight = Math.Min(320, Math.Max(ContentPanel.ActualHeight - 48, 0));
 
             if (ViewModel?.Chat is Chat chat)

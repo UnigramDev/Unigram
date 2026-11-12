@@ -11187,6 +11187,7 @@
     <string name="DiagnosticsShowPeerIds">Show Peer IDs</string>
     <string name="DiagnosticsUseLayoutRounding">Use Layout Rounding</string>
     <string name="DisableProxy">Disable Proxy</string>
+    <string name="DockedLayout">Docked Header and Composer</string>
     <string name="DownloadFolder">Download Folder</string>
     <string name="DownloadFolderDefault">Default</string>
     <string name="DownloadPath">Download Path</string>

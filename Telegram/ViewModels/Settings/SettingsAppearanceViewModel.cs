@@ -521,6 +521,16 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
+        public bool IsDockedLayoutEnabled
+        {
+            get => AppSettings.IsDockedLayoutEnabled;
+            set
+            {
+                AppSettings.IsDockedLayoutEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public int FontFamily
         {
             get => FontFamilyOptions.FindIndex(x => x.Value == AppSettings.Appearance.FontFamily);

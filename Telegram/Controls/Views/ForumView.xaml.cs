@@ -161,14 +161,16 @@ namespace Telegram.Controls.Views
         }
 
         private double _islandRadius = 16;
+        private double _buttonRadius = 12;
 
         /// <summary>
-        /// The radius of the card the docked layouts sit on. At 0 the card is flush with what is
-        /// around it, so it drops its shadow.
+        /// The radius of the card the docked layouts sit on, and of the buttons on it. At 0 the card
+        /// is flush with what is around it, so it drops its shadow.
         /// </summary>
-        public void UpdateIslandRadius(double radius)
+        public void UpdateIslandRadius(double radius, double buttonRadius)
         {
             _islandRadius = radius;
+            _buttonRadius = buttonRadius;
             UpdateIsland();
         }
 
@@ -187,7 +189,7 @@ namespace Telegram.Controls.Views
             _islandShadow.IsVisible = !merged;
             _islandShadow.Invalidate();
 
-            ModeButton.CornerRadius = new CornerRadius(Math.Max(4, _islandRadius - 4));
+            ModeButton.CornerRadius = new CornerRadius(_buttonRadius);
         }
 
         private bool IsHorizontal => _type is ForumViewType.Horizontal or ForumViewType.Bottom;

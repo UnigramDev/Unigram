@@ -282,6 +282,10 @@
                               Content="{CustomResource AdaptiveLayout}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.IsDockedLayoutEnabled, Mode=TwoWay}"
+                              Content="{CustomResource DockedLayout}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <controls:SettingsButton Content="{CustomResource SendByEnter2}"
                                              Glyph="&#xE919;">
                         <controls:SettingsButton.Badge>
