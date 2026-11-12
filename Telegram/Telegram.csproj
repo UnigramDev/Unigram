@@ -2713,6 +2713,7 @@
     <Content Include="Assets\Animations\Affiliate.tgs" />
     <Content Include="Assets\Animations\SupergroupTopics.tgs" />
     <Content Include="Assets\Animations\SupergroupTopicsList.tgs" />
+    <Content Include="Assets\Animations\SupergroupTopicsSidebar.tgs" />
     <Content Include="Assets\Animations\SupergroupTopicsTabs.tgs" />
     <Content Include="Assets\Animations\SupergroupDirectMessages.tgs" />
     <Content Include="Assets\Animations\SendMessagesCompleted.tgs" />

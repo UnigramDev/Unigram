@@ -15,6 +15,63 @@
         </TransitionCollection>
     </Page.Transitions>
 
+    <Page.Resources>
+        <Style x:Key="LayoutRadioButtonStyle"
+               TargetType="RadioButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver" />
+                                    <VisualState x:Name="Pressed" />
+                                    <VisualState x:Name="Disabled" />
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="Animated.ReplacementColor"
+                                                    Value="{ThemeResource AccentFillColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.Background"
+                                                    Value="{ThemeResource AccentFillColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.Foreground"
+                                                    Value="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <controls:AnimatedImage x:Name="Animated"
+                                                    ReplacementColor="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                    Source="{TemplateBinding controls:AnimatedImage.AttachedSource}"
+                                                    IsCachingEnabled="False"
+                                                    Width="180"
+                                                    Height="180"
+                                                    AutoPlay="True"
+                                                    LoopCount="1"
+                                                    ResizeMode="Fill"
+                                                    DecodeFrameType="Logical" />
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Padding="8,2,8,3"
+                                              Height="24"
+                                              CornerRadius="12"
+                                              Grid.Row="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
     <!--<local:HostedPage.Action>
         <Button Content="{CustomResource Done}"
                 Click="{x:Bind ViewModel.Continue}"
@@ -47,57 +104,31 @@
                                   VerticalScrollBarVisibility="Disabled"
                                   VerticalScrollMode="Disabled"
                                   HorizontalAlignment="Center">
-                        <StackPanel Margin="12,0"
+                        <StackPanel Padding="12,0,12,12"
                                     Orientation="Horizontal">
-                            <StackPanel Margin="0,12,12,12">
-                                <RadioButton Checked="Tabs_Checked"
-                                             IsChecked="{x:Bind ViewModel.UseTabsLayout, Mode=TwoWay}"
-                                             AutomationProperties.Name="{CustomResource TopicsLayoutTabs}"
-                                             GroupName="Layout"
-                                             Height="180"
-                                             MinWidth="180"
-                                             Padding="0"
-                                             Style="{StaticResource ChatListRadioButtonStyle}">
-                                    <Grid CornerRadius="8">
-                                        <controls:AnimatedImage x:Name="TabsAnimated"
-                                                                ReplacementColor="{ThemeResource AccentFillColorDefaultBrush}"
-                                                                Source="ms-appx:///Assets/Animations/SupergroupTopicsTabs.tgs"
-                                                                AutoPlay="True"
-                                                                LoopCount="1"
-                                                                ResizeMode="Fill"
-                                                                DecodeFrameType="Logical" />
-                                    </Grid>
-                                </RadioButton>
-                                <TextBlock Text="{CustomResource TopicsLayoutTabs}"
-                                           TextAlignment="Center"
-                                           Margin="0,4,0,0"
-                                           Style="{StaticResource BodyTextBlockStyle}" />
-                            </StackPanel>
+                            <RadioButton x:Name="TabsButton"
+                                         Checked="Tabs_Checked"
+                                         IsChecked="{x:Bind ViewModel.UseTabsLayout, Mode=TwoWay}"
+                                         Content="{CustomResource TopicsLayoutTabs}"
+                                         GroupName="Layout"
+                                         Padding="0"
+                                         Style="{StaticResource LayoutRadioButtonStyle}" />
 
-                            <StackPanel Margin="0,12,0,12">
-                                <RadioButton Checked="List_Checked"
-                                             IsChecked="{x:Bind ViewModel.UseListLayout, Mode=TwoWay}"
-                                             AutomationProperties.Name="{CustomResource TopicsLayoutList}"
-                                             GroupName="Layout"
-                                             Height="180"
-                                             MinWidth="180"
-                                             Padding="0"
-                                             Style="{StaticResource ChatListRadioButtonStyle}">
-                                    <Grid CornerRadius="8">
-                                        <controls:AnimatedImage x:Name="ListAnimated"
-                                                                ReplacementColor="{ThemeResource AccentFillColorDefaultBrush}"
-                                                                Source="ms-appx:///Assets/Animations/SupergroupTopicsList.tgs"
-                                                                AutoPlay="True"
-                                                                LoopCount="1"
-                                                                ResizeMode="Fill"
-                                                                DecodeFrameType="Logical" />
-                                    </Grid>
-                                </RadioButton>
-                                <TextBlock Text="{CustomResource TopicsLayoutList}"
-                                           TextAlignment="Center"
-                                           Margin="0,4,0,0"
-                                           Style="{StaticResource BodyTextBlockStyle}" />
-                            </StackPanel>
+                            <RadioButton x:Name="ListButton"
+                                         Checked="List_Checked"
+                                         IsChecked="{x:Bind ViewModel.UseListLayout, Mode=TwoWay}"
+                                         Content="{CustomResource TopicsLayoutList}"
+                                         GroupName="Layout"
+                                         Padding="0"
+                                         Style="{StaticResource LayoutRadioButtonStyle}" />
+
+                            <RadioButton x:Name="SidebarButton"
+                                         Checked="Sidebar_Checked"
+                                         IsChecked="{x:Bind ViewModel.UseSidebarLayout, Mode=TwoWay}"
+                                         Content="{CustomResource TopicsSidebar}"
+                                         GroupName="Layout"
+                                         Padding="0"
+                                         Style="{StaticResource LayoutRadioButtonStyle}" />
                         </StackPanel>
                     </ScrollViewer>
                 </controls:HeaderedControl>

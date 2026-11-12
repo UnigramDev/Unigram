@@ -12381,6 +12381,7 @@
     <string name="TopicsLayoutList">List</string>
     <string name="TopicsLayoutTabs">Tabs</string>
     <string name="TopicsPanelAllMessages">All Messages</string>
+    <string name="TopicsSidebar">Sidebar</string>
     <string name="TopicsTitle">Topics</string>
     <string name="TopicsEnabled">Enabled</string>
     <string name="TopicsDisabled">Disabled</string>

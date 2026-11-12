@@ -368,7 +368,22 @@ namespace Telegram.Controls
 
         //#endregion
 
+        #region AttachedSource
 
+        public static AnimatedImageSource GetAttachedSource(DependencyObject obj)
+        {
+            return (AnimatedImageSource)obj.GetValue(AttachedSourceProperty);
+        }
+
+        public static void SetAttachedSource(DependencyObject obj, AnimatedImageSource value)
+        {
+            obj.SetValue(AttachedSourceProperty, value);
+        }
+
+        public static readonly DependencyProperty AttachedSourceProperty =
+            DependencyProperty.RegisterAttached("AttachedSource", typeof(AnimatedImageSource), typeof(AnimatedImage), new PropertyMetadata(null));
+
+        #endregion
 
         #region Source
 

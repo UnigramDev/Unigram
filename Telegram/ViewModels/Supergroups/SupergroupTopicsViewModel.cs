@@ -45,14 +45,15 @@ namespace Telegram.ViewModels.Supergroups
 
             if (Chat.Type is ChatTypeSupergroup supergroup)
             {
-                ClientService.Send(new ToggleSupergroupIsForum(supergroup.SupergroupId, value, UseTabsLayout, false));
+                ClientService.Send(new ToggleSupergroupIsForum(supergroup.SupergroupId, value, UseTabsLayout, UseSidebarLayout));
             }
         }
 
         enum LayoutType
         {
             Tabs,
-            List
+            List,
+            Sidebar
         }
 
         private LayoutType _layoutType;
@@ -81,6 +82,18 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        public bool UseSidebarLayout
+        {
+            get => _layoutType == LayoutType.Sidebar;
+            set
+            {
+                if (value)
+                {
+                    SetLayoutType(LayoutType.Sidebar);
+                }
+            }
+        }
+
         private async void SetLayoutType(LayoutType type)
         {
             if (_layoutType == type)
@@ -92,6 +105,7 @@ namespace Telegram.ViewModels.Supergroups
 
             RaisePropertyChanged(nameof(UseTabsLayout));
             RaisePropertyChanged(nameof(UseListLayout));
+            RaisePropertyChanged(nameof(UseSidebarLayout));
 
             if (Chat.Type is ChatTypeBasicGroup)
             {
@@ -100,7 +114,7 @@ namespace Telegram.ViewModels.Supergroups
 
             if (Chat.Type is ChatTypeSupergroup supergroup)
             {
-                ClientService.Send(new ToggleSupergroupIsForum(supergroup.SupergroupId, true, type == LayoutType.Tabs, false));
+                ClientService.Send(new ToggleSupergroupIsForum(supergroup.SupergroupId, true, type == LayoutType.Tabs, type == LayoutType.Sidebar));
 
                 if (type == LayoutType.Tabs)
                 {
@@ -125,7 +139,9 @@ namespace Telegram.ViewModels.Supergroups
             {
                 Set(ref _isEnabled, supergroup.IsForum, nameof(IsEnabled));
 
-                _layoutType = supergroup.HasForumTabs
+                _layoutType = supergroup.HasForumSidebar
+                    ? LayoutType.Sidebar
+                    : supergroup.HasForumTabs
                     ? LayoutType.Tabs
                     : LayoutType.List;
             }
