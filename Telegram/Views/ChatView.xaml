@@ -957,6 +957,7 @@
                   Grid.Row="2">
                 <Grid x:Name="MessagesRoot">
                     <chats:ChatHistoryView x:Name="Messages"
+                                           AutomationProperties.Name="{CustomResource SearchMessages}"
                                            Style="{StaticResource BubbleListViewStyle}"
                                            ShowsScrollingPlaceholders="False"
                                            IsItemClickEnabled="False"
