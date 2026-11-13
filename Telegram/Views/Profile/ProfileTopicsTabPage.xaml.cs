@@ -166,6 +166,21 @@ namespace Telegram.Views.Profile
             // Do nothing
         }
 
+        public void UpdateSavedMessagesTopicLastMessage(SavedMessagesTopic topic)
+        {
+            // Do nothing
+        }
+
+        public void HandleSavedMessagesTopic(long topicId, Action<ISavedMessagesTopicDelegate, SavedMessagesTopic> action)
+        {
+            // Do nothing
+        }
+
+        public void UpdateSavedMessagesTopicCount(int count)
+        {
+            // Do nothing
+        }
+
         private bool TryGetTopicAndCell(int topicId, out ForumTopic topic, out IForumTopicDelegate cell)
         {
             if (_itemToSelector.TryGetValue(topicId, out SelectorItem container))

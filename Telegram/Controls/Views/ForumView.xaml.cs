@@ -242,6 +242,14 @@ namespace Telegram.Controls.Views
             {
                 Subtitle.Text = Locale.Declension(Strings.R.Members, supergroup.MemberCount);
             }
+            else if (ViewModel.Type == TopicListType.SavedMessages)
+            {
+                UpdateSavedMessagesTopicCount(ViewModel.ClientService.SavedMessagesTopicCount);
+            }
+            else
+            {
+                Subtitle.Text = string.Empty;
+            }
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -274,13 +282,16 @@ namespace Telegram.Controls.Views
         {
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(Search, Strings.Search, Icons.Search, VirtualKey.E);
-            flyout.CreateFlyoutSeparator();
 
-            flyout.CreateFlyoutItem(ViewModel.ViewAsMessages, Strings.TopicViewAsMessages, Icons.ChatEmpty);
-
-            if (ViewModel.Chat.CanCreateTopics(ViewModel.ClientService))
+            if (ViewModel.IsForum)
             {
-                flyout.CreateFlyoutItem(ViewModel.CreateTopic, Strings.CreateTopic, Icons.Compose);
+                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(ViewModel.ViewAsMessages, Strings.TopicViewAsMessages, Icons.ChatEmpty);
+
+                if (ViewModel.Chat.CanCreateTopics(ViewModel.ClientService))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.CreateTopic, Strings.CreateTopic, Icons.Compose);
+                }
             }
 
             flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
@@ -347,8 +358,9 @@ namespace Telegram.Controls.Views
         {
             var forumTopic = args.Item as ForumTopic;
             var directMessagesChatTopic = args.Item as DirectMessagesChatTopic;
+            var savedMessagesTopic = args.Item as SavedMessagesTopic;
 
-            var topicId = forumTopic?.Info.ForumTopicId ?? directMessagesChatTopic.Id;
+            var topicId = forumTopic?.Info.ForumTopicId ?? directMessagesChatTopic?.Id ?? savedMessagesTopic.Id;
 
             if (args.InRecycleQueue)
             {
@@ -370,6 +382,10 @@ namespace Telegram.Controls.Views
             else if (directMessagesChatTopic != null && args.ItemContainer.ContentTemplateRoot is IDirectMessagesTopicDelegate feedbackTopicCell)
             {
                 feedbackTopicCell.UpdateDirectMessagesChatTopic(ViewModel, directMessagesChatTopic);
+            }
+            else if (savedMessagesTopic != null && args.ItemContainer.ContentTemplateRoot is ISavedMessagesTopicDelegate savedMessagesTopicCell)
+            {
+                savedMessagesTopicCell.UpdateSavedMessagesTopic(ViewModel, savedMessagesTopic);
             }
 
             args.Handled = true;
@@ -483,6 +499,33 @@ namespace Telegram.Controls.Views
         public void HandleDirectMessagesChatTopic(DirectMessagesChatTopic topic, Action<IDirectMessagesTopicDelegate, DirectMessagesChatTopic> action)
         {
             if (TryGetCell(topic, out IDirectMessagesTopicDelegate cell))
+            {
+                action(cell, topic);
+            }
+        }
+
+        #endregion
+
+        #region SavedMessagesTopic
+
+        public void UpdateSavedMessagesTopicCount(int count)
+        {
+            Subtitle.Text = Locale.Declension(Strings.R.Chats, count);
+        }
+
+        public void UpdateSavedMessagesTopicLastMessage(SavedMessagesTopic topic)
+        {
+            if (_itemToSelector.TryGetValue(topic.Id, out SelectorItem container) && container.ContentTemplateRoot is ISavedMessagesTopicDelegate cell)
+            {
+                cell.UpdateSavedMessagesTopicLastMessage(topic);
+            }
+        }
+
+        public void HandleSavedMessagesTopic(long topicId, Action<ISavedMessagesTopicDelegate, SavedMessagesTopic> action)
+        {
+            if (_itemToSelector.TryGetValue(topicId, out SelectorItem container)
+                && ScrollingHost.ItemFromContainer(container) is SavedMessagesTopic topic
+                && container.ContentTemplateRoot is ISavedMessagesTopicDelegate cell)
             {
                 action(cell, topic);
             }
@@ -664,6 +707,11 @@ namespace Telegram.Controls.Views
                     flyout.CreateFlyoutSeparator();
                     flyout.CreateFlyoutItem(viewModel.SelectTopic, forumTopic, Strings.Select, Icons.CheckmarkCircle);
                 }
+            }
+            else if (topic is SavedMessagesTopic savedMessagesTopic && savedMessagesTopic.Id != 0)
+            {
+                flyout.CreateFlyoutItem(viewModel.PinTopic, savedMessagesTopic, savedMessagesTopic.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, savedMessagesTopic.IsPinned ? Icons.PinOff : Icons.Pin);
+                flyout.CreateFlyoutItem(viewModel.DeleteTopic, savedMessagesTopic, Strings.Delete, Icons.Delete, destructive: true);
             }
             else if (topic is DirectMessagesChatTopic directMessagesChatTopic && supergroup.IsAdministeredDirectMessagesGroup)
             {

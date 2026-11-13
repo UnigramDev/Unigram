@@ -37,6 +37,13 @@ namespace Telegram.Td.Api
         Sidebar
     }
 
+    public enum TopicListType
+    {
+        Forum,
+        DirectMessages,
+        SavedMessages
+    }
+
     public static class TdExtensions
     {
         // A date-time entity is described by the same format string bots use:
@@ -4360,44 +4367,49 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static ForumLayout GetForumLayout(this Chat chat, IClientService clientService, out bool isForum)
+        public static ForumLayout GetForumLayout(this Chat chat, IClientService clientService, out TopicListType type)
         {
             if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 if (supergroup.HasForumSidebar)
                 {
-                    isForum = true;
+                    type = TopicListType.Forum;
                     return ForumLayout.Sidebar;
                 }
 
                 if (supergroup.HasForumTabs || (supergroup.IsForum && !chat.ViewAsTopics && AppSettings.Diagnostics.ForumTabsDebug))
                 {
-                    isForum = true;
+                    type = TopicListType.Forum;
                     return ForumLayout.Tabs;
                 }
 
                 if (supergroup.IsDirectMessagesGroup)
                 {
-                    isForum = false;
+                    type = TopicListType.DirectMessages;
                     return supergroup.IsAdministeredDirectMessagesGroup ? ForumLayout.Tabs : ForumLayout.None;
                 }
+            }
+            else if (clientService.IsSavedMessages(chat))
+            {
+                type = TopicListType.SavedMessages;
+                return ForumLayout.Sidebar;
             }
             else if (clientService.TryGetUser(chat, out User user))
             {
                 if (user.Type is UserTypeBot { HasTopicSidebar: true })
                 {
-                    isForum = true;
+                    type = TopicListType.Forum;
                     return ForumLayout.Sidebar;
                 }
 
                 if (user.Type is UserTypeBot { HasTopics: true })
                 {
-                    isForum = true;
+                    type = TopicListType.Forum;
                     return ForumLayout.Tabs;
                 }
             }
 
-            isForum = false;
+            type = TopicListType.Forum;
             return ForumLayout.None;
         }
 

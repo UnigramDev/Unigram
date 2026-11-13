@@ -18,11 +18,15 @@ namespace Telegram.ViewModels.Delegates
 
         void UpdateForumTopicLastMessage(ForumTopic topic);
         void UpdateDirectMessagesChatTopicLastMessage(DirectMessagesChatTopic topic);
+        void UpdateSavedMessagesTopicLastMessage(SavedMessagesTopic topic);
 
         void HandleForumTopic(int forumTopicId, Action<IForumTopicDelegate, ForumTopic> action);
         void HandleForumTopic(ForumTopic topic, Action<IForumTopicDelegate, ForumTopic> action);
 
         void HandleDirectMessagesChatTopic(long topicId, Action<IDirectMessagesTopicDelegate, DirectMessagesChatTopic> action);
         void HandleDirectMessagesChatTopic(DirectMessagesChatTopic topic, Action<IDirectMessagesTopicDelegate, DirectMessagesChatTopic> action);
+
+        void HandleSavedMessagesTopic(long topicId, Action<ISavedMessagesTopicDelegate, SavedMessagesTopic> action);
+        void UpdateSavedMessagesTopicCount(int count);
     }
 }

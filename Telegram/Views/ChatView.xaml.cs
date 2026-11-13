@@ -5802,11 +5802,12 @@ namespace Telegram.Views
         private void UpdateForumTopics(Chat chat)
         {
             var layout = ForumLayout.None;
-            var forum = false;
+            var type = TopicListType.Forum;
 
-            if (ViewModel.Type is DialogType.History or DialogType.Thread)
+            // The profile's saved messages tab is the chat without its topics.
+            if (ViewModel.Type is DialogType.History or DialogType.Thread && !ViewModel.IsSavedMessagesTab)
             {
-                layout = chat.GetForumLayout(ViewModel.ClientService, out forum);
+                layout = chat.GetForumLayout(ViewModel.ClientService, out type);
             }
 
             ForumSidebarButton.Visibility = layout == ForumLayout.Sidebar
@@ -5826,9 +5827,9 @@ namespace Telegram.Views
                 return;
             }
 
-            if (_forumViewModel == null || _forumViewModel.IsForum != forum)
+            if (_forumViewModel == null || _forumViewModel.Type != type)
             {
-                _forumViewModel = new TopicListViewModel(ViewModel.ClientService, ViewModel.Settings, ViewModel.Aggregator, null, false, forum);
+                _forumViewModel = new TopicListViewModel(ViewModel.ClientService, ViewModel.Settings, ViewModel.Aggregator, null, false, type);
                 _forumViewModel.NavigationService = ViewModel.NavigationService;
                 _forumViewModel.Dispatcher = ViewModel.Dispatcher;
 
@@ -8205,6 +8206,17 @@ namespace Telegram.Views
                 else
                 {
                     ViewModel.NavigationService.NavigateToChat(chat, force: false);
+                }
+            }
+            else if (e.ClickedItem is SavedMessagesTopic savedMessagesTopic && _forumViewModel?.Chat is Chat savedMessages)
+            {
+                if (savedMessagesTopic.Id != 0)
+                {
+                    NavigateToMessageTopic(savedMessages, savedMessagesTopic.ToId());
+                }
+                else
+                {
+                    ViewModel.NavigationService.NavigateToChat(savedMessages, force: false);
                 }
             }
         }

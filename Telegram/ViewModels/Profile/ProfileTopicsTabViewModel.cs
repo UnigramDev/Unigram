@@ -8,6 +8,7 @@
 using System.Threading.Tasks;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Td.Api;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Profile
@@ -15,7 +16,7 @@ namespace Telegram.ViewModels.Profile
     public partial class ProfileTopicsTabViewModel : TopicListViewModel
     {
         public ProfileTopicsTabViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(clientService, settingsService, aggregator, null, true, true)
+            : base(clientService, settingsService, aggregator, null, true, TopicListType.Forum)
         {
         }
 

@@ -28,32 +28,36 @@ namespace Telegram.ViewModels
         private readonly INotificationsService _notificationsService;
 
         private readonly bool _chatList;
-        private readonly bool _forum;
+        private readonly TopicListType _type;
 
         private readonly Dictionary<long, bool> _deletedChats = new();
 
+        // Every pinned saved messages topic the list has seen, in the window or not: the pin limit
+        // counts all of them.
+        private readonly HashSet<long> _pinnedSavedMessagesTopics = new();
+
         public ITopicListDelegate Delegate { get; set; }
 
-        public bool IsForum => _forum;
+        public TopicListType Type => _type;
+
+        public bool IsForum => _type == TopicListType.Forum;
 
         public bool IsChatList => _chatList;
 
-        public TopicListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, bool chatList, bool forum)
+        public TopicListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, bool chatList, TopicListType type)
             : base(clientService, settingsService, aggregator)
         {
             _notificationsService = notificationsService ?? Session.Resolve<INotificationsService>();
 
             _chatList = chatList;
-            _forum = forum;
+            _type = type;
 
-            if (forum)
+            Items = type switch
             {
-                Items = new ForumTopicsCollection(clientService, aggregator, this, null);
-            }
-            else
-            {
-                Items = new DirectMessagesChatTopicsCollection(clientService, aggregator, this, null);
-            }
+                TopicListType.Forum => new ForumTopicsCollection(clientService, aggregator, this, null),
+                TopicListType.SavedMessages => new SavedMessagesTopicsCollection(clientService, this),
+                _ => new DirectMessagesChatTopicsCollection(clientService, aggregator, this, null)
+            };
 
             ChatsMarkCommand = new RelayCommand(ChatsMarkExecute);
             ChatsNotifyCommand = new RelayCommand(ChatsNotifyExecute);
@@ -124,6 +128,34 @@ namespace Telegram.ViewModels
         #endregion
 
         #region Pin
+
+        public void PinTopic(SavedMessagesTopic topic)
+        {
+            if (topic.IsPinned)
+            {
+                ClientService.Send(new ToggleSavedMessagesTopicIsPinned(topic.Id, false));
+            }
+            else if (_pinnedSavedMessagesTopics.Count < ClientService.Options.PinnedSavedMessagesTopicCountMax)
+            {
+                ClientService.Send(new ToggleSavedMessagesTopicIsPinned(topic.Id, true));
+            }
+            else
+            {
+                NavigationService.ShowLimitReached(new PremiumLimitTypePinnedSavedMessagesTopicCount());
+            }
+        }
+
+        private void SetPinned(SavedMessagesTopic topic)
+        {
+            if (topic.IsPinned)
+            {
+                _pinnedSavedMessagesTopics.Add(topic.Id);
+            }
+            else
+            {
+                _pinnedSavedMessagesTopics.Remove(topic.Id);
+            }
+        }
 
         public async void PinTopic(ForumTopic topic)
         {
@@ -263,6 +295,34 @@ namespace Telegram.ViewModels
             {
                 // TODO: Handle the case where topics can't be deleted because user isn't admin
                 ClientService.Send(new DeleteForumTopic(Chat.Id, topic.Info.ForumTopicId));
+            }
+        }
+
+        public async void DeleteTopic(SavedMessagesTopic topic)
+        {
+            string message;
+            string title;
+            string primary;
+
+            if (topic.Type is SavedMessagesTopicTypeMyNotes)
+            {
+                message = Strings.ClearHistoryMyNotesMessage;
+                title = Strings.ClearHistoryMyNotesTitle;
+                primary = Strings.Delete;
+            }
+            else
+            {
+                var chatTitle = ClientService.GetTitle(topic);
+
+                message = string.Format(Strings.ClearHistoryMessageSingle, chatTitle);
+                title = string.Format(Strings.ClearHistoryTitleSingle, chatTitle);
+                primary = Strings.Remove;
+            }
+
+            var confirm = await ShowPopupAsync(message, title, primary, Strings.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ClientService.Send(new DeleteSavedMessagesTopicHistory(topic.Id));
             }
         }
 
@@ -421,7 +481,14 @@ namespace Telegram.ViewModels
                 SelectedItem = null;
                 SelectedItems.Clear();
 
-                if (_forum)
+                if (_type == TopicListType.SavedMessages)
+                {
+                    // The "All Messages" row previews the chat's own last message, and the topics
+                    // arrive through the session's saved messages list rather than as updates.
+                    Aggregator.Subscribe<UpdateChatLastMessage>(this, Handle)
+                        .Subscribe<UpdateSavedMessagesTopicCount>(Handle);
+                }
+                else if (_type == TopicListType.Forum)
                 {
                     var subscription = Aggregator.Subscribe<UpdateForumTopicInfo>(this, Handle)
                         .Subscribe<UpdateForumTopicReadInbox>(Handle)
@@ -471,10 +538,24 @@ namespace Telegram.ViewModels
 
         private void Handle(UpdateChatLastMessage update)
         {
-            if (update.ChatId == Chat?.Id)
+            if (update.ChatId != Chat?.Id)
+            {
+                return;
+            }
+
+            if (_type == TopicListType.SavedMessages)
+            {
+                BeginOnUIThread(() => Delegate?.HandleSavedMessagesTopic(0, (cell, topic) => cell.UpdateSavedMessagesTopicLastMessage(topic)));
+            }
+            else
             {
                 BeginOnUIThread(() => Delegate?.HandleForumTopic(0, (cell, topic) => cell.UpdateForumTopicLastMessage(topic)));
             }
+        }
+
+        private void Handle(UpdateSavedMessagesTopicCount update)
+        {
+            BeginOnUIThread(() => Delegate?.UpdateSavedMessagesTopicCount(update.TopicCount));
         }
 
         private void Handle(UpdateChatReadOutbox update)
@@ -1291,6 +1372,219 @@ namespace Telegram.ViewModels
             private void NotifyChanged()
             {
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
+            }
+        }
+
+        public partial class SavedMessagesTopicsCollection : WindowedCollection<SavedMessagesTopic, long, long, OrderChangedEventArgs<SavedMessagesTopic>>, ITopicListCollection
+        {
+            private readonly IClientService _clientService;
+
+            private CancellationTokenSource _token = new();
+
+            private readonly TopicListViewModel _viewModel;
+
+            // The list this is a window over. There is one per session, since saved messages are a
+            // single chat, so it outlives the collection and is only ever watched, never restarted.
+            private readonly SavedMessagesTopicService _service;
+
+            private Chat _chat;
+
+            public Chat Chat => _chat;
+
+            public SavedMessagesTopicsCollection(IClientService clientService, TopicListViewModel viewModel)
+                : base(Post(viewModel))
+            {
+                _clientService = clientService;
+                _viewModel = viewModel;
+
+                _service = clientService.SavedMessagesTopics;
+            }
+
+            public override void Dispose()
+            {
+                _token?.Cancel();
+
+                base.Dispose();
+
+                _service.Changed -= OnChanged;
+            }
+
+            public void Restart(Chat chat)
+            {
+                _token?.Cancel();
+                _token = new CancellationTokenSource();
+
+                _service.Changed -= OnChanged;
+                _viewModel._pinnedSavedMessagesTopics.Clear();
+
+                _chat = chat;
+
+                // Re-arms, and abandons the load in flight, so the one below starts from nothing.
+                Restart();
+
+                if (_chat != null)
+                {
+                    _ = LoadMoreItemsAsync(0);
+                }
+            }
+
+            // Topic 0 is the "All Messages" row the list opens with, which stands for the whole chat.
+            private bool HasAllMessages => Count > 0 && this[0].Id == 0;
+
+            protected override async Task<IncrementalLoadResult> OnLoadMoreItemsAsync(uint count)
+            {
+                var token = _token;
+                var totalCount = 0u;
+
+                await Task.Yield();
+
+                if (_chat == null)
+                {
+                    return default;
+                }
+
+                // The offset is into the service's list, which has no "All Messages" row.
+                var response = await _service.GetSavedMessagesTopicsAsync(HasAllMessages ? Count - 1 : Count, 20);
+                if (response is Topics topics && !token.IsCancellationRequested)
+                {
+                    if (Count == 0)
+                    {
+                        var all = new SavedMessagesTopic(0, null, false, long.MaxValue, _chat.LastMessage, null);
+
+                        SetOrder(all.Id, all.Order);
+                        Insert(0, all);
+
+                        totalCount++;
+
+                        if (_viewModel.SelectedItem == null)
+                        {
+                            _viewModel.Delegate?.SetSelectedItem(all);
+                        }
+                    }
+
+                    foreach (var topic in _service.GetTopics(topics.TopicIds))
+                    {
+                        _viewModel.SetPinned(topic);
+
+                        var order = topic.Order;
+                        if (order == 0)
+                        {
+                            continue;
+                        }
+
+                        // An update can have inserted it already while the page was in
+                        // flight, and can have moved it since: place it where it belongs.
+                        var next = NextIndexOf(topic, topic.Id, order, out int prev);
+                        if (next == prev)
+                        {
+                            continue;
+                        }
+
+                        if (prev >= 0)
+                        {
+                            RemoveAt(prev);
+                        }
+                        else
+                        {
+                            totalCount++;
+                        }
+
+                        SetOrder(topic.Id, order);
+                        Insert(Math.Min(Count, next), topic);
+
+                        if (_viewModel.SelectedItem?.IsSavedMessages(topic.Id) is true)
+                        {
+                            _viewModel.Delegate?.SetSelectedItem(topic);
+                        }
+                    }
+
+                    // Before Subscribe, so the first update drains against a settled window.
+                    UpdateWindow(topics.TotalCount >= 0);
+
+                    _service.Changed -= OnChanged;
+                    _service.Changed += OnChanged;
+
+                    // The cache wrapper reuses Topics and answers -1 in TotalCount once it
+                    // holds the whole list, so this is the has-more test, not a count.
+                    return new IncrementalLoadResult(totalCount, topics.TotalCount >= 0);
+                }
+
+                return default;
+            }
+
+            private void OnChanged(OrderedSourceService<SavedMessagesTopic> sender, OrderChangedEventArgs<SavedMessagesTopic> args)
+            {
+                Enqueue(args);
+            }
+
+            protected override long GetKey(SavedMessagesTopic item)
+            {
+                return item.Id;
+            }
+
+            protected override SavedMessagesTopic GetItem(OrderChangedEventArgs<SavedMessagesTopic> args)
+            {
+                return args.Item;
+            }
+
+            protected override long GetOrder(OrderChangedEventArgs<SavedMessagesTopic> args)
+            {
+                return args.Order;
+            }
+
+            protected override bool IsPlaced(long order)
+            {
+                return order != 0;
+            }
+
+            protected override int Compare(long order, long topicId, long otherOrder, long otherTopicId)
+            {
+                if (order != otherOrder)
+                {
+                    return order > otherOrder ? 1 : -1;
+                }
+
+                return topicId.CompareTo(otherTopicId);
+            }
+
+            protected override OrderChangedEventArgs<SavedMessagesTopic> Merge(OrderChangedEventArgs<SavedMessagesTopic> previous, OrderChangedEventArgs<SavedMessagesTopic> next)
+            {
+                return next.LastMessage || !previous.LastMessage
+                    ? next
+                    : new OrderChangedEventArgs<SavedMessagesTopic>(next.Item, next.Order, true);
+            }
+
+            protected override void OnApplied(OrderChangedEventArgs<SavedMessagesTopic> args)
+            {
+                _viewModel.SetPinned(args.Item);
+            }
+
+            protected override void OnPlaced(OrderChangedEventArgs<SavedMessagesTopic> args, int previousIndex, int index)
+            {
+                if (_viewModel.SelectedItem?.IsSavedMessages(args.Item.Id) is true)
+                {
+                    _viewModel.Delegate?.SetSelectedItem(args.Item);
+                }
+            }
+
+            protected override void OnUnchanged(OrderChangedEventArgs<SavedMessagesTopic> args, int index)
+            {
+                _viewModel.Delegate?.UpdateSavedMessagesTopicLastMessage(args.Item);
+            }
+
+            public object GetItem(MessageTopic topic)
+            {
+                if (topic == null)
+                {
+                    return HasAllMessages ? this[0] : null;
+                }
+
+                if (topic is MessageTopicSavedMessages savedMessages && ContainsKey(savedMessages.SavedMessagesTopicId))
+                {
+                    return _service.GetTopic(savedMessages.SavedMessagesTopicId);
+                }
+
+                return null;
             }
         }
     }

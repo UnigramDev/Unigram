@@ -39,11 +39,12 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ForumTopicCell : ControlEx2, IForumTopicDelegate
+    public sealed partial class ForumTopicCell : ControlEx2, IForumTopicDelegate, ISavedMessagesTopicDelegate
     {
         private bool _selected;
 
         private ForumTopic _topic;
+        private SavedMessagesTopic _savedMessagesTopic;
         private Chat _chat;
 
         private int _thumbnailId;
@@ -97,6 +98,7 @@ namespace Telegram.Controls.Cells
         private XamlPath IconPath;
         private TextBlock IconText;
         private XamlPath AllTopics;
+        private ProfilePicture Photo;
 
         private bool _templateApplied;
 
@@ -130,6 +132,10 @@ namespace Telegram.Controls.Cells
             {
                 UpdateForumTopic(_viewModel, _topic);
             }
+            else if (_savedMessagesTopic != null)
+            {
+                UpdateSavedMessagesTopic(_viewModel, _savedMessagesTopic);
+            }
         }
 
         #endregion
@@ -144,6 +150,10 @@ namespace Telegram.Controls.Cells
             if (_topic != null && _chat != null)
             {
                 return UpdateAutomation(_viewModel.ClientService, _topic, _chat, GetLastMessage(_topic));
+            }
+            else if (_savedMessagesTopic != null)
+            {
+                return GetName(_savedMessagesTopic);
             }
 
             return null;
@@ -462,6 +472,8 @@ namespace Telegram.Controls.Cells
                 AllTopics?.Visibility = Visibility.Collapsed;
             }
 
+            Photo?.Visibility = Visibility.Collapsed;
+
             if (topic.Info.IsGeneral || topic.Info.Icon.CustomEmojiId != 0)
             {
                 TypeIcon.SetStatus(_viewModel.ClientService, topic.Info.Icon);
@@ -513,6 +525,7 @@ namespace Telegram.Controls.Cells
         {
             _viewModel = viewModel;
             _topic = topic;
+            _savedMessagesTopic = null;
             _chat = viewModel.ClientService.GetChat(topic.Info.ChatId);
 
             if (!_templateApplied)
@@ -529,6 +542,121 @@ namespace Telegram.Controls.Cells
             UpdateForumTopicUnreadMentionCount(topic);
             UpdateForumTopicNotificationSettings(topic);
             UpdateForumTopicActions(topic, _viewModel.ClientService.GetChatActions(topic.Info.ChatId, new MessageTopicForum(topic.Info.ForumTopicId)));
+        }
+
+        #endregion
+
+        #region SavedMessagesTopic
+
+        // Topic 0 is the "All Messages" row, which stands for the whole chat like the forum one.
+        private string GetName(SavedMessagesTopic topic)
+        {
+            return topic.Id == 0 ? Strings.TopicsPanelAllMessages : _viewModel.ClientService.GetTitle(topic);
+        }
+
+        public void UpdateSavedMessagesTopic(TopicListViewModel viewModel, SavedMessagesTopic topic)
+        {
+            _viewModel = viewModel;
+            _topic = null;
+            _savedMessagesTopic = topic;
+            _chat = viewModel.Chat;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
+
+            TitleLabel.Text = GetName(topic);
+
+            TypeIcon.ClearStatus();
+            IconRoot.Visibility = Visibility.Collapsed;
+
+            AllTopics?.Visibility = Visibility.Collapsed;
+
+            LoadTemplateChild(ref Photo);
+            Photo.Visibility = Visibility.Visible;
+
+            if (topic.Id == 0 && _chat != null)
+            {
+                Photo.Source = ProfilePictureSource.Chat(viewModel.ClientService, _chat);
+            }
+            else if (topic.Type is SavedMessagesTopicTypeMyNotes)
+            {
+                Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.MyNotesFilled, 5);
+            }
+            else if (topic.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && viewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat chat))
+            {
+                Photo.Source = ProfilePictureSource.Chat(viewModel.ClientService, chat);
+            }
+            else
+            {
+                Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.AuthorHiddenFilled, 5);
+            }
+
+            // Saved messages are never unread, muted or typed into by anyone else.
+            MutedIcon.Visibility = Visibility.Collapsed;
+            UnreadBadge.Visibility = Visibility.Collapsed;
+            UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+            UpdateForumTopicActions(null, null);
+
+            UpdateSavedMessagesTopicLastMessage(topic);
+        }
+
+        public void UpdateSavedMessagesTopicLastMessage(SavedMessagesTopic topic)
+        {
+            if (_viewModel == null || !_templateApplied)
+            {
+                return;
+            }
+
+            _savedMessagesTopic = topic;
+
+            PinnedIcon.Visibility = topic.IsPinned
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            var message = topic.Id == 0 ? _chat?.LastMessage : topic.LastMessage;
+            var draft = topic.DraftMessage;
+
+            MinithumbnailId thumbnail = null;
+
+            if (draft != null)
+            {
+                DraftLabel.Text = FormatDraft();
+                FromLabel.Text = string.Empty;
+
+                UpdateBriefLabel(GetDraftText(draft));
+            }
+            else
+            {
+                DraftLabel.Text = string.Empty;
+
+                if (message != null)
+                {
+                    var from = topic.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat
+                        ? _viewModel.ClientService.GetChat(savedFromChat.ChatId)
+                        : null;
+
+                    FromLabel.Text = ChatCell.UpdateFromLabel(_viewModel.ClientService, from, message);
+                    UpdateBriefLabel(ChatCell.UpdateBriefLabel(message.Content, message.IsOutgoing, false, out thumbnail));
+                }
+                else
+                {
+                    FromLabel.Text = string.Empty;
+                    UpdateBriefLabel(string.Empty.AsFormattedText());
+                }
+            }
+
+            _draft = draft != null;
+
+            // Everything here is outgoing and read, so there are no ticks to show.
+            UpdateMessageState(0, null, null, null, null);
+
+            TimeLabel.Text = message != null
+                ? Formatter.DateExtended(message.Date)
+                : string.Empty;
+
+            UpdateMinithumbnail(thumbnail);
         }
 
         #endregion
@@ -602,12 +730,7 @@ namespace Telegram.Controls.Cells
 
             if (draft != null)
             {
-                return draft.Content switch
-                {
-                    DraftMessageContentText draftText => draftText.Text,
-                    DraftMessageContentRichMessage draftRichMessage => draftRichMessage.Message.ToFormattedText(),
-                    _ => string.Empty.AsFormattedText()
-                };
+                return GetDraftText(draft);
             }
             else if (topMessage != null)
             {
@@ -622,7 +745,7 @@ namespace Telegram.Controls.Cells
             if (topic.DraftMessage is not null)
             {
                 draft = true;
-                return string.Format("{0}: \u200B​​​", Strings.Draft);
+                return FormatDraft();
             }
 
             var message = GetLastMessage(topic);
@@ -640,6 +763,21 @@ namespace Telegram.Controls.Cells
 
             draft = false;
             return ChatCell.UpdateFromLabel(_viewModel.ClientService, chat, message);
+        }
+
+        private static FormattedText GetDraftText(DraftMessage draft)
+        {
+            return draft.Content switch
+            {
+                DraftMessageContentText draftText => draftText.Text,
+                DraftMessageContentRichMessage draftRichMessage => draftRichMessage.Message.ToFormattedText(),
+                _ => string.Empty.AsFormattedText()
+            };
+        }
+
+        private static string FormatDraft()
+        {
+            return string.Format("{0}: \u200B​​​", Strings.Draft);
         }
 
         public void UpdateMessageState(long maxId, ForumTopic topic, DraftMessage draft, Message message, MessageSendingState state)
@@ -765,7 +903,19 @@ namespace Telegram.Controls.Cells
             viewModel.NavigationService = service;
             viewModel.Dispatcher = service.Dispatcher;
             chatView.Activate(viewModel);
-            _ = viewModel.NavigatedToAsync(new ChatMessageTopic(chat.Id, new MessageTopicForum(_topic.Info.ForumTopicId)), NavigationMode.New, new NavigationState());
+
+            if (_topic != null)
+            {
+                _ = viewModel.NavigatedToAsync(new ChatMessageTopic(chat.Id, new MessageTopicForum(_topic.Info.ForumTopicId)), NavigationMode.New, new NavigationState());
+            }
+            else if (_savedMessagesTopic?.Id is > 0)
+            {
+                _ = viewModel.NavigatedToAsync(new ChatMessageTopic(chat.Id, _savedMessagesTopic.ToId()), NavigationMode.New, new NavigationState());
+            }
+            else
+            {
+                _ = viewModel.NavigatedToAsync(chat.Id, NavigationMode.New, new NavigationState());
+            }
 
             // Unloaded doesn't fire for a view hosted in a flyout, so the flyout's own Closed
             // is what tears the preview down; Unloaded stays subscribed in case it does arrive
@@ -858,7 +1008,9 @@ namespace Telegram.Controls.Cells
                 }
 
                 var service = WindowContext.GetNavigationService(this);
-                service?.NavigateToChat(chat, topic: _topic.ToId(), state: new NavigationState
+                var topic = _topic?.ToId() ?? (_savedMessagesTopic?.Id is > 0 ? _savedMessagesTopic.ToId() : null);
+
+                service?.NavigateToChat(chat, topic: topic, state: new NavigationState
                 {
                     { "package", e.DataView }
                 });
