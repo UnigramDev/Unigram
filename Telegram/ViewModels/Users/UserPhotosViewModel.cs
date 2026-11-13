@@ -23,6 +23,9 @@ namespace Telegram.ViewModels.Users
         // part of the offset it is paged by.
         private int _additionalPhotos;
 
+        // The main photo, added from the full info before getUserProfilePhotos returns it again.
+        private readonly long _photoId;
+
         public UserPhotosViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, User user, UserFullInfo userFull)
             : base(clientService, storageService, aggregator)
         {
@@ -40,6 +43,11 @@ namespace Telegram.ViewModels.Users
             //    _additionalPhotos++;
             //    Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, true));
             //}
+
+            if (userFull.Photo != null)
+            {
+                _photoId = userFull.Photo.Id;
+            }
 
             if (userFull.Photo != null && user.ProfilePhoto?.Id == userFull.Photo.Id)
             {
@@ -97,7 +105,7 @@ namespace Telegram.ViewModels.Users
 
                 foreach (var item in photos.Photos)
                 {
-                    if (item.Id == user.ProfilePhoto.Id)
+                    if (item.Id == _photoId)
                     {
                         continue;
                     }
