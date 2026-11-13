@@ -6,6 +6,7 @@
 //
 
 using System;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -78,7 +79,7 @@ namespace Telegram.Controls
         {
             _switchTimer.Stop();
 
-            if (e.DataView.AvailableFormats.Count > 0)
+            if (HasFormats(e.DataView))
             {
                 _switchToItem = ItemFromContainer(sender as DependencyObject);
                 _switchTimer.Start();
@@ -88,6 +89,19 @@ namespace Telegram.Controls
             {
                 _switchToItem = null;
                 e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+            }
+        }
+
+        private static bool HasFormats(DataPackageView data)
+        {
+            try
+            {
+                return data.AvailableFormats.Count > 0;
+            }
+            catch
+            {
+                // A drag from some sources fails to list its formats with ERROR_NOT_FOUND.
+                return false;
             }
         }
 
