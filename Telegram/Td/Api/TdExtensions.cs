@@ -218,7 +218,7 @@ namespace Telegram.Td.Api
                 MessagePaidAlbum paidAlbum => paidAlbum.ShowCaptionAboveMedia,
                 MessagePaidMedia paidMedia => paidMedia.ShowCaptionAboveMedia,
                 MessageWidget widget => widget.ShowCaptionAboveMedia,
-                MessageRichMessage richMessage => richMessage.Message.Blocks[0] is not PageBlockAnimation and not PageBlockCollage and not PageBlockMap and not PageBlockPhoto and not PageBlockSlideshow and not PageBlockVideo,
+                MessageRichMessage richMessage => !richMessage.Message.IsMedia(0),
                 _ => false
             };
         }
@@ -2795,21 +2795,35 @@ namespace Telegram.Td.Api
             return caption != null && !string.IsNullOrEmpty(caption.Text);
         }
 
+        // TDLib drops a media block whose media did not arrive, so a rich message can have no
+        // blocks at all; it is then laid out as text.
         internal static bool IsMedia(this RichMessage message, Index index)
         {
-            return message.Blocks[index] is PageBlockAnimation or PageBlockCollage or PageBlockMap or PageBlockPhoto or PageBlockSlideshow or PageBlockVideo;
+            var offset = index.GetOffset(message.Blocks.Count);
+            if ((uint)offset >= (uint)message.Blocks.Count)
+            {
+                return false;
+            }
+
+            return message.Blocks[offset] is PageBlockAnimation or PageBlockCollage or PageBlockMap or PageBlockPhoto or PageBlockSlideshow or PageBlockVideo;
         }
 
         internal static bool IsFullMedia(this RichMessage message, Index index)
         {
-            return message.Blocks[index] is PageBlockAnimation { Caption: null } or PageBlockCollage { Caption: null } or PageBlockMap { Caption: null } or PageBlockPhoto { Caption: null } or PageBlockSlideshow { Caption: null } or PageBlockVideo { Caption: null };
+            var offset = index.GetOffset(message.Blocks.Count);
+            if ((uint)offset >= (uint)message.Blocks.Count)
+            {
+                return false;
+            }
+
+            return message.Blocks[offset] is PageBlockAnimation { Caption: null } or PageBlockCollage { Caption: null } or PageBlockMap { Caption: null } or PageBlockPhoto { Caption: null } or PageBlockSlideshow { Caption: null } or PageBlockVideo { Caption: null };
         }
 
         public static bool HasCaption(this MessageContent content)
         {
             if (content is MessageRichMessage richMessage)
             {
-                return richMessage.Message.Blocks[0] is not PageBlockAnimation and not PageBlockCollage and not PageBlockMap and not PageBlockPhoto and not PageBlockSlideshow and not PageBlockVideo;
+                return !richMessage.Message.IsMedia(0);
             }
 
             var caption = content.GetCaption();
