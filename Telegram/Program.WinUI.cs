@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -38,7 +39,17 @@ namespace Telegram
     /// </summary>
     public static class Program
     {
+        // A running instance answers a redirect on a pool thread, whatever its UI thread is doing,
+        // so one that has not answered by now is not going to.
+        private static readonly TimeSpan RedirectTimeout = TimeSpan.FromSeconds(10);
+
         private static DispatcherQueue _dispatcher;
+
+        /// <summary>
+        /// This process started after the user ended a running instance that took no launches.
+        /// Read by App, which reports it once the crash reporter is up.
+        /// </summary>
+        public static bool EndedUnresponsiveInstance { get; private set; }
 
         [STAThread]
         static void Main(string[] args)
@@ -54,10 +65,16 @@ namespace Telegram
             // First, before anything this process would only do for itself.
             var keyInstance = AppInstance.FindOrRegisterForKey("Telegram");
 
-            if (!keyInstance.IsCurrent)
+            while (!keyInstance.IsCurrent)
             {
-                RedirectActivationTo(AppInstance.GetCurrent().GetActivatedEventArgs(), keyInstance);
-                return;
+                if (RedirectActivationTo(AppInstance.GetCurrent().GetActivatedEventArgs(), keyInstance))
+                {
+                    return;
+                }
+
+                // The instance that held the key has exited, so it is free - unless another launch
+                // took it first, and then this one redirects to that.
+                keyInstance = AppInstance.FindOrRegisterForKey("Telegram");
             }
 
             // Before any window: the updater waits for this process to be gone, then starts the
@@ -116,27 +133,84 @@ namespace Telegram
         }
 
         /// <summary>
-        /// The wait is on a pool thread rather than this one: the redirect is a cross-process COM
+        /// True when this process is done: the running instance has the activation, or the user
+        /// chose to leave it be. False once that instance has exited, and the key is free to take.
+        ///
+        /// The redirect runs on a pool thread rather than this one: it is a cross-process COM
         /// call, and blocking the STA that is about to become the UI thread on it deadlocks. There
         /// is no window yet, so there is nothing to pump.
+        ///
+        /// The SDK's own wait for the running instance has no timeout and does not watch its
+        /// process, so one that stops taking requests, or exits before taking this one, would hold
+        /// this process there for good. Every later launch would then queue up behind it.
         /// </summary>
-        private static void RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance)
+        private static bool RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance)
         {
-            // The user launched this process, so it may take the foreground and the running one,
-            // in the background, may not: its window would only flash on the taskbar. Handed over
-            // rather than used here, because the window to raise may not exist until the running
-            // process reopens it from the notification area icon.
-            Win32.AllowSetForegroundWindow(keyInstance.ProcessId);
+            Process owner;
 
-            using var redirected = new ManualResetEvent(false);
-
-            _ = Task.Run(async () =>
+            try
             {
-                await keyInstance.RedirectActivationToAsync(args);
-                redirected.Set();
-            });
+                // Its PID cannot be reused while keyInstance lives: the SDK holds a handle to it.
+                owner = Process.GetProcessById((int)keyInstance.ProcessId);
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
 
-            redirected.WaitOne();
+            using (owner)
+            {
+                // The user launched this process, so it may take the foreground and the running
+                // one, in the background, may not: its window would only flash on the taskbar.
+                // Handed over rather than used here, because the window to raise may not exist
+                // until the running process reopens it from the notification area icon.
+                Win32.AllowSetForegroundWindow(keyInstance.ProcessId);
+
+                var redirected = Task.Run(async () => await keyInstance.RedirectActivationToAsync(args));
+                var exited = owner.WaitForExitAsync();
+
+                switch (Task.WaitAny([redirected, exited], RedirectTimeout))
+                {
+                    case 0:
+                        return true;
+                    case 1:
+                        return false;
+                }
+
+                // Not through Strings: the language pack is a database the running instance has
+                // open, and this process must not touch its data while it lives.
+                var text = LocaleFallback.GetString(nameof(Strings.InstanceNotResponding));
+                var choice = Win32.MessageBoxW(IntPtr.Zero, text, "Telegram", Win32.MB_YESNO | Win32.MB_ICONWARNING | Win32.MB_SETFOREGROUND);
+
+                // The question can outlive its reason: the instance may have answered meanwhile, or
+                // been ended by another launch that asked the same thing.
+                if (choice != Win32.IDYES || redirected.IsCompleted)
+                {
+                    return true;
+                }
+
+                if (exited.IsCompleted)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    owner.Kill();
+                }
+                catch (Exception)
+                {
+                    // Exited on its own in the meantime, or out of reach. The wait settles which.
+                }
+
+                if (owner.WaitForExit(RedirectTimeout))
+                {
+                    EndedUnresponsiveInstance = true;
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         /// <summary>

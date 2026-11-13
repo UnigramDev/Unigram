@@ -75,6 +75,14 @@ namespace Telegram
             Native.GarbageCollectionMonitor.Initialize(GC.Collect, AppSettings.Diagnostics.DisableXamlGcCollect, AppSettings.Diagnostics.DisableMemoryPressure);
 #endif
             WatchDog.Initialize();
+
+#if WINUI3
+            if (Program.EndedUnresponsiveInstance)
+            {
+                WatchDog.TrackError("The running instance took no launches and was ended");
+            }
+#endif
+
             LifetimeService.Initialize();
 
             SetApplicationTheme(NightModeService.Current.GetCalculatedApplicationTheme());

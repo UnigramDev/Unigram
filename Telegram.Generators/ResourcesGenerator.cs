@@ -184,7 +184,8 @@ namespace Telegram.Generators
             builder.AppendLine("{");
             builder.AppendLine("    /// <summary>");
             builder.AppendLine("    /// The English text behind every key, for the ones the cloud language pack does not");
-            builder.AppendLine("    /// answer for. Read by LocaleService, and by nothing else.");
+            builder.AppendLine("    /// answer for. Read by LocaleService, and by nothing else but the WinUI Program, which");
+            builder.AppendLine("    /// must not open the language pack while another instance holds it.");
             builder.AppendLine("    ///");
             builder.AppendLine("    /// <para>A switch rather than a dictionary: the table is cold - a hit means the pack was");
             builder.AppendLine("    /// missing a string - and a switch costs nothing until it is called, where a dictionary");

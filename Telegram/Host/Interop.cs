@@ -510,6 +510,14 @@ namespace Telegram.Host
         public static partial bool SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
 
         [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        public static partial int MessageBoxW(IntPtr hWnd, string text, string caption, uint type);
+
+        public const uint MB_YESNO = 0x00000004;
+        public const uint MB_ICONWARNING = 0x00000030;
+        public const uint MB_SETFOREGROUND = 0x00010000;
+        public const int IDYES = 6;
+
+        [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
         public static partial IntPtr FindWindowExW(IntPtr parent, IntPtr after, string className, string windowName);
 
         [LibraryImport("user32.dll")]

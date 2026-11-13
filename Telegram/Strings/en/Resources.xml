@@ -11210,6 +11210,7 @@
     <string name="GroupUpgradedTo">Group upgraded to supergroup.</string>
     <string name="InAppPreviewInfo">Hover your cursor on a chat to preview the latest message.</string>
     <string name="InstallBetaUpdates">Install Beta Updates</string>
+    <string name="InstanceNotResponding">Telegram is already running, but it is not responding.\n\nDo you want to close it and start Telegram again?</string>
     <string name="InterfaceScale">Interface scale</string>
     <string name="LimitByPeriodCustom">Custom</string>
     <string name="LimitNumberOfUsesCustom">Custom</string>
