@@ -377,9 +377,14 @@ namespace Telegram.ViewModels.Settings
             {
                 ClientService.Send(new SetUpgradedGiftColors(giftForResale.Gift.Id));
             }
-            else
+            else if (SelectedAccentColor != null)
             {
                 ClientService.Send(new SetAccentColor(SelectedAccentColor.Id, SelectedCustomEmojiId));
+            }
+            else
+            {
+                // The colours are a gift's that is not among those loaded, and nothing else was picked.
+                return;
             }
 
             ShowToast(Strings.UserColorApplied, ToastPopupIcon.Success);

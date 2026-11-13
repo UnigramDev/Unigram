@@ -27,6 +27,10 @@ namespace Telegram.Views.Popups
         private IClientService _clientService;
         private MessageSender _sender;
 
+        // The sender's own accent, which clearing a gift's colours falls back to: the accent alone is what
+        // SetAccentColor can apply, and there is no "none".
+        private NameColor _accentColor;
+
         public ChooseNameColorView()
         {
             InitializeComponent();
@@ -93,7 +97,9 @@ namespace Telegram.Views.Popups
                 BackgroundControl.UpdateChat(clientService, chat.Background, chat.Theme);
             }
 
-            var accent = upgradedGift == null ? colors.FirstOrDefault(x => x.Id == accentColorId) ?? colors.FirstOrDefault() : null;
+            _accentColor = colors.FirstOrDefault(x => x.Id == accentColorId) ?? colors.FirstOrDefault();
+
+            var accent = upgradedGift == null ? _accentColor : null;
 
             if (customEmojiId != 0 && upgradedGift == null)
             {
@@ -186,10 +192,11 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            // TODO: restore SelectedAccentColor
-
             SelectedCustomEmojiId = customEmoji.CustomEmojiId;
             SelectedGiftColors = null;
+
+            // Gift colours may be the current ones without any gift selected, so clearing it changes nothing.
+            RestoreAccentColor();
 
             Message1.UpdateMockup(_clientService, SelectedCustomEmojiId, SelectedAccentColor?.Id ?? 0, null);
 
@@ -202,6 +209,15 @@ namespace Telegram.Views.Popups
             {
                 Animated.Source = null;
                 Badge.Badge = Strings.UserReplyIconOff;
+            }
+        }
+
+        private void RestoreAccentColor()
+        {
+            if (SelectedAccentColor == null && _accentColor != null)
+            {
+                // OnSelectionChanged applies it.
+                List.SelectedItem = _accentColor;
             }
         }
 
@@ -289,6 +305,7 @@ namespace Telegram.Views.Popups
         {
             if (upgradedGift == null)
             {
+                RestoreAccentColor();
                 return;
             }
 
