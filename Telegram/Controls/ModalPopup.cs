@@ -851,8 +851,26 @@ namespace Telegram.Controls
         /// </remarks>
         private void RestoreFocus()
         {
-            var target = _focusedBefore?.Target;
+            var saved = _focusedBefore;
+            var target = saved?.Target;
             _focusedBefore = null;
+
+            // Only while focus is still in here, or nowhere - Popup::Close's own rule. A popup this
+            // one opened on its way out has taken it during the close animation, and keeps it; if
+            // what that popup saved is in here, or nothing, it hands focus back to this one's instead.
+            var focused = FocusManagerEx.TryGetFocusedElement(_xamlRoot) as DependencyObject;
+            var owner = FindOwner(focused);
+
+            // A Hyperlink is not in the visual tree to walk, so it restores as it always did.
+            if (focused is UIElement && owner != this)
+            {
+                if (owner != null && (owner._focusedBefore?.Target is not DependencyObject next || FindOwner(next) == this))
+                {
+                    owner._focusedBefore = saved;
+                }
+
+                return;
+            }
 
             if (target is Control control)
             {
@@ -862,6 +880,21 @@ namespace Telegram.Controls
             {
                 hyperlink.Focus(FocusState.Programmatic);
             }
+        }
+
+        private static ModalPopup FindOwner(DependencyObject element)
+        {
+            while (element is UIElement)
+            {
+                if (element is ModalPopup popup)
+                {
+                    return popup;
+                }
+
+                element = VisualTreeHelper.GetParent(element);
+            }
+
+            return null;
         }
 
         private bool ContainsFocus()
