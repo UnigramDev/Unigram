@@ -3675,13 +3675,13 @@ namespace Telegram.ViewModels
 
                     if (split.Length == 2)
                     {
-                        foreach (var command in BotCommands.Where(x => string.Equals(x.Command, split[0], StringComparison.OrdinalIgnoreCase)))
+                        foreach (var command in BotCommands.Where(x => x.IsEphemeral && string.Equals(x.Command, split[0], StringComparison.OrdinalIgnoreCase)))
                         {
                             if (ClientService.TryGetUser(command.BotUserId, out User botUser))
                             {
                                 if (botUser.HasActiveUsername(split[1], out _))
                                 {
-                                    return new SendEphemeralMessage(chatId, topicId, command.BotUserId, null, messageSendOptions?.SendingId ?? 0, messageSendOptions?.OnlyPreview ?? false, inputMessageContent);
+                                    return new SendEphemeralMessage(chatId, topicId, command.BotUserId, replyTo, messageSendOptions?.SendingId ?? 0, messageSendOptions?.OnlyPreview ?? false, inputMessageContent);
                                 }
                             }
                         }
