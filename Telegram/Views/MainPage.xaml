@@ -793,6 +793,7 @@
                       Margin="0,8,0,0"
                       Grid.Row="1">
                     <ListView ItemsSource="{x:Bind ViewModel.Settings.Results}"
+                              AutomationProperties.Name="{CustomResource Search}"
                               SelectionMode="None"
                               ContainerContentChanging="Settings_ContainerContentChanging"
                               Grid.Row="1">

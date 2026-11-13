@@ -51,6 +51,7 @@
         </controls:ContentPageHeader>
 
         <TextBox x:Name="Search"
+                 AutomationProperties.Name="{CustomResource Search}"
                  PlaceholderText="{CustomResource Search}"
                  Text="{x:Bind ViewModel.Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Margin="12,8"
