@@ -12,7 +12,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Views.Premium.Popups
 {
-    public sealed partial class UniqueStickersPopup : ContentPopup
+    public sealed partial class UniqueStickersPopup : ModalPopup
     {
         public UniqueStickersPopup(IClientService clientService, Sticker sticker)
         {

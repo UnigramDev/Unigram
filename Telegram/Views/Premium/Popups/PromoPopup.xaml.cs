@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Premium.Popups
 {
-    public sealed partial class PromoPopup : ContentPopup
+    public sealed partial class PromoPopup : ModalPopup
     {
         public PromoViewModel ViewModel => DataContext as PromoViewModel;
 
@@ -320,8 +320,6 @@ namespace Telegram.Views.Premium.Popups
 
         private void StickerSet_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
-            Hide();
-
             if (_stickerSet != null)
             {
                 StickersPopup.ShowAsync(ViewModel.NavigationService, _stickerSet);
@@ -332,12 +330,12 @@ namespace Telegram.Views.Premium.Popups
         {
             if (e.ClickedItem is PremiumFeature feature)
             {
-                Hide();
-
                 if (await ViewModel.OpenAsync(feature))
                 {
-                    await this.ShowQueuedAsync(XamlRoot);
+                    return;
                 }
+
+                Hide();
             }
         }
 
@@ -582,7 +580,7 @@ namespace Telegram.Views.Premium.Popups
                 : Strings.SubscribeToPremium, Locale.FormatCurrency(option.MonthCount == 12 ? option.Amount : option.Amount / option.MonthCount, option.Currency));
         }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (_giftCode != null)
             {

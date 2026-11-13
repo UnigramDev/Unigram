@@ -19,7 +19,7 @@ namespace Telegram.Views.Premium.Popups
         ReadDate
     }
 
-    public sealed partial class ChangePrivacyPopup : ContentPopup
+    public sealed partial class ChangePrivacyPopup : ModalPopup
     {
         public ChangePrivacyPopup(User user, ChangePrivacyType type, bool premium, bool premiumAvailable)
         {
@@ -73,7 +73,7 @@ namespace Telegram.Views.Premium.Popups
             }
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private void OnOpened(ModalPopup sender, ModalPopupOpenedEventArgs args)
         {
             Icon.Play();
         }

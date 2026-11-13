@@ -1,4 +1,4 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Premium.Popups.LimitReachedPopup"
+﻿<controls:ModalPopup x:Class="Telegram.Views.Premium.Popups.LimitReachedPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,9 +8,9 @@
                        Padding="0,24,0,0"
                        IsDismissButtonVisible="True"
                        PrimaryButtonStyle="{StaticResource PremiumButtonStyle}"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       PrimaryButtonClick="OnPrimaryButtonClick"
                        SecondaryButtonStyle="{StaticResource AccentButtonStyle}"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       SecondaryButtonClick="OnSecondaryButtonClick"
                        ButtonsLayout="Vertical">
 
     <Grid>
@@ -156,7 +156,7 @@
         </ListView>
     </Grid>
 
-    <controls:ContentPopup.PrimaryButtonContent>
+    <controls:ModalPopup.PrimaryButtonContent>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -177,5 +177,5 @@
                                     Margin="8,-3,-4,-5"
                                     Grid.Column="1" />
         </Grid>
-    </controls:ContentPopup.PrimaryButtonContent>
-</controls:ContentPopup>
+    </controls:ModalPopup.PrimaryButtonContent>
+</controls:ModalPopup>

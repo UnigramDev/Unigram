@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Premium.Popups
 {
-    public sealed partial class FeaturesPopup : ContentPopup
+    public sealed partial class FeaturesPopup : ModalPopup
     {
         private readonly IClientService _clientService;
         private readonly IReadOnlyList<BusinessFeature> _businessFeatures;

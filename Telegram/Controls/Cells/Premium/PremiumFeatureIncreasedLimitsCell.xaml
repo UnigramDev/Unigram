@@ -82,6 +82,7 @@
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
-                                    ScrollingHost="{x:Bind ScrollingHost}" />
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    TopInset="0" />
     </Grid>
 </UserControl>

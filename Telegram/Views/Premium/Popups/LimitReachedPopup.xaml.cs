@@ -26,7 +26,7 @@ namespace Telegram.Views.Premium.Popups
 {
     public partial record PremiumLimitValue(long DefaultValue, long PremiumValue);
 
-    public sealed partial class LimitReachedPopup : ContentPopup
+    public sealed partial class LimitReachedPopup : ModalPopup
     {
         private readonly INavigationService _navigationService;
         private readonly IClientService _clientService;
@@ -320,10 +320,8 @@ namespace Telegram.Views.Premium.Popups
             return null;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
-            Hide();
-
             if (_clientService.IsPremiumAvailable && !_clientService.IsPremium)
             {
                 _navigationService.ShowPromo(new PremiumSourceLimitExceeded());
@@ -493,7 +491,7 @@ namespace Telegram.Views.Premium.Popups
             }
         }
 
-        private async void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnSecondaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             var deferral = args.GetDeferral();
 
