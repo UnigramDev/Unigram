@@ -90,6 +90,8 @@ namespace Telegram.Controls.Gallery
             _inactivityTimer.Start();
 
             ScrollingHost.AddHandler(TappedEvent, new TappedEventHandler(OnTapped), true);
+
+            Album.SetProgressSource(LayoutRoot.ProgressProperties);
         }
 
         private void OnTick(object sender, object e)
@@ -1121,7 +1123,7 @@ namespace Telegram.Controls.Gallery
         private void Album_ItemClick(object sender, GalleryMedia item)
         {
             var viewModel = ViewModel;
-            if (viewModel == null || LayoutRoot.IsScrolling)
+            if (viewModel == null || LayoutRoot.IsScrolling || !LayoutRoot.IsIdle)
             {
                 return;
             }
@@ -1134,7 +1136,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            // The neighbours are already in place, so they slide in like the arrows do.
+            // Neighbours slide in like with the arrows.
             if (index == selected - 1)
             {
                 ChangeView(CarouselDirection.Previous);
