@@ -63,21 +63,20 @@
                                                    Padding="10,6,36,5"
                                                    Grid.Row="1">
                             <FlyoutBase.AttachedFlyout>
-                                <Flyout x:Name="EmojiFlyout"
-                                        Placement="Top"
-                                        ShowMode="Transient">
-                                    <Flyout.FlyoutPresenterStyle>
-                                        <Style TargetType="FlyoutPresenter"
-                                               BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+                                <MenuFlyout x:Name="EmojiFlyout">
+                                    <MenuFlyout.MenuFlyoutPresenterStyle>
+                                        <Style TargetType="MenuFlyoutPresenter">
                                             <Setter Property="Padding"
                                                     Value="0" />
                                         </Style>
-                                    </Flyout.FlyoutPresenterStyle>
-                                    <drawers:EmojiDrawer x:Name="EmojiPanel"
-                                                         ItemClick="Emoji_ItemClick"
-                                                         Width="300"
-                                                         Height="360" />
-                                </Flyout>
+                                    </MenuFlyout.MenuFlyoutPresenterStyle>
+                                    <controls:MenuFlyoutContent Padding="0">
+                                        <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                                             ItemClick="Emoji_ItemClick"
+                                                             Width="300"
+                                                             Height="360" />
+                                    </controls:MenuFlyoutContent>
+                                </MenuFlyout>
                             </FlyoutBase.AttachedFlyout>
                         </controls:FormattedTextBox>
 
@@ -85,7 +84,8 @@
                                                     IsHitTestVisible="False"
                                                     Margin="10,4,-2,-2" />
 
-                        <controls:GlyphButton Click="Emoji_Click"
+                        <controls:GlyphButton x:Name="EmojiButton"
+                                              Click="Emoji_Click"
                                               Glyph="&#xF164;"
                                               AllowFocusOnInteraction="False"
                                               HorizontalAlignment="Right"
