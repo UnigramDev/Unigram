@@ -141,13 +141,19 @@ namespace Telegram.Common
                 var orientationOnly = GetOrientationOnly(owner);
                 if (!orientationOnly)
                 {
+                    // The scrolling length stays a whole DIP. The panel keeps it as a float, chains rows by
+                    // adding it and finds the row at an offset by truncating division, so a length float
+                    // cannot hold (62.667 at 150%, 63.2 at 125%) can put a row edge on either side of the
+                    // offset the ScrollViewer settles on, and the two re-measure each other forever.
+                    var scrollingLength = Math.Floor(itemLength + 0.001);
+
                     if (reference.Orientation == Orientation.Horizontal)
                     {
-                        reference.ItemHeight = itemLength;
+                        reference.ItemHeight = scrollingLength;
                     }
                     else
                     {
-                        reference.ItemWidth = itemLength;
+                        reference.ItemWidth = scrollingLength;
                     }
                 }
 
