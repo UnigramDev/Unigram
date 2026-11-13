@@ -535,12 +535,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Border x:Name="HeaderBackground"
-                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                Visibility="Collapsed"
-                Grid.ColumnSpan="2"
-                Canvas.ZIndex="2" />
-
         <Grid x:Name="Header"
               Height="{StaticResource NavigationViewTopPaneHeight}"
               Margin="8,8,8,0"
@@ -550,6 +544,7 @@
                        RadiusX="24"
                        RadiusY="24" />
             <Border x:Name="HeaderCard"
+                    BackgroundSizing="OuterBorderEdge"
                     Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                     BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                     BorderThickness="0"

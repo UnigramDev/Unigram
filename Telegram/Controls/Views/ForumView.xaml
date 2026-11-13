@@ -382,6 +382,8 @@
         <Border x:Name="IslandBackgroundRoot"
                 x:Load="False"
                 Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                BackgroundSizing="OuterBorderEdge"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 CornerRadius="16"
                 Grid.RowSpan="2" />
 

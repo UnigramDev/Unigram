@@ -875,7 +875,6 @@ namespace Telegram.Views
                 Options.Visibility = Visibility.Collapsed;
 
                 ClipperOuter.Visibility = Visibility.Collapsed;
-                HeaderBackground.Visibility = Visibility.Visible;
 
                 HeaderLeft.SizeChanged += Options_SizeChanged;
                 HeaderLeft.Padding = new Thickness(12, 0, 0, 0);
@@ -7045,16 +7044,19 @@ namespace Telegram.Views
             var margin = _islandMargin;
 
             // The column the messages are laid out in, which every island but the left tabs keeps to.
-            var width = adaptive ? 1024 - 2 * margin : double.PositiveInfinity;
+            // Docked, the chrome spans the whole chat instead.
+            var width = adaptive && !merged ? 1024 - 2 * margin : double.PositiveInfinity;
 
             Header.Margin = new Thickness(margin, margin, margin, 0);
             Header.MaxWidth = width;
             HeaderCard.CornerRadius = new CornerRadius(surface);
+            HeaderCard.BorderThickness = merged ? new Thickness(0, 0, 0, 1) : new Thickness();
             HeaderShadow.RadiusX = HeaderShadow.RadiusY = surface;
             _headerShadow.IsVisible = !merged;
             _headerShadow.Invalidate();
 
-            Profile.CornerRadius = new CornerRadius(radius);
+            // It spans the whole header, so it is the header's surface rather than one of its buttons.
+            Profile.CornerRadius = new CornerRadius(surface);
             BackButton.CornerRadius =
                 VideoCall.CornerRadius =
                 Call.CornerRadius =
@@ -7069,7 +7071,9 @@ namespace Telegram.Views
             UpdateForumLeftInset(_forumPlacement == ForumPlacement.Left);
             UpdateClipperScrim();
 
-            ForumNavigation.UpdateIslandRadius(card, button.TopLeft);
+            // The tabs are 32 tall, like the cards: their button takes the card's radius less the inset,
+            // docked or not, where the header's 48 tall buttons would take 20 and turn it into an ellipse.
+            ForumNavigation.UpdateIslandRadius(card, Math.Max(4, Math.Min(radius, 16) - 4));
 
             if (IsDocked(_forumDockedAt))
             {
@@ -8586,7 +8590,7 @@ namespace Telegram.Views
                 _ => new Thickness()
             };
 
-            ForumNavigation.MaxWidth = edge == ForumPlacement.Left || !_islandsAdaptive
+            ForumNavigation.MaxWidth = edge == ForumPlacement.Left || !_islandsAdaptive || _islandsDocked
                 ? double.PositiveInfinity
                 : 1024 - 2 * _islandMargin;
         }

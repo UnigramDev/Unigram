@@ -186,6 +186,12 @@ namespace Telegram.Controls.Views
             IslandShadow.RadiusX = IslandShadow.RadiusY = _islandRadius;
             IslandBackgroundRoot.CornerRadius = new CornerRadius(_islandRadius);
 
+            IslandBackgroundRoot.BorderThickness = !merged
+                ? new Thickness()
+                : _type == ForumViewType.Vertical
+                ? new Thickness(0, 0, 1, 0)
+                : new Thickness(0, 0, 0, 1);
+
             _islandShadow.IsVisible = !merged;
             _islandShadow.Invalidate();
 
