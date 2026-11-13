@@ -106,6 +106,11 @@ namespace Telegram.Controls
         private const float MinimumScale = 0.1f;
         private const float MaximumScale = 30;
 
+        // The longest side of the surface a text or shape is drawn into, past which Win2D refuses
+        // to create it: a long text, or one scaled up far, gets there. 8192 is the most a feature
+        // level 10 device allows.
+        private const double MaximumRasterSize = 8192;
+
         // A reaction's, against the size of a story area.
         private const float ReactionMinimumScale = 0.5f;
         private const float ReactionMaximumScale = 1.8f;
@@ -987,9 +992,11 @@ namespace Telegram.Controls
             }
             else
             {
-                var exact = entity.Scale * k;
+                // Physical pixels: a CanvasControl's surface is its size at the display's scale.
+                var fit = (float)(MaximumRasterSize / ((XamlRoot?.RasterizationScale ?? 1) * Math.Max(bounds.Width, bounds.Height)));
+                var exact = Math.Min(entity.Scale * k, fit);
 
-                if (settle || !_rasters.TryGetValue(entity, out raster) || exact / raster is < 0.8f or > 1.25f)
+                if (settle || !_rasters.TryGetValue(entity, out raster) || raster > fit || exact / raster is < 0.8f or > 1.25f)
                 {
                     raster = exact;
                     _rasters[entity] = raster;
