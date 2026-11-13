@@ -472,7 +472,13 @@ namespace Telegram.Views
             }
             else
             {
-                await Launcher.LaunchUriAsync(url);
+                // System.Uri accepts hosts the WinRT Uri it is converted to rejects, such as the
+                // non-ASCII file name a relative link becomes once TryCreateUri prepends https://.
+                try
+                {
+                    await Launcher.LaunchUriAsync(url);
+                }
+                catch { }
             }
         }
 
