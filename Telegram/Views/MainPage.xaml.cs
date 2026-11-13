@@ -932,7 +932,9 @@ namespace Telegram.Views
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                if (MasterDetail.NavigationService.Content is IChatPage chatPage)
+                // Null once Dispose has run: switching or logging out the account tears this page
+                // down without waiting for the animation, and the batch still completes after it.
+                if (MasterDetail.NavigationService?.Content is IChatPage chatPage)
                 {
                     chatPage.CompleteBannerAnimation(true);
                 }
