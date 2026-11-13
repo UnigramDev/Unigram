@@ -89,6 +89,8 @@ namespace Telegram.Services
 
         public bool ContainsItem(string token) => SAP.FutureAccessList.ContainsItem(token);
 
+        public string Add(IStorageItem item) => SAP.FutureAccessList.Add(item);
+
         public void AddOrReplace(string token, IStorageItem item) => SAP.FutureAccessList.AddOrReplace(token, item);
 
         public void Remove(string token) => SAP.FutureAccessList.Remove(token);

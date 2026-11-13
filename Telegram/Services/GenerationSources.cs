@@ -96,10 +96,17 @@ namespace Telegram.Services
 
             try
             {
-                // A token of its own, never Add's: for a file already in the list Add hands back
-                // the token it is under, and when that is a fixed one from AddOrReplace, the next
-                // use of it points the conversion string at another file.
-                var token = Guid.NewGuid().ToString("N");
+                // Add hands back the token a file is already under, so a resend makes the same
+                // conversion string - one generation, one upload - and the list follows the file
+                // if it moves. Only a GUID is safe to share; anything else is a name a feature
+                // repoints, such as EditMediaPopup or a download's unique id.
+                var token = AccessList.Future.Add(item);
+                if (Guid.TryParse(token, out _))
+                {
+                    return token;
+                }
+
+                token = Guid.NewGuid().ToString("N");
 
                 AccessList.Future.AddOrReplace(token, item);
                 return token;
