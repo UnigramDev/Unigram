@@ -36,26 +36,6 @@
                 <StackPanel>
                     <Border x:Name="Header" />
 
-                    <Grid MaxWidth="1000"
-                          Margin="24,0">
-                        <TextBox x:Name="Search"
-                                 Text="{x:Bind ViewModel.MembersTab.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 PlaceholderText="{CustomResource Search}"
-                                 BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                 Margin="0,4,0,2"
-                                 Padding="34,5,6,6"
-                                 InputScope="Search" />
-
-                        <controls:GlyphButton Glyph="&#xE721;"
-                                              FontSize="16"
-                                              Width="36"
-                                              Height="32"
-                                              IsTabStop="False"
-                                              AutomationProperties.AccessibilityView="Raw"
-                                              HorizontalAlignment="Left"
-                                              VerticalAlignment="Center" />
-                    </Grid>
-
                     <controls:HeaderedControl x:Name="AddNewPanel"
                                               Visibility="Collapsed"
                                               Margin="0,2,0,2"

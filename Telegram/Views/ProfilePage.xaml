@@ -38,15 +38,22 @@
                     <Grid x:Name="HeaderPanel"
                           Opacity="{x:Bind ViewModel.Items.Count, Mode=OneWay}"
                           Canvas.ZIndex="2">
-                        <Grid HorizontalAlignment="Center"
+                        <Grid x:Name="TabsPanel"
+                              HorizontalAlignment="Center"
                               CornerRadius="20"
                               MaxWidth="1000"
+                              Height="40"
                               Margin="24,0,24,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <Border x:Name="CardBackground"
                                     Background="{ThemeResource SettingsItemBackground}"
                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                     BorderThickness="1"
-                                    CornerRadius="20" />
+                                    CornerRadius="20"
+                                    Grid.ColumnSpan="2" />
                             <controls:TopNavView x:Name="Navigation"
                                                  IsItemClickEnabled="True"
                                                  ItemClick="Navigation_ItemClick"
@@ -66,6 +73,64 @@
                                     </ItemsPanelTemplate>
                                 </controls:TopNavView.ItemsPanel>
                             </controls:TopNavView>
+
+                            <!-- Outside the strip rather than its footer, so it stays in view when the tabs overflow and scroll. -->
+                            <StackPanel x:Name="SearchSlot"
+                                        Orientation="Horizontal"
+                                        Grid.Column="1">
+                                <Border Background="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                        Width="1"
+                                        Height="20"
+                                        Margin="-12,0,0,0"
+                                        VerticalAlignment="Center" />
+
+                                <controls:GlyphButton x:Name="SearchButton"
+                                                      Click="Search_Click"
+                                                      Glyph="&#xE721;"
+                                                      AutomationProperties.Name="{CustomResource Search}"
+                                                      ToolTipService.ToolTip="{CustomResource Search}"
+                                                      Width="48"
+                                                      Height="40"
+                                                      CornerRadius="16"
+                                                      VerticalAlignment="Center"
+                                                      IsEnabled="False" />
+                            </StackPanel>
+
+                            <Grid x:Name="SearchRoot"
+                                  x:Load="False"
+                                  Margin="4,0"
+                                  Grid.ColumnSpan="2">
+                                <TextBox x:Name="SearchField"
+                                         TextChanged="SearchField_TextChanged"
+                                         BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                         Style="{StaticResource NoDeleteTextBoxStyle}"
+                                         InputScope="Search"
+                                         Padding="34,3,36,6"
+                                         CornerRadius="16"
+                                         Height="32"
+                                         VerticalAlignment="Center" />
+
+                                <controls:GlyphButton Glyph="&#xE721;"
+                                                      FontSize="16"
+                                                      Width="36"
+                                                      Height="32"
+                                                      IsTabStop="False"
+                                                      IsHitTestVisible="False"
+                                                      AutomationProperties.AccessibilityView="Raw"
+                                                      HorizontalAlignment="Left"
+                                                      VerticalAlignment="Center" />
+
+                                <controls:GlyphButton Click="SearchClose_Click"
+                                                      Glyph="&#xE711;"
+                                                      FontSize="16"
+                                                      AutomationProperties.Name="{CustomResource AccDescrCloseSearch}"
+                                                      ToolTipService.ToolTip="{CustomResource AccDescrCloseSearch}"
+                                                      Width="32"
+                                                      Height="32"
+                                                      CornerRadius="12"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Center" />
+                            </Grid>
                         </Grid>
 
                         <messages:MessageService x:Name="DateHeader"

@@ -27,11 +27,7 @@ namespace Telegram.Views.Profile
         {
             base.OnNavigatedTo(e);
 
-            if (IsProfile)
-            {
-                FindName(nameof(SearchRoot));
-            }
-            else
+            if (!IsProfile)
             {
                 ScrollingHost.Style = BootStrapper.Current.Resources["DefaultListViewStyle"] as Style;
                 ScrollingHost.Padding = new Thickness(0);

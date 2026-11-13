@@ -138,7 +138,12 @@ namespace Telegram.Views
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
-            if (MediaFrame.Content is INavigablePage tabPage)
+            if (_searchOpen)
+            {
+                HideSearch();
+                args.Handled = true;
+            }
+            else if (MediaFrame.Content is INavigablePage tabPage)
             {
                 tabPage.OnBackRequested(args);
             }
@@ -487,6 +492,8 @@ namespace Telegram.Views
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
+            UpdateSearch(e.Content);
+
             if (e.Content is IProfileChatPage savedMessagesPage)
             {
                 if (!_backgroundUpdated)
@@ -927,8 +934,131 @@ namespace Telegram.Views
             _hasBeenScrolled = false;
 
             Logger.Info(disableAnimation + ", " + ScrollingHost.ScrollableHeight);
-            ScrollingHost.TryChangeView(null, ViewModel.IsSavedMessages ? 0 : Math.Round(ProfileHeader.ActualSize.Y - 24), null, disableAnimation);
+            ScrollingHost.TryChangeView(null, ContentOffset, null, disableAnimation);
         }
+
+        private double ContentOffset => ViewModel.IsSavedMessages ? 0 : Math.Round(ProfileHeader.ActualSize.Y - 24);
+
+        #region Search
+
+        private bool _searchOpen;
+        private string _searchQuery = string.Empty;
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            ShowSearch();
+
+            // Results belong under the pinned strip, but a search opened deep in the list stays where it is.
+            if (ScrollingHost.VerticalOffset < ContentOffset)
+            {
+                ScrollToContent(false);
+            }
+        }
+
+        private void SearchClose_Click(object sender, RoutedEventArgs e)
+        {
+            HideSearch();
+        }
+
+        private void SearchField_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Raised asynchronously, so it can arrive after the search has closed.
+            if (_searchOpen)
+            {
+                _searchQuery = SearchField.Text;
+                SetSearchQuery(MediaFrame.Content, _searchQuery);
+            }
+        }
+
+        // Disabled rather than collapsed on the tabs that have no search, so switching tabs never resizes the pill.
+        // Never reopened from a tab's query: the view model clears them all whenever the profile is navigated to.
+        private void UpdateSearch(object content)
+        {
+            var searchable = content is ProfileMembersTabPage or ProfileFilesTabPage or ProfileLinksTabPage or ProfileMusicTabPage or ProfileVoiceTabPage;
+            if (!searchable)
+            {
+                HideSearch();
+            }
+
+            // GlyphButton's template has no disabled look of its own.
+            SearchButton.IsEnabled = searchable;
+            SearchButton.Opacity = searchable ? 1 : 0.4;
+        }
+
+        private void ShowSearch()
+        {
+            FindName(nameof(SearchRoot));
+
+            _searchOpen = true;
+            _searchQuery = string.Empty;
+
+            SearchField.PlaceholderText = MediaFrame.Content is ProfileMembersTabPage
+                ? Strings.SearchMembers
+                : Strings.Search;
+
+            // The pill keeps the width the tabs gave it rather than shrinking to the field's own.
+            TabsPanel.MinWidth = TabsPanel.ActualWidth;
+
+            Navigation.Visibility = Visibility.Collapsed;
+            SearchSlot.Visibility = Visibility.Collapsed;
+            SearchRoot.Visibility = Visibility.Visible;
+
+            SearchField.Focus(FocusState.Programmatic);
+        }
+
+        private void HideSearch()
+        {
+            if (!_searchOpen)
+            {
+                return;
+            }
+
+            if (_searchQuery.Length > 0)
+            {
+                SetSearchQuery(MediaFrame.Content, string.Empty);
+            }
+
+            var focused = SearchField.FocusState != FocusState.Unfocused;
+
+            _searchOpen = false;
+            _searchQuery = string.Empty;
+
+            SearchField.Text = string.Empty;
+            SearchRoot.Visibility = Visibility.Collapsed;
+
+            Navigation.Visibility = Visibility.Visible;
+            SearchSlot.Visibility = Visibility.Visible;
+            TabsPanel.MinWidth = 0;
+
+            if (focused)
+            {
+                SearchButton.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void SetSearchQuery(object page, string query)
+        {
+            switch (page)
+            {
+                case ProfileMembersTabPage:
+                    ViewModel.MembersTab.Members.Query = query;
+                    break;
+                case ProfileFilesTabPage:
+                    ViewModel.Files.Query = query;
+                    break;
+                case ProfileLinksTabPage:
+                    ViewModel.Links.Query = query;
+                    break;
+                case ProfileMusicTabPage:
+                    ViewModel.Music.Query = query;
+                    break;
+                case ProfileVoiceTabPage:
+                    ViewModel.Voice.Query = query;
+                    break;
+            }
+        }
+
+        #endregion
 
         private int _prevSelectedIndex = -1;
 
