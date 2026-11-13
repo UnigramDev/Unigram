@@ -90,6 +90,7 @@
                                                     Grid.ColumnSpan="4" />
 
                         <Slider x:Name="Price"
+                                AutomationProperties.Name="{CustomResource PrivateMessagesPriceHeader}"
                                 Value="{x:Bind ViewModel.IncomingPaidMessageStarCount, Mode=TwoWay}"
                                 Maximum="10000"
                                 Minimum="1"
