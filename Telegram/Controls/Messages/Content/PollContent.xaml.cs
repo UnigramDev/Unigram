@@ -505,7 +505,7 @@ namespace Telegram.Controls.Messages.Content
 
         private async void Option_Click(object sender, RoutedEventArgs e)
         {
-            if (_message.Content is not MessagePoll poll)
+            if (_message?.Content is not MessagePoll poll)
             {
                 return;
             }
