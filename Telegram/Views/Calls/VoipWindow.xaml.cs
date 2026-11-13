@@ -23,6 +23,8 @@ using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -60,6 +62,25 @@ namespace Telegram.Views.Calls
         private readonly DisplayRequest _displayRequest = new();
 
         private VoipConnectionState _background;
+        private string _lastAnnouncedCallStatus;
+
+        private void AnnounceCallStatus(string status)
+        {
+            if (string.IsNullOrEmpty(status) || status == _lastAnnouncedCallStatus)
+            {
+                return;
+            }
+
+            _lastAnnouncedCallStatus = status;
+            Announce(status, "CallStatus");
+        }
+
+        private void Announce(string text, string activity)
+        {
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(EndCall);
+            peer?.RaiseNotificationEvent(AutomationNotificationKind.Other,
+                AutomationNotificationProcessing.MostRecent, text, activity);
+        }
 
         public VoipWindow(WindowContext window, VoipCall call)
             : base(window)
@@ -256,6 +277,7 @@ namespace Telegram.Views.Calls
                 if (args.ReadyState is VoipReadyState.Established && _call.State is CallStateReady ready)
                 {
                     TransitionToEnstablished(ready);
+                    AnnounceCallStatus(Strings.Connected);
                 }
                 else if (args.ReadyState is VoipReadyState.WaitInit or VoipReadyState.WaitInitAck)
                 {
@@ -263,7 +285,7 @@ namespace Telegram.Views.Calls
                 }
                 else if (args.ReadyState is VoipReadyState.Reconnecting)
                 {
-
+                    AnnounceCallStatus(Strings.VoipConnecting);
                 }
             }
             else
@@ -300,6 +322,15 @@ namespace Telegram.Views.Calls
             else if (args.State is VoipState.Error or VoipState.Discarded)
             {
                 TransitionToDiscarded(_call.State as CallStateDiscarded);
+            }
+
+            if (args.State is VoipState.HangingUp or VoipState.Error or VoipState.Discarded)
+            {
+                AnnounceCallStatus(Title.Text);
+            }
+            else if (args.State != VoipState.Ready || args.ReadyState is VoipReadyState.WaitInit or VoipReadyState.WaitInitAck)
+            {
+                AnnounceCallStatus(State.Text);
             }
         }
 
@@ -344,6 +375,8 @@ namespace Telegram.Views.Calls
             }
 
             _enstablished = enstablished;
+            AutomationProperties.SetAccessibilityView(Duration, enstablished ? AccessibilityView.Content : AccessibilityView.Raw);
+            AutomationProperties.SetAccessibilityView(State, enstablished ? AccessibilityView.Raw : AccessibilityView.Content);
 
             var prevVisual = ElementComposition.GetElementVisual(enstablished ? State : DurationRoot);
             var nextVisual = ElementComposition.GetElementVisual(enstablished ? DurationRoot : State);
@@ -381,6 +414,8 @@ namespace Telegram.Views.Calls
                 Duration.Text = _call.Duration.ToDuration();
 
                 Emoji.Content = string.Join(string.Empty, ready.Emojis);
+                // Keep the verification sequence in the accessible name, in display order.
+                AutomationProperties.SetName(Emoji, Strings.VoipHintEncryptionKey + ": " + string.Join(" ", ready.Emojis));
                 Emoji.Visibility = Visibility.Visible;
 
                 ToastPopup.Show(Emoji, Icons.LockClosedFilled12 + Icons.Spacing + Strings.VoipHintEncryptionKey, ToastPlacementMode.Bottom, ElementTheme.Light, TimeSpan.FromSeconds(4));
@@ -411,6 +446,11 @@ namespace Telegram.Views.Calls
             }
 
             _weakNetworkCollapsed = !show;
+            AutomationProperties.SetAccessibilityView(WeakNetworkLabel, show ? AccessibilityView.Content : AccessibilityView.Raw);
+            if (show)
+            {
+                Announce(Strings.VoipWeakNetwork, "CallNetwork");
+            }
 
             var weakNetwork = ElementComposition.GetElementVisual(WeakNetwork);
 
@@ -784,9 +824,12 @@ namespace Telegram.Views.Calls
             Mute.IsChecked = args.Audio == VoipAudioState.Muted;
             Camera.IsChecked = args.Video != VoipVideoState.Inactive && !_call.IsScreenSharing;
             Screen.IsChecked = args.Video != VoipVideoState.Inactive && _call.IsScreenSharing;
+            Automation.SetToolTip(Mute, Mute.IsChecked == true ? Strings.VoipUnmute : Strings.VoipMute);
+            Automation.SetToolTip(Camera, Camera.IsChecked == true ? Strings.VoipStopVideo : Strings.VoipStartVideo);
+            Automation.SetToolTip(Screen, Screen.IsChecked == true ? Strings.VoipChatStopScreenCapture : Strings.VoipChatStartScreenCapture);
 
-            LocalAudioOff.ShowHide(args.Audio == VoipAudioState.Muted, LocalAudioPanel);
-            LocalVideoOff.ShowHide(_call.RemoteVideoState != VoipVideoState.Inactive && args.Video == VoipVideoState.Inactive, LocalVideoPanel);
+            LocalAudioOff.ShowHide(args.Audio == VoipAudioState.Muted, LocalAudioPanel, announce: false);
+            LocalVideoOff.ShowHide(_call.RemoteVideoState != VoipVideoState.Inactive && args.Video == VoipVideoState.Inactive, LocalVideoPanel, announce: false);
         }
 
         private void OnVideoFailed()
@@ -911,6 +954,9 @@ namespace Telegram.Views.Calls
             // Changes only reach this window between Loaded and Unloaded, so whatever it missed
             // before then is read here.
             OnWindowVisibilityChanged(Window.IsVisible);
+            var status = _lastAnnouncedCallStatus ?? (_enstablished ? Strings.Connected : State.Text);
+            _lastAnnouncedCallStatus = null;
+            AnnounceCallStatus(status);
         }
 
         protected override void OnWindowVisibilityChanged(bool visible)
