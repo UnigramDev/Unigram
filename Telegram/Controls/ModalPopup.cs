@@ -1923,6 +1923,13 @@ namespace Telegram.Controls
 
         private async Task InvokeButtonAsync(ContentDialogButton button)
         {
+            // The buttons and Enter stay live through Closing and the close animation, and a
+            // handler completing a one-shot result would run a second time.
+            if (!_isOpen || _isClosing)
+            {
+                return;
+            }
+
             TypedEventHandler<ModalPopup, ModalPopupButtonClickEventArgs> handler;
             ContentDialogResult result;
 
