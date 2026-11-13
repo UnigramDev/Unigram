@@ -279,7 +279,10 @@ namespace Telegram.Services
             ISession? replace = null;
             if (item.IsActive)
             {
-                var previous = _previousItem == item ? null : _previousItem;
+                // The previous session may have been destroyed since, as an added account left
+                // before signing in is. Switching to it is refused, which would leave the window
+                // on the session being destroyed here.
+                var previous = _previousItem != null && _previousItem != item && IsValidSession(_previousItem) ? _previousItem : null;
                 var active = previous ?? Items.FirstOrDefault(x => x != item) ?? Create(false);
 
                 ActiveItem = replace = active;
