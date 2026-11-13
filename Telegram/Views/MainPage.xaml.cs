@@ -869,6 +869,8 @@ namespace Telegram.Views
             State.IsIndeterminate = true;
             StateLabel.Text = text;
 
+            MasterDetail.SetConnectionState(text);
+
             var peer = FrameworkElementAutomationPeer.FromElement(TitleText);
             peer?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
         }
@@ -879,6 +881,8 @@ namespace Telegram.Views
             StateLabel.Text = Constants.RELEASE
                 ? Strings.AppDisplayName
                 : Strings.AppName;
+
+            MasterDetail.SetConnectionState(null);
         }
 
         public void Handle(UpdateActiveCall update)

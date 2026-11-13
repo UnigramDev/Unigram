@@ -68,6 +68,7 @@ namespace Telegram.Controls
         // Apart from _titlePage, which follows only the pages that show the header.
         private HostedPage _windowTitlePage;
         private ISession _windowTitleSession;
+        private string _windowTitleState;
 
         private ListViewBase _scrollingHostList;
         private ScrollViewer _scrollingHostViewer;
@@ -892,12 +893,37 @@ namespace Telegram.Controls
             }
         }
 
+        /// <summary>
+        /// Shown as the whole window title while set; null goes back to the account and chat.
+        /// </summary>
+        public void SetConnectionState(string text)
+        {
+            if (_windowTitleState != text)
+            {
+                _windowTitleState = text;
+                UpdateWindowTitle();
+            }
+        }
+
         private void UpdateWindowTitle()
         {
             // Null once disposed, and a dispatched update can still arrive after.
             var session = _windowTitleSession;
-            if (session == null || !session.ClientService.TryGetUser(session.UserId, out User user))
+            if (session == null)
             {
+                return;
+            }
+
+            if (_windowTitleState != null)
+            {
+                NavigationService.Window.Title = _windowTitleState;
+                return;
+            }
+
+            if (!session.ClientService.TryGetUser(session.UserId, out User user))
+            {
+                // Clears a connection state that ended before the user arrived.
+                NavigationService.Window.Title = string.Empty;
                 return;
             }
 
