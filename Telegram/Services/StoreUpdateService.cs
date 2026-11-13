@@ -59,22 +59,18 @@ namespace Telegram.Services
 
             try
             {
-                var context = StoreContext.GetDefault();
-                var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
-
-                if (updates != null && updates.Count > 0)
+                // StoreContext.GetDefault is a synchronous call into the Store broker and this runs on window
+                // activation: a broker that stops answering would hold the UI thread until COM fail-fasts it.
+                var version = await Task.Run(GetLatestVersionAsync);
+                if (version != null && (_nextUpdate == null || _nextUpdate.Version != version))
                 {
-                    var version = updates.Max(x => x.Package.Id.Version.ToVersion());
-                    if (_nextUpdate == null || _nextUpdate.Version != version)
+                    _nextUpdate = new CloudUpdate
                     {
-                        _nextUpdate = new CloudUpdate
-                        {
-                            Version = version,
-                            IsStorePackage = true
-                        };
+                        Version = version,
+                        IsStorePackage = true
+                    };
 
-                        _aggregator.Publish(new UpdateAppVersion(_nextUpdate));
-                    }
+                    _aggregator.Publish(new UpdateAppVersion(_nextUpdate));
                 }
             }
             catch (Exception ex)
@@ -84,6 +80,19 @@ namespace Telegram.Services
             }
 
             _updateLock.Release();
+        }
+
+        private static async Task<Version> GetLatestVersionAsync()
+        {
+            var context = StoreContext.GetDefault();
+            var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
+
+            if (updates != null && updates.Count > 0)
+            {
+                return updates.Max(x => x.Package.Id.Version.ToVersion());
+            }
+
+            return null;
         }
 
         public async Task<bool> LaunchAsync()
