@@ -14,6 +14,7 @@ using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -429,7 +430,7 @@ namespace Telegram.Controls.Gallery
 
             Style = BootStrapper.Current.Resources["EmptyButtonStyle"] as Style;
 
-            Background = new SolidColorBrush(Windows.UI.Colors.Transparent);
+            Background = new SolidColorBrush(Colors.Transparent);
             IsTabStop = false;
 
             Image = new Border
