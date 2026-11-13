@@ -936,15 +936,8 @@ namespace Telegram.Controls.Messages
             {
                 e.Handled = true;
 
-                var down = e.Key is VirtualKey.Right;
-                var delta = down ? FocusNavigationDirection.Next : FocusNavigationDirection.Previous;
-
-                var focused = FocusManager.FindNextFocusableElement(delta);
-                if (focused is Control control)
-                {
-                    control.Focus(FocusState.Keyboard);
-                    return;
-                }
+                var direction = e.Key is VirtualKey.Right ? FocusNavigationDirection.Right : FocusNavigationDirection.Left;
+                FocusManager.TryMoveFocus(direction, new FindNextElementOptions { SearchRoot = Presenter });
             }
             else if (e.Key is VirtualKey.Up or VirtualKey.Down && _flyout != null)
             {
@@ -989,7 +982,33 @@ namespace Telegram.Controls.Messages
 
         private void Flyout_Closed(object sender, object e)
         {
+            // Read before closing the popup, which takes the focus with it.
+            var focusWithin = IsFocusWithin();
+
             _popup.IsOpen = false;
+
+            if (focusWithin && _bubble is FrameworkElement element)
+            {
+                var selector = element.GetParent<SelectorItem>();
+                selector?.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private bool IsFocusWithin()
+        {
+            var node = FocusManagerEx.TryGetFocusedElement(XamlRoot) as DependencyObject;
+
+            while (node != null)
+            {
+                if (node == this)
+                {
+                    return true;
+                }
+
+                node = VisualTreeHelper.GetParent(node);
+            }
+
+            return false;
         }
 
         private void Reaction_Click(object sender, RoutedEventArgs e)
