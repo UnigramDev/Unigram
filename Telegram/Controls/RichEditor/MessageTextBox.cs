@@ -977,14 +977,17 @@ namespace Telegram.Controls.RichEditor
             PasteRequested?.Invoke(this, new FormattedTextPasteEventArgs(e.Content));
         }
 
-        // HTML goes to the host first, which the composer offers to open in the rich editor:
-        // anything but a message's own text, unless that came out of a rich message.
+        // HTML and text go to the host first, which the composer offers to open in the rich
+        // editor when they say more than a message can: anything but a message's own text,
+        // unless that came out of a rich message.
         private bool RaiseRichPaste()
         {
             var handler = PasteRequested;
             var content = handler != null ? ClipboardEx.TryGetContent() : null;
 
-            if (content == null || !content.Contains(StandardDataFormats.Html) || (content.Contains("application/x-tl-field-tags") && !content.Contains(RichClipboard.FormatId)))
+            if (content == null
+                || !(content.Contains(StandardDataFormats.Html) || content.Contains(StandardDataFormats.Text))
+                || (content.Contains("application/x-tl-field-tags") && !content.Contains(RichClipboard.FormatId)))
             {
                 return false;
             }
@@ -994,7 +997,7 @@ namespace Telegram.Controls.RichEditor
             return args.Handled;
         }
 
-        /// <summary>Raised for what the clipboard or a drop holds that is not text (files, bitmaps), and for HTML pasted with Ctrl+V.</summary>
+        /// <summary>Raised for what the clipboard or a drop holds that is not text (files, bitmaps), and for HTML or text pasted with Ctrl+V.</summary>
         public event EventHandler<FormattedTextPasteEventArgs> PasteRequested;
 
         private void OnLinkRequested(object sender, EventArgs e)

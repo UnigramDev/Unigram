@@ -221,7 +221,7 @@ namespace Telegram.Controls.Chats
                 e.Handled = true;
                 PasteRich(viewModel, package);
             }
-            else if (package.Contains(StandardDataFormats.Html))
+            else if (package.Contains(StandardDataFormats.Html) || package.Contains(StandardDataFormats.Text))
             {
                 // The box pastes the text it reads as; all this adds is the offer.
                 OfferRich(viewModel, package);
@@ -272,10 +272,12 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        // HTML that reads as a message's text may still carry markdown in its text: a code
+        // editor copies markdown source as HTML, a line per paragraph.
         private async void OfferRich(DialogViewModel viewModel, DataPackageView package)
         {
             var offer = CreateOffer(viewModel);
-            if (offer != null && await GetRichBlocksAsync(package) is Vector<PageBlock> blocks)
+            if (offer != null && (await GetRichBlocksAsync(package) ?? await GetMarkdownBlocksAsync(package)) is Vector<PageBlock> blocks)
             {
                 offer.Blocks = blocks;
                 Offer(offer);
@@ -287,12 +289,15 @@ namespace Telegram.Controls.Chats
         {
             try
             {
-                // CF_HTML wraps the markup in a header of byte offsets and a source URL.
-                var blocks = RichHtml.Parse(HtmlFormatHelper.GetStaticFragment(await package.GetHtmlFormatAsync()));
-
-                if (blocks.Count > 0 && !PageBlockHelper.TryGetFormattedText(new RichMessage(blocks, false, true), out _))
+                if (package.Contains(StandardDataFormats.Html))
                 {
-                    return blocks;
+                    // CF_HTML wraps the markup in a header of byte offsets and a source URL.
+                    var blocks = RichHtml.Parse(HtmlFormatHelper.GetStaticFragment(await package.GetHtmlFormatAsync()));
+
+                    if (SaysMoreThanText(blocks))
+                    {
+                        return blocks;
+                    }
                 }
             }
             catch
@@ -301,6 +306,37 @@ namespace Telegram.Controls.Chats
             }
 
             return null;
+        }
+
+        /// <summary>The clipboard's text read as markdown, when that says more than a message's text and entities can; null otherwise.</summary>
+        private static async Task<Vector<PageBlock>> GetMarkdownBlocksAsync(DataPackageView package)
+        {
+            try
+            {
+                if (package.Contains(StandardDataFormats.Text))
+                {
+                    var text = await package.GetTextAsync();
+
+                    // Every plain paste is parsed, and one can be up to 256 KB.
+                    var blocks = await Task.Run(() => MarkdownToInstantView.ParseForEditor(text));
+
+                    if (blocks != null && SaysMoreThanText(blocks))
+                    {
+                        return blocks;
+                    }
+                }
+            }
+            catch
+            {
+                // The clipboard changed, or its source went away, while being read.
+            }
+
+            return null;
+        }
+
+        private static bool SaysMoreThanText(Vector<PageBlock> blocks)
+        {
+            return blocks.Count > 0 && !PageBlockHelper.TryGetFormattedText(new RichMessage(blocks, false, true), out _);
         }
 
         // =====================================================================================

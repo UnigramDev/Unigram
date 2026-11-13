@@ -1166,9 +1166,10 @@ namespace Telegram.Controls
             }
         }
 
-        // What is not text goes to whoever hosts the box, and so does HTML, which the composer
-        // offers to open in the rich editor: anything but a message's own text, unless that
-        // came out of a rich message. Ctrl+Shift+V asks nobody.
+        // What is not text goes to whoever hosts the box, and so do HTML and text, which the
+        // composer offers to open in the rich editor when they say more than a message can:
+        // anything but a message's own text, unless that came out of a rich message.
+        // Ctrl+Shift+V asks nobody.
         private bool RaisePasteRequested(DataPackageView package)
         {
             var handler = PasteRequested;
@@ -1179,7 +1180,7 @@ namespace Telegram.Controls
 
             var formats = package.AvailableFormats;
             var media = formats.Contains(StandardDataFormats.Bitmap) || formats.Contains(StandardDataFormats.StorageItems);
-            var rich = formats.Contains(StandardDataFormats.Html)
+            var rich = (formats.Contains(StandardDataFormats.Html) || formats.Contains(StandardDataFormats.Text))
                 && (formats.Contains(RichClipboard.FormatId) || !formats.Contains("application/x-tl-field-tags"))
                 && !WindowContext.KeyModifiers(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
