@@ -46,6 +46,9 @@ namespace Telegram.Views.Stories.Popups
         // What GetStateKey said once the media was in.
         private string _initialState;
 
+        // The decode can finish after the editor closed and its tools let go of the surface.
+        private bool _unloaded;
+
         public EditStoryPopup(INavigationService navigationService, IClientService clientService, StorageMedia media)
             : base(navigationService.XamlRoot)
         {
@@ -104,6 +107,11 @@ namespace Telegram.Views.Stories.Popups
 
             await loading;
 
+            if (_unloaded)
+            {
+                return;
+            }
+
             Surface.StartHistory();
             _initialState = GetStateKey();
         }
@@ -111,6 +119,8 @@ namespace Telegram.Views.Stories.Popups
         // The toolbars let go of the player before the surface closes it.
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            _unloaded = true;
+
             PaintTabs.Deactivate();
             PaintToolbar?.Detach();
             TrimToolbar?.Close();
