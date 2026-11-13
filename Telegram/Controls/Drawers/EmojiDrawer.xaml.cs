@@ -652,6 +652,10 @@ namespace Telegram.Controls.Drawers
                         relevantHashSet.Retyped++;
                         relevantHashSet.TotalCount++;
 
+                        // XAML measures the container to build the new template before it sets
+                        // the new item, so the template would bind to the item still held from
+                        // the container's last use, and x:Bind's cast to its type would throw.
+                        selector.Content = null;
                         selector.TypeName = typeName;
                         selector.ContentTemplate = relevantHashSet.ItemTemplate;
 
