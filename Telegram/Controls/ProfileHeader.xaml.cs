@@ -997,16 +997,21 @@ namespace Telegram.Controls
                 Grid.SetColumn(Search, 2);
             }
 
-            if (fullInfo.BusinessInfo?.Location != null)
+            // fullInfo is ClientService's cached instance, which updateUserFullInfo overwrites field
+            // by field on the TDLib thread, so BusinessInfo is read once rather than per access.
+            var businessInfo = fullInfo.BusinessInfo;
+
+            var businessLocation = businessInfo?.Location;
+            if (businessLocation != null)
             {
                 Location.Visibility = Visibility.Visible;
-                Location.Content = fullInfo.BusinessInfo.Location.Address;
+                Location.Content = businessLocation.Address;
 
-                if (fullInfo.BusinessInfo.Location.Location != null)
+                if (businessLocation.Location != null)
                 {
                     LocationMap.Visibility = Visibility.Visible;
                     LocationMap.XamlRoot = ViewModel.XamlRoot;
-                    LocationMap.SetSource(ViewModel.ClientService, fullInfo.BusinessInfo.Location.Location, 44, 44, chat.Id);
+                    LocationMap.SetSource(ViewModel.ClientService, businessLocation.Location, 44, 44, chat.Id);
                 }
                 else
                 {
@@ -1052,10 +1057,11 @@ namespace Telegram.Controls
                 PersonalChannelRoot.Visibility = Visibility.Collapsed;
             }
 
-            if (fullInfo.BusinessInfo?.OpeningHours != null)
+            var openingHours = businessInfo?.OpeningHours;
+            if (openingHours != null)
             {
                 BusinessHours.Visibility = Visibility.Visible;
-                BusinessHours.UpdateHours(ViewModel.ClientService, fullInfo.BusinessInfo.OpeningHours);
+                BusinessHours.UpdateHours(ViewModel.ClientService, openingHours);
             }
             else
             {
