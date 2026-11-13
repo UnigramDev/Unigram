@@ -412,6 +412,10 @@
            BasedOn="{StaticResource DefaultRichEditBoxStyle}" />
     <Style TargetType="local:FormattedTextBox"
            BasedOn="{StaticResource DefaultRichEditBoxStyle}" />
+    <!-- CaptionTextBox is only created from code, so this is also what gives it XAML type info:
+         without it, a Style targeting FormattedTextBox is rejected for it as a RichEditBox. -->
+    <Style TargetType="local:CaptionTextBox"
+           BasedOn="{StaticResource DefaultRichEditBoxStyle}" />
     <Style TargetType="local:SettingsComboBox"
            BasedOn="{StaticResource DefaultComboBoxStyle}" />
     <Style TargetType="local:ButtonEx"

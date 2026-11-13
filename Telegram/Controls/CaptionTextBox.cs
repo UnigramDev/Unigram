@@ -34,6 +34,7 @@ namespace Telegram.Controls
 
         public CaptionTextBox()
         {
+            DefaultStyleKey = typeof(CaptionTextBox);
             SelectionChanged += OnSelectionChanged;
         }
 
