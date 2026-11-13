@@ -223,8 +223,11 @@ namespace Telegram.Controls.Messages
             //ContentPanel.DragStarting += OnDragStarting;
 
             // TODO: make sure this is needed
-            //ContentPanel.SizeChanged += OnSizeChanged;
-            //Message.TextEntityClick += Message_TextEntityClick;
+            if (IsConnected)
+            {
+                ContentPanel.SizeChanged += OnSizeChanged;
+                Message.TextEntityClick += Message_TextEntityClick;
+            }
 
             _templateApplied = true;
             TemplateApplied?.Invoke(this, EventArgs.Empty);
@@ -2502,6 +2505,13 @@ namespace Telegram.Controls.Messages
 
         protected override void OnLoaded()
         {
+            // Loaded reaches an element that was never measured, under a collapsed ancestor for one,
+            // so the template may not be there yet: OnApplyTemplate subscribes in that case.
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             // TODO: a more elegant way is needed
             OnUnloaded();
 
@@ -2520,6 +2530,11 @@ namespace Telegram.Controls.Messages
 
         protected override void OnUnloaded()
         {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
             ContentPanel.SizeChanged -= OnSizeChanged;
             Message.TextEntityClick -= Message_TextEntityClick;
 
