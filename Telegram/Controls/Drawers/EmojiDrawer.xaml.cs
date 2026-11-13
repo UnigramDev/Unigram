@@ -410,6 +410,11 @@ namespace Telegram.Controls.Drawers
                         }
                     }
                 }
+                else if (sticker.FullType == null)
+                {
+                    // A placeholder for a set that has not loaded yet: there is no sticker, and no
+                    // reaction, to hand on.
+                }
                 else
                 {
                     if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
