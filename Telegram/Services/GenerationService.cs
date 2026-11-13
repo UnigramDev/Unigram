@@ -79,9 +79,10 @@ namespace Telegram.Services
         /// </summary>
         public static async Task<InputFile> PrepareAsync(StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null, bool forceCopy = false)
         {
-            // Taken even for the branches that never generate: TDLib then uploads straight from the
-            // user's own path, and the picker's grant on it dies with the session, so an upload the
-            // user reopens the app to resume would find nothing to read.
+            // On UWP taken even for the branches that never generate: TDLib then uploads straight
+            // from the user's own path, and the picker's grant on it dies with the session, so an
+            // upload the user reopens the app to resume would find nothing to read. On WinUI it is
+            // the path, and nothing is kept.
             var token = GenerationSources.Add(file);
             var path = file.Path;
 

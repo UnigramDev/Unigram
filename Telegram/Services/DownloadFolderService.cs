@@ -24,8 +24,8 @@ namespace Telegram.Services
     /// Two things live behind this rather than one: the destination folder the user chose, and the
     /// record of each downloaded file's copy in it. Both are expressed in download terms - staged,
     /// saved, discarded - because the mechanism underneath is not shared. UWP has no path it may
-    /// keep, so it holds tokens in the future access list; an unpackaged host has nothing to hold
-    /// but paths, and no notion of a grant to lose.
+    /// keep, so it holds tokens in the future access list; WinUI runs full trust, so it has nothing
+    /// to hold but paths, and no notion of a grant to lose.
     ///
     /// App-wide, not per-session: the access list belongs to the package, and unique ids are
     /// global. Deliberately knows nothing about TDLib, so that the client service can depend on it
@@ -540,12 +540,13 @@ namespace Telegram.Services
         }
 
         /// <summary>
-        /// Internal because the outgoing-file tokens in <see cref="StorageService.Future"/> are
+        /// Internal because the outgoing-file tokens in <see cref="GenerationSources"/> are
         /// held in this same list and against this same cap - which is why either can evict the
-        /// other, and why they want separate stores.
+        /// other, and why they want separate stores. WinUI has neither the cap nor those tokens.
         /// </summary>
         internal static void RemoveOverflow()
         {
+#if !WINUI3
             try
             {
                 // Access to entries should probably be locked around the app...
@@ -587,6 +588,7 @@ namespace Telegram.Services
                     // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
+#endif
         }
 
         #endregion

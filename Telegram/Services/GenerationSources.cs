@@ -8,6 +8,10 @@
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
+#if WINUI3
+using System.Collections.Concurrent;
+using System.IO;
+#endif
 
 namespace Telegram.Services
 {
@@ -15,20 +19,73 @@ namespace Telegram.Services
     /// The app's handles on files it is sending.
     ///
     /// A token goes into the conversion string of every <c>inputFileGenerated</c>, and it is all
-    /// TDLib keeps of the source: nothing else can reopen a file the app has no path to. A file
-    /// sent as <c>inputFileLocal</c> needs one too, for a different reason - TDLib uploads straight
-    /// from the user's path, and the picker's grant on it lasts only as long as the session, so an
-    /// upload the user reopens the app to resume would find nothing to read.
+    /// TDLib keeps of the source: nothing else can reopen a file the app has no path to. On UWP a
+    /// file sent as <c>inputFileLocal</c> needs one too, for a different reason - TDLib uploads
+    /// straight from the user's path, and the picker's grant on it lasts only as long as the
+    /// session, so an upload the user reopens the app to resume would find nothing to read.
     ///
-    /// Nothing is ever released, and giving it back is harder than it looks:
+    /// On UWP nothing is ever released, and giving it back is harder than it looks:
     /// <c>FileManager::run_generate</c> skips generation only once the file has a local location or
     /// can be downloaded from the server, so a send that failed and is retried starts generation
     /// again from the same conversion string. Entries are reclaimed by
     /// <see cref="DownloadFolderService.RemoveOverflow"/> when the list nears its limit, which is
     /// also the only thing holding these and the download folder's entries to one budget.
+    ///
+    /// WinUI runs full trust, so the token is the path itself and there is nothing to hold or
+    /// release.
     /// </summary>
     public static class GenerationSources
     {
+#if WINUI3
+        // The conversion string is split on '#', which a file name may contain and a path may not.
+        private const char Separator = '#';
+        private const char Escape = '|';
+
+        // A file with no path - on a device, or in a virtual folder - can be reopened only from the
+        // object the picker gave, which does not outlive the process.
+        private static readonly ConcurrentDictionary<string, StorageFile> _pathless = new();
+
+        // Known gap: the broker's list follows a file that is moved or renamed, and a path does not.
+        // A compress, transcode or thumbnail queued from a file that moves before it runs fails
+        // instead of resuming; TDLib's mtime check cannot see it, as their path has a new extension.
+        public static string Add(IStorageItem item)
+        {
+            if (string.IsNullOrEmpty(item.Path))
+            {
+                if (item is StorageFile file)
+                {
+                    var token = Guid.NewGuid().ToString("N");
+                    _pathless[token] = file;
+                    return token;
+                }
+
+                return null;
+            }
+
+            return item.Path.Replace(Separator, Escape);
+        }
+
+        public static void AddOrReplace(string token, IStorageItem item)
+        {
+            // Only the *FromApp entry points need this, and they check no grants outside the
+            // app container.
+        }
+
+        public static Task<StorageFile> GetFileAsync(string token)
+        {
+            if (Path.IsPathFullyQualified(token))
+            {
+                return StorageFile.GetFileFromPathAsync(token.Replace(Escape, Separator)).AsTask();
+            }
+            else if (_pathless.TryGetValue(token, out StorageFile file))
+            {
+                return Task.FromResult(file);
+            }
+
+            // Queued before tokens became paths.
+            return AccessList.Future.GetFileAsync(token);
+        }
+#else
         /// <summary>
         /// Takes a handle on a file TDLib is about to read, and returns the token that names it in
         /// the conversion string.
@@ -93,5 +150,6 @@ namespace Telegram.Services
         {
             return AccessList.Future.GetFileAsync(token);
         }
+#endif
     }
 }

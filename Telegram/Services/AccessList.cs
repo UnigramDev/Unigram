@@ -6,14 +6,15 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
 using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
-#if UNPACKAGED
+#if WINUI3
 using System.IO;
 using Telegram.Common;
 using Telegram.Services.Settings;
+#else
+using System.Collections.Generic;
 #endif
 
 namespace Telegram.Services
@@ -24,27 +25,16 @@ namespace Telegram.Services
     ///
     /// Two implementations, because the thing a token stands for is not the same on both hosts.
     /// Inside the app container a path grants nothing, so the token is a grant held by the broker
-    /// and the list is capped. Unpackaged the process holds the user's own token, so a path *is*
-    /// the access - which makes the list a dictionary, and the cap only a way of keeping it from
-    /// growing without end.
+    /// and the list is capped. WinUI runs full trust, packaged or not: the process holds the
+    /// user's own token, so a path *is* the access, and the list is only a record of paths.
     /// </summary>
     public interface IAccessList
     {
-        int Count { get; }
-
-        int MaximumItemsAllowed { get; }
-
-        IReadOnlyList<string> Tokens { get; }
-
         bool ContainsItem(string token);
-
-        string Add(IStorageItem item);
 
         void AddOrReplace(string token, IStorageItem item);
 
         void Remove(string token);
-
-        void Clear();
 
         /// <summary>
         /// Throws when the file is gone, as the access list does: every caller either reports the
@@ -62,16 +52,14 @@ namespace Telegram.Services
 
     public static class AccessList
     {
-#if UNPACKAGED
-        private static IAccessList _future;
-        public static IAccessList Future => _future ??= ApiInfo.HasPackageIdentity
-            ? new FutureAccessList()
-            : new PathAccessList();
+#if WINUI3
+        public static PathAccessList Future { get; } = new PathAccessList();
 #else
-        public static IAccessList Future { get; } = new FutureAccessList();
+        public static FutureAccessList Future { get; } = new FutureAccessList();
 #endif
     }
 
+#if !WINUI3
     /// <summary>
     /// The broker's list, one call deep. The try-catch every one of these needs stays with the
     /// callers, which is where it already is.
@@ -101,8 +89,6 @@ namespace Telegram.Services
 
         public bool ContainsItem(string token) => SAP.FutureAccessList.ContainsItem(token);
 
-        public string Add(IStorageItem item) => SAP.FutureAccessList.Add(item);
-
         public void AddOrReplace(string token, IStorageItem item) => SAP.FutureAccessList.AddOrReplace(token, item);
 
         public void Remove(string token) => SAP.FutureAccessList.Remove(token);
@@ -115,75 +101,45 @@ namespace Telegram.Services
 
         public bool CheckAccess(IStorageItem item) => SAP.FutureAccessList.CheckAccess(item);
     }
+#endif
 
-#if UNPACKAGED
+#if WINUI3
     /// <summary>
-    /// Token to path, kept in the settings store so that it persists the same way everything else
-    /// unpackaged does, and so that this needs no file format of its own.
+    /// Key to path, for what the app remembers across restarts: the download folder and each
+    /// downloaded file's copy. Files being sent are not here - their token is the path itself, see
+    /// <see cref="GenerationSources"/> - so the list grows only with downloads and needs no cap.
     ///
-    /// The cap is carried over from the broker's list rather than inherited from anything real:
-    /// nothing here is ever released - see <see cref="GenerationSources"/> for why - so without
-    /// one the map is a leak that survives restarts.
+    /// Two older lists are read through and never written. Unpackaged builds put a token for every
+    /// file sent in this same container, and packaged ones used the broker's list for everything;
+    /// an upload TDLib resumes still names its file by one of those tokens.
     /// </summary>
     public partial class PathAccessList : IAccessList
     {
-        private const string ContainerName = "AccessList";
+        private readonly ISettingsStore _store = SettingsStore.Local.GetContainer("AccessList");
 
-        private readonly ISettingsStore _store = SettingsStore.Local.GetContainer(ContainerName);
+        public bool ContainsItem(string token) => _store.ContainsKey(token) || ContainsLegacy(token);
 
-        // Mirrored rather than read back: the store is the only copy that survives a restart, but
-        // the counting RemoveOverflow does on every Add wants an answer that costs nothing.
-        private readonly Dictionary<string, string> _paths = new();
-
-        public PathAccessList()
-        {
-            foreach (var token in _store.Keys)
-            {
-                if (_store.TryGet(token, out string path))
-                {
-                    _paths[token] = path;
-                }
-            }
-        }
-
-        public int Count => _paths.Count;
-
-        public int MaximumItemsAllowed => 1000;
-
-        public IReadOnlyList<string> Tokens => new List<string>(_paths.Keys);
-
-        public bool ContainsItem(string token) => token != null && _paths.ContainsKey(token);
-
-        public string Add(IStorageItem item)
-        {
-            var token = Guid.NewGuid().ToString("N");
-            AddOrReplace(token, item);
-            return token;
-        }
-
-        public void AddOrReplace(string token, IStorageItem item)
-        {
-            _paths[token] = item.Path;
-            _store.SetValue(token, item.Path);
-        }
+        public void AddOrReplace(string token, IStorageItem item) => _store.SetValue(token, item.Path);
 
         public void Remove(string token)
         {
-            _paths.Remove(token);
             _store.Remove(token);
-        }
 
-        public void Clear()
-        {
-            _paths.Clear();
-            _store.Clear();
+            if (ContainsLegacy(token))
+            {
+                SAP.FutureAccessList.Remove(token);
+            }
         }
 
         public async Task<StorageFile> GetFileAsync(string token)
         {
-            if (_paths.TryGetValue(token, out string path))
+            if (_store.TryGet(token, out string path))
             {
                 return await StorageFile.GetFileFromPathAsync(path);
+            }
+            else if (ContainsLegacy(token))
+            {
+                return await SAP.FutureAccessList.GetFileAsync(token);
             }
 
             throw new FileNotFoundException($"No file is held under {token}");
@@ -191,12 +147,21 @@ namespace Telegram.Services
 
         public async Task<StorageFolder> GetFolderAsync(string token)
         {
-            if (_paths.TryGetValue(token, out string path))
+            if (_store.TryGet(token, out string path))
             {
                 return await StorageFolder.GetFolderFromPathAsync(path);
             }
+            else if (ContainsLegacy(token))
+            {
+                return await SAP.FutureAccessList.GetFolderAsync(token);
+            }
 
             throw new DirectoryNotFoundException($"No folder is held under {token}");
+        }
+
+        private static bool ContainsLegacy(string token)
+        {
+            return ApiInfo.HasPackageIdentity && SAP.FutureAccessList.ContainsItem(token);
         }
 
         // There is no grant to check: the process holds the user's own token, so anything the user
