@@ -229,7 +229,7 @@ namespace Telegram.Controls.Cells
 
                     PinnedBackground.Height = 24;
                     PinnedBackground.Width = double.NaN;
-                    PinnedBackground.Margin = new Thickness(marginBefore, 6, marginAfter, 4);
+                    PinnedBackground.Margin = new Thickness(marginBefore, 4, marginAfter, 0);
                     PinnedBackground.CornerRadius = new CornerRadius(radiusBefore, radiusAfter, radiusAfter, radiusBefore);
                 }
 
