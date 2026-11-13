@@ -16,6 +16,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
@@ -101,6 +102,8 @@ namespace Telegram.Controls.Messages.Content
             ButtonDrag.StartDetectingDrag();
 
             Button.Click += Button_Click;
+            Button.GotFocus += OnButtonFocusChanged;
+            Button.LostFocus += OnButtonFocusChanged;
             Button.DragStarting += Button_DragStarting;
 
             _templateApplied = true;
@@ -144,6 +147,11 @@ namespace Telegram.Controls.Messages.Content
             ViewOnce.Visibility = message.SelfDestructType is MessageSelfDestructTypeImmediately
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            var description = message.SelfDestructType is MessageSelfDestructTypeImmediately
+                ? Strings.AttachOnceRound
+                : Strings.AttachRound;
+            AutomationProperties.SetHelpText(Button, description + ", " + videoNote.GetDuration());
 
             UpdateThumbnail(message, videoNote, videoNote.Thumbnail?.File, true, isSecret);
 
@@ -331,7 +339,7 @@ namespace Telegram.Controls.Messages.Content
                 }
             }
 
-            Button.Opacity = Player.Source == null ? 1 : 0;
+            UpdateButtonOpacity();
 
             UpdateDuration();
             UpdateSource();
@@ -504,6 +512,17 @@ namespace Telegram.Controls.Messages.Content
             {
                 _message.Delegate.PlayMessage(_message);
             }
+        }
+
+        private void OnButtonFocusChanged(object sender, RoutedEventArgs e)
+        {
+            UpdateButtonOpacity();
+        }
+
+        private void UpdateButtonOpacity()
+        {
+            // Keep the playback action and its focus visual visible during an animated preview.
+            Button.Opacity = Player.Source == null || Button.FocusState != FocusState.Unfocused ? 1 : 0;
         }
 
         private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
