@@ -81,6 +81,10 @@ namespace Telegram.Controls.Drawers
 
         private bool _isActive;
 
+        // A popup of its own, so it stays open when the panel collapses, but a tone picked once
+        // the drawer is deactivated would reach a view model that is gone.
+        private Flyout _skinFlyout;
+
         private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
@@ -226,6 +230,9 @@ namespace Telegram.Controls.Drawers
         public void Deactivate()
         {
             _itemIdToSelector.Clear();
+
+            _skinFlyout?.Hide();
+            _skinFlyout = null;
 
             _isActive = false;
             _handler.UnloadItems();
@@ -377,6 +384,8 @@ namespace Telegram.Controls.Drawers
 
                         flyout.Content = new EmojiSkinFlyout(this, flyout, skin);
                         flyout.ShowAt(container as UIElement, FlyoutPlacementMode.Top);
+
+                        _skinFlyout = flyout;
                         return;
                     }
                 }
@@ -886,6 +895,8 @@ namespace Telegram.Controls.Drawers
 
                 flyout.Content = new EmojiSkinFlyout(this, flyout, emoji);
                 flyout.ShowAt(sender, FlyoutPlacementMode.Top);
+
+                _skinFlyout = flyout;
             }
         }
 
