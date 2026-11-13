@@ -91,8 +91,11 @@ namespace Telegram.Controls.Chats
         /// resting against the bottom. The only batch it is wrong for is one that must not be
         /// followed into, which is what <see cref="ReleaseAnchor"/> is for.
         ///
-        /// Not mirrored for the saved messages tab. What is mirrored there is which load lands at
-        /// which end of the list, not which end the panel holds still.
+        /// Not in the saved messages tab, whose panel scrolls the profile around it: there the
+        /// panel counts as resting on its end whenever the profile shows the bottom of a list
+        /// shorter than the screen, and following that end scrolls the profile down with every row
+        /// that lands, as does its scroll to the last row on a reset. The end the tab follows is
+        /// the top, which the first visible element holds still on its own.
         ///
         /// The caller is forwarded rather than recaptured, so the log names the path that wanted
         /// the edge and not this method.
@@ -176,7 +179,7 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            var mode = end
+            var mode = end && !IsReversed
                 ? ItemsUpdatingScrollMode.KeepLastItemInView
                 : ItemsUpdatingScrollMode.KeepItemsInView;
 

@@ -1358,6 +1358,11 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            // The saved messages tab has no scroller of its own: it scrolls with the profile around it,
+            // so positioning the list moves the whole profile. Opened from the newest message, the list
+            // is already where it belongs - at its top - and the view is left where the profile has it.
+            var keepView = IsSavedMessagesTab && fromMessageId == 0;
+
             long firstVisibleId = 0;
             long lastVisibleId = 0;
             if (direction == null && TryGetFirstVisibleMessageId(out firstVisibleId) && TryGetLastVisibleMessageId(out lastVisibleId, out _))
@@ -1397,7 +1402,10 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(fromMessageId, highlight, checklistTaskId, pollOptionId) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
+                if (!keepView)
+                {
+                    HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(fromMessageId, highlight, checklistTaskId, pollOptionId) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
+                }
 
                 if (previousId.HasValue && !_repliesStack.Contains(previousId.Value))
                 {
@@ -1499,7 +1507,11 @@ namespace Telegram.ViewModels
                 IsOldestSliceLoaded = null;
                 IsNewestSliceLoaded = endReached;
 
-                if (Items.TryGetValue(GetKey(chat.Id, fromMessageId), out already))
+                if (keepView)
+                {
+                    HistoryField?.Resume();
+                }
+                else if (Items.TryGetValue(GetKey(chat.Id, fromMessageId), out already))
                 {
                     HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(fromMessageId, highlight, checklistTaskId, pollOptionId, hasUnreadMessages: slice.IsUnread) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
 
