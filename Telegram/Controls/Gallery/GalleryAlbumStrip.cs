@@ -41,7 +41,6 @@ namespace Telegram.Controls.Gallery
 
         private readonly Compositor _compositor;
 
-        private readonly CompositionPropertySet _restingProgress;
         private CompositionPropertySet _progress;
 
         // Non-adjacent selection changes, from 0 to 1.
@@ -57,10 +56,6 @@ namespace Telegram.Controls.Gallery
         {
             _compositor = BootStrapper.Current.Compositor;
 
-            _restingProgress = _compositor.CreatePropertySet();
-            _restingProgress.InsertScalar("Progress", 0);
-            _progress = _restingProgress;
-
             _jump = _compositor.CreatePropertySet();
             _jump.InsertScalar("T", 1);
 
@@ -72,19 +67,7 @@ namespace Telegram.Controls.Gallery
 
         public void SetProgressSource(CompositionPropertySet progress)
         {
-            progress ??= _restingProgress;
-
-            if (_progress == progress)
-            {
-                return;
-            }
-
             _progress = progress;
-
-            foreach (var thumb in _thumbs)
-            {
-                StartAnimations(thumb);
-            }
         }
 
         public void Update(IList<GalleryMedia> items, GalleryMedia selected)
