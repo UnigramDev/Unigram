@@ -710,7 +710,7 @@ namespace Telegram.Views.Popups
 
         private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            if (e.Items.Count > 1 || e.Items[0] is not PlaybackItemProfileAudio)
+            if (e.Items.Count > 1 || e.Items[0] is not PlaybackItemProfileAudio audio || audio.UserId != _clientService.Options.MyId)
             {
                 ScrollingHost.CanReorderItems = false;
                 e.Cancel = true;
