@@ -25,12 +25,8 @@
         <ScrollViewer x:Name="ScrollingHost"
                       SizeChanged="OnSizeChanged"
                       DirectManipulationStarted="OnDirectManipulationStarted"
-                      DirectManipulationCompleted="OnDirectManipulationCompleted"
-                      ViewChanging="OnViewChanging"
-                      ViewChanged="OnViewChanged"
-                      VerticalSnapPointsAlignment="Near"
-                      VerticalSnapPointsType="Mandatory">
-            <local:ProfileSnapGrid x:Name="RootGrid">
+                      ViewChanged="OnViewChanged">
+            <Grid>
                 <StackPanel x:Name="Header"
                             SizeChanged="ProfileHeader_SizeChanged"
                             VerticalAlignment="Top"
@@ -88,7 +84,7 @@
                 <Frame x:Name="MediaFrame"
                        Navigating="OnNavigating"
                        Navigated="OnNavigated" />
-            </local:ProfileSnapGrid>
+            </Grid>
         </ScrollViewer>
 
         <Grid MaxWidth="1000"

@@ -452,14 +452,20 @@ namespace Telegram.Controls
 
             _resting = offset;
 
-            if (Settle(offset, _threshold, _threshold + CollapseRange, forward, out var target)
-                || (_tabs != null && Settle(offset, _tabs.Threshold - StickyHeaderTabs.ApproachRange, _tabs.Threshold, forward, out target)))
+            var scrollable = _scrollingHost.ScrollableHeight;
+
+            if (Settle(offset, _threshold, _threshold + CollapseRange, forward, scrollable, out var target)
+                || (_tabs != null && Settle(offset, _tabs.Threshold - StickyHeaderTabs.ApproachRange, _tabs.Threshold, forward, scrollable, out target)))
             {
                 _scrollingHost.TryChangeView(null, target, null, false);
             }
         }
 
-        private bool Settle(double offset, float from, float to, bool forward, out double target)
+        /// <summary>
+        /// Whether a view resting at <paramref name="offset"/> lies inside the band between
+        /// <paramref name="from"/> and <paramref name="to"/>, and if so the edge it settles on.
+        /// </summary>
+        internal static bool Settle(double offset, double from, double to, bool forward, double scrollableHeight, out double target)
         {
             target = forward ? to : from;
 
@@ -469,7 +475,7 @@ namespace Telegram.Controls
             return offset > from + 0.5
                 && offset < to - 0.5
                 && target >= 0
-                && target <= _scrollingHost.ScrollableHeight;
+                && target <= scrollableHeight;
         }
 
         /// <summary>
