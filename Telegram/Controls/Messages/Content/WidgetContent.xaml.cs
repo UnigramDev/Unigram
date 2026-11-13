@@ -192,6 +192,9 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
+            // Recycling can run inside XAML's render tick, where releasing a capture raises PointerCaptureLost through a
+            // sent message and XAML fail-fasts. The capture ends with the press, and a pointer no longer ours is ignored.
+            CancelPointer(false);
             Close();
             _message = null;
             _html = null;
@@ -994,7 +997,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void CancelPointer()
+        private void CancelPointer(bool release = true)
         {
             if (_pointer is not uint pointer)
             {
@@ -1004,7 +1007,11 @@ namespace Telegram.Controls.Messages.Content
             _pointer = null;
             _claim = -1;
             _session?.View.Pointer(3, 0, 0, (int)pointer, true, _pointerMouse, 0, 0);
-            Host.ReleasePointerCaptures();
+
+            if (release)
+            {
+                Host.ReleasePointerCaptures();
+            }
         }
 
         #endregion
