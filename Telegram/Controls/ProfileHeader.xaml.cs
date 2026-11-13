@@ -2158,7 +2158,7 @@ namespace Telegram.Controls
         protected override Size ArrangeOverride(Size finalSize)
         {
             var x = 0d;
-            var column = (finalSize.Width - ColumnSpacing * (_columns - 1)) / _columns;
+            var column = Math.Max(0, (finalSize.Width - ColumnSpacing * (_columns - 1)) / _columns);
 
             foreach (var child in Children)
             {
