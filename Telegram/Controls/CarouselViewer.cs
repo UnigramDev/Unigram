@@ -108,22 +108,12 @@ namespace Telegram.Controls
             }
         }
 
-        // A notch of a mouse wheel.
-        private const int WheelDelta = 120;
-
-        // How long the wheel must have been still for the next delta to start a new gesture.
-        private const ulong WheelGestureGap = 100;
-
-        private int _wheelAccumulated;
-        private ulong _wheelLast;
-        private bool _wheelConsumed;
-
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
             // TODO: I don't understand how to use VisualInteractionSource
             // for vertical pointer wheel + horizontal position source
 
-            if (_interactionSource?.PositionXSourceMode != InteractionSourceMode.EnabledWithInertia)
+            if (_interactionSource?.PositionXSourceMode != InteractionSourceMode.EnabledWithInertia || IsScrolling)
             {
                 return;
             }
@@ -136,62 +126,14 @@ namespace Telegram.Controls
                 return;
             }
 
-            var delta = point.Properties.MouseWheelDelta;
-            if (delta == 0)
-            {
-                return;
-            }
-
-            e.Handled = true;
-
-            var now = Logger.TickCount;
-            var gesture = now - _wheelLast >= WheelGestureGap;
-
-            _wheelLast = now;
-
-            if (delta % WheelDelta == 0)
-            {
-                // A mouse wheel: every notch is a step of its own.
-                _wheelAccumulated = 0;
-                _wheelConsumed = false;
-
-                if (IsScrolling)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                // A precision touchpad sends a stream of small deltas, inertia included, for a
-                // single swipe: add them up to one notch and then ignore the rest of the stream,
-                // or one swipe would page through several items.
-                if (gesture || Math.Sign(delta) != Math.Sign(_wheelAccumulated))
-                {
-                    _wheelAccumulated = 0;
-                    _wheelConsumed = false;
-                }
-
-                if (_wheelConsumed)
-                {
-                    return;
-                }
-
-                _wheelAccumulated += delta;
-
-                if (Math.Abs(_wheelAccumulated) < WheelDelta || IsScrolling || !IsIdle)
-                {
-                    return;
-                }
-
-                _wheelConsumed = true;
-            }
-
-            var direction = delta > 0
+            var direction = point.Properties.MouseWheelDelta > 0
                 ? CarouselDirection.Previous
                 : CarouselDirection.Next;
 
             ViewChanging?.Invoke(this, new CarouselViewChangingEventArgs(direction));
             ChangeView(direction);
+
+            e.Handled = true;
         }
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
@@ -293,18 +235,9 @@ namespace Telegram.Controls
 
         public bool IsScrolling => Logger.TickCount - _scrolling < 100;
 
-        /// <summary>
-        /// False while a finger, a touchpad, inertia or an animation is moving the elements.
-        /// </summary>
         public bool IsIdle => _isIdle;
 
-        /// <summary>
-        /// A property set whose "Progress" scalar says how far the elements have moved from
-        /// the current one: -1 is all the way to the previous element, 1 to the next one. It
-        /// is animated on the compositor, following the finger or touchpad while dragging, the
-        /// inertia after it, and the animation of <see cref="ChangeView"/>, so other visuals
-        /// can move in step with the elements. Null until the control has loaded.
-        /// </summary>
+        // "Progress" goes from -1 (previous element) to 1 (next element).
         public CompositionPropertySet ProgressProperties => _progress;
 
         public FrameworkElement CurrentElement => _elements[1];
@@ -379,7 +312,7 @@ namespace Telegram.Controls
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
 
-        private CompositionPropertySet _progress;
+        private readonly CompositionPropertySet _progress = BootStrapper.Current.Compositor.CreatePropertySet();
 
         private float _restingValue;
 
@@ -410,7 +343,6 @@ namespace Telegram.Controls
             _tracker.Properties.InsertBoolean("CanGoNext", _canGoNext);
             _tracker.Properties.InsertBoolean("CanGoPrev", _canGoPrev);
 
-            _progress = _tracker.Compositor.CreatePropertySet();
             _progress.InsertScalar("Progress", 0);
 
             ConfigureAnimations();

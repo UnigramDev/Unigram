@@ -23,20 +23,8 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Gallery
 {
-    /// <summary>
-    /// A row of thumbnails of every item in the album the gallery is showing. The selected
-    /// item is drawn at its own aspect ratio and the others as narrow slices of theirs, so the
-    /// strip keeps one width however the album is laid out; clicking a thumbnail opens it.
-    /// </summary>
-    /// <remarks>
-    /// The strip moves on the compositor, from the same progress that moves the carousel: each
-    /// thumbnail's position, width and opacity are expressions of it, so the strip follows a
-    /// finger, a touchpad, inertia and the carousel's own animation frame by frame, with no
-    /// work on the UI thread while it moves. Layout runs only when the album or the selection
-    /// changes, to work out where everything goes at rest and next to either neighbour.
-    /// A jump further than a neighbour, which the carousel doesn't animate, eases in on the
-    /// compositor as well.
-    /// </remarks>
+    // Thumbnails of the album the gallery is showing. They are animated on the compositor
+    // from the carousel progress, layout only computes the resting and neighbour states.
     public sealed partial class GalleryAlbumStrip : Panel
     {
         private const double ItemHeight = 52;
@@ -53,20 +41,16 @@ namespace Telegram.Controls.Gallery
 
         private readonly Compositor _compositor;
 
-        // Progress of the carousel: -1 at the previous item, 0 at the selected one, 1 at the
-        // next one. Until the carousel hands over its own, one that stays at 0.
         private readonly CompositionPropertySet _restingProgress;
         private CompositionPropertySet _progress;
 
-        // How far a jump has got, from 0 to 1; 1 when there is none.
+        // Non-adjacent selection changes, from 0 to 1.
         private readonly CompositionPropertySet _jump;
         private readonly Stopwatch _jumpStopwatch = new();
 
         private long _albumId;
         private int _selectedIndex = -1;
 
-        // Everything shrinks by this much when a large album doesn't fit the space it's given.
-        // Worked out from the widest the strip can be, so it holds still while the selection moves.
         private double _scale = 1;
 
         public GalleryAlbumStrip()
@@ -86,10 +70,6 @@ namespace Telegram.Controls.Gallery
 
         public event EventHandler<GalleryMedia> ItemClick;
 
-        /// <summary>
-        /// The property set whose "Progress" scalar says where the carousel is between the
-        /// selected item and its neighbours, from -1 (the previous one) to 1 (the next one).
-        /// </summary>
         public void SetProgressSource(CompositionPropertySet progress)
         {
             progress ??= _restingProgress;
@@ -107,11 +87,6 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        /// <summary>
-        /// Shows <paramref name="items"/> with <paramref name="selected"/> expanded, or hides the
-        /// strip for fewer than two. Called again for the same album, as a page load at either
-        /// end grows it, the thumbnails already there and anything in motion are left alone.
-        /// </summary>
         public void Update(IList<GalleryMedia> items, GalleryMedia selected)
         {
             var index = items?.IndexOf(selected) ?? -1;
@@ -138,8 +113,6 @@ namespace Telegram.Controls.Gallery
 
             for (int i = 0; i < items.Count; i++)
             {
-                // Thumbnails of items still in the album keep their image rather than loading it
-                // again, which is all a page load at either end of it would otherwise do.
                 var thumb = Array.Find(previous, x => x.Item == items[i]);
                 if (thumb == null)
                 {
@@ -170,8 +143,7 @@ namespace Telegram.Controls.Gallery
 
             var previousIndex = previousSelected != null ? _thumbs.FindIndex(x => x.Item == previousSelected) : -1;
 
-            // A neighbour is reached through the carousel, whose progress carries the strip
-            // there. Anything further is a jump, which eases from what's on screen.
+            // Neighbours are animated by the carousel progress.
             if (sameAlbum && previousSelected != selected && (previousIndex < 0 || Math.Abs(previousIndex - index) > 1))
             {
                 StartJump();
@@ -206,9 +178,7 @@ namespace Telegram.Controls.Gallery
             Visibility = Visibility.Collapsed;
         }
 
-        // The images go below and the buttons above them, each in album order. Only what
-        // changed goes in or out of the tree: taking a thumbnail out and putting it back
-        // reloads its visual state, and can drop its image for a frame.
+        // Images first, buttons on top. Only changed elements are moved, to avoid flickering.
         private void UpdateChildren()
         {
             var desired = new List<UIElement>(_thumbs.Count * 2);
@@ -271,9 +241,7 @@ namespace Telegram.Controls.Gallery
 
         #region Composition
 
-        // Where a value is for the carousel's progress, starting from where a jump left it.
-        // c.{name}A is the value at rest, c.{name}P next to the previous item and c.{name}N
-        // next to the next one; c.{name}F is where the last jump started.
+        // A: at rest, P/N: previous/next item selected, F: start of the current jump.
         private static string Value(string name)
         {
             var carousel = $"((pr.Progress < 0) ? (c.{name}A + (c.{name}P - c.{name}A) * -pr.Progress) : (c.{name}A + (c.{name}N - c.{name}A) * pr.Progress))";
@@ -294,8 +262,7 @@ namespace Telegram.Controls.Gallery
                 return animation;
             }
 
-            // The image is laid out at the full width it has when selected, and the clip shows
-            // the middle of it: the same crop a narrower box would show.
+            // The image is laid out at full width and clipped around its center.
             thumb.Visual.StartAnimation("Translation.X", Create($"{x} + {w} / 2 - c.Full / 2"));
             thumb.Visual.StartAnimation("Opacity", Create(Value("O")));
 
@@ -312,14 +279,11 @@ namespace Telegram.Controls.Gallery
 
             var t = _jumpStopwatch.Elapsed.TotalMilliseconds / JumpDuration.TotalMilliseconds;
 
-            // Close enough to the cubic bezier the animation eases with.
             return 1 - Math.Pow(1 - t, 3);
         }
 
         private void StartJump()
         {
-            // The carousel is at rest when a jump starts, so what is on screen is where the
-            // last layout put things, or as far as the last jump had got towards there.
             var progress = GetJumpProgress();
 
             foreach (var thumb in _thumbs)
@@ -366,16 +330,13 @@ namespace Telegram.Controls.Gallery
                 return new Size(0, 0);
             }
 
-            // The widest the strip gets: one item as wide as it can be, every other one narrow.
-            // The thumbnails are centered inside it, so the panel keeps one size whatever is
-            // selected.
+            // Widest possible layout, so the size doesn't change with the selection.
             var width = SelectedMaxWidth + (ItemWidth + Spacing) * (_thumbs.Count - 1);
 
             _scale = !double.IsInfinity(availableSize.Width) && width > availableSize.Width
                 ? availableSize.Width / width
                 : 1;
 
-            // Neither images nor buttons have a size of their own: they take what they're given.
             var itemSize = new Size(ItemWidth * _scale, ItemHeight * _scale);
 
             foreach (var thumb in _thumbs)
@@ -387,7 +348,6 @@ namespace Telegram.Controls.Gallery
             return new Size(width * _scale, ItemHeight * _scale);
         }
 
-        // Left edge, width and opacity of every thumbnail with the item at selected expanded.
         private void GetLayout(int selected, double finalWidth, double[] x, double[] w, double[] o)
         {
             var total = Spacing * _scale * (_thumbs.Count - 1);
@@ -422,8 +382,6 @@ namespace Telegram.Controls.Gallery
             var oa = new double[count];
             GetLayout(_selectedIndex, finalSize.Width, xa, wa, oa);
 
-            // A neighbour outside the album leaves the strip as it is while the carousel moves
-            // there: whatever comes next isn't in it.
             var xp = new double[count];
             var wp = new double[count];
             var op = new double[count];
@@ -444,8 +402,6 @@ namespace Telegram.Controls.Gallery
 
                 thumb.SetLayout(xa[i], wa[i], oa[i], xp[i], wp[i], op[i], xn[i], wn[i], on[i], full, height, Radius * _scale);
 
-                // Outside of a jump, or for a thumbnail that wasn't there when it started, the
-                // jump has nothing to ease from.
                 if (!jumping || !thumb.HasFrom)
                 {
                     thumb.SetFrom(1);
@@ -453,8 +409,6 @@ namespace Telegram.Controls.Gallery
 
                 thumb.Image.Arrange(new Rect(0, 0, full, height));
 
-                // Clicks land where the thumbnail is at rest: the strip ignores them while the
-                // carousel is moving anyway.
                 thumb.Arrange(new Rect(xa[i], 0, wa[i], height));
             }
 
@@ -464,13 +418,8 @@ namespace Telegram.Controls.Gallery
         #endregion
     }
 
-    /// <summary>
-    /// The button of one thumbnail, laid over its image at rest. The image itself is
-    /// <see cref="Image"/>, which <see cref="GalleryAlbumStrip"/> moves on the compositor.
-    /// </summary>
     public sealed partial class GalleryAlbumThumb : Button
     {
-        // Under the image, so a thumbnail still being loaded isn't a hole in the strip.
         private static readonly Windows.UI.Color PlaceholderColor = Windows.UI.Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF);
 
         private readonly ImageBrush _texture;
@@ -478,7 +427,6 @@ namespace Telegram.Controls.Gallery
 
         private long _thumbnailToken;
 
-        // At rest, and where the last jump started: left edge, width and opacity.
         private double _x, _w, _o;
         private double _fromX, _fromW, _fromO;
 
@@ -498,7 +446,6 @@ namespace Telegram.Controls.Gallery
 
             Style = BootStrapper.Current.Resources["EmptyButtonStyle"] as Style;
 
-            // Transparent rather than null, or the pointer would go through it.
             Background = new SolidColorBrush(Windows.UI.Colors.Transparent);
             IsTabStop = false;
 
@@ -573,10 +520,6 @@ namespace Telegram.Controls.Gallery
             HasLayout = true;
         }
 
-        /// <summary>
-        /// Starts the next jump from <paramref name="progress"/> of the way between where the
-        /// last one started and where things are at rest.
-        /// </summary>
         internal void SetFrom(double progress)
         {
             if (HasFrom && progress < 1)

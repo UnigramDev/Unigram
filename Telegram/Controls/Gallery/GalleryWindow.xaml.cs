@@ -91,9 +91,7 @@ namespace Telegram.Controls.Gallery
 
             ScrollingHost.AddHandler(TappedEvent, new TappedEventHandler(OnTapped), true);
 
-            // The carousel creates its progress once loaded, which can be after the album
-            // strip was first shown.
-            LayoutRoot.Loaded += (s, e) => Album.SetProgressSource(LayoutRoot.ProgressProperties);
+            Album.SetProgressSource(LayoutRoot.ProgressProperties);
         }
 
         private void OnTick(object sender, object e)
@@ -1107,10 +1105,6 @@ namespace Telegram.Controls.Gallery
         {
             if (viewModel.TryGetAlbum(out int start, out int end))
             {
-                // The album strip moves on the compositor with the carousel, finger and
-                // touchpad included.
-                Album.SetProgressSource(LayoutRoot.ProgressProperties);
-
                 var items = new GalleryMedia[end - start + 1];
 
                 for (int i = 0; i < items.Length; i++)
@@ -1128,8 +1122,6 @@ namespace Telegram.Controls.Gallery
 
         private void Album_ItemClick(object sender, GalleryMedia item)
         {
-            // Not while the carousel is still moving, after a swipe as well as after a click:
-            // changing the elements under it then makes them jump.
             var viewModel = ViewModel;
             if (viewModel == null || LayoutRoot.IsScrolling || !LayoutRoot.IsIdle)
             {
