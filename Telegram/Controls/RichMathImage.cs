@@ -28,7 +28,7 @@ namespace Telegram.Controls
         private RichMathSurface _surface;
 
         // What the bitmap was rasterized for. Drawing a formula is a pass over the parsed
-        // expression and a bitmap the size of it, so an arrange that changed none of this is
+        // expression and a bitmap the size of it, so a measure that changed none of this is
         // not a reason to do it again.
         //
         // The scale is read here rather than subscribed to: a rasterization scale change makes
@@ -71,13 +71,13 @@ namespace Telegram.Controls
             InvalidateTexture();
         }
 
-        // The bitmap is out of date. Drawn again where it is drawn - the arrange pass - rather
+        // The bitmap is out of date. Drawn again where it is drawn - the measure pass - rather
         // than here, so a colour change and a source change on the way to the same frame
         // rasterize once.
         private void InvalidateTexture()
         {
             _rendered = false;
-            InvalidateArrange();
+            InvalidateMeasure();
         }
 
         // The colour of the text around it: a formula is text, and it belongs in whatever the
@@ -128,6 +128,14 @@ namespace Telegram.Controls
                 return base.MeasureOverride(availableSize);
             }
 
+            // Here rather than when the source is set or the element loads: it runs once for
+            // however many of the three inputs moved, and a recycled element that comes back
+            // unchanged draws nothing again. Not in arrange: setting the image source there
+            // invalidates measure, which stops the arrange walk and costs the whole tree another
+            // layout iteration per formula, and a chat full of formulas runs out of them. Set
+            // here, the image is measured just below, in the same pass.
+            Render();
+
             availableSize = new Size(_surface.PixelWidth, _surface.PixelHeight);
 
             LayoutRoot.Measure(availableSize);
@@ -140,12 +148,6 @@ namespace Telegram.Controls
             {
                 return base.ArrangeOverride(finalSize);
             }
-
-            // Here rather than when the source is set or the element loads: this is the point
-            // at which the formula is about to be seen, it runs once for however many of the
-            // three inputs moved, and a recycled element that comes back unchanged draws
-            // nothing again.
-            Render();
 
             LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             return finalSize;
