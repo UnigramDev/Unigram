@@ -13,11 +13,14 @@ using Telegram.Common.Recording;
 using Telegram.Td;
 using Telegram.ViewModels;
 using Windows.Media.Capture;
+using Windows.System;
 using Windows.System.Display;
 using Windows.System.Profile;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -36,6 +39,7 @@ namespace Telegram.Controls.Chats
         private Visual _icon;
 
         private readonly DispatcherTimer _timer;
+        private int _recordingRequestVersion;
 
         // One session per button, and one button per chat. The engine underneath used to be a
         // thread-static singleton, so a recording started in one chat drove the state of every
@@ -117,6 +121,58 @@ namespace Telegram.Controls.Chats
         protected override bool IsRuntimeCompatible()
         {
             return Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 11);
+        }
+
+        private bool CanSelectRecordingMode => IsEnabled && !_session.IsRecording
+            && !_session.IsLockRequested && !_pressed && !_timer.IsEnabled;
+
+        internal void Activate()
+        {
+            if (!IsEnabled)
+            {
+                return;
+            }
+
+            if (_session.IsLocked)
+            {
+                Complete();
+            }
+            else if (CanSelectRecordingMode)
+            {
+                Mode = Mode == ChatRecordMode.Voice ? ChatRecordMode.Video : ChatRecordMode.Voice;
+                UpdateVisualState();
+            }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ChatRecordButtonAutomationPeer(this);
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            if (e.Key is VirtualKey.Space or VirtualKey.Enter)
+            {
+                e.Handled = true;
+                if (!e.KeyStatus.WasKeyDown)
+                {
+                    Activate();
+                }
+                return;
+            }
+
+            base.OnKeyDown(e);
+        }
+
+        protected override void OnKeyUp(KeyRoutedEventArgs e)
+        {
+            if (e.Key is VirtualKey.Space or VirtualKey.Enter)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            base.OnKeyUp(e);
         }
 
         protected override void OnApplyTemplate()
@@ -217,6 +273,7 @@ namespace Telegram.Controls.Chats
 
         private async void StartRecording()
         {
+            var requestVersion = _recordingRequestVersion;
             // Inherited from the permission check this replaced, which found consent status
             // always Unspecified on Xbox and gave up asking. Unverified against AppCapability,
             // and cheaper to keep than to be wrong about.
@@ -227,6 +284,11 @@ namespace Telegram.Controls.Chats
                     : MediaDeviceAccess.Audio;
 
                 var permissions = await MediaDevicePermissions.CheckAccessAsync(XamlRoot, requested, ElementTheme.Default, MediaDevicePurpose.Record);
+                if (requestVersion != _recordingRequestVersion)
+                {
+                    return;
+                }
+
                 if (permissions == false)
                 {
                     // A lock asked for by Ctrl+R has to go with the recording that never began,
@@ -270,7 +332,7 @@ namespace Telegram.Controls.Chats
             // Release, so that letting go of the pointer raises Click and ends the recording.
             ClickMode = ClickMode.Release;
 
-            Automation.SetToolTip(this, null);
+            Automation.SetToolTip(this, Mode == ChatRecordMode.Video ? Strings.RecordingRound : Strings.RecordingAudio);
 
             try
             {
@@ -290,6 +352,7 @@ namespace Telegram.Controls.Chats
             UpdateVisualState();
 
             ClickMode = ClickMode.Press;
+            Automation.SetToolTip(this, Strings.SendMessage);
             RecordingLocked?.Invoke(this, e);
         }
 
@@ -308,6 +371,9 @@ namespace Telegram.Controls.Chats
 
         private void OnRecordingStarted(object sender, MediaCapture e)
         {
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(this);
+            peer?.RaiseNotificationEvent(AutomationNotificationKind.Other, AutomationNotificationProcessing.MostRecent,
+                Mode == ChatRecordMode.Video ? Strings.RecordingRound : Strings.RecordingAudio, "RecordingStarted");
             RecordingStarted?.Invoke(this, e);
         }
 
@@ -339,23 +405,32 @@ namespace Telegram.Controls.Chats
             ToastPopup.Show(this, message, ToastPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
         }
 
+        private bool CanStartRecording()
+        {
+            if (MediaDevicePermissions.IsUnsupported(XamlRoot))
+            {
+                return false;
+            }
+
+            if (IsRestricted)
+            {
+                var message = Mode == ChatRecordMode.Video
+                    ? Strings.VideoMessagesRestrictedByPrivacy
+                    : Strings.VoiceMessagesRestrictedByPrivacy;
+                ToastPopup.Show(this, ClientEx.ParseMarkdown(string.Format(message, ViewModel.Chat.Title)),
+                    ToastPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
+                return false;
+            }
+
+            return true;
+        }
+
         private async void OnClick(object sender, RoutedEventArgs e)
         {
             if (ClickMode == ClickMode.Press)
             {
-                if (MediaDevicePermissions.IsUnsupported(XamlRoot))
+                if (!CanStartRecording())
                 {
-                    return;
-                }
-                else if (IsRestricted)
-                {
-                    var message = Mode == ChatRecordMode.Video
-                        ? Strings.VideoMessagesRestrictedByPrivacy
-                        : Strings.VoiceMessagesRestrictedByPrivacy;
-
-                    var formatted = string.Format(message, ViewModel.Chat.Title);
-                    var markdown = ClientEx.ParseMarkdown(formatted);
-                    ToastPopup.Show(this, markdown, ToastPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
                     return;
                 }
 
@@ -425,6 +500,8 @@ namespace Telegram.Controls.Chats
                     Strings.AccDescrRecordingCanceled, "RecordingCanceled");
             }
 
+            _recordingRequestVersion++;
+            _session.CancelLock();
             _session.Cancel();
         }
 
@@ -470,20 +547,37 @@ namespace Telegram.Controls.Chats
 
         public async void ToggleRecording()
         {
+            if (!IsEnabled || _session.IsLockRequested)
+            {
+                return;
+            }
+
             if (_session.IsLocked)
             {
                 Complete();
             }
             else
             {
-                var restricted = await ViewModel.VerifyRightsAsync(x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
-                if (restricted)
+                if (_session.IsRecording || !CanStartRecording())
                 {
                     return;
                 }
 
-                // Nothing is holding a pointer down, so it locks the moment it begins.
                 _session.RequestLock();
+                var requestVersion = ++_recordingRequestVersion;
+                var restricted = await ViewModel.VerifyRightsAsync(x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
+                if (requestVersion != _recordingRequestVersion)
+                {
+                    return;
+                }
+
+                if (restricted || !_session.IsLockRequested)
+                {
+                    _session.CancelLock();
+                    return;
+                }
+
+                // Nothing is holding a pointer down, so it locks the moment it begins.
                 StartRecording();
             }
         }
@@ -504,5 +598,42 @@ namespace Telegram.Controls.Chats
         public event EventHandler RecordingLocked;
 
         public event EventHandler<float> QuantumProcessed;
+    }
+
+    public sealed class ChatRecordButtonAutomationPeer : ToggleButtonAutomationPeer, IInvokeProvider, IToggleProvider
+    {
+        private readonly ChatRecordButton _owner;
+
+        public ChatRecordButtonAutomationPeer(ChatRecordButton owner) : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.Button;
+
+        protected override object GetPatternCore(PatternInterface patternInterface)
+        {
+            // The idle control switches recording mode; a locked recording exposes Send.
+            return patternInterface switch
+            {
+                PatternInterface.Invoke => this,
+                PatternInterface.Toggle => _owner.IsRecording || _owner.Session.IsLockRequested ? null : this,
+                _ => base.GetPatternCore(patternInterface)
+            };
+        }
+
+        ToggleState IToggleProvider.ToggleState => _owner.Mode == ChatRecordMode.Video ? ToggleState.On : ToggleState.Off;
+
+        void IToggleProvider.Toggle() => Invoke();
+
+        public void Invoke()
+        {
+            if (!_owner.IsEnabled)
+            {
+                throw new Windows.UI.Xaml.Automation.ElementNotEnabledException();
+            }
+
+            _ = _owner.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, _owner.Activate);
+        }
     }
 }
