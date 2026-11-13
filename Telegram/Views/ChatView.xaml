@@ -1741,6 +1741,7 @@
                          x:Load="False"
                          ItemClick="ForumNavigation_ItemClick"
                          BackRequested="ForumSidebar_BackRequested"
+                         MoreRequested="ForumSidebar_MoreRequested"
                          HorizontalAlignment="Right"
                          Visibility="Collapsed"
                          Grid.RowSpan="3"

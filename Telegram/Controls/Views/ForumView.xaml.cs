@@ -154,6 +154,10 @@ namespace Telegram.Controls.Views
                 BackgroundRoot.Visibility = Visibility.Collapsed;
             }
 
+            SearchOption.Visibility = type == ForumViewType.Sidebar
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
             ScrollViewer.SetHorizontalScrollBarVisibility(ScrollingHost, horizontal ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Disabled);
             ScrollViewer.SetHorizontalScrollMode(ScrollingHost, horizontal ? ScrollMode.Auto : ScrollMode.Disabled);
             ScrollViewer.SetVerticalScrollBarVisibility(ScrollingHost, type == ForumViewType.Vertical ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Auto);
@@ -280,6 +284,12 @@ namespace Telegram.Controls.Views
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
+            if (MoreRequested != null)
+            {
+                MoreRequested(sender, e);
+                return;
+            }
+
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(Search, Strings.Search, Icons.Search, VirtualKey.E);
 
@@ -783,6 +793,12 @@ namespace Telegram.Controls.Views
         /// hosted anywhere else.
         /// </summary>
         public event EventHandler BackRequested;
+
+        /// <summary>
+        /// Raised by the more button instead of opening the topic list's own menu, for a view
+        /// hosted in a chat, whose menu it shows.
+        /// </summary>
+        public event RoutedEventHandler MoreRequested;
 
         /// <summary>
         /// Raised when the button that moves docked tabs to the next edge is clicked.

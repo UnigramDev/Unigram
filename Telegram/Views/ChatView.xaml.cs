@@ -2758,6 +2758,16 @@ namespace Telegram.Views
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
+            ShowMenu(sender, false);
+        }
+
+        private void ForumSidebar_MoreRequested(object sender, RoutedEventArgs e)
+        {
+            ShowMenu(sender, true);
+        }
+
+        private void ShowMenu(object sender, bool sidebar)
+        {
             var flyout = new MenuFlyout();
 
             var chat = ViewModel.Chat;
@@ -2789,7 +2799,7 @@ namespace Telegram.Views
             {
                 flyout.CreateFlyoutItem(ViewModel.DeleteTopic, Strings.DeleteChatUser, Icons.Delete, destructive: true);
 
-                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
+                ShowMenuAt(flyout, sender, sidebar);
                 return;
             }
 
@@ -2904,7 +2914,54 @@ namespace Telegram.Views
 
             if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
+                ShowMenuAt(flyout, sender, sidebar);
+            }
+        }
+
+        private void ShowMenuAt(MenuFlyout flyout, object sender, bool sidebar)
+        {
+            // Every option acts on the chat, which the sidebar covers. Click is raised before the
+            // item's command runs and before the menu closes, so the sidebar is gone by then.
+            if (sidebar)
+            {
+                SubscribeSidebarMenu(flyout.Items, true);
+                flyout.Closed += SidebarMenu_Closed;
+            }
+
+            flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void SubscribeSidebarMenu(IList<MenuFlyoutItemBase> items, bool subscribe)
+        {
+            foreach (var item in items)
+            {
+                if (item is MenuFlyoutSubItem subItem)
+                {
+                    SubscribeSidebarMenu(subItem.Items, subscribe);
+                }
+                else if (item is MenuFlyoutItem flyoutItem)
+                {
+                    flyoutItem.Click -= SidebarMenuItem_Click;
+
+                    if (subscribe)
+                    {
+                        flyoutItem.Click += SidebarMenuItem_Click;
+                    }
+                }
+            }
+        }
+
+        private void SidebarMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            CloseForumSidebar();
+        }
+
+        private void SidebarMenu_Closed(object sender, object e)
+        {
+            if (sender is MenuFlyout flyout)
+            {
+                flyout.Closed -= SidebarMenu_Closed;
+                SubscribeSidebarMenu(flyout.Items, false);
             }
         }
 
