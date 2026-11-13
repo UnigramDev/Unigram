@@ -274,7 +274,12 @@ namespace Telegram.Controls.Views
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(ProfilePage), ViewModel.Chat.Id);
+            // The list stays on screen with no chat while it animates away, and turning hit
+            // testing off for that does not stop a focused button from being invoked by key.
+            if (ViewModel?.Chat is Chat chat)
+            {
+                ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+            }
         }
 
         private void Options_SizeChanged(object sender, SizeChangedEventArgs e)
