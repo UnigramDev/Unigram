@@ -207,22 +207,24 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            var formats = e.Package.AvailableFormats;
+            // Contains, never AvailableFormats: a drop from some sources fails to list its formats
+            // with ERROR_NOT_FOUND, while Contains on the same view still answers.
+            var package = e.Package;
 
-            if (formats.Contains(StandardDataFormats.Bitmap) || formats.Contains(StandardDataFormats.StorageItems))
+            if (package.Contains(StandardDataFormats.Bitmap) || package.Contains(StandardDataFormats.StorageItems))
             {
                 e.Handled = true;
-                PasteMedia(viewModel, e.Package);
+                PasteMedia(viewModel, package);
             }
-            else if (formats.Contains(RichClipboard.FormatId))
+            else if (package.Contains(RichClipboard.FormatId))
             {
                 e.Handled = true;
-                PasteRich(viewModel, e.Package);
+                PasteRich(viewModel, package);
             }
-            else if (formats.Contains(StandardDataFormats.Html))
+            else if (package.Contains(StandardDataFormats.Html))
             {
                 // The box pastes the text it reads as; all this adds is the offer.
-                OfferRich(viewModel, e.Package);
+                OfferRich(viewModel, package);
             }
         }
 

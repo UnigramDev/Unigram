@@ -840,7 +840,7 @@ namespace Telegram.Views.Popups
         // Files and pictures join the album; with text among them, the text is what is pasted.
         private async void CaptionInput_PasteRequested(object sender, FormattedTextPasteEventArgs e)
         {
-            if (e.Package.AvailableFormats.Contains(StandardDataFormats.Text))
+            if (e.Package.Contains(StandardDataFormats.Text))
             {
                 return;
             }
@@ -1071,7 +1071,7 @@ namespace Telegram.Views.Popups
         {
             try
             {
-                if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+                if (package.Contains(StandardDataFormats.Bitmap))
                 {
                     var photo = await StorageMedia.CreateFromBitmapAsync(package);
                     if (photo != null)
@@ -1089,7 +1089,7 @@ namespace Telegram.Views.Popups
                         UpdatePanel();
                     }
                 }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
+                else if (package.Contains(StandardDataFormats.StorageItems))
                 {
                     var files = await StorageMedia.GetFilesAsync(package);
                     if (files.Count == 0)

@@ -160,7 +160,7 @@ namespace Telegram.ViewModels
                     // TODO: this is a forward
                 }
 
-                if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+                if (package.Contains(StandardDataFormats.Bitmap))
                 {
                     var photo = await StorageMedia.CreateFromBitmapAsync(package);
                     if (photo != null)
@@ -174,7 +174,7 @@ namespace Telegram.ViewModels
                         {
                             var captionElements = new List<string>();
 
-                            if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                            if (package.Contains(StandardDataFormats.Text))
                             {
                                 var text = await package.GetTextAsync();
                                 captionElements.Add(text);
@@ -191,7 +191,7 @@ namespace Telegram.ViewModels
                         }
                     }
                 }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
+                else if (package.Contains(StandardDataFormats.StorageItems))
                 {
                     var files = await StorageMedia.GetFilesAsync(package);
 
@@ -205,7 +205,7 @@ namespace Telegram.ViewModels
                         SendFileExecute(files);
                     }
                 }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
+                else if (package.Contains(StandardDataFormats.WebLink))
                 {
                     var field = TextField;
                     if (field == null)
@@ -232,7 +232,7 @@ namespace Telegram.ViewModels
                 //    gridLoading.Visibility = Visibility.Collapsed;
                 //
                 //}
-                else if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                else if (package.Contains(StandardDataFormats.Text))
                 {
                     var field = TextField;
                     if (field == null)
