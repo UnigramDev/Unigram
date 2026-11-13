@@ -103,12 +103,7 @@ namespace Telegram.ViewModels.Gallery
 
         public RangeObservableCollection<GalleryMedia> Items { get; protected set; }
 
-        /// <summary>
-        /// Finds the run of <see cref="Items"/> around the selection that was sent as one album.
-        /// Albums are sent as consecutive messages, so their items sit next to each other in any
-        /// list the gallery pages through. False when the selection isn't part of an album, or
-        /// when no other item of it has been loaded yet.
-        /// </summary>
+        // Range of Items around the selection sharing its MediaAlbumId.
         public bool TryGetAlbum(out int start, out int end)
         {
             start = end = SelectedIndex;
@@ -154,8 +149,7 @@ namespace Telegram.ViewModels.Gallery
                 return;
             }
 
-            // An album that reaches either end of Items may go on past it, and the strip of its
-            // thumbnails would only show part of it until the selection got near that end.
+            // An album reaching either end of Items may continue past it.
             var album = TryGetAlbum(out int albumStart, out int albumEnd);
 
             var previous = _hasPrevious && (index <= LoadMoreThreshold || album && albumStart == 0);

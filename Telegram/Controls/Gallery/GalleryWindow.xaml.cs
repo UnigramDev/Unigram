@@ -1136,7 +1136,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            // The neighbours are already in place, so they slide in like the arrows do.
+            // Neighbours slide in like with the arrows.
             if (index == selected - 1)
             {
                 ChangeView(CarouselDirection.Previous);
