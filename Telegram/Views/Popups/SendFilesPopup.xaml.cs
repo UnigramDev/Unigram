@@ -857,7 +857,15 @@ namespace Telegram.Views.Popups
 
         private async void ListView_Drop(object sender, DragEventArgs e)
         {
-            await HandlePackageAsync(e.DataView);
+            // Reading the DataView is a synchronous call into the drag source, and inside Drop XAML's
+            // reentrancy guard fail-fasts on any message pumped while it waits, so leave the event first.
+            var deferral = e.GetDeferral();
+            await Task.Yield();
+
+            var package = e.DataView;
+            deferral.Complete();
+
+            await HandlePackageAsync(package);
         }
 
         /// <summary>

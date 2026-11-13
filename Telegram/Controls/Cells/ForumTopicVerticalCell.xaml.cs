@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
@@ -575,17 +576,36 @@ namespace Telegram.Controls.Cells
             flyout.ShowAt(this, position ?? this.TransformToPointerPosition());
         }
 
-        protected override void OnDragEnter(DragEventArgs e)
+        // DragLeave and Drop can arrive while a deferred DragEnter still waits to read the DataView.
+        private bool _dragInside;
+
+        protected override async void OnDragEnter(DragEventArgs e)
         {
+            base.OnDragEnter(e);
+
             var chat = _chat;
             if (chat == null)
             {
                 return;
             }
 
+            if (!_viewModel.ClientService.CanPostMessages(chat))
+            {
+                DropVisual?.Visibility = Visibility.Collapsed;
+                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+                return;
+            }
+
+            _dragInside = true;
+
+            // Reading the DataView is a synchronous call into the drag source, and inside a drag event XAML's
+            // reentrancy guard fail-fasts on any message pumped while it waits, so leave the event first.
+            var deferral = e.GetDeferral();
+            await Task.Yield();
+
             try
             {
-                if (_viewModel.ClientService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
+                if (_dragInside && _chat == chat && e.DataView.AvailableFormats.Count > 0)
                 {
                     if (DropVisual == null)
                     {
@@ -606,43 +626,58 @@ namespace Telegram.Controls.Cells
             {
                 DropVisual?.Visibility = Visibility.Collapsed;
             }
-
-            base.OnDragEnter(e);
+            finally
+            {
+                deferral.Complete();
+            }
         }
 
         protected override void OnDragLeave(DragEventArgs e)
         {
+            _dragInside = false;
             DropVisual?.Visibility = Visibility.Collapsed;
 
             base.OnDragLeave(e);
         }
 
-        protected override void OnDrop(DragEventArgs e)
+        protected override async void OnDrop(DragEventArgs e)
         {
+            _dragInside = false;
             DropVisual?.Visibility = Visibility.Collapsed;
+
+            base.OnDrop(e);
+
+            var chat = _chat;
+            var forumTopic = _forumTopic;
+
+            if (chat == null || forumTopic == null)
+            {
+                return;
+            }
+
+            var topic = forumTopic.ToId();
+
+            // As in OnDragEnter.
+            var deferral = e.GetDeferral();
+            await Task.Yield();
 
             try
             {
-                if (e.DataView.AvailableFormats.Count == 0)
+                var package = e.DataView;
+                if (package.AvailableFormats.Count > 0)
                 {
-                    return;
+                    var service = WindowContext.GetNavigationService(this);
+                    service?.NavigateToChat(chat, topic: topic, state: new NavigationState
+                    {
+                        { "package", package }
+                    });
                 }
-
-                var chat = _chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                var service = WindowContext.GetNavigationService(this);
-                service?.NavigateToChat(chat, topic: _forumTopic.ToId(), state: new NavigationState
-                {
-                    { "package", e.DataView }
-                });
             }
             catch { }
-
-            base.OnDrop(e);
+            finally
+            {
+                deferral.Complete();
+            }
         }
     }
 }

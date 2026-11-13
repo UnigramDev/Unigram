@@ -79,6 +79,7 @@ namespace Telegram.Controls.RichEditor
             root.Tapped += OnTapped;
             root.DoubleTapped += OnDoubleTapped;
             root.Holding += OnHolding;
+            root.DragEnter += OnDragEnter;
             root.DragOver += OnDragOver;
             root.Drop += OnDrop;
             root.LayoutUpdated += OnLayoutUpdated;
@@ -97,6 +98,7 @@ namespace Telegram.Controls.RichEditor
             root.Tapped -= OnTapped;
             root.DoubleTapped -= OnDoubleTapped;
             root.Holding -= OnHolding;
+            root.DragEnter -= OnDragEnter;
             root.DragOver -= OnDragOver;
             root.Drop -= OnDrop;
             root.LayoutUpdated -= OnLayoutUpdated;
@@ -875,10 +877,41 @@ namespace Telegram.Controls.RichEditor
         // there. Media is the host's to prepare, so it is handed over like a paste.
         // =====================================================================================
 
+        // What the drag carries, read once per DragEnter out of the event. Reading the DataView is a synchronous call
+        // into the drag source, and inside a drag event XAML's reentrancy guard fail-fasts on any message pumped while
+        // it waits. DragOver and Drop still decide synchronously, so the page under the editor keeps the last word
+        // on what the editor does not take.
+        private bool _dropKnown;
+        private bool _dropMedia;
+        private bool _dropText;
+
+        private async void OnDragEnter(object sender, DragEventArgs e)
+        {
+            _dropKnown = false;
+
+            var deferral = e.GetDeferral();
+            await Task.Yield();
+
+            try
+            {
+                var data = e.DataView;
+                _dropMedia = data.Contains(StandardDataFormats.StorageItems) || data.Contains(StandardDataFormats.Bitmap);
+                _dropText = data.Contains(StandardDataFormats.Text);
+                _dropKnown = true;
+            }
+            catch
+            {
+                // The source went away.
+            }
+            finally
+            {
+                deferral.Complete();
+            }
+        }
+
         private void OnDragOver(object sender, DragEventArgs e)
         {
-            var data = e.DataView;
-            if (data.Contains(StandardDataFormats.StorageItems) || data.Contains(StandardDataFormats.Bitmap) || data.Contains(StandardDataFormats.Text))
+            if (_dropKnown && (_dropMedia || _dropText))
             {
                 e.AcceptedOperation = DataPackageOperation.Copy;
 
@@ -896,10 +929,8 @@ namespace Telegram.Controls.RichEditor
 
         private async void OnDrop(object sender, DragEventArgs e)
         {
-            var data = e.DataView;
-
-            var media = data.Contains(StandardDataFormats.StorageItems) || data.Contains(StandardDataFormats.Bitmap);
-            if (!media && !data.Contains(StandardDataFormats.Text))
+            var media = _dropMedia;
+            if (!_dropKnown || (!media && !_dropText))
             {
                 return;
             }
@@ -922,13 +953,25 @@ namespace Telegram.Controls.RichEditor
 
             Focus(FocusState.Pointer);
 
+            // As in OnDragEnter: the host reads the DataView as soon as it is handed over.
+            var deferral = e.GetDeferral();
+            await Task.Yield();
+
+            var data = e.DataView;
+
             if (media)
             {
-                PasteRequested?.Invoke(this, new RichPasteRequestedEventArgs(data));
+                try
+                {
+                    PasteRequested?.Invoke(this, new RichPasteRequestedEventArgs(data));
+                }
+                finally
+                {
+                    deferral.Complete();
+                }
+
                 return;
             }
-
-            var deferral = e.GetDeferral();
 
             try
             {
