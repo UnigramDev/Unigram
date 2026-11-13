@@ -794,6 +794,11 @@ namespace Telegram.Views
         {
             this.BeginOnUIThread(() =>
             {
+                if (StateLabel == null)
+                {
+                    return;
+                }
+
                 SetProxyVisibility(_clientService.Options.ExpectBlocking, _clientService.Options.EnabledProxyId, update.State);
 
                 switch (update.State)
@@ -867,6 +872,12 @@ namespace Telegram.Views
         private void ShowState(string text)
         {
             State.IsIndeterminate = true;
+            MasterDetail.SetWindowTitleConnectionStatus(text);
+            if (StateLabel.Text == text)
+            {
+                return;
+            }
+
             StateLabel.Text = text;
 
             var peer = FrameworkElementAutomationPeer.FromElement(TitleText);
@@ -876,6 +887,7 @@ namespace Telegram.Views
         private void HideState()
         {
             State.IsIndeterminate = false;
+            MasterDetail.SetWindowTitleConnectionStatus(null);
             StateLabel.Text = Constants.RELEASE
                 ? Strings.AppDisplayName
                 : Strings.AppName;
