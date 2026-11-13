@@ -16,6 +16,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,7 +31,7 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private RichMessageDelegate _delegate;
+        private IMessageDelegate _delegate;
 
         public InstantContent(MessageViewModel message)
         {
@@ -131,7 +132,11 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            _delegate = new RichMessageDelegate(text, message.Delegate as DialogMessageDelegate);
+            // Outside a chat - a Mini App's prepared message, say - the delegate is not a chat's,
+            // and there is no chat for the article's media to open in.
+            _delegate = message.Delegate is DialogMessageDelegate dialog
+                ? new RichMessageDelegate(text, dialog)
+                : message.Delegate;
             UpdateInstantView(message, text, _instantViewToken.Token);
         }
 
