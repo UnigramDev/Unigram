@@ -6,6 +6,8 @@
 
   Microsoft.WinUI is the name the WinUI package's own projection has, kept so nothing that resolves it by
   name has to change.
+
+  With TelegramCsWinRT=2 it builds an empty library: the app takes the packages' own projections then.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
@@ -17,19 +19,22 @@
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <Platforms>x64;ARM64</Platforms>
     <AssemblyName>Microsoft.WinUI</AssemblyName>
-    <CsWinRTGenerateReferenceProjection>true</CsWinRTGenerateReferenceProjection>
     <!-- Generated code; the list is the one CsWinRT's own projections suppress. -->
     <NoWarn>$(NoWarn);CS0108;CS0109;CS0114;CS1591;CS0219;CS0628;CS0660;CA2257</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup>
+  <PropertyGroup Condition="'$(TelegramCsWinRT)' == '3'">
+    <CsWinRTGenerateReferenceProjection>true</CsWinRTGenerateReferenceProjection>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TelegramCsWinRT)' == '3'">
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="$(TelegramCsWinRTVersion)" />
   </ItemGroup>
 
   <!-- From CsWinRT's src/Projections/WinAppSDK/WinAppSDK.csproj (staging/3.0), less its exclusion of the
        WebView2 control, which projects and runs with WinAppSDK 2.6.5. The Windows.UI.Xaml attributes are
        ones the WinUI metadata references by mistake instead of their Microsoft.UI.Xaml counterparts. -->
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(TelegramCsWinRT)' == '3'">
     <CsWinRTFilters>
       -exclude Windows
       -include Microsoft
@@ -44,7 +49,7 @@
     </CsWinRTFilters>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TelegramCsWinRT)' == '3'">
     <CsWinRTInputs Include="@(TelegramProjectionWinMD)" />
   </ItemGroup>
 

@@ -2,6 +2,8 @@
   The projection of the three local WinRT components. CsWinRT 3 projects a component from a library, not
   from the app that uses it: the app compiles against this reference assembly, and its merged projection
   step generates the implementation, as it does for Telegram.WinUI.Projection.
+
+  With TelegramCsWinRT=2 it builds an empty library: the app projects the components itself then.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
@@ -12,12 +14,15 @@
     <WindowsSdkPackageVersion>$(TelegramWindowsSdkPackageVersion)</WindowsSdkPackageVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <Platforms>x64;ARM64</Platforms>
-    <CsWinRTGenerateReferenceProjection>true</CsWinRTGenerateReferenceProjection>
-    <CsWinRTIncludes>Telegram.Native</CsWinRTIncludes>
     <NoWarn>$(NoWarn);CS0108;CS0109;CS0114;CS1591;CS0219;CS0628;CS0660;CA2257</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup>
+  <PropertyGroup Condition="'$(TelegramCsWinRT)' == '3'">
+    <CsWinRTGenerateReferenceProjection>true</CsWinRTGenerateReferenceProjection>
+    <CsWinRTIncludes>Telegram.Native</CsWinRTIncludes>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TelegramCsWinRT)' == '3'">
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="$(TelegramCsWinRTVersion)" />
     <ProjectReference Include="..\Telegram.WinUI.Projection\Telegram.WinUI.Projection.csproj" />
     <ProjectReference Include="..\Telegram.Native\Telegram.Native.vcxproj" Private="false" />
@@ -27,7 +32,7 @@
 
   <!-- Metadata only, so the generator can resolve the Windows App SDK and Win2D types the components'
        signatures use; the default excludes keep them out of this projection. -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(TelegramCsWinRT)' == '3'">
     <CsWinRTInputs Include="@(TelegramProjectionWinMD)" />
   </ItemGroup>
 

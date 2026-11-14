@@ -5,11 +5,32 @@
     version here: the projection is generated from these packages' .winmd files, and the app runs
     their native halves.
   -->
+  <!--
+    TelegramCsWinRT picks the CsWinRT the WinUI flavour builds on: 2 (2.3.1) or 3 (3.0 preview). It is
+    an ordinary property, so -p:TelegramCsWinRT=3, or the environment variable of that name for
+    Build.WinUI.ps1, switches every project at once. 2 stays the default while 3.0 is a preview and
+    its NativeAOT binary is the larger of the two. With 2, the two projection projects build empty.
+  -->
   <PropertyGroup>
-    <!-- The .1 revision is what selects CsWinRT 3 in the .NET SDK; .0 selects CsWinRT 2. -->
+    <TelegramCsWinRT Condition="'$(TelegramCsWinRT)' == ''">2</TelegramCsWinRT>
+  </PropertyGroup>
+
+  <!-- The TFM revision is what selects CsWinRT in the .NET SDK: .1 is CsWinRT 3, .0 CsWinRT 2. -->
+  <PropertyGroup Condition="'$(TelegramCsWinRT)' == '3'">
     <TelegramWinUITargetFramework>net11.0-windows10.0.26100.1</TelegramWinUITargetFramework>
     <TelegramWindowsSdkPackageVersion>10.0.26100.88-preview</TelegramWindowsSdkPackageVersion>
     <TelegramCsWinRTVersion>3.0.0-preview.261104.1</TelegramCsWinRTVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TelegramCsWinRT)' == '2'">
+    <TelegramWinUITargetFramework>net11.0-windows10.0.26100.0</TelegramWinUITargetFramework>
+    <!-- The projection the SDK picks by default, .57, casts the result of the *Interop window
+         helpers (UserConsentVerifierInterop and others) to a generic interface, which NativeAOT
+         cannot do. This one is built against the CsWinRT below; move the two together. -->
+    <TelegramWindowsSdkPackageVersion>10.0.26100.87</TelegramWindowsSdkPackageVersion>
+    <TelegramCsWinRTVersion>2.3.1</TelegramCsWinRTVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TelegramWinAppSDKVersion>2.6.5</TelegramWinAppSDKVersion>
     <TelegramWebView2Version>1.0.4129.50</TelegramWebView2Version>
     <TelegramWin2DVersion>1.4.0</TelegramWin2DVersion>
