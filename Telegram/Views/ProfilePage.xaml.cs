@@ -72,7 +72,7 @@ namespace Telegram.Views
             ScrollingHost.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChanged), true);
 
             _toolTipShadow = new ThemeShadowEx(ToolTip, 32);
-            _manageShadow = new ThemeShadowEx(ManageCard, 16);
+            _manageShadow = new ThemeShadowEx(ManageCard, Constants.BubbleElevation);
         }
 
         public override HostedPagePositionBase GetPosition()

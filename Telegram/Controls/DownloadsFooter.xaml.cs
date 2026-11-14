@@ -20,8 +20,6 @@ namespace Telegram.Controls
 {
     public sealed partial class DownloadsFooter : HyperlinkButton
     {
-        private const float ShadowDepth = 32;
-
         public DownloadsFooter()
         {
             InitializeComponent();
@@ -69,7 +67,7 @@ namespace Telegram.Controls
 
             var parent = ElementComposition.GetElementVisual(this);
             var visual = ElementComposition.GetElementVisual(this);
-            var insets = ThemeShadowEx.GetInsets(ShadowDepth);
+            var insets = ThemeShadowEx.GetInsets(Constants.BubbleElevation);
             visual.Clip = visual.Compositor.CreateInsetClip((float)-insets.Left, (float)-insets.Top, (float)-insets.Right, 0);
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -265,11 +263,11 @@ namespace Telegram.Controls
 
             // Hosted here rather than through ThemeShadowEx, which sizes its sprite to the layout:
             // scaling that down to the card's width squashes the rounded ends of the nine grid.
-            var insets = ThemeShadowEx.GetInsets(ShadowDepth);
+            var insets = ThemeShadowEx.GetInsets(Constants.BubbleElevation);
             _props.InsertVector4("Insets", new Vector4((float)insets.Left, (float)insets.Top, (float)insets.Right, (float)insets.Bottom));
 
             _shadow = compositor.CreateSpriteVisual();
-            _shadow.Brush = ThemeShadowEx.CreateBrush(compositor, ShadowDepth, ActualTheme, 20, 20);
+            _shadow.Brush = ThemeShadowEx.CreateBrush(compositor, Constants.BubbleElevation, ActualTheme, 20, 20);
 
             StartExpression(_shadow, "Offset", "Vector3((p.Layout - p.Width) / 2 - p.Insets.X, -p.Insets.Y, 0)");
             StartExpression(_shadow, "Size", "Vector2(p.Width + p.Insets.X + p.Insets.Z, p.Height + p.Insets.Y + p.Insets.W)");
@@ -281,7 +279,7 @@ namespace Telegram.Controls
         {
             if (_shadow != null)
             {
-                _shadow.Brush = ThemeShadowEx.CreateBrush(_shadow.Compositor, ShadowDepth, ActualTheme, 20, 20);
+                _shadow.Brush = ThemeShadowEx.CreateBrush(_shadow.Compositor, Constants.BubbleElevation, ActualTheme, 20, 20);
             }
         }
 

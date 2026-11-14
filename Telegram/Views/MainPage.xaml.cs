@@ -122,7 +122,7 @@ namespace Telegram.Views
             ElementCompositionPreview.SetIsTranslationEnabled(DialogsPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(SearchField, true);
 
-            _navigationShadow = new ThemeShadowEx(Navigation, 16);
+            _navigationShadow = new ThemeShadowEx(Navigation, Constants.BubbleElevation);
 
             if (AppSettings.Diagnostics.ShowMemoryUsage)
             {

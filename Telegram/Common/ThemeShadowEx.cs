@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Composition;
+using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -60,7 +61,7 @@ namespace Telegram.Common
             _element = element;
             _translationZ = translationZ;
 
-            _visual = ElementComposition.GetElementVisual(element).Compositor.CreateSpriteVisual();
+            _visual = BootStrapper.Current.Compositor.CreateSpriteVisual();
             _visual.IsVisible = false;
 
             _element.SizeChanged += OnSizeChanged;
