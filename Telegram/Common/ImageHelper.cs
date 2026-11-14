@@ -50,7 +50,7 @@ namespace Telegram.Common
         public static Size Fit(double width, double height, double side)
         {
             var ratio = FitRatio(width, height, side);
-            return new Size(width * ratio, height * ratio);
+            return new Size((float)(width * ratio), (float)(height * ratio));
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Telegram.Common
                 return Fit(width, height, maxSide);
             }
 
-            return new Size(width, height);
+            return new Size((float)width, (float)height);
         }
 
         #endregion
@@ -406,7 +406,7 @@ namespace Telegram.Common
 
             for (int i = 0; i < count; i++)
             {
-                area = new Rect(height - area.Bottom, area.X, area.Height, area.Width);
+                area = new Rect((float)(height - area.Bottom), area.X, area.Height, area.Width);
 
                 (width, height) = (height, width);
             }
@@ -419,12 +419,12 @@ namespace Telegram.Common
             if (flip == ImageFlip.Horizontal)
             {
                 var newX = width - area.Right;
-                return new Rect(newX, area.Y, area.Width, area.Height);
+                return new Rect((float)newX, area.Y, area.Width, area.Height);
             }
             else if (flip == ImageFlip.Vertical)
             {
                 var newY = height - area.Bottom;
-                return new Rect(area.X, newY, area.Width, area.Height);
+                return new Rect(area.X, (float)newY, area.Width, area.Height);
             }
 
             return area;
@@ -449,8 +449,8 @@ namespace Telegram.Common
             {
                 double ratio = Math.Max(max / scaled.Width, max / scaled.Height);
 
-                scaled.Width *= ratio;
-                scaled.Height *= ratio;
+                scaled.Width = (float)(scaled.Width * ratio);
+                scaled.Height = (float)(scaled.Height * ratio);
             }
 
             // One factor per axis. The scaling above is uniform so the two agree, but a
@@ -601,7 +601,7 @@ namespace Telegram.Common
             double orientedWidth = quarter ? decoder.OrientedPixelHeight : decoder.OrientedPixelWidth;
             double orientedHeight = quarter ? decoder.OrientedPixelWidth : decoder.OrientedPixelHeight;
 
-            var crop = new Rect(0, 0, rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
+            var crop = new Rect(0, 0, (float)(rectangle.Width * orientedWidth), (float)(rectangle.Height * orientedHeight));
 
             int outputWidth;
             int outputHeight;
@@ -614,7 +614,7 @@ namespace Telegram.Common
             }
             else
             {
-                var output = Scale(crop, new Size(orientedWidth, orientedHeight), min, max).Crop;
+                var output = Scale(crop, new Size((float)orientedWidth, (float)orientedHeight), min, max).Crop;
 
                 outputWidth = Math.Max(1, (int)Math.Round(output.Width));
                 outputHeight = Math.Max(1, (int)Math.Round(output.Height));

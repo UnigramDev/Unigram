@@ -77,7 +77,7 @@ namespace Telegram.Controls
                 }
             }
 
-            return new Size(availableSize.Width, y);
+            return new Size(availableSize.Width, (float)y);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -88,7 +88,7 @@ namespace Telegram.Controls
             {
                 if (Children[i] is TableViewItem item && item.Visibility == Visibility.Visible)
                 {
-                    item.Arrange(new Rect(0, y, item.DesiredSize.Width, item.DesiredSize.Height));
+                    item.Arrange(new Rect(0, (float)y, item.DesiredSize.Width, item.DesiredSize.Height));
                     y += item.DesiredSize.Height;
                 }
             }

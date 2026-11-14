@@ -399,7 +399,7 @@ namespace Telegram.Controls.Messages.Service
         // The stone takes the place of this panel's own, at its size.
         public Rect LandingBounds(Size stone)
         {
-            return Diamond.TransformToVisual(null).TransformBounds(new Rect(0, 0, Diamond.ActualWidth, Diamond.ActualHeight));
+            return Diamond.TransformToVisual(null).TransformBounds(new Rect(0, 0, (float)Diamond.ActualWidth, (float)Diamond.ActualHeight));
         }
 
         // Asked for by the flight as it sets off, so made then: the card squashes and is pushed down

@@ -124,7 +124,7 @@ namespace Telegram.Views.Chats
             var transform = container.TransformToVisual(null);
 
             var point = transform.TransformPoint(new Point());
-            var origin = new Rect(point.X, point.Y, container.ActualWidth, container.ActualHeight);
+            var origin = new Rect(point.X, point.Y, (float)container.ActualWidth, (float)container.ActualHeight);
 
             ViewModel.OpenStory(e.ClickedItem as StoryViewModel, origin, GetOrigin);
         }
@@ -137,7 +137,7 @@ namespace Telegram.Views.Chats
                 var transform = container.TransformToVisual(null);
                 var point = transform.TransformPoint(new Point());
 
-                return new Rect(point.X, point.Y, container.ActualWidth, container.ActualHeight);
+                return new Rect(point.X, point.Y, (float)container.ActualWidth, (float)container.ActualHeight);
             }
 
             return Rect.Empty;

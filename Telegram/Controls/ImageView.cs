@@ -372,11 +372,11 @@ namespace Telegram.Controls
                 //    Holder.Height = height * ratio;
                 //}
 
-                return new Size(width * ratio, height * ratio);
+                return new Size((float)(width * ratio), (float)(height * ratio));
             }
             else
             {
-                return new Size(width, height);
+                return new Size((float)width, (float)height);
             }
         }
 

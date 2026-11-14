@@ -484,8 +484,8 @@ namespace Telegram.Controls.Messages
             _availableWidth = availableSize.Width;
             _formattedWidth = FormatWidth(_arrangedWidth);
 
-            var size = base.MeasureOverride(new Size(_formattedWidth, availableSize.Height));
-            return new Size(Math.Min(MinContentWidth, availableSize.Width), size.Height);
+            var size = base.MeasureOverride(new Size((float)_formattedWidth, availableSize.Height));
+            return new Size((float)Math.Min(MinContentWidth, availableSize.Width), size.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)

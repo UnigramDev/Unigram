@@ -145,16 +145,16 @@ namespace Telegram.Services.Calls
         private VoipVideoState _videoState = VoipVideoState.Inactive;
         private VoipAudioState _audioState = VoipAudioState.Active;
 
-        public event TypedEventHandler<VoipCall, VoipCallStateChangedEventArgs> StateChanged;
-        public event TypedEventHandler<VoipCall, VoipCallConnectionStateChangedEventArgs> ConnectionStateChanged;
-        public event TypedEventHandler<VoipCall, VoipCallMediaStateChangedEventArgs> RemoteMediaStateChanged;
-        public event TypedEventHandler<VoipCall, VoipCallRemoteBatteryLevelIsLowChangedEventArgs> RemoteBatteryLevelIsLowChanged;
-        public event TypedEventHandler<VoipCall, VoipCallAudioLevelUpdatedEventArgs> AudioLevelUpdated;
-        public event TypedEventHandler<VoipCall, VoipCallSignalBarsUpdatedEventArgs> SignalBarsUpdated;
+        public event EventHandler<VoipCall, VoipCallStateChangedEventArgs> StateChanged;
+        public event EventHandler<VoipCall, VoipCallConnectionStateChangedEventArgs> ConnectionStateChanged;
+        public event EventHandler<VoipCall, VoipCallMediaStateChangedEventArgs> RemoteMediaStateChanged;
+        public event EventHandler<VoipCall, VoipCallRemoteBatteryLevelIsLowChangedEventArgs> RemoteBatteryLevelIsLowChanged;
+        public event EventHandler<VoipCall, VoipCallAudioLevelUpdatedEventArgs> AudioLevelUpdated;
+        public event EventHandler<VoipCall, VoipCallSignalBarsUpdatedEventArgs> SignalBarsUpdated;
 
-        public event TypedEventHandler<VoipCall, VoipCallMediaStateChangedEventArgs> MediaStateChanged;
+        public event EventHandler<VoipCall, VoipCallMediaStateChangedEventArgs> MediaStateChanged;
 
-        public event TypedEventHandler<VoipCall, EventArgs> VideoFailed;
+        public event EventHandler<VoipCall, EventArgs> VideoFailed;
 
         // TODO: this isn't safe
         private readonly VoipCallAudioLevelUpdatedEventArgs _audioLevelUpdatedArgs = new(0);
@@ -592,6 +592,10 @@ namespace Telegram.Services.Calls
         {
             RemoteBatteryLevelIsLowChanged?.Invoke(this, new VoipCallRemoteBatteryLevelIsLowChangedEventArgs(remoteBatteryLevelIsLow));
         }
+
+#if CSWINRT3_0
+        private void OnSignalingDataEmitted(ReadOnlySpan<byte> data) => OnSignalingDataEmitted(data.ToArray());
+#endif
 
         private void OnSignalingDataEmitted(byte[] data)
         {

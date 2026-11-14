@@ -39,7 +39,7 @@ namespace Telegram.Controls.Stories
             private readonly Visual _visual;
             private readonly uint _id;
 
-            private readonly TypedEventHandler<object, CompositionBatchCompletedEventArgs> _batchCompleted;
+            private readonly CompositionBatchCompletedHandler _batchCompleted;
             private CompositionScopedBatch _batch;
 
             public readonly float Amplitude;

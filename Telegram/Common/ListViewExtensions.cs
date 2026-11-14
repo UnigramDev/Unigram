@@ -43,12 +43,12 @@ namespace Telegram.Common
                 {
                     if (selectorItem.ActualWidth < listView.ActualWidth)
                     {
-                        position.X -= (listView.ActualWidth - selectorItem.ActualWidth) / 2d;
+                        position.X = (float)(position.X - ((listView.ActualWidth - selectorItem.ActualWidth) / 2d));
                     }
                 }
                 else if (alignment == VerticalAlignment.Bottom)
                 {
-                    position.X -= listView.ActualWidth - selectorItem.ActualWidth;
+                    position.X = (float)(position.X - (listView.ActualWidth - selectorItem.ActualWidth));
                 }
 
                 if (scrollViewer.HorizontalOffset < scrollViewer.ScrollableWidth || position.X < scrollViewer.ScrollableWidth)
@@ -67,12 +67,12 @@ namespace Telegram.Common
                 {
                     if (selectorItem.ActualHeight < listView.ActualHeight)
                     {
-                        position.Y -= (listView.ActualHeight - selectorItem.ActualHeight) / 2d;
+                        position.Y = (float)(position.Y - ((listView.ActualHeight - selectorItem.ActualHeight) / 2d));
                     }
                 }
                 else if (alignment == VerticalAlignment.Bottom)
                 {
-                    position.Y -= listView.ActualHeight - selectorItem.ActualHeight;
+                    position.Y = (float)(position.Y - (listView.ActualHeight - selectorItem.ActualHeight));
                 }
 
                 if (scrollViewer.VerticalOffset < scrollViewer.ScrollableHeight || position.Y < scrollViewer.ScrollableHeight)

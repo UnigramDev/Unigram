@@ -461,7 +461,7 @@ namespace Telegram.Views.Stars.Popups
                 height = Math.Max(height, Children[i].DesiredSize.Height);
             }
 
-            return new Size(availableSize.Width, height);
+            return new Size(availableSize.Width, (float)height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)

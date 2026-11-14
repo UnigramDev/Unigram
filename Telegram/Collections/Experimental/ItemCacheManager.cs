@@ -88,7 +88,7 @@ namespace Telegram.Collections
 #endif
         }
 
-        public event TypedEventHandler<object, CacheChangedEventArgs<T>> CacheChanged;
+        public event EventHandler<object, CacheChangedEventArgs<T>> CacheChanged;
 
         public void Stop()
         {

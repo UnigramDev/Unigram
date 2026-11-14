@@ -41,12 +41,12 @@ namespace Telegram.Controls
         /// <summary>
         /// The countdown ran out: whatever was deferred is to be carried out.
         /// </summary>
-        public event TypedEventHandler<UndoToastPopup, object> Committed;
+        public event EventHandler<UndoToastPopup, object> Committed;
 
         /// <summary>
         /// The button was pressed: whatever was deferred is to be called off.
         /// </summary>
-        public event TypedEventHandler<UndoToastPopup, object> Undone;
+        public event EventHandler<UndoToastPopup, object> Undone;
 
         public bool IsOpen => _toast.IsOpen;
 

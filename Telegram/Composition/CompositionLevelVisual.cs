@@ -189,7 +189,7 @@ namespace Telegram.Composition
         // One template, instantiated by every StartAnimation. Re-inserting a key frame at a
         // progress that already holds one replaces it, and leaves the running instance alone.
         private PathKeyFrameAnimation _pathAnimation;
-        private readonly TypedEventHandler<object, CompositionBatchCompletedEventArgs> _batchCompleted;
+        private readonly CompositionBatchCompletedHandler _batchCompleted;
 
         private CompositionScopedBatch _batch;
 

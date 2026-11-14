@@ -81,8 +81,8 @@ namespace Telegram.Common
         public double TopOpacity { get; set; } = 1;
         public double BottomOpacity { get; set; } = 1;
 
-        public Point ControlPoint1 { get; set; } = new Point(.30, 0);
-        public Point ControlPoint2 { get; set; } = new Point(.58, 1);
+        public Point ControlPoint1 { get; set; } = new Point((float).30, 0);
+        public Point ControlPoint2 { get; set; } = new Point((float).58, 1);
 
         private LinearGradientBrush _target;
 
@@ -178,7 +178,7 @@ namespace Telegram.Common
 
             for (double i = 0; i <= 1; i += increment)
             {
-                coordinates[index++] = new Point(GetBezier(i, p1.X, p2.X), GetBezier(i, p1.Y, p2.Y));
+                coordinates[index++] = new Point((float)GetBezier(i, p1.X, p2.X), (float)GetBezier(i, p1.Y, p2.Y));
             }
 
             return coordinates;

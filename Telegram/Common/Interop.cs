@@ -409,6 +409,17 @@ namespace Telegram.Common
     }
 #endif
 
+#if CSWINRT3_0
+    // CsWinRT 2 shipped this as WinRT.Interop.InitializeWithWindow; 3 leaves it to the app.
+    [GeneratedComInterface]
+    [Guid("3E68D4BD-7135-4D10-8018-9FB6D9F33FA1")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public partial interface IInitializeWithWindow
+    {
+        void Initialize(IntPtr hwnd);
+    }
+
+#endif
 #if NET9_0_OR_GREATER
     [GeneratedComInterface]
 #else

@@ -630,7 +630,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             var x = end != Text.IsRightToLeft ? 100000d : -100000d;
-            var position = Text.GetPositionFromPoint(new Point(x, y - Text.ActualOffset.Y), out _);
+            var position = Text.GetPositionFromPoint(new Point((float)x, (float)(y - Text.ActualOffset.Y)), out _);
 
             return Math.Clamp(position, 0, _leaf.Length);
         }
@@ -648,7 +648,7 @@ namespace Telegram.Controls.RichEditor
             if (rect.Height <= 0)
             {
                 // Before any text, at the edge the line starts from.
-                return new Rect(Text.IsRightToLeft != IsMirrored ? ActualSize.X : 0, 0, 0, Math.Max(ActualHeight, 16));
+                return new Rect(Text.IsRightToLeft != IsMirrored ? ActualSize.X : 0, 0, 0, (float)Math.Max(ActualHeight, 16));
             }
 
             rect = FromText(new Rect(rect.X, rect.Y, 0, rect.Height), offset, IsMirrored);

@@ -965,7 +965,7 @@ namespace Telegram.Controls.RichEditor
                 var points = new PointCollection();
                 for (double x = 0; x <= width; x += 2)
                 {
-                    points.Add(new Point(x, ((int)(x / 2) & 1) == 0 ? 0 : 1.5));
+                    points.Add(new Point((float)x, (float)(((int)(x / 2) & 1) == 0 ? 0 : 1.5)));
                 }
 
                 line.Points = points;

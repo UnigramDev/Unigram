@@ -266,7 +266,7 @@ namespace Telegram.Controls.RichEditor
                 return bounds;
             }
 
-            bounds = element.TransformToVisual(Surface).TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+            bounds = element.TransformToVisual(Surface).TransformBounds(new Rect(0, 0, (float)element.ActualWidth, (float)element.ActualHeight));
             _bounds[element] = bounds;
 
             return bounds;
@@ -581,7 +581,7 @@ namespace Telegram.Controls.RichEditor
             ScrollViewer.ChangeView(null, to, null, true);
 
             // The same place in the viewport is further along the text now.
-            var point = new Point(_scrollPoint.X, _scrollPoint.Y + (to - _scrollPointOffset));
+            var point = new Point(_scrollPoint.X, (float)(_scrollPoint.Y + (to - _scrollPointOffset)));
 
             if (HitTest(point, out RichPosition position, out RichBlock node) && node == null)
             {
@@ -799,7 +799,7 @@ namespace Telegram.Controls.RichEditor
             var gripper = (FrameworkElement)sender;
 
             // The point on the line the handle hangs from, not the handle's own centre.
-            _gripperOrigin = new Point(Canvas.GetLeft(gripper) + gripper.ActualWidth / 2, Canvas.GetTop(gripper) - 4);
+            _gripperOrigin = new Point((float)(Canvas.GetLeft(gripper) + gripper.ActualWidth / 2), (float)(Canvas.GetTop(gripper) - 4));
             _gripperScrollOrigin = ScrollViewer?.VerticalOffset ?? 0;
             _isDragging = true;
             e.Handled = true;
@@ -810,7 +810,7 @@ namespace Telegram.Controls.RichEditor
             // The translation is in screen space; whatever scrolled since the drag began moved the
             // text under the finger by as much.
             var scrolled = (ScrollViewer?.VerticalOffset ?? 0) - _gripperScrollOrigin;
-            var point = new Point(_gripperOrigin.X + e.Cumulative.Translation.X, _gripperOrigin.Y + e.Cumulative.Translation.Y + scrolled);
+            var point = new Point(_gripperOrigin.X + e.Cumulative.Translation.X, (float)(_gripperOrigin.Y + e.Cumulative.Translation.Y + scrolled));
 
             var drag = ReferenceEquals(sender, StartGripper) ? ScrollDrag.StartGripper : ScrollDrag.EndGripper;
             TrackAutoScroll(point, drag);
@@ -1482,7 +1482,7 @@ namespace Telegram.Controls.RichEditor
             // What is there may not be realized yet, and is measured before it is asked.
             EnsureRealizedAt(y);
 
-            if (!HitTest(new Point(goal, y), out RichPosition position, out RichBlock node))
+            if (!HitTest(new Point((float)goal, (float)y), out RichPosition position, out RichBlock node))
             {
                 return;
             }
@@ -1494,7 +1494,7 @@ namespace Telegram.Controls.RichEditor
                 var inside = direction > 0 ? line.Y - 1 : line.Y + line.Height + 1;
 
                 if (!line.IsEmpty && (direction > 0 ? line.Y + line.Height > edge : line.Y < edge)
-                    && HitTest(new Point(goal, inside), out RichPosition within, out RichBlock withinNode)
+                    && HitTest(new Point((float)goal, inside), out RichPosition within, out RichBlock withinNode)
                     && withinNode == null
                     && RichPosition.Compare(within, _engine.Focus) * direction > 0)
                 {
@@ -1603,7 +1603,7 @@ namespace Telegram.Controls.RichEditor
 
                 if (y > text.Top && y < text.Bottom)
                 {
-                    var offset = current.GetPositionFromPoint(new Point(Math.Clamp(goal - text.X, 0, text.Width), y - text.Y));
+                    var offset = current.GetPositionFromPoint(new Point((float)Math.Clamp(goal - text.X, 0, text.Width), y - text.Y));
                     if (!IsSameLine(current, offset, from))
                     {
                         _engine.Move(new RichPosition(current.Leaf, offset), extend);
@@ -1691,7 +1691,7 @@ namespace Telegram.Controls.RichEditor
             // Onto the line of it nearest the one left: its last going up, its first going down.
             var target = Bounds(bestLeaf);
             var local = new Point(
-                Math.Clamp(goal - target.X, 0, target.Width),
+                (float)Math.Clamp(goal - target.X, 0, target.Width),
                 direction < 0 ? Math.Max(0, target.Height - 1) : 1);
 
             _engine.Move(new RichPosition(bestLeaf.Leaf, bestLeaf.GetPositionFromPoint(local)), extend);

@@ -933,7 +933,7 @@ namespace Telegram.Common
                 var element = (FrameworkElement)item;
                 var origin = element.TransformToVisual(_root).TransformPoint(default);
 
-                _bounds.Add(new Rect(origin.X, origin.Y, element.ActualWidth, element.ActualHeight));
+                _bounds.Add(new Rect(origin.X, origin.Y, (float)element.ActualWidth, (float)element.ActualHeight));
             }
 
             _boundsValid = true;

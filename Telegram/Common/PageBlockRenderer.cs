@@ -628,11 +628,11 @@ namespace Telegram.Common
                 _resolver.Apply(_grid, _scroll);
 
                 var width = Math.Min(total, availableSize.Width);
-                _scroll.Measure(new Size(width, availableSize.Height));
+                _scroll.Measure(new Size((float)width, availableSize.Height));
 
                 // The width of the table, not of the ScrollViewer: that one reports whatever it
                 // was offered, which is how a two word table used to fill a whole bubble.
-                return new Size(width, _scroll.DesiredSize.Height);
+                return new Size((float)width, _scroll.DesiredSize.Height);
             }
 
             // Measured, a table asks only for its content's width, so one alone does not widen its

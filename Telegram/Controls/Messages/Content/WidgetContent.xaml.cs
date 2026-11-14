@@ -229,8 +229,8 @@ namespace Telegram.Controls.Messages.Content
                 }
             }
 
-            base.MeasureOverride(new Size(_width, _height));
-            return new Size(_width, _height);
+            base.MeasureOverride(new Size((float)_width, (float)_height));
+            return new Size((float)_width, (float)_height);
         }
 
         private double AutoHeight()

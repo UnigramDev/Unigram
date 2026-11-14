@@ -203,13 +203,13 @@ namespace Telegram.Controls.Messages
             else
             {
                 figure.StartPoint = new Point(20, 40);
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(31.0457, 40), Point2 = new Point(40, 31.0457), Point3 = new Point(40, 20) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(40, 8.9543), Point2 = new Point(31.0457, 0), Point3 = new Point(20, 0) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(8.9543, 0), Point2 = new Point(0, 8.9543), Point3 = new Point(0, 20) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(0, 26.3285), Point2 = new Point(2.93929, 31.9704), Point3 = new Point(7.52717, 35.6352) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(6.57139, 36.832), Point2 = new Point(6, 38.3493), Point3 = new Point(6, 40) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(6, 43.866), Point2 = new Point(9.13401, 47), Point3 = new Point(13, 47) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(16.866, 47), Point2 = new Point(20, 43.866), Point3 = new Point(20, 40) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(31.0457f, 40), Point2 = new Point(40, 31.0457f), Point3 = new Point(40, 20) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(40, 8.9543f), Point2 = new Point(31.0457f, 0), Point3 = new Point(20, 0) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(8.9543f, 0), Point2 = new Point(0, 8.9543f), Point3 = new Point(0, 20) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(0, 26.3285f), Point2 = new Point(2.93929f, 31.9704f), Point3 = new Point(7.52717f, 35.6352f) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(6.57139f, 36.832f), Point2 = new Point(6, 38.3493f), Point3 = new Point(6, 40) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(6, 43.866f), Point2 = new Point(9.13401f, 47), Point3 = new Point(13, 47) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(16.866f, 47), Point2 = new Point(20, 43.866f), Point3 = new Point(20, 40) });
             }
 
             var path = new PathGeometry();
@@ -326,7 +326,7 @@ namespace Telegram.Controls.Messages
                     animated.AutoPlay = auto;
                     animated.LimitFps = !auto;
                     animated.LoopCount = auto ? 1 : 0;
-                    animated.FrameSize = new Size(size, size);
+                    animated.FrameSize = new Size((float)size, (float)size);
                     animated.DecodeFrameType = DecodePixelType.Logical;
                     animated.IsCachingEnabled = cache;
                     animated.Width = size;
@@ -495,13 +495,13 @@ namespace Telegram.Controls.Messages
             else
             {
                 figure.StartPoint = new Point(20, 40);
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(31.0457, 40), Point2 = new Point(40, 31.0457), Point3 = new Point(40, 20) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(40, 8.9543), Point2 = new Point(31.0457, 0), Point3 = new Point(20, 0) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(8.9543, 0), Point2 = new Point(0, 8.9543), Point3 = new Point(0, 20) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(0, 26.3285), Point2 = new Point(2.93929, 31.9704), Point3 = new Point(7.52717, 35.6352) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(6.57139, 36.832), Point2 = new Point(6, 38.3493), Point3 = new Point(6, 40) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(6, 43.866), Point2 = new Point(9.13401, 47), Point3 = new Point(13, 47) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(16.866, 47), Point2 = new Point(20, 43.866), Point3 = new Point(20, 40) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(31.0457f, 40), Point2 = new Point(40, 31.0457f), Point3 = new Point(40, 20) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(40, 8.9543f), Point2 = new Point(31.0457f, 0), Point3 = new Point(20, 0) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(8.9543f, 0), Point2 = new Point(0, 8.9543f), Point3 = new Point(0, 20) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(0, 26.3285f), Point2 = new Point(2.93929f, 31.9704f), Point3 = new Point(7.52717f, 35.6352f) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(6.57139f, 36.832f), Point2 = new Point(6, 38.3493f), Point3 = new Point(6, 40) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(6, 43.866f), Point2 = new Point(9.13401f, 47), Point3 = new Point(13, 47) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(16.866f, 47), Point2 = new Point(20, 43.866f), Point3 = new Point(20, 40) });
             }
 
             var path = new PathGeometry();
@@ -620,7 +620,7 @@ namespace Telegram.Controls.Messages
                     animated.AutoPlay = auto;
                     animated.LimitFps = !auto;
                     animated.LoopCount = auto ? 1 : 0;
-                    animated.FrameSize = new Size(size, size);
+                    animated.FrameSize = new Size((float)size, (float)size);
                     animated.DecodeFrameType = DecodePixelType.Logical;
                     animated.Width = size;
                     animated.Height = size;
@@ -753,13 +753,13 @@ namespace Telegram.Controls.Messages
             else
             {
                 figure.StartPoint = new Point(20, 40);
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(31.0457, 40), Point2 = new Point(40, 31.0457), Point3 = new Point(40, 20) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(40, 8.9543), Point2 = new Point(31.0457, 0), Point3 = new Point(20, 0) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(8.9543, 0), Point2 = new Point(0, 8.9543), Point3 = new Point(0, 20) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(0, 26.3285), Point2 = new Point(2.93929, 31.9704), Point3 = new Point(7.52717, 35.6352) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(6.57139, 36.832), Point2 = new Point(6, 38.3493), Point3 = new Point(6, 40) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(6, 43.866), Point2 = new Point(9.13401, 47), Point3 = new Point(13, 47) });
-                figure.Segments.Add(new BezierSegment { Point1 = new Point(16.866, 47), Point2 = new Point(20, 43.866), Point3 = new Point(20, 40) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(31.0457f, 40), Point2 = new Point(40, 31.0457f), Point3 = new Point(40, 20) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(40, 8.9543f), Point2 = new Point(31.0457f, 0), Point3 = new Point(20, 0) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(8.9543f, 0), Point2 = new Point(0, 8.9543f), Point3 = new Point(0, 20) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(0, 26.3285f), Point2 = new Point(2.93929f, 31.9704f), Point3 = new Point(7.52717f, 35.6352f) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(6.57139f, 36.832f), Point2 = new Point(6, 38.3493f), Point3 = new Point(6, 40) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(6, 43.866f), Point2 = new Point(9.13401f, 47), Point3 = new Point(13, 47) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(16.866f, 47), Point2 = new Point(20, 43.866f), Point3 = new Point(20, 40) });
             }
 
             var path = new PathGeometry();
@@ -869,7 +869,7 @@ namespace Telegram.Controls.Messages
                     animated.AutoPlay = auto;
                     animated.LimitFps = !auto;
                     animated.LoopCount = auto ? 1 : 0;
-                    animated.FrameSize = new Size(size, size);
+                    animated.FrameSize = new Size((float)size, (float)size);
                     animated.DecodeFrameType = DecodePixelType.Logical;
                     animated.Width = size;
                     animated.Height = size;

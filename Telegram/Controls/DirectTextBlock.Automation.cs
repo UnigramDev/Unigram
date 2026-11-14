@@ -163,7 +163,7 @@ namespace Telegram.Controls
             // is the rest of the conversion.
             var bounds = GetBoundingRectangle();
             var scale = _owner.Scale;
-            var point = new Point((screenLocation.X - bounds.X) / scale, (screenLocation.Y - bounds.Y) / scale);
+            var point = new Point((float)((screenLocation.X - bounds.X) / scale), (float)((screenLocation.Y - bounds.Y) / scale));
 
             var position = _owner.GetPositionFromPoint(point, out _);
 
@@ -524,7 +524,7 @@ namespace Telegram.Controls
             var bounds = _parent.GetBoundingRectangle();
             var scale = _owner.Scale;
 
-            return new Rect(bounds.X + link.X * scale, bounds.Y + link.Y * scale, link.Width * scale, link.Height * scale);
+            return new Rect((float)(bounds.X + link.X * scale), (float)(bounds.Y + link.Y * scale), (float)(link.Width * scale), (float)(link.Height * scale));
         }
 
         protected override Point GetClickablePointCore()

@@ -240,7 +240,7 @@ namespace Telegram.Controls
                 width *= Children.Count;
             }
 
-            return new Size(width, height);
+            return new Size((float)width, (float)height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -249,7 +249,7 @@ namespace Telegram.Controls
 
             foreach (var child in Children)
             {
-                child.Arrange(new Rect(x, 0, finalSize.Width / Children.Count, finalSize.Height));
+                child.Arrange(new Rect((float)x, 0, finalSize.Width / Children.Count, finalSize.Height));
                 x += finalSize.Width / Children.Count;
             }
 

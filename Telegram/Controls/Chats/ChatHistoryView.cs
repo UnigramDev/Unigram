@@ -735,7 +735,7 @@ namespace Telegram.Controls.Chats
             {
                 if (pixel is double adjust)
                 {
-                    position.Y -= adjust;
+                    position.Y = (float)(position.Y - adjust);
                 }
             }
             else if (alignment == VerticalAlignment.Center)
@@ -750,7 +750,7 @@ namespace Telegram.Controls.Chats
                         }
                     }
 
-                    return new Rect(0, 0, selectorItem.ActualWidth, selectorItem.ActualHeight);
+                    return new Rect(0, 0, (float)selectorItem.ActualWidth, (float)selectorItem.ActualHeight);
                 }
 
                 var occludedHeight = Delegate.AnimatedHeight;
@@ -758,7 +758,7 @@ namespace Telegram.Controls.Chats
 
                 if (highlightArea.Height < ActualHeight - occludedHeight)
                 {
-                    position.Y -= (ActualHeight / 2 - (highlightArea.Bottom - highlightArea.Height / 2)) + occludedHeight / 2;
+                    position.Y = (float)(position.Y - ((ActualHeight / 2 - (highlightArea.Bottom - highlightArea.Height / 2)) + occludedHeight / 2));
 
                     if (Delegate.HasMessagesPadding)
                     {
@@ -772,11 +772,11 @@ namespace Telegram.Controls.Chats
             }
             else if (alignment == VerticalAlignment.Bottom)
             {
-                position.Y -= ActualHeight - selectorItem.ActualHeight;
+                position.Y = (float)(position.Y - (ActualHeight - selectorItem.ActualHeight));
 
                 if (pixel is double adjust)
                 {
-                    position.Y += adjust;
+                    position.Y = (float)(position.Y + adjust);
                 }
             }
 

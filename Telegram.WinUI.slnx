@@ -7,6 +7,14 @@
   <Project Path="Telegram.Generators/Telegram.Generators.csproj" />
   <Project Path="Telegram.Generators.WinRT/Telegram.Generators.WinRT.csproj" />
   <Project Path="Telegram.WinUI.Rewriter/Telegram.WinUI.Rewriter.csproj" />
+  <Project Path="Telegram.Native.Projection/Telegram.Native.Projection.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="Telegram.WinUI.Projection/Telegram.WinUI.Projection.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
   <Project Path="Telegram.Native.Calls/Telegram.Native.Calls.vcxproj" Id="fdd3c45d-4cff-4a90-8fef-16ca70ab00be" />
   <Project Path="Telegram.Native/Telegram.Native.vcxproj" Id="1b521e77-46bd-4d60-89f6-d68e9bb9abff" />
   <Project Path="Telegram.Native.Widgets/Telegram.Native.Widgets.vcxproj" Id="6d1f3a90-2c4e-4b7a-9e15-83a0c5f2d7b1" />

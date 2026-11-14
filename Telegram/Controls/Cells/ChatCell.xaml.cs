@@ -2840,7 +2840,7 @@ namespace Telegram.Controls.Cells
                 }
             }
 
-            return new Size(width, height);
+            return new Size((float)width, (float)height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -2858,7 +2858,7 @@ namespace Telegram.Controls.Cells
                 }
                 else
                 {
-                    child.Arrange(new Rect(width, 0, child.DesiredSize.Width, child.DesiredSize.Height));
+                    child.Arrange(new Rect((float)width, 0, child.DesiredSize.Width, child.DesiredSize.Height));
                     width += child.DesiredSize.Width;
                 }
             }

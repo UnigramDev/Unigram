@@ -713,9 +713,9 @@ namespace Telegram.Controls
         private static Geometry BuildCheck()
         {
             // The three points of the tick, as fractions of the chart box.
-            var figure = new PathFigure { StartPoint = new Point(Diameter * .348, Diameter * .538) };
-            figure.Segments.Add(new LineSegment { Point = new Point(Diameter * .447, Diameter * .636) });
-            figure.Segments.Add(new LineSegment { Point = new Point(Diameter * .678, Diameter * .402) });
+            var figure = new PathFigure { StartPoint = new Point((float)(Diameter * .348), (float)(Diameter * .538)) };
+            figure.Segments.Add(new LineSegment { Point = new Point((float)(Diameter * .447), (float)(Diameter * .636)) });
+            figure.Segments.Add(new LineSegment { Point = new Point((float)(Diameter * .678), (float)(Diameter * .402)) });
 
             var geometry = new PathGeometry();
             geometry.Figures.Add(figure);

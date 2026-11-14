@@ -305,7 +305,7 @@ namespace Telegram.Controls.Chats
 
             _emojiFlyout.ShowAt(this, new FlyoutShowOptions
             {
-                Position = new Windows.Foundation.Point(rect.X + Padding.Left - 8, rect.Y + 6 - ContentElement.VerticalOffset),
+                Position = new Windows.Foundation.Point((float)(rect.X + Padding.Left - 8), (float)(rect.Y + 6 - ContentElement.VerticalOffset)),
                 Placement = FlyoutPlacementMode.TopEdgeAlignedLeft,
                 ShowMode = FlyoutShowMode.Transient
             });

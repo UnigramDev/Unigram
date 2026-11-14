@@ -2171,7 +2171,7 @@ namespace Telegram.Views.Host
                 var secondaryTile = new SecondaryTile("web_app_" + _clientService.SessionId + "_" + _botUser.Id);
                 WindowContext.InitializeWithWindow(secondaryTile, XamlRoot);
 
-                await secondaryTile.RequestDeleteForSelectionAsync(new Windows.Foundation.Rect(0, 0, ActualWidth, ActualHeight));
+                await secondaryTile.RequestDeleteForSelectionAsync(new Windows.Foundation.Rect(0, 0, (float)ActualWidth, (float)ActualHeight));
             }
         }
 
@@ -2224,7 +2224,7 @@ namespace Telegram.Views.Host
 
                 WindowContext.InitializeWithWindow(secondaryTile, XamlRoot);
 
-                var pinned = await secondaryTile.RequestCreateForSelectionAsync(new Windows.Foundation.Rect(0, 0, ActualWidth, ActualHeight));
+                var pinned = await secondaryTile.RequestCreateForSelectionAsync(new Windows.Foundation.Rect(0, 0, (float)ActualWidth, (float)ActualHeight));
                 if (pinned)
                 {
                     PostEvent("home_screen_added");

@@ -295,7 +295,7 @@ namespace Telegram.Controls
             if (_isCropEnabled)
             {
                 var padding = Padding;
-                m_layoutClip.Rect = new Rect(-padding.Left, -padding.Top, m_viewport.Width + padding.Left + padding.Right, m_viewport.Height + padding.Top + padding.Bottom);
+                m_layoutClip.Rect = new Rect((float)(-padding.Left), (float)(-padding.Top), (float)(m_viewport.Width + padding.Left + padding.Right), (float)(m_viewport.Height + padding.Top + padding.Bottom));
             }
             else
             {
@@ -325,7 +325,7 @@ namespace Telegram.Controls
             var sin = Math.Sin(radians);
             var cos = Math.Cos(radians);
 
-            return new Point(x * cos - y * sin, x * sin + y * cos);
+            return new Point((float)(x * cos - y * sin), (float)(x * sin + y * cos));
         }
 
         private Rect FitArea(Size crop)
@@ -346,7 +346,7 @@ namespace Telegram.Controls
                 height = width / ratio;
             }
 
-            return new Rect((m_viewport.Width - width) / 2, (m_viewport.Height - height) / 2, width, height);
+            return new Rect((float)((m_viewport.Width - width) / 2), (float)((m_viewport.Height - height) / 2), (float)width, (float)height);
         }
 
         /// <summary>
@@ -374,7 +374,7 @@ namespace Telegram.Controls
                 var fit = Math.Max(imageWidth / m_cropSize.Width, imageHeight / m_cropSize.Height);
                 if (fit < 1)
                 {
-                    m_cropSize = new Size(m_cropSize.Width * fit, m_cropSize.Height * fit);
+                    m_cropSize = new Size((float)(m_cropSize.Width * fit), (float)(m_cropSize.Height * fit));
                 }
 
                 // The image's centre from the frame's, turned into the frame's axes. Clamped in the
@@ -396,7 +396,7 @@ namespace Telegram.Controls
             var shrink = Math.Min(oriented.Width / boundsWidth, oriented.Height / boundsHeight);
             if (shrink < 1)
             {
-                m_cropSize = new Size(m_cropSize.Width * shrink, m_cropSize.Height * shrink);
+                m_cropSize = new Size((float)(m_cropSize.Width * shrink), (float)(m_cropSize.Height * shrink));
                 boundsWidth *= shrink;
                 boundsHeight *= shrink;
             }
@@ -405,8 +405,8 @@ namespace Telegram.Controls
             var halfHeight = boundsHeight / 2;
 
             // Past the image's edges the two bounds swap, and the clamp keeps the image inside.
-            m_center.X = Math.Clamp(m_center.X, Math.Min(halfWidth, oriented.Width - halfWidth), Math.Max(halfWidth, oriented.Width - halfWidth));
-            m_center.Y = Math.Clamp(m_center.Y, Math.Min(halfHeight, oriented.Height - halfHeight), Math.Max(halfHeight, oriented.Height - halfHeight));
+            m_center.X = (float)Math.Clamp(m_center.X, Math.Min(halfWidth, oriented.Width - halfWidth), Math.Max(halfWidth, oriented.Width - halfWidth));
+            m_center.Y = (float)Math.Clamp(m_center.Y, Math.Min(halfHeight, oriented.Height - halfHeight), Math.Max(halfHeight, oriented.Height - halfHeight));
         }
 
         private double GetLockedRatio()
@@ -435,12 +435,12 @@ namespace Telegram.Controls
             // wide; anything wider is shown whole across the frame's width.
             if (m_frame && oriented.Height / oriented.Width <= 1.29)
             {
-                return new Size(oriented.Width, oriented.Width / ratio);
+                return new Size(oriented.Width, (float)(oriented.Width / ratio));
             }
 
             return oriented.Width / oriented.Height > ratio
-                ? new Size(oriented.Height * ratio, oriented.Height)
-                : new Size(oriented.Width, oriented.Width / ratio);
+                ? new Size((float)(oriented.Height * ratio), oriented.Height)
+                : new Size(oriented.Width, (float)(oriented.Width / ratio));
         }
 
         private void ResetCrop()
@@ -482,15 +482,15 @@ namespace Telegram.Controls
             {
                 var t = m_animationProgress;
 
-                position = new Point(Lerp(m_fromPosition.X, position.X, t), Lerp(m_fromPosition.Y, position.Y, t));
+                position = new Point((float)Lerp(m_fromPosition.X, position.X, t), (float)Lerp(m_fromPosition.Y, position.Y, t));
                 scale = Lerp(m_fromScale, scale, t);
                 angle = Lerp(m_fromAngle, angle, t);
                 mirror = Lerp(m_fromMirror, 1, t);
                 area = new Rect(
-                    Lerp(m_fromArea.X, area.X, t),
-                    Lerp(m_fromArea.Y, area.Y, t),
-                    Lerp(m_fromArea.Width, area.Width, t),
-                    Lerp(m_fromArea.Height, area.Height, t));
+                    (float)Lerp(m_fromArea.X, area.X, t),
+                    (float)Lerp(m_fromArea.Y, area.Y, t),
+                    (float)Lerp(m_fromArea.Width, area.Width, t),
+                    (float)Lerp(m_fromArea.Height, area.Height, t));
             }
 
             var matrix = GetOrientation()
@@ -503,7 +503,7 @@ namespace Telegram.Controls
             if (m_viewZoom != 1 || m_viewOffset != default)
             {
                 matrix *= Matrix3x2.CreateScale((float)m_viewZoom) * Matrix3x2.CreateTranslation((float)m_viewOffset.X, (float)m_viewOffset.Y);
-                area = new Rect(area.X * m_viewZoom + m_viewOffset.X, area.Y * m_viewZoom + m_viewOffset.Y, area.Width * m_viewZoom, area.Height * m_viewZoom);
+                area = new Rect((float)(area.X * m_viewZoom + m_viewOffset.X), (float)(area.Y * m_viewZoom + m_viewOffset.Y), (float)(area.Width * m_viewZoom), (float)(area.Height * m_viewZoom));
             }
 
             m_imageTransform.Matrix = new Matrix(matrix.M11, matrix.M12, matrix.M21, matrix.M22, matrix.M31, matrix.M32);
@@ -586,7 +586,7 @@ namespace Telegram.Controls
         private Point GetStartPosition(Point position, double scale, double angle, Point previousCenter, double mirror = 1)
         {
             var offset = Rotate((m_center.X - previousCenter.X) * mirror, m_center.Y - previousCenter.Y, angle);
-            return new Point(position.X + offset.X * scale, position.Y + offset.Y * scale);
+            return new Point((float)(position.X + offset.X * scale), (float)(position.Y + offset.Y * scale));
         }
 
         private void OnRendering(object sender, object e)
@@ -752,8 +752,8 @@ namespace Telegram.Controls
             var scale = ViewScale;
             var delta = Rotate(x, y, -m_angle);
 
-            m_center.X -= delta.X / scale;
-            m_center.Y -= delta.Y / scale;
+            m_center.X = (float)(m_center.X - (delta.X / scale));
+            m_center.Y = (float)(m_center.Y - (delta.Y / scale));
 
             Constrain();
         }
@@ -770,11 +770,11 @@ namespace Telegram.Controls
             var center = AreaCenter;
             var offset = Rotate(point.X - center.X, point.Y - center.Y, -m_angle);
 
-            m_center.X += offset.X * (1 / scale - 1 / target);
-            m_center.Y += offset.Y * (1 / scale - 1 / target);
+            m_center.X = (float)(m_center.X + (offset.X * (1 / scale - 1 / target)));
+            m_center.Y = (float)(m_center.Y + (offset.Y * (1 / scale - 1 / target)));
 
             var ratio = scale / target;
-            m_cropSize = new Size(m_cropSize.Width * ratio, m_cropSize.Height * ratio);
+            m_cropSize = new Size((float)(m_cropSize.Width * ratio), (float)(m_cropSize.Height * ratio));
 
             Constrain();
         }
@@ -805,7 +805,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            m_viewOffset = ClampView(m_viewZoom, new Point(m_viewOffset.X + x, m_viewOffset.Y + y));
+            m_viewOffset = ClampView(m_viewZoom, new Point((float)(m_viewOffset.X + x), (float)(m_viewOffset.Y + y)));
             UpdateView();
         }
 
@@ -828,7 +828,7 @@ namespace Telegram.Controls
             var ratio = zoom / m_viewZoom;
 
             // The point under the pointer stays under it.
-            var offset = new Point(point.X - (point.X - m_viewOffset.X) * ratio, point.Y - (point.Y - m_viewOffset.Y) * ratio);
+            var offset = new Point((float)(point.X - (point.X - m_viewOffset.X) * ratio), (float)(point.Y - (point.Y - m_viewOffset.Y) * ratio));
 
             m_viewZoom = zoom;
             m_viewOffset = ClampView(zoom, offset);
@@ -842,8 +842,8 @@ namespace Telegram.Controls
             var area = m_area;
 
             return new Point(
-                Axis(area.X, area.Width, m_viewport.Width, offset.X),
-                Axis(area.Y, area.Height, m_viewport.Height, offset.Y));
+                (float)Axis(area.X, area.Width, m_viewport.Width, offset.X),
+                (float)Axis(area.Y, area.Height, m_viewport.Height, offset.Y));
 
             double Axis(double start, double length, double viewport, double value)
             {
@@ -1071,8 +1071,8 @@ namespace Telegram.Controls
             var minimum = MinimumAreaSize / m_dragScale;
 
             // The crop frame: the area's axes, centred on the crop as it was when the drag began.
-            var halfWidth = m_dragCropSize.Width / 2;
-            var halfHeight = m_dragCropSize.Height / 2;
+            double halfWidth = m_dragCropSize.Width / 2;
+            double halfHeight = m_dragCropSize.Height / 2;
 
             var left = -halfWidth;
             var top = -halfHeight;
@@ -1241,8 +1241,8 @@ namespace Telegram.Controls
             var offset = Rotate((left + right) / 2, (top + bottom) / 2, -m_angle);
 
             m_center = new Point(m_dragCenter.X + offset.X, m_dragCenter.Y + offset.Y);
-            m_cropSize = new Size(right - left, bottom - top);
-            m_area = new Rect(screenX + (left - anchorX) * scale, screenY + (top - anchorY) * scale, (right - left) * scale, (bottom - top) * scale);
+            m_cropSize = new Size((float)(right - left), (float)(bottom - top));
+            m_area = new Rect((float)(screenX + (left - anchorX) * scale), (float)(screenY + (top - anchorY) * scale), (float)((right - left) * scale), (float)((bottom - top) * scale));
 
             // Fits allows a hair past the image, and the search can stop anywhere inside that. Kept,
             // the slack adds up over drags until the starting crop no longer fits and every move is
@@ -1886,7 +1886,7 @@ namespace Telegram.Controls
                 var width = Snap(m_cropSize.Width / oriented.Width);
                 var height = Snap(m_cropSize.Height / oriented.Height);
 
-                return new Rect(x, y, width, height);
+                return new Rect((float)x, (float)y, (float)width, (float)height);
             }
         }
 
@@ -1979,7 +1979,7 @@ namespace Telegram.Controls
             ImageThumb.Width = width;
             ImageThumb.Height = height;
 
-            m_sourceSize = new Size(width, height);
+            m_sourceSize = new Size((float)width, (float)height);
             m_hasSource = true;
 
             m_quarterTurns = (int)rotation & 3;

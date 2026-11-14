@@ -151,7 +151,7 @@ namespace Telegram.Controls.Cells
             _selectionStrokeBrush?.Unregister();
         }
 
-        public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var chat = args.Item as Chat;
             if (chat == null)
@@ -192,7 +192,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateUser(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateUser(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var user = args.Item as User;
             if (user == null)
@@ -225,7 +225,7 @@ namespace Telegram.Controls.Cells
         }
 
 
-        public void UpdateMessageSender(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateMessageSender(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var messageSender = args.Item as MessageSender;
             if (messageSender == null)
@@ -272,7 +272,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSharedChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSharedChat(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var chat = args.Item as Chat;
             if (chat == null)

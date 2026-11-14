@@ -135,25 +135,25 @@ namespace Telegram.Controls
         {
             var figure = new PathFigure
             {
-                StartPoint = new Point(left, -left),
+                StartPoint = new Point((float)left, (float)(-left)),
                 IsClosed = true
             };
 
-            figure.Segments.Add(new LineSegment { Point = new Point(width - right, -right) });
+            figure.Segments.Add(new LineSegment { Point = new Point((float)(width - right), (float)(-right)) });
 
             figure.Segments.Add(new ArcSegment
             {
-                Point = new Point(width - right, right),
-                Size = new Size(right, right),
+                Point = new Point((float)(width - right), (float)right),
+                Size = new Size((float)right, (float)right),
                 SweepDirection = SweepDirection.Clockwise
             });
 
-            figure.Segments.Add(new LineSegment { Point = new Point(left, left) });
+            figure.Segments.Add(new LineSegment { Point = new Point((float)left, (float)left) });
 
             figure.Segments.Add(new ArcSegment
             {
-                Point = new Point(left, -left),
-                Size = new Size(left, left),
+                Point = new Point((float)left, (float)(-left)),
+                Size = new Size((float)left, (float)left),
                 SweepDirection = SweepDirection.Clockwise
             });
 

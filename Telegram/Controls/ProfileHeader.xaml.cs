@@ -50,7 +50,7 @@ namespace Telegram.Controls
         public ProfileHeader()
         {
             InitializeComponent();
-            DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
+            DescriptionLabel.AddHandler(ContextRequestedEvent, new ContextRequestedHandler(About_ContextRequested), true);
 
             //HeaderRoot.CreateInsetClip();
 
@@ -1869,7 +1869,7 @@ namespace Telegram.Controls
             player.DecodeFrameType = DecodePixelType.Logical;
             player.AutoPlay = true;
             player.Source = new DelayedFileSource(ViewModel.ClientService, effect.StickerValue);
-            player.RenderTransformOrigin = new Point(0.5, 0.5);
+            player.RenderTransformOrigin = new Point(0.5f, 0.5f);
             player.RenderTransform = new ScaleTransform
             {
                 ScaleX = -1
@@ -2138,7 +2138,7 @@ namespace Telegram.Controls
                 columns++;
             }
 
-            var column = new Size(Math.Max(0, (availableSize.Width - ColumnSpacing * (columns - 1)) / columns), availableSize.Height);
+            var column = new Size((float)Math.Max(0, (availableSize.Width - ColumnSpacing * (columns - 1)) / columns), availableSize.Height);
             var height = 0d;
 
             foreach (var child in Children)
@@ -2152,7 +2152,7 @@ namespace Telegram.Controls
             }
 
             _columns = columns;
-            return new Size(availableSize.Width, height);
+            return new Size(availableSize.Width, (float)height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -2162,7 +2162,7 @@ namespace Telegram.Controls
 
             foreach (var child in Children)
             {
-                child.Arrange(new Rect(x, 0, column, finalSize.Height));
+                child.Arrange(new Rect((float)x, 0, (float)column, finalSize.Height));
 
                 if (child.Visibility == Visibility.Visible)
                 {

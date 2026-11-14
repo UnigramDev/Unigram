@@ -112,7 +112,7 @@ namespace Telegram.Controls.Views
             VisualUtilities.SetSkeleton(ScrollingHost.ItemsPanelRoot, size, shapes.ToArray());
         }
 
-        public event TypedEventHandler<InteractionsView, ItemClickEventArgs> ItemClick;
+        public event EventHandler<InteractionsView, ItemClickEventArgs> ItemClick;
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Calls;
@@ -110,7 +111,7 @@ namespace Telegram.Services.Calls
             }
         }
 
-        public event TypedEventHandler<VoipVideoOutput, VoipVideoStateChangedEventArgs> StateChanged;
+        public event EventHandler<VoipVideoOutput, VoipVideoStateChangedEventArgs> StateChanged;
 
         private void MaybeRaiseStateChanged()
         {

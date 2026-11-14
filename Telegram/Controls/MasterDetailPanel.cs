@@ -159,13 +159,13 @@ namespace Telegram.Controls
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Size CreateSize(double width, double height)
         {
-            return new Size(Math.Max(0, width), Math.Max(0, height));
+            return new Size((float)Math.Max(0, width), (float)Math.Max(0, height));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Rect CreateRect(double x, double y, double width, double height)
         {
-            return new Rect(x, y, Math.Max(0, width), Math.Max(0, height));
+            return new Rect((float)x, (float)y, (float)Math.Max(0, width), (float)Math.Max(0, height));
         }
 
         public static double CountDialogsWidthFromRatio(double width, double ratio)
@@ -236,7 +236,7 @@ namespace Telegram.Controls
                     newWidth = CountDialogsWidthFromRatio(ActualWidth, newRatio);
                 }
 
-                grip.Arrange(new Rect(newWidth, 0, 8, ActualHeight));
+                grip.Arrange(new Rect((float)newWidth, 0, 8, (float)ActualHeight));
                 gripWidthRatio = newRatio;
             }
         }

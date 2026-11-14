@@ -170,40 +170,40 @@ namespace Telegram.Controls.Messages
         {
             var totalMeasure = new Size();
             var parentMeasure = new Size(availableSize.Width, availableSize.Height);
-            var lineMeasure = new Size(Padding.Left, 0);
+            var lineMeasure = new Size((float)Padding.Left, 0);
             var count = 0;
 
             void Measure(double currentWidth, double currentHeight)
             {
                 if (parentMeasure.Width > currentWidth + lineMeasure.Width)
                 {
-                    lineMeasure.Width += currentWidth + Spacing;
-                    lineMeasure.Height = Math.Max(lineMeasure.Height, currentHeight);
+                    lineMeasure.Width = (float)(lineMeasure.Width + (currentWidth + Spacing));
+                    lineMeasure.Height = (float)Math.Max(lineMeasure.Height, currentHeight);
                 }
                 else
                 {
                     // new line should be added
                     // to get the max U to provide it correctly to ui width ex: ---| or -----|
-                    totalMeasure.Width = Math.Max(lineMeasure.Width - Spacing, totalMeasure.Width);
-                    totalMeasure.Height += lineMeasure.Height + Spacing;
+                    totalMeasure.Width = (float)Math.Max(lineMeasure.Width - Spacing, totalMeasure.Width);
+                    totalMeasure.Height = (float)(totalMeasure.Height + (lineMeasure.Height + Spacing));
 
                     // if the next new row still can handle more controls
                     if (parentMeasure.Width > currentWidth)
                     {
                         // set lineMeasure initial values to the currentMeasure to be calculated later on the new loop
-                        lineMeasure.Width = currentWidth;
-                        lineMeasure.Height = currentHeight;
+                        lineMeasure.Width = (float)currentWidth;
+                        lineMeasure.Height = (float)currentHeight;
                     }
 
                     // the control will take one row alone
                     else
                     {
                         // validate the new control measures
-                        totalMeasure.Width = Math.Max(currentWidth, totalMeasure.Width);
-                        totalMeasure.Height += currentHeight + Spacing;
+                        totalMeasure.Width = (float)Math.Max(currentWidth, totalMeasure.Width);
+                        totalMeasure.Height = (float)(totalMeasure.Height + (currentHeight + Spacing));
 
                         // add new empty line
-                        lineMeasure = new Size(Padding.Left, 0);
+                        lineMeasure = new Size((float)Padding.Left, 0);
                     }
                 }
             }
@@ -228,8 +228,8 @@ namespace Telegram.Controls.Messages
                 // if the last loop is (parentMeasure.U > currentMeasure.U) the currentMeasure isn't added to the total so add it here
                 // for the last condition it is zeros so adding it will make no difference
                 // this way is faster than an if condition in every loop for checking the last item
-                totalMeasure.Width = Math.Max(lineMeasure.Width - Spacing, totalMeasure.Width) + Padding.Right;
-                totalMeasure.Height += lineMeasure.Height + Padding.Bottom + Padding.Top;
+                totalMeasure.Width = (float)(Math.Max(lineMeasure.Width - Spacing, totalMeasure.Width) + Padding.Right);
+                totalMeasure.Height = (float)(totalMeasure.Height + (lineMeasure.Height + Padding.Bottom + Padding.Top));
             }
 
             if (count > 0)
@@ -244,7 +244,7 @@ namespace Telegram.Controls.Messages
         protected override Size ArrangeOverride(Size finalSize)
         {
             var parentMeasure = new Size(finalSize.Width, finalSize.Height);
-            var position = new Size(Padding.Left, Padding.Top);
+            var position = new Size((float)Padding.Left, (float)Padding.Top);
             var count = 0;
 
             double currentV = 0;
@@ -254,8 +254,8 @@ namespace Telegram.Controls.Messages
                 if ((desiredMeasure.Width + position.Width) > parentMeasure.Width)
                 {
                     // next row!
-                    position.Width = Padding.Left;
-                    position.Height += currentV + Spacing;
+                    position.Width = (float)Padding.Left;
+                    position.Height = (float)(position.Height + (currentV + Spacing));
                     currentV = 0;
                 }
 
@@ -263,7 +263,7 @@ namespace Telegram.Controls.Messages
                 child.Arrange(new Rect(position.Width, position.Height, child.DesiredSize.Width, child.DesiredSize.Height));
 
                 // adjust the location for the next items
-                position.Width += desiredMeasure.Width + Spacing;
+                position.Width = (float)(position.Width + (desiredMeasure.Width + Spacing));
                 currentV = Math.Max(desiredMeasure.Height, currentV);
                 count++;
             }

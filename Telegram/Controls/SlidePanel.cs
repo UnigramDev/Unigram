@@ -561,7 +561,7 @@ namespace Telegram.Controls
             _cardTravel = travel;
             UpdateCard(first, last);
 
-            return new Size(width, height);
+            return new Size((float)width, (float)height);
         }
 
         private void UpdateCard(Visual first, Visual last)
@@ -728,7 +728,7 @@ namespace Telegram.Controls
 
                 if (child == _card || child == _cardShadowHost)
                 {
-                    child.Arrange(new Rect(0, -_cardTravel, finalSize.Width, _cardTravel + finalSize.Height + LeadingSpacing));
+                    child.Arrange(new Rect(0, -_cardTravel, finalSize.Width, (float)(_cardTravel + finalSize.Height + LeadingSpacing)));
                     continue;
                 }
 

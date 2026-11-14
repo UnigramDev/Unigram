@@ -1095,8 +1095,8 @@ namespace Telegram.Controls
 
             // Snapped to the pixel under the pointer, so the grid lines up with real pixels.
             var source = new Rect(
-                Math.Floor(center.X / pixel) * pixel - pixel * 3,
-                Math.Floor(center.Y / pixel) * pixel - pixel * 3,
+                (float)(Math.Floor(center.X / pixel) * pixel - pixel * 3),
+                (float)(Math.Floor(center.Y / pixel) * pixel - pixel * 3),
                 pixel * Pixels,
                 pixel * Pixels);
 

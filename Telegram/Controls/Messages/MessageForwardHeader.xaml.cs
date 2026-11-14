@@ -67,8 +67,8 @@ namespace Telegram.Controls.Messages
 
                 var rectangles2 = new[]
                 {
-                    new Rect(0, 0, ForwardText.ActualWidth, ForwardText.ActualHeight),
-                    new Rect(0, ForwardText.ActualHeight, ForwardLink.ActualWidth, ForwardLink.ActualHeight)
+                    new Rect(0, 0, (float)ForwardText.ActualWidth, (float)ForwardText.ActualHeight),
+                    new Rect(0, (float)ForwardText.ActualHeight, (float)ForwardLink.ActualWidth, (float)ForwardLink.ActualHeight)
                 };
 
                 //var contentEnd = ForwardLabel.ContentEnd.GetCharacterRect(ForwardLabel.ContentEnd.LogicalDirection);

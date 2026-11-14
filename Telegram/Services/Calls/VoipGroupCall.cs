@@ -430,6 +430,12 @@ namespace Telegram.Services.Calls
             }
         }
 
+#if CSWINRT3_0
+        private byte[] EncryptData(VoipDataChannel dataChannel, ReadOnlySpan<byte> data, int unencryptedPrefixSize) => EncryptData(dataChannel, data.ToArray(), unencryptedPrefixSize);
+
+        private byte[] DecryptData(long userId, ReadOnlySpan<byte> data) => DecryptData(userId, data.ToArray());
+#endif
+
         private byte[] EncryptData(VoipDataChannel dataChannel, byte[] data, int unencryptedPrefixSize)
         {
             return Transform(new EncryptGroupCallData(Id, null, data, unencryptedPrefixSize));
@@ -487,20 +493,20 @@ namespace Telegram.Services.Calls
         // the transform against each other: TDLib answers on the one thread Dispose runs on.
         private readonly CancellationTokenSource _disposing = new();
 
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallNetworkStateChangedEventArgs> NetworkStateChanged;
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallJoinedStateChangedEventArgs> JoinedStateChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallNetworkStateChangedEventArgs> NetworkStateChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallJoinedStateChangedEventArgs> JoinedStateChanged;
 
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallVerificationStateChangedEventArgs> VerificationStateChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallVerificationStateChangedEventArgs> VerificationStateChanged;
 
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallMessagesChangedEventArgs> MessagesChanged;
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallMessagesChangedEventArgs> PinnedMessagesChanged;
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallReactionsChangedEventArgs> ReactionsChanged;
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallTopDonorsChangedEventArgs> TopDonorsChanged;
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallTotalStarCountChangedEventArgs> TotalStarCountChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallMessagesChangedEventArgs> MessagesChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallMessagesChangedEventArgs> PinnedMessagesChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallReactionsChangedEventArgs> ReactionsChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallTopDonorsChangedEventArgs> TopDonorsChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallTotalStarCountChangedEventArgs> TotalStarCountChanged;
 
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallStreamStateChangedEventArgs> StreamStateChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallStreamStateChangedEventArgs> StreamStateChanged;
 
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallStreamerChangedEventArgs> StreamerChanged;
+        public event EventHandler<VoipGroupCall, VoipGroupCallStreamerChangedEventArgs> StreamerChanged;
 
         /// <summary>
         /// Every participant TDLib has told us about. Created with the call and kept for
@@ -1390,8 +1396,8 @@ namespace Telegram.Services.Calls
             }
         }
 
-        public event TypedEventHandler<VoipGroupCall, EventArgs> MutedChanged;
-        public event TypedEventHandler<VoipGroupCall, IList<VoipGroupParticipant>> AudioLevelsUpdated;
+        public event EventHandler<VoipGroupCall, EventArgs> MutedChanged;
+        public event EventHandler<VoipGroupCall, IList<VoipGroupParticipant>> AudioLevelsUpdated;
 
         public bool IsNoiseSuppressionEnabled
         {

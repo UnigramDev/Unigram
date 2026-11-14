@@ -13,7 +13,10 @@ using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
-#if NET9_0_OR_GREATER
+#if CSWINRT3_0
+using System.Runtime.InteropServices;
+using WindowsRuntime.InteropServices;
+#elif NET9_0_OR_GREATER
 using System.Runtime.InteropServices;
 using WinRT;
 #endif
@@ -78,9 +81,27 @@ namespace Telegram.Composition
         /// miss still files a crash report. Probe with a raw QueryInterface instead; once that has
         /// succeeded <c>As&lt;T&gt;</c> cannot throw.
         /// </remarks>
-        public static bool TryGetPartner(this CompositionVisualSurface surface, out ICompositionVisualSurfacePartner partner)
+        public static unsafe bool TryGetPartner(this CompositionVisualSurface surface, out ICompositionVisualSurfacePartner partner)
         {
-#if NET9_0_OR_GREATER
+#if CSWINRT3_0
+            // Both pointers are ours to release; the second is only proof that the cast will work.
+            if (WindowsRuntimeMarshal.TryGetNativeObject(surface, out void* native))
+            {
+                var hr = Marshal.QueryInterface((IntPtr)native, typeof(ICompositionVisualSurfacePartner).GUID, out var abi);
+                Marshal.Release((IntPtr)native);
+
+                if (hr >= 0)
+                {
+                    Marshal.Release(abi);
+
+                    partner = (ICompositionVisualSurfacePartner)(object)surface;
+                    return true;
+                }
+            }
+
+            partner = null;
+            return false;
+#elif NET9_0_OR_GREATER
             // NativeObject is the RCW's own reference and is not ours to dispose. The pointer TryAs
             // hands back on success is, and it is only wanted as proof that the QI would work.
             if (surface is IWinRTObject native

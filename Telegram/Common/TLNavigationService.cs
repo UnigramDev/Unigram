@@ -568,7 +568,7 @@ namespace Telegram.Common
                     var masterDetailPanel = Window.Content.GetChild<MasterDetailPanel>();
                     if (masterDetailPanel != null)
                     {
-                        await OpenAsync(target, parameter, size: new Windows.Foundation.Size(masterDetailPanel.ActualDetailWidth, masterDetailPanel.ActualHeight));
+                        await OpenAsync(target, parameter, size: new Windows.Foundation.Size((float)masterDetailPanel.ActualDetailWidth, (float)masterDetailPanel.ActualHeight));
                     }
                     else
                     {

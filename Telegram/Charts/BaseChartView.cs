@@ -1737,7 +1737,11 @@ namespace Telegram.Charts
             return a;
         }
 
+#if CSWINRT3_0
+        protected Rect CreateRect(float x1, float y1, float x2, float y2)
+#else
         protected Rect CreateRect(double x1, double y1, double x2, double y2)
+#endif
         {
             return new Rect(x1, y1, x2 - x1, y2 - y1);
         }

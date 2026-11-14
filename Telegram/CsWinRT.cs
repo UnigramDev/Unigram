@@ -33,10 +33,33 @@ global using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
 // Not Path: that name is System.IO.Path wherever the Shapes namespace is not imported.
 #if WINUI3
 global using XamlPath = Microsoft.UI.Xaml.Shapes.Path;
+global using Windows.Foundation;
 #else
 global using XamlPath = Windows.UI.Xaml.Shapes.Path;
 #endif
-#if NET9_0_OR_GREATER
+// A delegate handed to a WinRT event or to AddHandler has to be the type the projection uses:
+// TypedEventHandler on .NET Native and CsWinRT 2, System.EventHandler<,> on CsWinRT 3. C# cannot
+// alias an open generic, so each closed type that is stored or passed around gets its own.
+#if CSWINRT3_0
+global using CharacterReceivedHandler = System.EventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs>;
+global using CompositionBatchCompletedHandler = System.EventHandler<object, Microsoft.UI.Composition.CompositionBatchCompletedEventArgs>;
+global using ContainerContentChangingHandler = System.EventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs>;
+global using ContextRequestedHandler = System.EventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.ContextRequestedEventArgs>;
+global using HyperlinkClickHandler = System.EventHandler<Microsoft.UI.Xaml.Documents.Hyperlink, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs>;
+#elif WINUI3
+global using CharacterReceivedHandler = Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs>;
+global using CompositionBatchCompletedHandler = Windows.Foundation.TypedEventHandler<object, Microsoft.UI.Composition.CompositionBatchCompletedEventArgs>;
+global using ContainerContentChangingHandler = Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs>;
+global using ContextRequestedHandler = Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.ContextRequestedEventArgs>;
+global using HyperlinkClickHandler = Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Documents.Hyperlink, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs>;
+#else
+global using CharacterReceivedHandler = Windows.Foundation.TypedEventHandler<Windows.UI.Xaml.UIElement, Windows.UI.Xaml.Input.CharacterReceivedRoutedEventArgs>;
+global using CompositionBatchCompletedHandler = Windows.Foundation.TypedEventHandler<object, Windows.UI.Composition.CompositionBatchCompletedEventArgs>;
+global using ContainerContentChangingHandler = Windows.Foundation.TypedEventHandler<Windows.UI.Xaml.Controls.ListViewBase, Windows.UI.Xaml.Controls.ContainerContentChangingEventArgs>;
+global using ContextRequestedHandler = Windows.Foundation.TypedEventHandler<Windows.UI.Xaml.UIElement, Windows.UI.Xaml.Input.ContextRequestedEventArgs>;
+global using HyperlinkClickHandler = Windows.Foundation.TypedEventHandler<Windows.UI.Xaml.Documents.Hyperlink, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs>;
+#endif
+#if NET9_0_OR_GREATER && !CSWINRT3_0
 using WinRT;
 
 // Direct2D
@@ -55,6 +78,14 @@ using WinRT;
 // Without one the list comes up empty rather than failing - the QI just yields no children.
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.KeyedList<Telegram.ViewModels.Settings.KeyedGroup, Telegram.Td.Api.Session>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.KeyedList<string, object>))]
+#elif CSWINRT3_0
+// CsWinRT 3 renamed the attribute; the alias lets the 2.x spelling drive its generator, which
+// resolves aliases. The namespace stays for the files that import it for the attribute.
+global using GeneratedBindableCustomProperty = WindowsRuntime.Xaml.GeneratedCustomPropertyProviderAttribute;
+
+namespace WinRT
+{
+}
 #else
 namespace WinRT
 {

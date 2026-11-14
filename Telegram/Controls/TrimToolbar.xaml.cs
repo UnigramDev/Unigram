@@ -611,7 +611,7 @@ namespace Telegram.Controls
 
             var scale = BubbleSide / Math.Max(frame.Width, frame.Height);
 
-            _bubbleSize = new Size(Math.Max(1, Math.Round(frame.Width * scale)), Math.Max(1, Math.Round(frame.Height * scale)));
+            _bubbleSize = new Size((float)Math.Max(1, Math.Round(frame.Width * scale)), (float)Math.Max(1, Math.Round(frame.Height * scale)));
 
             CoverBubble.Width = _bubbleSize.Width;
             CoverBubble.Height = _bubbleSize.Height;

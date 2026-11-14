@@ -358,9 +358,9 @@ namespace Telegram.Controls.Gallery
             var source = WindowContext.ForXamlRoot(viewModel.XamlRoot);
             var handle = source != null
                 ? new IntPtr(source.Handle)
-                : WinRT.Interop.WindowNative.GetWindowHandle(window);
+                : WindowContext.GetWindowHandle(window);
 
-            var display = DisplayArea.GetFromWindowId(Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle), DisplayAreaFallback.Primary);
+            var display = DisplayArea.GetFromWindowId(new Microsoft.UI.WindowId((ulong)handle), DisplayAreaFallback.Primary);
             var scale = Win32.GetDpiForWindow(handle) / 96.0;
 
             var margin = (int)(CompactMargin * scale);
@@ -448,7 +448,7 @@ namespace Telegram.Controls.Gallery
 
                 if (!ApiInfo.HasPackageIdentity)
                 {
-                    WindowContext.SetIcon(WinRT.Interop.WindowNative.GetWindowHandle(window));
+                    WindowContext.SetIcon(WindowContext.GetWindowHandle(window));
                 }
 
                 var presenter = CompactOverlayPresenter.Create();

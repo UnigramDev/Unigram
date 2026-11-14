@@ -1685,7 +1685,7 @@ namespace Telegram.Views.Popups
             {
                 var origin = _emojiScroller.TransformToVisual(EmojiRoot).TransformPoint(new Point(0, 0));
 
-                var viewport = new Rect(origin.X, origin.Y, _emojiScroller.ActualWidth, _emojiScroller.ActualHeight);
+                var viewport = new Rect(origin.X, origin.Y, (float)_emojiScroller.ActualWidth, (float)_emojiScroller.ActualHeight);
                 if (viewport != _badgesViewport)
                 {
                     _badgesViewport = viewport;
@@ -1711,7 +1711,7 @@ namespace Telegram.Views.Popups
                     }
 
                     // In the list's content coordinates: where the cell is now, plus how far the list has scrolled.
-                    var corner = container.TransformToVisual(_emojiScroller).TransformPoint(new Point(container.ActualWidth - 12, 12));
+                    var corner = container.TransformToVisual(_emojiScroller).TransformPoint(new Point((float)(container.ActualWidth - 12), 12));
                     var x = corner.X + _emojiScroller.HorizontalOffset;
                     var y = corner.Y + _emojiScroller.VerticalOffset;
 

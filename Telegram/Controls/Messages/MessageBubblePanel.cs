@@ -177,7 +177,7 @@ namespace Telegram.Controls.Messages
 
             if (_textRow < _mediaRow)
             {
-                _text.Arrange(new Rect(0, 0, finalSize.Width - _textInset, _text.DesiredSize.Height));
+                _text.Arrange(new Rect(0, 0, (float)(finalSize.Width - _textInset), _text.DesiredSize.Height));
 
                 if (_factCheck != null)
                 {
@@ -192,7 +192,7 @@ namespace Telegram.Controls.Messages
             else
             {
                 _media.Arrange(new Rect(0, 0, finalSize.Width, _media.DesiredSize.Height));
-                _text.Arrange(new Rect(0, _media.DesiredSize.Height, finalSize.Width - _textInset, _text.DesiredSize.Height));
+                _text.Arrange(new Rect(0, _media.DesiredSize.Height, (float)(finalSize.Width - _textInset), _text.DesiredSize.Height));
 
                 _factCheck?.Arrange(new Rect(0, _media.DesiredSize.Height + _text.DesiredSize.Height, finalSize.Width, _factCheck.DesiredSize.Height));
             }
@@ -299,7 +299,7 @@ namespace Telegram.Controls.Messages
 
             if (text is null)
             {
-                return new Size(0, AppSettings.Appearance.MessageFontSize * 1.33);
+                return new Size(0, (float)(AppSettings.Appearance.MessageFontSize * 1.33));
             }
             else if (Placeholder)
             {
@@ -310,13 +310,13 @@ namespace Telegram.Controls.Messages
 
                 if (ForceNewLine)
                 {
-                    return new Size(Math.Max(0, footerWidth - 16), 0);
+                    return new Size((float)Math.Max(0, footerWidth - 16), 0);
                 }
 
                 var contentEnd = text.ContentEnd();
                 if (contentEnd == -1 || (text.ContentAgainstFlow && !canInset))
                 {
-                    return new Size(0, fontSize * 1.33);
+                    return new Size(0, (float)(fontSize * 1.33));
                 }
 
                 var bounds = left + contentEnd;
@@ -335,7 +335,7 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            return new Size(marginLeft, marginBottom);
+            return new Size((float)marginLeft, (float)marginBottom);
         }
     }
 }

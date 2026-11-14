@@ -203,7 +203,7 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var constraint = new Size(availableSize.Width, double.PositiveInfinity);
+            var constraint = new Size(availableSize.Width, float.PositiveInfinity);
 
             var width = 0d;
             var height = 0d;
@@ -228,7 +228,7 @@ namespace Telegram.Controls
                 any = true;
             }
 
-            return new Size(width, height);
+            return new Size((float)width, (float)height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -249,7 +249,7 @@ namespace Telegram.Controls
                     y += Spacing;
                 }
 
-                child.Arrange(new Rect(0, y, finalSize.Width, height));
+                child.Arrange(new Rect(0, (float)y, finalSize.Width, height));
 
                 y += height;
                 any = true;

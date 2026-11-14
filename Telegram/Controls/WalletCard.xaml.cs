@@ -1318,7 +1318,7 @@ namespace Telegram.Controls
             _slotText = text;
 
             // Through the window: the slot is under the popup the card is in, in another tree.
-            var bounds = slot.TransformToVisual(null).TransformBounds(new Rect(0, 0, slot.ActualWidth, slot.ActualHeight));
+            var bounds = slot.TransformToVisual(null).TransformBounds(new Rect(0, 0, (float)slot.ActualWidth, (float)slot.ActualHeight));
             var origin = Stage.TransformToVisual(null).TransformPoint(new Point(0, 0));
 
             var size = LayoutRoot.ActualSize;
@@ -1539,7 +1539,7 @@ namespace Telegram.Controls
 
         private Rect BoundsOnFace(FrameworkElement element)
         {
-            return element.TransformToVisual(StickerLayer).TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+            return element.TransformToVisual(StickerLayer).TransformBounds(new Rect(0, 0, (float)element.ActualWidth, (float)element.ActualHeight));
         }
 
         private void UpdatePrintShadow(SpriteVisual shadow, TextBlock text, bool animated)

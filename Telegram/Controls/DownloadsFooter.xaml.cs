@@ -141,7 +141,7 @@ namespace Telegram.Controls
                 _resize = true;
             }
 
-            return new Size(Math.Max(size.Width, _hold), size.Height);
+            return new Size((float)Math.Max(size.Width, _hold), size.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)

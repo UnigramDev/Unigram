@@ -128,7 +128,7 @@ namespace Telegram.Controls.Messages.Content
                     var transform = TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
-                    Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, ActualWidth, ActualHeight));
+                    Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, (float)ActualWidth, (float)ActualHeight));
                 }
             }
             catch

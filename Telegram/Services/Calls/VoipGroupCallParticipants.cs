@@ -50,7 +50,7 @@ namespace Telegram.Services.Calls
         /// <summary>
         /// Raised on TDLib's update thread, once per participant update. Handlers marshal.
         /// </summary>
-        public event TypedEventHandler<VoipGroupCallParticipants, VoipGroupCallParticipantChangedEventArgs> Changed;
+        public event EventHandler<VoipGroupCallParticipants, VoipGroupCallParticipantChangedEventArgs> Changed;
 
         /// <summary>
         /// Merges an update into the participant this already holds, so that every view

@@ -38,7 +38,7 @@ namespace Telegram.Controls
 
         // Where the spectrum's knob sits, as fractions; kept rather than derived from the colour,
         // which cannot tell which side of the spectrum a grey came from.
-        private Point _spectrum = new(0.5, 0);
+        private Point _spectrum = new(0.5f, 0);
 
         // Set while the picker writes its own text boxes, so their change handlers stay out.
         private bool _updating;
@@ -290,14 +290,14 @@ namespace Telegram.Controls
 
             if (hsv.V < 0.99)
             {
-                return new Point(0.78 + (1 - hsv.V) * 0.22, y);
+                return new Point((float)(0.78 + (1 - hsv.V) * 0.22), (float)y);
             }
             else if (hsv.S < 0.99)
             {
-                return new Point(hsv.S * 0.22, y);
+                return new Point((float)(hsv.S * 0.22), (float)y);
             }
 
-            return new Point(0.5, y);
+            return new Point(0.5f, (float)y);
         }
 
         private void PlaceSpectrumKnob()
@@ -337,8 +337,8 @@ namespace Telegram.Controls
             var point = e.GetCurrentPoint(SpectrumPanel).Position;
 
             _spectrum = new Point(
-                Math.Clamp(point.X / SpectrumPanel.ActualWidth, 0, 1),
-                Math.Clamp(point.Y / SpectrumPanel.ActualHeight, 0, 1));
+                (float)Math.Clamp(point.X / SpectrumPanel.ActualWidth, 0, 1),
+                (float)Math.Clamp(point.Y / SpectrumPanel.ActualHeight, 0, 1));
 
             SetColor(ToSpectrumColor(_spectrum, _color.A), SpectrumPanel);
             PlaceSpectrumKnob();

@@ -59,7 +59,7 @@ namespace Telegram.Controls
                 var calcDuration = Math.Max(minVoiceLength, Math.Min(maxVoiceLength, _duration));
                 var waveformWidth = minVoiceWidth + (maxVoiceWidth - minVoiceWidth) * (calcDuration - minVoiceLength) / (maxVoiceLength - minVoiceLength);
 
-                availableSize = new Size(waveformWidth, 20);
+                availableSize = new Size((float)waveformWidth, 20);
 
                 RootGrid.Measure(availableSize);
                 return availableSize;

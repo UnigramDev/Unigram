@@ -106,10 +106,10 @@ namespace Telegram.Views.Wallet
             var scale = fontSize / SourceGlyphSize * LandingSize;
 
             return new Rect(
-                glyph.X + (glyph.Width - SourceGlyphSize * scale) / 2 + SourceOffset.X * scale + LandingNudge.X,
-                glyph.Y + (glyph.Height - SourceGlyphSize * scale) / 2 + SourceOffset.Y * scale + LandingNudge.Y,
-                stone.Width * scale,
-                stone.Height * scale);
+                (float)(glyph.X + (glyph.Width - SourceGlyphSize * scale) / 2 + SourceOffset.X * scale + LandingNudge.X),
+                (float)(glyph.Y + (glyph.Height - SourceGlyphSize * scale) / 2 + SourceOffset.Y * scale + LandingNudge.Y),
+                (float)(stone.Width * scale),
+                (float)(stone.Height * scale));
         }
 
         // One UI thread per window, hence the lock.
@@ -454,7 +454,7 @@ namespace Telegram.Views.Wallet
             _flying = true;
             StopTimeout();
 
-            var bounds = _site.LandingBounds(new Size(_stone.Width, _stone.Height));
+            var bounds = _site.LandingBounds(new Size((float)_stone.Width, (float)_stone.Height));
             var scale = (float)(bounds.Width / _stone.Width);
             var target = new Vector3((float)bounds.X, (float)bounds.Y, 0);
 

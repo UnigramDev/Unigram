@@ -188,7 +188,7 @@ namespace Telegram.Services
         /// Raised on both exits, so a view can put back whatever it changed while the reaction was
         /// pending.
         /// </summary>
-        public event TypedEventHandler<GroupCallPaidReactionService, object> Completed;
+        public event EventHandler<GroupCallPaidReactionService, object> Completed;
 
         private bool AddPendingImpl(INavigationService navigationService, VoipGroupCall groupCall, long starCount, PaidReactionType type)
         {

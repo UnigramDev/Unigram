@@ -121,7 +121,7 @@ namespace Telegram.Controls
             totalMeasure.U = Math.Max(lineMeasure.U, totalMeasure.U);
             totalMeasure.V += lineMeasure.V;
 
-            return Orientation == Orientation.Horizontal ? new Size(totalMeasure.U, totalMeasure.V) : new Size(totalMeasure.V, totalMeasure.U);
+            return Orientation == Orientation.Horizontal ? new Size((float)totalMeasure.U, (float)totalMeasure.V) : new Size((float)totalMeasure.V, (float)totalMeasure.U);
         }
 
         /// <inheritdoc />
@@ -166,12 +166,12 @@ namespace Telegram.Controls
 
                     if (horizontal)
                     {
-                        child.Arrange(new Rect(position, v, size.Width, size.Height));
+                        child.Arrange(new Rect((float)position, (float)v, size.Width, size.Height));
                         position += size.Width;
                     }
                     else
                     {
-                        child.Arrange(new Rect(v, position, size.Width, size.Height));
+                        child.Arrange(new Rect((float)v, (float)position, size.Width, size.Height));
                         position += size.Height;
                     }
                 }

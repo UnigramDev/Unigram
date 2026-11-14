@@ -296,7 +296,7 @@ namespace Telegram.Controls
                     FrameBottomColor = FrameBottomColor
                 };
 
-                return await ImageHelper.RenderFrameAsync(_media.File, generation, new Size(FrameLayer.ActualWidth, FrameLayer.ActualHeight), time);
+                return await ImageHelper.RenderFrameAsync(_media.File, generation, new Size((float)FrameLayer.ActualWidth, (float)FrameLayer.ActualHeight), time);
             }
             else if (!IsVideo)
             {
@@ -335,7 +335,7 @@ namespace Telegram.Controls
         /// </summary>
         public Rect GetFrameBounds(UIElement relativeTo)
         {
-            return FrameLayer.TransformToVisual(relativeTo).TransformBounds(new Rect(0, 0, FrameLayer.ActualWidth, FrameLayer.ActualHeight));
+            return FrameLayer.TransformToVisual(relativeTo).TransformBounds(new Rect(0, 0, (float)FrameLayer.ActualWidth, (float)FrameLayer.ActualHeight));
         }
 
         private void Cropper_ViewChanged(object sender, EventArgs e)

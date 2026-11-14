@@ -83,7 +83,7 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateSpectrumPointer(new Point(_color.H / 360 * e.NewSize.Width, (1 - _color.S) * e.NewSize.Height), false);
+            UpdateSpectrumPointer(new Point((float)(_color.H / 360 * e.NewSize.Width), (float)((1 - _color.S) * e.NewSize.Height)), false);
         }
 
         private void OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -123,8 +123,8 @@ namespace Telegram.Controls
 
         private void UpdateSpectrumPointer(Point point, bool values)
         {
-            point.X = Math.Max(0, Math.Min(Spectrum.ActualWidth, point.X));
-            point.Y = Math.Max(0, Math.Min(Spectrum.ActualHeight, point.Y));
+            point.X = (float)Math.Max(0, Math.Min(Spectrum.ActualWidth, point.X));
+            point.Y = (float)Math.Max(0, Math.Min(Spectrum.ActualHeight, point.Y));
 
             var h = point.X / Spectrum.ActualWidth * 360;
             var s = 1 - point.Y / Spectrum.ActualHeight;
@@ -155,7 +155,7 @@ namespace Telegram.Controls
             }
         }
 
-        public event TypedEventHandler<ColorPicker, ColorChangedEventArgs> ColorChanged;
+        public event EventHandler<ColorPicker, ColorChangedEventArgs> ColorChanged;
 
         #region Color
 
@@ -199,7 +199,7 @@ namespace Telegram.Controls
             {
                 _loaded = true;
 
-                UpdateSpectrumPointer(new Point(hsv.H / 360 * Spectrum.ActualWidth, (1 - hsv.S) * Spectrum.ActualHeight), false);
+                UpdateSpectrumPointer(new Point((float)(hsv.H / 360 * Spectrum.ActualWidth), (float)((1 - hsv.S) * Spectrum.ActualHeight)), false);
                 ValueSlider.Value = hsv.V * 100;
             }
         }

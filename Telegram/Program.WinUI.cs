@@ -54,7 +54,9 @@ namespace Telegram
         [STAThread]
         static void Main(string[] args)
         {
+#if !CSWINRT3_0
             WinRT.ComWrappersSupport.InitializeComWrappers();
+#endif
 
             // One instance, which the UWP app model gave the other flavours for free and this one
             // has to ask for: launching a packaged desktop app again simply starts a second

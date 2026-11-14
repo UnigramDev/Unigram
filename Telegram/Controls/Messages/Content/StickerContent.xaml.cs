@@ -106,7 +106,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (flip)
             {
-                Player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                Player.RenderTransformOrigin = new Windows.Foundation.Point(0.5f, 0.5f);
                 Player.RenderTransform = new ScaleTransform
                 {
                     ScaleX = -1
@@ -344,7 +344,7 @@ namespace Telegram.Controls.Messages.Content
                 {
                     player.Margin = new Thickness(-right, -top, -left, -bottom);
 
-                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5f, 0.5f);
                     player.RenderTransform = new ScaleTransform
                     {
                         ScaleX = -1
@@ -388,7 +388,7 @@ namespace Telegram.Controls.Messages.Content
                 player.Height = outer;
                 player.LoopCount = 1;
                 player.IsHitTestVisible = false;
-                player.FrameSize = new Size(outer, outer);
+                player.FrameSize = new Size((float)outer, (float)outer);
                 player.DecodeFrameType = DecodePixelType.Logical;
                 player.AutoPlay = true;
                 player.Source = new DelayedFileSource(_message.ClientService, regular.PremiumAnimation);
@@ -403,7 +403,7 @@ namespace Telegram.Controls.Messages.Content
 
                 if (!message.IsVisuallyOutgoing)
                 {
-                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5f, 0.5f);
                     player.RenderTransform = new ScaleTransform
                     {
                         ScaleX = -1

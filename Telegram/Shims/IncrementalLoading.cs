@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml.Data;
+#if CSWINRT3_0
+using WindowsRuntime.InteropServices;
+#endif
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {

@@ -88,7 +88,7 @@ namespace Telegram.Controls
             return container;
         }
 
-        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
+        public event ContextRequestedHandler ItemContextRequested;
 
         #region FocusFollowsSingleSelection
 
@@ -367,7 +367,7 @@ namespace Telegram.Controls
             PrepareContainerForItem?.Invoke(element as SelectorItem, item);
         }
 
-        public event TypedEventHandler<SelectorItem, object> PrepareContainerForItem;
+        public event EventHandler<SelectorItem, object> PrepareContainerForItem;
     }
 
     public partial class TopNavViewItem : TextListViewItem

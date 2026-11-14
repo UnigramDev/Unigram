@@ -81,7 +81,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             // The panel's own padding and spacing: whatever its children do not account for.
-            var total = groups.DesiredSize.Width;
+            double total = groups.DesiredSize.Width;
             _order.Clear();
 
             for (int i = 0; i < items.Count; i++)

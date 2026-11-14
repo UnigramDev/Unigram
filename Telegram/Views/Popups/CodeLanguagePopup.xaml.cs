@@ -14,10 +14,13 @@ using Telegram.Native.Highlight;
 using Telegram.Td;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using WinRT;
 
 namespace Telegram.Views.Popups
 {
     /// <summary>A language the code can be highlighted as: what is sent, what it is called, and the other ids it goes by.</summary>
+    // Id is read by name, through the suggestion box's TextMemberPath.
+    [GeneratedBindableCustomProperty(new[] { "Id" }, new Type[] { })]
     public sealed partial class CodeLanguage
     {
         public CodeLanguage(string id, string name, List<string> ids)

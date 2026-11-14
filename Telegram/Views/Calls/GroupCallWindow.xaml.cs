@@ -2585,10 +2585,10 @@ namespace Telegram.Views.Calls
             figure.Segments.Add(new LineSegment { Point = new Point(width, height - haheight) });
             figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight, height), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
 
-            figure.Segments.Add(new LineSegment { Point = new Point(offset, height) });
+            figure.Segments.Add(new LineSegment { Point = new Point((float)offset, height) });
             //figure.Segments.Add(new LineSegment { Point = new Point(offset + 7, height + 7) });
 
-            figure.Segments.Add(new ArcSegment { Point = new Point(offset - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+            figure.Segments.Add(new ArcSegment { Point = new Point((float)(offset - 14), height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
             //figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
 
             figure.Segments.Add(new LineSegment { Point = new Point(haheight, height) });
@@ -2605,7 +2605,7 @@ namespace Telegram.Views.Calls
 
             //figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
 
-            data.Children.Add(new EllipseGeometry { Center = new Point(offset - 8 + 5, height + 20 - 7), RadiusX = 3.5f, RadiusY = 3.5f });
+            data.Children.Add(new EllipseGeometry { Center = new Point((float)(offset - 8 + 5), height + 20 - 7), RadiusX = 3.5f, RadiusY = 3.5f });
             //data.Children.Add(new EllipseGeometry { Center = new Point(width - haheight - 8 + 5, height + 20 - 7), RadiusX = 3.5f, RadiusY = 3.5f });
 
             MessagePill.Data = data;
@@ -2680,7 +2680,7 @@ namespace Telegram.Views.Calls
                 columns++;
             }
 
-            var column = new Size(Math.Max(0, (availableWidth - ColumnSpacing * (columns - 1)) / columns), availableSize.Height);
+            var column = new Size((float)Math.Max(0, (availableWidth - ColumnSpacing * (columns - 1)) / columns), availableSize.Height);
             var height = 0d;
 
             for (int i = 0; i < Children.Count; i += 2)
@@ -2697,7 +2697,7 @@ namespace Telegram.Views.Calls
             }
 
             _columns = columns;
-            return new Size(availableWidth + Padding.Left + Padding.Right, height + Padding.Top + Padding.Bottom);
+            return new Size((float)(availableWidth + Padding.Left + Padding.Right), (float)(height + Padding.Top + Padding.Bottom));
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -2716,8 +2716,8 @@ namespace Telegram.Views.Calls
                 var offset0 = (x + column / 2) - child0.DesiredSize.Width / 2;
                 var offset1 = (x + column / 2) - child1.DesiredSize.Width / 2;
 
-                child0.Arrange(new Rect(offset0, y, child0.DesiredSize.Width, child0.DesiredSize.Height));
-                child1.Arrange(new Rect(offset1, y + child0.DesiredSize.Height, child1.DesiredSize.Width, child1.DesiredSize.Height));
+                child0.Arrange(new Rect((float)offset0, (float)y, child0.DesiredSize.Width, child0.DesiredSize.Height));
+                child1.Arrange(new Rect((float)offset1, (float)(y + child0.DesiredSize.Height), child1.DesiredSize.Width, child1.DesiredSize.Height));
 
                 if (child0.Visibility == Visibility.Visible)
                 {
@@ -2767,8 +2767,8 @@ namespace Telegram.Views.Calls
             var rows = Math.Ceiling(Math.Sqrt(count));
             var columns = Math.Ceiling(count / rows);
 
-            var finalWidth = availableSize.Width;
-            var finalHeight = availableSize.Height;
+            double finalWidth = availableSize.Width;
+            double finalHeight = availableSize.Height;
 
             if (_mode == ParticipantsGridMode.Compact)
             {
@@ -2806,7 +2806,7 @@ namespace Telegram.Views.Calls
 
             static Size SafeSize(double width, double height)
             {
-                return new Size(Math.Max(0, width), Math.Max(0, height));
+                return new Size((float)Math.Max(0, width), (float)Math.Max(0, height));
             }
 
             for (int row = 0; row < rows; row++)
@@ -2837,7 +2837,7 @@ namespace Telegram.Views.Calls
                 }
             }
 
-            availableSize.Height = finalHeight;
+            availableSize.Height = (float)finalHeight;
             return availableSize;
         }
 
@@ -2849,8 +2849,8 @@ namespace Telegram.Views.Calls
             var rows = Math.Ceiling(Math.Sqrt(count));
             var columns = Math.Ceiling(count / rows);
 
-            var finalWidth = finalSize.Width;
-            var finalHeight = finalSize.Height;
+            double finalWidth = finalSize.Width;
+            double finalHeight = finalSize.Height;
 
             if (_mode == ParticipantsGridMode.Compact)
             {
@@ -2907,7 +2907,7 @@ namespace Telegram.Views.Calls
 
                 static Size SafeSize(double width, double height)
                 {
-                    return new Size(Math.Max(0, width), Math.Max(0, height));
+                    return new Size((float)Math.Max(0, width), (float)Math.Max(0, height));
                 }
 
                 for (int column = 0; column < rowColumns; column++)
@@ -2919,7 +2919,7 @@ namespace Telegram.Views.Calls
                     }
 
                     var size = SafeSize(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows);
-                    var point = new Point(x + column * size.Width, row * size.Height);
+                    var point = new Point((float)(x + column * size.Width), row * size.Height);
 
                     if (cell.IsSelected)
                     {

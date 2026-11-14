@@ -2534,6 +2534,7 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Shims\ClipboardEx.cs" />
     <Compile Include="Shims\ConditionalWeakTableExtensions.cs" />
+    <Compile Include="Shims\EventHandler.cs" />
     <Compile Include="Shims\FocusManagerEx.cs" />
     <Compile Include="Shims\IncrementalLoading.cs" />
     <Compile Include="Shims\PickerExtensions.cs" />

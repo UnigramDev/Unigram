@@ -71,14 +71,14 @@ namespace Telegram.Controls.Stories.Widgets
         /// </summary>
         public Size GetNaturalSize()
         {
-            Label.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            Label.Measure(new Size(float.PositiveInfinity, float.PositiveInfinity));
 
             var padding = RootGrid.Padding;
             var emoji = EmojiBox.Margin.Left + EmojiBox.Width + EmojiBox.Margin.Right;
 
             return new Size(
-                padding.Left + emoji + Label.DesiredSize.Width + padding.Right,
-                padding.Top + Math.Max(EmojiBox.Height, LabelBox.Height) + padding.Bottom);
+                (float)(padding.Left + emoji + Label.DesiredSize.Width + padding.Right),
+                (float)(padding.Top + Math.Max(EmojiBox.Height, LabelBox.Height) + padding.Bottom));
         }
 
         private void RootGrid_SizeChanged(object sender, SizeChangedEventArgs e)

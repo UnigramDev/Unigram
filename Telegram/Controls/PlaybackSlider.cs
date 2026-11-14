@@ -78,10 +78,10 @@ namespace Telegram.Controls
 
         public TimeSpan Duration => _duration;
 
-        public event TypedEventHandler<PlaybackSlider, PlaybackSliderPositionChanged> PositionStarted;
-        public event TypedEventHandler<PlaybackSlider, PlaybackSliderPositionChanged> PositionChanging;
-        public event TypedEventHandler<PlaybackSlider, PlaybackSliderPositionChanged> PositionChanged;
-        public event TypedEventHandler<PlaybackSlider, object> PositionCanceled;
+        public event EventHandler<PlaybackSlider, PlaybackSliderPositionChanged> PositionStarted;
+        public event EventHandler<PlaybackSlider, PlaybackSliderPositionChanged> PositionChanging;
+        public event EventHandler<PlaybackSlider, PlaybackSliderPositionChanged> PositionChanged;
+        public event EventHandler<PlaybackSlider, object> PositionCanceled;
 
         private TimeSpan _position;
         private TimeSpan _duration;

@@ -13,11 +13,11 @@ namespace Telegram.Composition
 {
     public partial class WeakInteractionTrackerOwner : IInteractionTrackerOwner
     {
-        public event TypedEventHandler<InteractionTracker, InteractionTrackerIdleStateEnteredArgs> IdleStateEntered;
-        public event TypedEventHandler<InteractionTracker, InteractionTrackerInertiaStateEnteredArgs> InertiaStateEntered;
-        public event TypedEventHandler<InteractionTracker, InteractionTrackerInteractingStateEnteredArgs> InteractingStateEntered;
-        public event TypedEventHandler<InteractionTracker, InteractionTrackerValuesChangedArgs> ValuesChanged;
-        public event TypedEventHandler<InteractionTracker, InteractionTrackerCustomAnimationStateEnteredArgs> CustomAnimationStateEntered;
+        public event EventHandler<InteractionTracker, InteractionTrackerIdleStateEnteredArgs> IdleStateEntered;
+        public event EventHandler<InteractionTracker, InteractionTrackerInertiaStateEnteredArgs> InertiaStateEntered;
+        public event EventHandler<InteractionTracker, InteractionTrackerInteractingStateEnteredArgs> InteractingStateEntered;
+        public event EventHandler<InteractionTracker, InteractionTrackerValuesChangedArgs> ValuesChanged;
+        public event EventHandler<InteractionTracker, InteractionTrackerCustomAnimationStateEnteredArgs> CustomAnimationStateEntered;
 
         void IInteractionTrackerOwner.IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {

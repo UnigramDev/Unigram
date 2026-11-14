@@ -1905,7 +1905,7 @@ namespace Telegram.Views.Popups
             var positions = _positions ??= MosaicAlbumLayout.chatMessageBubbleMosaicLayout(MAX_WIDTH, MAX_HEIGHT, GetSizes());
             if (positions.Item1.Length == 1)
             {
-                var size = new Size(Media[0].ActualWidth, Media[0].ActualHeight);
+                var size = new Size((float)Media[0].ActualWidth, (float)Media[0].ActualHeight);
                 var rect = new Rect(0, 0, size.Width, size.Height);
 
                 positions = (new[] { (rect, MosaicItemPosition.None) }, size);
@@ -1929,7 +1929,7 @@ namespace Telegram.Views.Popups
                     height = Math.Clamp(height, 98, MAX_HEIGHT);
                 }
 
-                rects[i] = new Rect(x, y, width, height);
+                rects[i] = new Rect((float)x, (float)y, (float)width, (float)height);
             }
 
             var finalWidth = Sanitize(positions.Item2.Width * ratioX);
@@ -1940,7 +1940,7 @@ namespace Telegram.Views.Popups
                 finalHeight = Math.Clamp(finalHeight, 98, MAX_HEIGHT);
             }
 
-            return (rects, new Size(finalWidth, finalHeight));
+            return (rects, new Size((float)finalWidth, (float)finalHeight));
         }
 
         private static double Sanitize(double value)
@@ -1956,7 +1956,7 @@ namespace Telegram.Views.Popups
         {
             foreach (var media in Media)
             {
-                yield return new Size(media.ActualWidth, media.ActualHeight);
+                yield return new Size((float)media.ActualWidth, (float)media.ActualHeight);
             }
         }
     }

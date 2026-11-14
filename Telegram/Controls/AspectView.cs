@@ -116,8 +116,8 @@ namespace Telegram.Controls
             }
             else if (Constraint is FixedSize fixedSize)
             {
-                base.MeasureOverride(new Size(fixedSize.Width, fixedSize.Height));
-                return new Size(fixedSize.Width, fixedSize.Height);
+                base.MeasureOverride(new Size((float)fixedSize.Width, (float)fixedSize.Height));
+                return new Size((float)fixedSize.Width, (float)fixedSize.Height);
             }
 
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, MaxWidth));
@@ -390,7 +390,7 @@ namespace Telegram.Controls
                 height = int.MaxValue;
             }
 
-            ActualConstraint = new Size(width, height);
+            ActualConstraint = new Size((float)width, (float)height);
 
             var rotate = RotationAngle
                 is RotationAngle.Angle90
@@ -415,8 +415,8 @@ namespace Telegram.Controls
             width = Math.Max(width, MinWidth);
             height = Math.Max(height, MinHeight);
 
-            base.MeasureOverride(new Size(width, height));
-            return new Size(width, height);
+            base.MeasureOverride(new Size((float)width, (float)height));
+            return new Size((float)width, (float)height);
         }
 
         private bool _applyingRotation;

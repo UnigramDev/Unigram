@@ -97,8 +97,8 @@ namespace Telegram.Controls
         public static Size Scale(this Size size, double scaleFactor)
         {
             return new Size(
-                double.IsInfinity(size.Width) ? size.Width : (size.Width * scaleFactor),
-                double.IsInfinity(size.Height) ? size.Height : (size.Height * scaleFactor));
+                (float)(double.IsInfinity(size.Width) ? size.Width : (size.Width * scaleFactor)),
+                (float)(double.IsInfinity(size.Height) ? size.Height : (size.Height * scaleFactor)));
         }
     }
 }

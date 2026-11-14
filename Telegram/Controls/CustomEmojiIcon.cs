@@ -134,7 +134,7 @@ namespace Telegram.Controls
                         player.LoopCount = name.AnimateCustomEmoji ? 0 : 1;
                         player.Width = size;
                         player.Height = size;
-                        player.FrameSize = new Size(size, size);
+                        player.FrameSize = new Size((float)size, (float)size);
                         player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                         player.HorizontalAlignment = HorizontalAlignment.Left;
                         player.FlowDirection = FlowDirection.LeftToRight;

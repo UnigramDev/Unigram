@@ -2846,7 +2846,7 @@ namespace Telegram.Controls.Messages
             var message = _message;
             if (message == null)
             {
-                return new Rect(0, 0, ActualWidth, ActualHeight);
+                return new Rect(0, 0, (float)ActualWidth, (float)ActualHeight);
             }
 
             _highlight = BootStrapper.Current.Compositor.CreateContainerVisual();
@@ -2984,8 +2984,8 @@ namespace Telegram.Controls.Messages
                     var hheight = (float)(maxY - minY);
 
                     solid.Scale = new Vector3(wwidth / target.ActualSize.X, hheight / target.ActualSize.Y, 0);
-                    solid.CenterPoint = new Vector3(new Windows.Foundation.Point(maxX - (wwidth / 2), maxY - (hheight / 2)).ToVector2(), 0);
-                    solid.CenterPoint = new Vector3(new Windows.Foundation.Point(minX + 16, minY + 8).ToVector2(), 0);
+                    solid.CenterPoint = new Vector3(new Windows.Foundation.Point((float)(maxX - (wwidth / 2)), (float)(maxY - (hheight / 2))).ToVector2(), 0);
+                    solid.CenterPoint = new Vector3(new Windows.Foundation.Point((float)(minX + 16), (float)(minY + 8)).ToVector2(), 0);
 
                     if (ApiInfo.CanCreateRectangleClip)
                     {
@@ -3018,7 +3018,7 @@ namespace Telegram.Controls.Messages
                     solid.StartAnimation("Opacity", opacity1);
                     visual.StartAnimation("Opacity", opacity2);
 
-                    return new Rect(minX, minY, maxX - minX, maxY - minY);
+                    return new Rect((float)minX, (float)minY, (float)(maxX - minX), (float)(maxY - minY));
                 }
             }
 
@@ -3064,7 +3064,7 @@ namespace Telegram.Controls.Messages
 
             solid.StartAnimation("Opacity", animation);
 
-            return new Rect(0, 0, ActualWidth, ActualHeight);
+            return new Rect(0, 0, (float)ActualWidth, (float)ActualHeight);
         }
 
         #region Actions
@@ -4035,11 +4035,11 @@ namespace Telegram.Controls.Messages
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                return base.MeasureOverride(new Size(Math.Max(minWidth, width * ratio) + additional, availableSize.Height));
+                return base.MeasureOverride(new Size((float)(Math.Max(minWidth, width * ratio) + additional), availableSize.Height));
             }
             else
             {
-                return base.MeasureOverride(new Size(Math.Max(minWidth, width) + additional, availableSize.Height));
+                return base.MeasureOverride(new Size((float)(Math.Max(minWidth, width) + additional), availableSize.Height));
             }
         }
 

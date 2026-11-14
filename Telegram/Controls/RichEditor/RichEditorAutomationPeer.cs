@@ -323,7 +323,7 @@ namespace Telegram.Controls.RichEditor
             to = leaf.Length;
 
             var transform = view.TransformToVisual(_owner);
-            var bounds = transform.TransformBounds(new Rect(0, 0, view.ActualWidth, view.ActualHeight));
+            var bounds = transform.TransformBounds(new Rect(0, 0, (float)view.ActualWidth, (float)view.ActualHeight));
 
             if (bounds.Bottom <= viewport.Top || bounds.Top >= viewport.Bottom || bounds.Right <= viewport.Left || bounds.Left >= viewport.Right)
             {
@@ -710,7 +710,7 @@ namespace Telegram.Controls.RichEditor
         {
             var bounds = GetBoundingRectangle();
             var scale = _owner.XamlRoot?.RasterizationScale ?? 1;
-            var local = new Point((screenLocation.X - bounds.X) / scale, (screenLocation.Y - bounds.Y) / scale);
+            var local = new Point((float)((screenLocation.X - bounds.X) / scale), (float)((screenLocation.Y - bounds.Y) / scale));
 
             if (_owner.HitTestFromControl(local, out RichPosition position))
             {

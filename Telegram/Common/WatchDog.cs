@@ -515,10 +515,13 @@ namespace Telegram
         private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs args)
 #endif
         {
-            args.Handled = args.Exception is not LayoutCycleException
+            // E_LAYOUTCYCLE rather than LayoutCycleException, which CsWinRT 3 keeps internal.
+            var layoutCycle = args.Exception.HResult == unchecked((int)0x802B0014);
+
+            args.Handled = !layoutCycle
                 && args.Exception.HResult != unchecked((int)0x8001010A);
 
-            if (args.Exception is LayoutCycleException)
+            if (layoutCycle)
             {
                 AppSettings.Diagnostics.LegacyScrollBars = true;
             }

@@ -72,7 +72,7 @@ namespace Telegram.Navigation
         internal WindowContext(Window window)
         {
             _window = window;
-            _handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+            _handle = GetWindowHandle(window);
             _current = this;
 
             Dispatcher = DispatcherContext.Current;
@@ -160,7 +160,11 @@ namespace Telegram.Navigation
         // shows nothing until it is given one. The HWND overload is what puts it over our window.
         public IAsyncOperation<UserConsentVerificationResult> RequestUserConsentAsync(string message)
         {
+#if CSWINRT3_0
+            return UserConsentVerifier.RequestVerificationForWindowAsync(_handle, message);
+#else
             return UserConsentVerifierInterop.RequestVerificationForWindowAsync(_handle, message);
+#endif
         }
 
         private string _persistedId;
@@ -401,8 +405,8 @@ namespace Telegram.Navigation
 
                 var scale = Scale;
 
-                return new Rect(origin.x / scale, origin.y / scale,
-                    (client.right - client.left) / scale, (client.bottom - client.top) / scale);
+                return new Rect((float)(origin.x / scale), (float)(origin.y / scale),
+                    (float)((client.right - client.left) / scale), (float)((client.bottom - client.top) / scale));
             }
         }
 
@@ -441,7 +445,7 @@ namespace Telegram.Navigation
                 }
 
                 var scale = Scale;
-                return new Point(point.x / scale, point.y / scale);
+                return new Point((float)(point.x / scale), (float)(point.y / scale));
             }
         }
 
@@ -460,8 +464,8 @@ namespace Telegram.Navigation
 
                 var scale = Scale;
 
-                return new Rect(rect.left / scale, rect.top / scale,
-                    (rect.right - rect.left) / scale, (rect.bottom - rect.top) / scale);
+                return new Rect((float)(rect.left / scale), (float)(rect.top / scale),
+                    (float)((rect.right - rect.left) / scale), (float)((rect.bottom - rect.top) / scale));
             }
         }
 
@@ -992,7 +996,17 @@ namespace Telegram.Navigation
         /// </summary>
         internal static void InitializeWithWindow(object target, XamlRoot xamlRoot)
         {
+#if CSWINRT3_0
+            ((IInitializeWithWindow)target).Initialize(GetWindowHandle(xamlRoot));
+#else
             WinRT.Interop.InitializeWithWindow.Initialize(target, GetWindowHandle(xamlRoot));
+#endif
+        }
+
+        // A window's id is its HWND: Win32Interop.GetWindowFromWindowId is nothing but this cast.
+        internal static IntPtr GetWindowHandle(Window window)
+        {
+            return (IntPtr)window.AppWindow.Id.Value;
         }
 
         partial void SetHostContent(UIElement content)

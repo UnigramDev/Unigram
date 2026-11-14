@@ -333,7 +333,7 @@ namespace Telegram.Controls
 
             if (radiusLeft != 0)
             {
-                pathFigure.StartPoint = new Point(6 - radiusLeft, -1);
+                pathFigure.StartPoint = new Point((float)(6 - radiusLeft), -1);
             }
             else
             {
@@ -342,40 +342,40 @@ namespace Telegram.Controls
 
                 pathFigure.Segments.Add(new BezierSegment
                 {
-                    Point1 = new Point(0.923074, 2),
-                    Point2 = new Point(1.80816, 2.36679),
-                    Point3 = new Point(2.46094, 3.01953)
+                    Point1 = new Point(0.923074f, 2),
+                    Point2 = new Point(1.80816f, 2.36679f),
+                    Point3 = new Point(2.46094f, 3.01953f)
                 });
             }
 
-            pathFigure.Segments.Add(new LineSegment { Point = new Point(6.76172, 7.32031) });
+            pathFigure.Segments.Add(new LineSegment { Point = new Point(6.76172f, 7.32031f) });
 
             pathFigure.Segments.Add(new BezierSegment
             {
-                Point1 = new Point(7.23956, 7.79815),
+                Point1 = new Point(7.23956f, 7.79815f),
                 Point2 = new Point(8, 8),
-                Point3 = new Point(8.5, 7.99512)
+                Point3 = new Point(8.5f, 7.99512f)
             });
 
             pathFigure.Segments.Add(new BezierSegment
             {
                 Point1 = new Point(9, 8),
-                Point2 = new Point(9.76044, 7.79815),
-                Point3 = new Point(10.2383, 7.32031)
+                Point2 = new Point(9.76044f, 7.79815f),
+                Point3 = new Point(10.2383f, 7.32031f)
             });
 
             if (radiusRight != 0)
             {
-                pathFigure.Segments.Add(new LineSegment { Point = new Point(17 - (6 - radiusRight), -1) });
+                pathFigure.Segments.Add(new LineSegment { Point = new Point((float)(17 - (6 - radiusRight)), -1) });
             }
             else
             {
-                pathFigure.Segments.Add(new LineSegment { Point = new Point(14.5391, 3.01953) });
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(14.5391f, 3.01953f) });
 
                 pathFigure.Segments.Add(new BezierSegment
                 {
-                    Point1 = new Point(15.1918, 2.36679),
-                    Point2 = new Point(16.0769, 2),
+                    Point1 = new Point(15.1918f, 2.36679f),
+                    Point2 = new Point(16.0769f, 2),
                     Point3 = new Point(17, 2)
                 });
 

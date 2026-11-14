@@ -5273,8 +5273,8 @@ namespace Telegram.Td.Api
             {
                 case 0:
                 case 360:
-                    topPoint = new Windows.Foundation.Point(0.5, 0);
-                    bottomPoint = new Windows.Foundation.Point(0.5, 1);
+                    topPoint = new Windows.Foundation.Point(0.5f, 0);
+                    bottomPoint = new Windows.Foundation.Point(0.5f, 1);
                     break;
                 case 45:
                 default:
@@ -5282,24 +5282,24 @@ namespace Telegram.Td.Api
                     bottomPoint = new Windows.Foundation.Point(0, 1);
                     break;
                 case 90:
-                    topPoint = new Windows.Foundation.Point(1, 0.5);
-                    bottomPoint = new Windows.Foundation.Point(0, 0.5);
+                    topPoint = new Windows.Foundation.Point(1, 0.5f);
+                    bottomPoint = new Windows.Foundation.Point(0, 0.5f);
                     break;
                 case 135:
                     topPoint = new Windows.Foundation.Point(1, 1);
                     bottomPoint = new Windows.Foundation.Point(0, 0);
                     break;
                 case 180:
-                    topPoint = new Windows.Foundation.Point(0.5, 1);
-                    bottomPoint = new Windows.Foundation.Point(0.5, 0);
+                    topPoint = new Windows.Foundation.Point(0.5f, 1);
+                    bottomPoint = new Windows.Foundation.Point(0.5f, 0);
                     break;
                 case 225:
                     topPoint = new Windows.Foundation.Point(0, 1);
                     bottomPoint = new Windows.Foundation.Point(1, 0);
                     break;
                 case 270:
-                    topPoint = new Windows.Foundation.Point(0, 0.5);
-                    bottomPoint = new Windows.Foundation.Point(1, 0.5);
+                    topPoint = new Windows.Foundation.Point(0, 0.5f);
+                    bottomPoint = new Windows.Foundation.Point(1, 0.5f);
                     break;
                 case 315:
                     topPoint = new Windows.Foundation.Point(0, 0);

@@ -143,7 +143,7 @@ namespace Telegram.Controls.Messages
                 j += row;
             }
 
-            return new Size(w, h);
+            return new Size((float)w, (float)h);
         }
 
         // Reused across passes. These carry the button rectangles to the native clip
@@ -203,7 +203,7 @@ namespace Telegram.Controls.Messages
                 for (int i = 0; i < row; i++)
                 {
                     var child = Children[j + i];
-                    var rect = new Rect(x, y, column, child.DesiredSize.Height);
+                    var rect = new Rect((float)x, (float)y, column, child.DesiredSize.Height);
 
                     child.Arrange(rect);
 

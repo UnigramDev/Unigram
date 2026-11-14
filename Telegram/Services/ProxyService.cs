@@ -54,8 +54,8 @@ namespace Telegram.Services
 
             _watcher = HttpProxyWatcher.Current;
             _debouncer = new EventDebouncer<bool>(Constants.HoldingThrottle,
-                handler => _watcher.Changed += new TypedEventHandler<HttpProxyWatcher, bool>(handler),
-                handler => _watcher.Changed -= new TypedEventHandler<HttpProxyWatcher, bool>(handler), true);
+                handler => _watcher.Changed += handler.Invoke,
+                handler => _watcher.Changed -= handler.Invoke, true);
 
             _debouncer.Invoked += OnProxyChanged;
         }

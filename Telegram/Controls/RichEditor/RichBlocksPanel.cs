@@ -148,7 +148,7 @@ namespace Telegram.Controls.RichEditor
 
             var children = Children;
             var widest = 0d;
-            var constraint = new Size(width, double.PositiveInfinity);
+            var constraint = new Size(width, float.PositiveInfinity);
 
             for (int i = 0; i < children.Count; i++)
             {
@@ -170,7 +170,7 @@ namespace Telegram.Controls.RichEditor
             Sum();
 
             MeasureTicks += Stopwatch.GetTimestamp() - started;
-            return new Size(widest, _offsets[_roots.Count]);
+            return new Size((float)widest, (float)_offsets[_roots.Count]);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -185,7 +185,7 @@ namespace Telegram.Controls.RichEditor
 
                 if (index >= 0 && index < _roots.Count)
                 {
-                    presenter.Arrange(new Rect(0, _offsets[index], finalSize.Width, _values[index]));
+                    presenter.Arrange(new Rect(0, (float)_offsets[index], finalSize.Width, (float)_values[index]));
                 }
             }
 

@@ -238,7 +238,7 @@ namespace Telegram.Controls.Messages
 
                 if (message.IsChannelPost || !message.IsOutgoing)
                 {
-                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5f, 0.5f);
                     player.RenderTransform = new ScaleTransform
                     {
                         ScaleX = -1

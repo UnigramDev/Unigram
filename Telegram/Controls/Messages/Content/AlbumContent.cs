@@ -53,7 +53,7 @@ namespace Telegram.Controls.Messages.Content
                     height += child.DesiredSize.Height;
                 }
 
-                return new Size(width, height);
+                return new Size((float)width, (float)height);
             }
 
             var positions = album.GetPositionsForWidth(availableSize.Width, true);
@@ -82,7 +82,7 @@ namespace Telegram.Controls.Messages.Content
                 for (int i = 0; i < Children.Count; i++)
                 {
                     var child = Children[i];
-                    child.Arrange(new Rect(0, height, child.DesiredSize.Width, child.DesiredSize.Height));
+                    child.Arrange(new Rect(0, (float)height, child.DesiredSize.Width, child.DesiredSize.Height));
                     width = Math.Max(child.DesiredSize.Width, width);
                     height += child.DesiredSize.Height;
                 }
@@ -114,7 +114,7 @@ namespace Telegram.Controls.Messages.Content
                     var transform = child.TransformToVisual(this);
                     var point = transform.TransformPoint(new Point());
 
-                    return new Rect(point.X, point.Y, selector.ActualWidth, selector.ActualHeight);
+                    return new Rect(point.X, point.Y, (float)selector.ActualWidth, (float)selector.ActualHeight);
                 }
             }
 

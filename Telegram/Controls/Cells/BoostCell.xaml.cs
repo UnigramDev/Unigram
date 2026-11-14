@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
@@ -22,7 +23,7 @@ namespace Telegram.Controls.Cells
             InitializeComponent();
         }
 
-        public void UpdateChatBoost(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateChatBoost(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var boost = args.Item as ChatBoost;
             if (boost == null)

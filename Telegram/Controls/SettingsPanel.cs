@@ -54,11 +54,11 @@ namespace Telegram.Controls
                 // The -16 drops the trailing gap after the last child. With IsFooter the
                 // accumulator starts at 0, so a panel with nothing visible has no gap to
                 // drop and would report -16, which XAML rejects as a desired size.
-                return new Size(availableSize.Width, Math.Max(0, accumulated - 16));
+                return new Size(availableSize.Width, (float)Math.Max(0, accumulated - 16));
             }
             else
             {
-                return new Size(availableSize.Width, accumulated + 16);
+                return new Size(availableSize.Width, (float)(accumulated + 16));
             }
         }
 
@@ -73,7 +73,7 @@ namespace Telegram.Controls
                     accumulated -= 16;
                 }
 
-                child.Arrange(new Rect(0, accumulated, finalSize.Width, child.DesiredSize.Height));
+                child.Arrange(new Rect(0, (float)accumulated, finalSize.Width, child.DesiredSize.Height));
 
                 if (child.DesiredSize.Height > 0)
                 {

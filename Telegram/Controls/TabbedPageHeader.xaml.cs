@@ -101,7 +101,7 @@ namespace Telegram.Controls
             remove => BackButton.Click -= value;
         }
 
-        public event TypedEventHandler<UIElement, object> GoBackRequested;
+        public event EventHandler<UIElement, object> GoBackRequested;
 
         public event RoutedEventHandler GoForwardClick
         {
@@ -109,7 +109,7 @@ namespace Telegram.Controls
             remove => ForwardButton.Click -= value;
         }
 
-        public event TypedEventHandler<UIElement, object> GoForwardRequested;
+        public event EventHandler<UIElement, object> GoForwardRequested;
 
         public Uri Source
         {

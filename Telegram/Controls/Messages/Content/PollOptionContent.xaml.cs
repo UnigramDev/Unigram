@@ -629,12 +629,12 @@ namespace Telegram.Controls.Messages.Content
         protected override Size ArrangeOverride(Size finalSize)
         {
             var text = Children[0];
-            text.Arrange(new Rect(0, 0, finalSize.Width - _textInset, text.DesiredSize.Height));
+            text.Arrange(new Rect(0, 0, (float)(finalSize.Width - _textInset), text.DesiredSize.Height));
 
             if (Children.Count > 1)
             {
                 var voters = Children[1];
-                voters.Arrange(new Rect(finalSize.Width - voters.DesiredSize.Width, _votersTop, voters.DesiredSize.Width, voters.DesiredSize.Height));
+                voters.Arrange(new Rect(finalSize.Width - voters.DesiredSize.Width, (float)_votersTop, voters.DesiredSize.Width, voters.DesiredSize.Height));
             }
 
             return finalSize;

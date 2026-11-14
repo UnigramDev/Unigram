@@ -271,7 +271,7 @@ namespace Telegram.Views.Wallet
             var shift = (_cell.ActualHeight / 2 - amount.ActualOffset.Y - amount.ActualHeight / 2 - AmountRaise) * LiftScale;
 
             fontSize *= AmountScale * LiftScale;
-            return new Rect(glyph.X, glyph.Y + shift, glyph.Width, glyph.Height);
+            return new Rect(glyph.X, (float)(glyph.Y + shift), glyph.Width, glyph.Height);
         }
 
         private void Lift(SelectorItem container, string key)
@@ -317,7 +317,7 @@ namespace Telegram.Views.Wallet
             // XAML rasterizes text for the transforms it knows of, and a composition scale is not
             // one, so the text would otherwise be a raised bitmap of the row at rest. The two
             // share a centre, so they compose as one scale.
-            _container.RenderTransformOrigin = new Point(0.5, 0.5);
+            _container.RenderTransformOrigin = new Point(0.5f, 0.5f);
             _container.RenderTransform = new ScaleTransform { ScaleX = LiftScale, ScaleY = LiftScale };
 
             // Grows evenly from its middle, and the press squashes it and pushes it down a little.
@@ -345,7 +345,7 @@ namespace Telegram.Views.Wallet
 
             // Large as a RenderTransform, for the same reason as the row: the compositor only
             // scales down from it, so the raised amount is rasterized at the size it is shown.
-            amount.RenderTransformOrigin = new Point(1, 0.5);
+            amount.RenderTransformOrigin = new Point(1, 0.5f);
             amount.RenderTransform = new ScaleTransform { ScaleX = AmountScale, ScaleY = AmountScale };
 
             // Read off the visuals rather than measured here: the row is bound before it is laid

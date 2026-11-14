@@ -1,0 +1,29 @@
+<Project>
+
+  <!--
+    Shared by Telegram.WinUI.Projection.csproj and Telegram.WinUI.csproj, which must agree on every
+    version here: the projection is generated from these packages' .winmd files, and the app runs
+    their native halves.
+  -->
+  <PropertyGroup>
+    <!-- The .1 revision is what selects CsWinRT 3 in the .NET SDK; .0 selects CsWinRT 2. -->
+    <TelegramWinUITargetFramework>net11.0-windows10.0.26100.1</TelegramWinUITargetFramework>
+    <TelegramWindowsSdkPackageVersion>10.0.26100.88-preview</TelegramWindowsSdkPackageVersion>
+    <TelegramCsWinRTVersion>3.0.0-preview.261104.1</TelegramCsWinRTVersion>
+    <TelegramWinAppSDKVersion>2.6.5</TelegramWinAppSDKVersion>
+    <TelegramWebView2Version>1.0.4129.50</TelegramWebView2Version>
+    <TelegramWin2DVersion>1.4.0</TelegramWin2DVersion>
+
+    <_TelegramProjectionPackageRoot>$(NuGetPackageRoot)</_TelegramProjectionPackageRoot>
+    <_TelegramProjectionPackageRoot Condition="'$(_TelegramProjectionPackageRoot)' == ''">$(UserProfile)\.nuget\packages\</_TelegramProjectionPackageRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <TelegramProjectionWinMD Include="$(_TelegramProjectionPackageRoot)microsoft.windowsappsdk.foundation\$(TelegramWinAppSDKVersion)\metadata\*.winmd" />
+    <TelegramProjectionWinMD Include="$(_TelegramProjectionPackageRoot)microsoft.windowsappsdk.interactiveexperiences\$(TelegramWinAppSDKVersion)\metadata\10.0.18362.0\*.winmd" />
+    <TelegramProjectionWinMD Include="$(_TelegramProjectionPackageRoot)microsoft.windowsappsdk.winui\$(TelegramWinAppSDKVersion)\metadata\*.winmd" />
+    <TelegramProjectionWinMD Include="$(_TelegramProjectionPackageRoot)microsoft.web.webview2\$(TelegramWebView2Version)\lib\Microsoft.Web.WebView2.Core.winmd" />
+    <TelegramProjectionWinMD Include="$(_TelegramProjectionPackageRoot)microsoft.graphics.win2d\$(TelegramWin2DVersion)\lib\uap10.0\Microsoft.Graphics.Canvas.winmd" />
+  </ItemGroup>
+
+</Project>

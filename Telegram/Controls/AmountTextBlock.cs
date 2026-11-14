@@ -708,7 +708,7 @@ namespace Telegram.Controls
             var margin = Margin;
             _available = (float)(availableSize.Width + margin.Left + margin.Right);
 
-            return base.MeasureOverride(new Size(double.PositiveInfinity, availableSize.Height));
+            return base.MeasureOverride(new Size(float.PositiveInfinity, availableSize.Height));
         }
 
         private void OnPrefixSizeChanged(object sender, SizeChangedEventArgs e)
@@ -900,10 +900,17 @@ namespace Telegram.Controls
             public bool PixelSnappingDisabled => true;
             public Matrix3x2 Transform => Matrix3x2.Identity;
 
+#if CSWINRT3_0
+            public void DrawGlyphRun(Vector2 point, CanvasFontFace fontFace, float fontSize,
+                ReadOnlySpan<CanvasGlyph> glyphs, bool isSideways, uint bidiLevel, object brush,
+                CanvasTextMeasuringMode measuringMode, string localeName, string textString,
+                ReadOnlySpan<int> clusterMapIndices, uint textPosition, CanvasGlyphOrientation glyphOrientation)
+#else
             public void DrawGlyphRun(Vector2 point, CanvasFontFace fontFace, float fontSize,
                 CanvasGlyph[] glyphs, bool isSideways, uint bidiLevel, object brush,
                 CanvasTextMeasuringMode measuringMode, string localeName, string textString,
                 int[] clusterMapIndices, uint textPosition, CanvasGlyphOrientation glyphOrientation)
+#endif
             {
                 if (glyphs == null)
                 {

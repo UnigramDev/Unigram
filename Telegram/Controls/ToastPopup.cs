@@ -167,7 +167,7 @@ namespace Telegram.Controls
         /// <summary>
         /// Raised once the toast is off the screen, animation included.
         /// </summary>
-        public event TypedEventHandler<ToastPopup, object> Closed;
+        public event EventHandler<ToastPopup, object> Closed;
 
         public bool IsOpen
         {
@@ -411,7 +411,7 @@ namespace Telegram.Controls
             if (Target != null && Target.XamlRoot != null)
             {
                 PositionTargeted(placement, Target.TransformToVisual(null).TransformBounds(
-                    new Rect(0, 0, Target.ActualWidth, Target.ActualHeight)));
+                    new Rect(0, 0, (float)Target.ActualWidth, (float)Target.ActualHeight)));
             }
             else
             {

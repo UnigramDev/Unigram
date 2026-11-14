@@ -2864,7 +2864,7 @@ namespace Telegram.Controls
             else
             {
                 var radius = 12 * unit;
-                var shadow = new Rect(frame.X + 0.75 * unit, frame.Y + 0.75 * unit, frame.Width, frame.Height);
+                var shadow = new Rect((float)(frame.X + 0.75 * unit), (float)(frame.Y + 0.75 * unit), frame.Width, frame.Height);
 
                 session.DrawRoundedRectangle(shadow, radius, radius, shadowColor, 2 * unit, _dashStyle);
                 session.DrawRoundedRectangle(frame, radius, radius, frameColor, 2 * unit, _dashStyle);
@@ -3214,7 +3214,7 @@ namespace Telegram.Controls
 
             if (right > left)
             {
-                bounds = new Rect(left, top, right - left, bottom - top);
+                bounds = new Rect((float)left, (float)top, (float)(right - left), (float)(bottom - top));
             }
             else
             {
@@ -3252,7 +3252,7 @@ namespace Telegram.Controls
 
                     if (right > left)
                     {
-                        lines[i] = new Rect(left - padding, top, right - left + padding * 2, line.Height);
+                        lines[i] = new Rect((float)(left - padding), top, (float)(right - left + padding * 2), line.Height);
                     }
                 }
 
@@ -3332,7 +3332,7 @@ namespace Telegram.Controls
 
         private static Rect WithEdges(Rect rect, double left, double right)
         {
-            return new Rect(left, rect.Y, right - left, rect.Height);
+            return new Rect((float)left, rect.Y, (float)(right - left), rect.Height);
         }
 
         private static void AddOutline(CanvasPathBuilder builder, List<Rect> block, float radius)

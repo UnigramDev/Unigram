@@ -687,7 +687,7 @@ namespace Telegram.Views.Wallet.Popups
         {
             foreach (var child in Children)
             {
-                child.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                child.Measure(new Size(float.PositiveInfinity, float.PositiveInfinity));
             }
 
             return new Size(

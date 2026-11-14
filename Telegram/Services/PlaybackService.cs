@@ -199,19 +199,19 @@ namespace Telegram.Services
 
 
 
-        event TypedEventHandler<IPlaybackService, object> MediaFailed;
+        event EventHandler<IPlaybackService, object> MediaFailed;
 
-        event TypedEventHandler<IPlaybackService, object> StateChanged;
-        event TypedEventHandler<IPlaybackService, object> SourceChanged;
-        event TypedEventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
-        event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
+        event EventHandler<IPlaybackService, object> StateChanged;
+        event EventHandler<IPlaybackService, object> SourceChanged;
+        event EventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
+        event EventHandler<IPlaybackService, object> PlaylistChanged;
 
         /// <summary>
         /// Repeat mode or shuffle changed. They can be changed from the system transport
         /// controls as well as from the app, so the buttons cannot only be refreshed by
         /// whoever pressed them.
         /// </summary>
-        event TypedEventHandler<IPlaybackService, object> SettingsChanged;
+        event EventHandler<IPlaybackService, object> SettingsChanged;
     }
 
     public partial class PlaybackService : IPlaybackService
@@ -263,12 +263,12 @@ namespace Telegram.Services
         // file subscriptions go through.
         private IEventAggregator _aggregator;
 
-        public event TypedEventHandler<IPlaybackService, object> MediaFailed;
-        public event TypedEventHandler<IPlaybackService, object> StateChanged;
-        public event TypedEventHandler<IPlaybackService, object> SourceChanged;
-        public event TypedEventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
-        public event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
-        public event TypedEventHandler<IPlaybackService, object> SettingsChanged;
+        public event EventHandler<IPlaybackService, object> MediaFailed;
+        public event EventHandler<IPlaybackService, object> StateChanged;
+        public event EventHandler<IPlaybackService, object> SourceChanged;
+        public event EventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
+        public event EventHandler<IPlaybackService, object> PlaylistChanged;
+        public event EventHandler<IPlaybackService, object> SettingsChanged;
 
         public PlaybackService()
         {

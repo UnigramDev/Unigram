@@ -119,7 +119,7 @@ namespace Telegram.Services
                 Title = title ?? string.Empty
             };
 
-            var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+            var handle = WindowContext.GetWindowHandle(window);
             var scale = Win32.GetDpiForWindow(handle) / 96.0;
 
             window.AppWindow.Resize(new SizeInt32(

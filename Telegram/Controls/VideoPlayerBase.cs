@@ -93,7 +93,7 @@ namespace Telegram.Controls
 
         protected bool _isFirstFrameReady;
 
-        public event TypedEventHandler<VideoPlayerBase, EventArgs> FirstFrameReady;
+        public event EventHandler<VideoPlayerBase, EventArgs> FirstFrameReady;
         protected void OnFirstFrameReady(bool value)
         {
             if (/*_isFirstFrameReady != value &&*/ value)
@@ -106,7 +106,7 @@ namespace Telegram.Controls
         private double _position;
         public abstract double Position { get; set; }
 
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerPositionChangedEventArgs> PositionChanged;
+        public event EventHandler<VideoPlayerBase, VideoPlayerPositionChangedEventArgs> PositionChanged;
         protected void OnPositionChanged(double value)
         {
             //if (_position != value)
@@ -119,7 +119,7 @@ namespace Telegram.Controls
         private double _buffered;
         public abstract double Buffered { get; }
 
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerBufferedChangedEventArgs> BufferedChanged;
+        public event EventHandler<VideoPlayerBase, VideoPlayerBufferedChangedEventArgs> BufferedChanged;
         protected void OnBufferedChanged(double value)
         {
             //if (_position != value)
@@ -132,7 +132,7 @@ namespace Telegram.Controls
         private double _duration;
         public abstract double Duration { get; }
 
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerDurationChangedEventArgs> DurationChanged;
+        public event EventHandler<VideoPlayerBase, VideoPlayerDurationChangedEventArgs> DurationChanged;
         protected void OnDurationChanged(double value)
         {
             //if (_duration != value)
@@ -145,7 +145,7 @@ namespace Telegram.Controls
         private bool _isPlaying;
         public abstract bool IsPlaying { get; }
 
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerIsPlayingChangedEventArgs> IsPlayingChanged;
+        public event EventHandler<VideoPlayerBase, VideoPlayerIsPlayingChangedEventArgs> IsPlayingChanged;
         protected void OnIsPlayingChanged(bool value)
         {
             //if (_isPlaying != value)
@@ -158,7 +158,7 @@ namespace Telegram.Controls
         private double _volume;
         public abstract double Volume { get; set; }
 
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerVolumeChangedEventArgs> VolumeChanged;
+        public event EventHandler<VideoPlayerBase, VideoPlayerVolumeChangedEventArgs> VolumeChanged;
         protected void OnVolumeChanged(double value)
         {
             //if (_volume != value)
@@ -176,27 +176,27 @@ namespace Telegram.Controls
 
         public VideoPlayerTrack Track { get; private set; }
 
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerLevelsChangedEventArgs> LevelsChanged;
+        public event EventHandler<VideoPlayerBase, VideoPlayerLevelsChangedEventArgs> LevelsChanged;
         protected void OnLevelsChanged(IList<VideoPlayerLevel> levels, VideoPlayerLevel currentLevel)
         {
             Levels = levels ?? Array.Empty<VideoPlayerLevel>();
             LevelsChanged?.Invoke(this, new VideoPlayerLevelsChangedEventArgs(levels, currentLevel, IsCurrentLevelAuto));
         }
 
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerTrackChangedEventArgs> TrackChanged;
+        public event EventHandler<VideoPlayerBase, VideoPlayerTrackChangedEventArgs> TrackChanged;
         protected void OnTrackChanged(int width, int height)
         {
             Track = new VideoPlayerTrack(width, height);
             TrackChanged?.Invoke(this, new VideoPlayerTrackChangedEventArgs(width, height));
         }
 
-        public event TypedEventHandler<VideoPlayerBase, EventArgs> Closed;
+        public event EventHandler<VideoPlayerBase, EventArgs> Closed;
         protected void OnClosed()
         {
             Closed?.Invoke(this, EventArgs.Empty);
         }
 
-        public event TypedEventHandler<VideoPlayerBase, EventArgs> TreeUpdated;
+        public event EventHandler<VideoPlayerBase, EventArgs> TreeUpdated;
         protected void OnTreeUpdated()
         {
             TreeUpdated?.Invoke(this, EventArgs.Empty);

@@ -67,7 +67,7 @@ namespace Telegram.Services
         /// own. The order is carried in the arguments rather than read back from the item, because
         /// by the time a handler runs it may have moved again.
         /// </remarks>
-        public event TypedEventHandler<OrderedSourceService<TItem>, OrderChangedEventArgs<TItem>> Changed;
+        public event EventHandler<OrderedSourceService<TItem>, OrderChangedEventArgs<TItem>> Changed;
 
         /// <summary>
         /// Places the item at <paramref name="order"/>, or takes it out of the list when that is

@@ -117,7 +117,7 @@ namespace Telegram.Controls
             // fires - handledEventsToo is the only way in. The character is already in the
             // document by then, which is what the emoticon match below reads backwards from.
             AddHandler(CharacterReceivedEvent,
-                new TypedEventHandler<UIElement, CharacterReceivedRoutedEventArgs>(OnCharacterReceived), true);
+                new CharacterReceivedHandler(OnCharacterReceived), true);
 
             _formattingFlyout = new MenuFlyoutSubItem
             {
@@ -569,7 +569,7 @@ namespace Telegram.Controls
 
         public event EventHandler TextChangedForRealNoCap;
 
-        public event TypedEventHandler<FormattedTextBox, EventArgs> Accept;
+        public event EventHandler<FormattedTextBox, EventArgs> Accept;
 
         #region IFormattedTextInput
 

@@ -177,7 +177,7 @@ namespace Telegram.Views.Popups
 
                 using (Icon.BeginBatchUpdate())
                 {
-                    Icon.FrameSize = new Size(width, height);
+                    Icon.FrameSize = new Size((float)width, (float)height);
                     Icon.Source = new DelayedFileSource(ViewModel.ClientService, foreground);
                 }
             }

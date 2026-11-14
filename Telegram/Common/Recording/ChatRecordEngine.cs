@@ -673,7 +673,7 @@ namespace Telegram.Common.Recording
                 // The centred square, as fractions of the frame.
                 var side = Math.Min(width, height);
                 var rectangle = side > 0
-                    ? new Rect((width - side) / 2 / width, (height - side) / 2 / height, side / width, side / height)
+                    ? new Rect((float)((width - side) / 2 / width), (float)((height - side) / 2 / height), (float)(side / width), (float)(side / height))
                     : default;
 
                 var length = viewModel.ClientService.Options.SuggestedVideoNoteLength;

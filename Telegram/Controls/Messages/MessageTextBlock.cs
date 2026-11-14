@@ -634,7 +634,7 @@ namespace Telegram.Controls.Messages
 
             foreach (var child in Children)
             {
-                child.Measure(new Size(availableSize.Width, double.PositiveInfinity));
+                child.Measure(new Size(availableSize.Width, float.PositiveInfinity));
 
                 var desired = child.DesiredSize;
                 width = Math.Max(width, desired.Width);
@@ -655,7 +655,7 @@ namespace Telegram.Controls.Messages
                 first = false;
             }
 
-            return new Size(width, height);
+            return new Size((float)width, (float)height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -690,7 +690,7 @@ namespace Telegram.Controls.Messages
                     x = finalSize.Width - width;
                 }
 
-                child.Arrange(new Rect(x, y, width, height));
+                child.Arrange(new Rect((float)x, (float)y, width, height));
 
                 y += height;
                 first = false;

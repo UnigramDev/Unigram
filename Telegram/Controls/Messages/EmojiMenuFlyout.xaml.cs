@@ -299,7 +299,7 @@ namespace Telegram.Controls.Messages
             var rootVisual = ElementComposition.GetElementVisual(LayoutRoot);
             var compositor = rootVisual.Compositor;
 
-            var x = position.X - 6;
+            double x = position.X - 6;
             var y = position.Y + element.ActualHeight + 8;
 
             var widthDiff = (width - element.ActualSize.X) / 2;

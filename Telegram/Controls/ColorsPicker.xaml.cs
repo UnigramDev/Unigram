@@ -38,7 +38,7 @@ namespace Telegram.Controls
             RadioColor1.IsChecked = true;
         }
 
-        public event TypedEventHandler<ColorsPicker, ColorsChangedEventArgs> ColorsChanged;
+        public event EventHandler<ColorsPicker, ColorsChangedEventArgs> ColorsChanged;
 
         private int _maximum = 4;
         public int Maximum

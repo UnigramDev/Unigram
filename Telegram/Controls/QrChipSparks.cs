@@ -215,7 +215,7 @@ namespace Telegram.Controls
         private Rect Chip()
         {
             var size = ActualSize;
-            return new Rect(Reach.Left, Reach.Top, Math.Max(0, size.X - Reach.Left - Reach.Right), Math.Max(0, size.Y - Reach.Top - Reach.Bottom));
+            return new Rect((float)Reach.Left, (float)Reach.Top, (float)Math.Max(0, size.X - Reach.Left - Reach.Right), (float)Math.Max(0, size.Y - Reach.Top - Reach.Bottom));
         }
 
         private float Elapsed()

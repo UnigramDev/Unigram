@@ -18,11 +18,15 @@ namespace Telegram.Common
     /// GetForWindow returns to the projected class, and under NativeAOT it arrives as a bare
     /// IInspectable wrapper, so the cast throws InvalidCastException. FromAbi is told the class
     /// instead of looking it up, which is what makes it safe there.
+    /// CsWinRT 3 generates typed GetForWindow extensions itself, and that flavour calls them.
     /// </summary>
     internal static unsafe partial class WindowInterop
     {
         public static UIViewSettings GetUIViewSettings(IntPtr hwnd)
         {
+#if CSWINRT3_0
+            return UIViewSettings.GetForWindow(hwnd);
+#else
             var result = GetForWindow("Windows.UI.ViewManagement.UIViewSettings",
                 new Guid("3694DBF9-8F68-44BE-8FF5-195C98EDE8A6"),
                 new Guid("C63657F6-8850-470D-88F8-455E16EA2C26"),
@@ -36,10 +40,14 @@ namespace Telegram.Common
             {
                 Marshal.Release(result);
             }
+#endif
         }
 
         public static InputPane GetInputPane(IntPtr hwnd)
         {
+#if CSWINRT3_0
+            return InputPane.GetForWindow(hwnd);
+#else
             var result = GetForWindow("Windows.UI.ViewManagement.InputPane",
                 new Guid("75CF2C57-9195-4931-8332-F0B409E916AF"),
                 new Guid("640ADA70-06F3-4C87-A678-9829C9127C28"),
@@ -53,10 +61,14 @@ namespace Telegram.Common
             {
                 Marshal.Release(result);
             }
+#endif
         }
 
         public static SystemMediaTransportControls GetSystemMediaTransportControls(IntPtr hwnd)
         {
+#if CSWINRT3_0
+            return SystemMediaTransportControls.GetForWindow(hwnd);
+#else
             var result = GetForWindow("Windows.Media.SystemMediaTransportControls",
                 new Guid("DDB0472D-C911-4A1F-86D9-DC3D71A95F5A"),
                 new Guid("99FA3FF4-1742-42A6-902E-087D41F965EC"),
@@ -70,8 +82,10 @@ namespace Telegram.Common
             {
                 Marshal.Release(result);
             }
+#endif
         }
 
+#if !CSWINRT3_0
         private static IntPtr GetForWindow(string className, Guid interopIid, Guid riid, IntPtr hwnd)
         {
             Marshal.ThrowExceptionForHR(WindowsCreateString(className, className.Length, out var hstring));
@@ -109,5 +123,6 @@ namespace Telegram.Common
 
         [LibraryImport("combase.dll")]
         private static partial int RoGetActivationFactory(IntPtr activatableClassId, ref Guid iid, out IntPtr factory);
+#endif
     }
 }

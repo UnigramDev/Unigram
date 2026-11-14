@@ -145,7 +145,7 @@ namespace Telegram.Services
                 originalHeight = output.Height;
             }
 
-            return await PrepareVideoThumbnailAsync(file.File, new Size(originalWidth, originalHeight), arguments);
+            return await PrepareVideoThumbnailAsync(file.File, new Size((float)originalWidth, (float)originalHeight), arguments);
         }
 
         public static async Task<InputThumbnail> PrepareVideoThumbnailAsync(StorageFile file, Size output, string arguments)
@@ -1058,13 +1058,13 @@ namespace Telegram.Services
         {
             if (generation.OutputSize.Width > 0 && generation.OutputSize.Height > 0)
             {
-                return new Size(RoundDown(generation.OutputSize.Width), RoundDown(generation.OutputSize.Height));
+                return new Size((float)RoundDown(generation.OutputSize.Width), (float)RoundDown(generation.OutputSize.Height));
             }
 
             var crop = GetVideoCrop(generation, width, height);
             var scale = Math.Min(1, (generation.MaxSide > 0 ? generation.MaxSide : VideoMaxSide) / Math.Max(crop.Width, crop.Height));
 
-            return new Size(RoundDown(crop.Width * scale), RoundDown(crop.Height * scale));
+            return new Size((float)RoundDown(crop.Width * scale), (float)RoundDown(crop.Height * scale));
         }
 
         private static double RoundDown(double value)
@@ -1082,10 +1082,10 @@ namespace Telegram.Services
             if (generation.HasRectangle)
             {
                 var rectangle = generation.Rectangle;
-                return new Rect(rectangle.X * orientedWidth, rectangle.Y * orientedHeight, rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
+                return new Rect((float)(rectangle.X * orientedWidth), (float)(rectangle.Y * orientedHeight), (float)(rectangle.Width * orientedWidth), (float)(rectangle.Height * orientedHeight));
             }
 
-            return new Rect(0, 0, orientedWidth, orientedHeight);
+            return new Rect(0, 0, (float)orientedWidth, (float)orientedHeight);
         }
 
         // From the upright frame to the output, as a photo is drawn: turned and flipped, cropped

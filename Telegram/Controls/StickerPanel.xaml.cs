@@ -31,7 +31,7 @@ namespace Telegram.Controls
         public event EventHandler SettingsClick;
 
         public Action<object> EmojiClick { get; set; }
-        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<StickerViewModel>> EmojiContextRequested;
+        public event EventHandler<UIElement, ItemContextRequestedEventArgs<StickerViewModel>> EmojiContextRequested;
 
         public event EventHandler<StickerDrawerItemClickEventArgs> StickerClick;
         public event EventHandler<ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;

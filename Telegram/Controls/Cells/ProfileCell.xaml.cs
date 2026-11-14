@@ -283,7 +283,7 @@ namespace Telegram.Controls.Cells
             Identity.SetStatus(clientService, chat, BotVerified);
         }
 
-        public void UpdateUser(IClientService clientService, User user, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateUser(IClientService clientService, User user, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             if (args.Phase == 0)
             {
@@ -308,7 +308,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateActiveStories(IClientService clientService, ActiveStoriesViewModel activeStories, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateActiveStories(IClientService clientService, ActiveStoriesViewModel activeStories, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             if (args.Phase == 0)
             {
@@ -333,7 +333,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateChatInviteLinkMember(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateChatInviteLinkMember(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var member = args.Item as ChatInviteLinkMember;
 
@@ -365,7 +365,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateFoundAffiliateProgram(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateFoundAffiliateProgram(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             args.ItemContainer.Tag = args.Item;
             Tag = args.Item;
@@ -403,7 +403,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateConnectedAffiliateProgram(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateConnectedAffiliateProgram(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             args.ItemContainer.Tag = args.Item;
             Tag = args.Item;
@@ -441,7 +441,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateTonConnectSession(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateTonConnectSession(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             args.ItemContainer.Tag = args.Item;
             Tag = args.Item;
@@ -473,7 +473,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSupergroupMember(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSupergroupMember(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             args.ItemContainer.Tag = args.Item;
             Tag = args.Item;
@@ -522,7 +522,7 @@ namespace Telegram.Controls.Cells
             Identity.SetStatus(clientService, user, BotVerified);
         }
 
-        public void UpdateSupergroupAdminFilter(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSupergroupAdminFilter(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             UpdateStyleNoSubtitle();
 
@@ -555,7 +555,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSupergroupBanned(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSupergroupBanned(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var member = args.Item as ChatMember;
 
@@ -628,7 +628,7 @@ namespace Telegram.Controls.Cells
             SubtitleLabel.Text = ChannelParticipantToTypeConverter.Convert(clientService, member);
         }
 
-        public void UpdateBoostSlot(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateBoostSlot(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var slot = args.Item as ChatBoostSlot;
             if (slot == null)
@@ -691,7 +691,7 @@ namespace Telegram.Controls.Cells
 
         private SearchResult _searchResult;
 
-        public void UpdateSearchResult(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSearchResult(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var result = args.Item as SearchResult;
 
@@ -911,7 +911,7 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        public void UpdateChatSharedMembers(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateChatSharedMembers(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var member = args.Item as ChatMember;
             if (member == null)
@@ -1029,7 +1029,7 @@ namespace Telegram.Controls.Cells
             Identity.SetStatus(clientService, user, BotVerified);
         }
 
-        public void UpdateNotificationException(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateNotificationException(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var chat = args.Item as Chat;
             if (chat == null)
@@ -1091,7 +1091,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateAddedReaction(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateAddedReaction(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var reaction = args.Item as AddedReaction;
 
@@ -1138,7 +1138,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateMessageViewer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateMessageViewer(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var viewer = args.Item as MessageViewer;
 
@@ -1170,7 +1170,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateStoryViewer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateStoryViewer(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var interaction = args.Item as StoryInteraction;
 
@@ -1213,7 +1213,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateMessageSender(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateMessageSender(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             UpdateStyleNoSubtitle();
 
@@ -1321,7 +1321,7 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        public void UpdateMessageStatisticsSharer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateMessageStatisticsSharer(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var message = args.Item as Message;
 
@@ -1355,7 +1355,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             UpdateStyleNoSubtitle();
 
@@ -1385,7 +1385,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSimilarChannel(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSimilarChannel(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var chat = args.Item as Chat;
 
@@ -1414,7 +1414,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateSimilarBot(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateSimilarBot(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var user = args.Item as User;
 
@@ -1443,7 +1443,7 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
-        public void UpdateStatisticsByChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateStatisticsByChat(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             if (args.InRecycleQueue)
             {
@@ -1554,7 +1554,7 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        public void UpdateLinkedChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        public void UpdateLinkedChat(IClientService clientService, ContainerContentChangingEventArgs args, ContainerContentChangingHandler callback)
         {
             var chat = args.Item as Chat;
 

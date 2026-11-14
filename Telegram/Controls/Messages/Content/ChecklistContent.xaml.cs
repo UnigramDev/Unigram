@@ -163,7 +163,7 @@ namespace Telegram.Controls.Messages.Content
                     var transform = child.TransformToVisual(this);
                     var point = transform.TransformPoint(new Point());
 
-                    return new Rect(point.X, point.Y, button.ActualWidth, button.ActualHeight);
+                    return new Rect(point.X, point.Y, (float)button.ActualWidth, (float)button.ActualHeight);
                 }
             }
 

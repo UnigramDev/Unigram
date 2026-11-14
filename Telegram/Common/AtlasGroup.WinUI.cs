@@ -9,7 +9,11 @@ using System;
 using System.Runtime.InteropServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
+#if CSWINRT3_0
+using WindowsRuntime.InteropServices;
+#else
 using WinRT;
+#endif
 
 namespace Telegram.Common
 {
@@ -42,7 +46,7 @@ namespace Telegram.Common
         /// </remarks>
         public static void SetAtlasGroup(this BitmapSource source, AtlasGroup group)
         {
-            if (group == AtlasGroup.Default || Marshal.QueryInterface(((IWinRTObject)source).NativeObject.ThisPtr, in IID_IBitmapSourceAtlasGroup, out var groupSource) < 0)
+            if (group == AtlasGroup.Default || QueryInterface(source, in IID_IBitmapSourceAtlasGroup, out var groupSource) < 0)
             {
                 return;
             }
@@ -68,13 +72,31 @@ namespace Telegram.Common
         /// </remarks>
         public static void SetAtlasSizeHint(this Window window, uint size)
         {
-            if (Marshal.QueryInterface(((IWinRTObject)window).NativeObject.ThisPtr, in IID_IWindowPrivate, out var windowPrivate) < 0)
+            if (QueryInterface(window, in IID_IWindowPrivate, out var windowPrivate) < 0)
             {
                 return;
             }
 
             ((delegate* unmanaged[Stdcall]<IntPtr, uint, uint, int>)(*(IntPtr**)windowPrivate)[11])(windowPrivate, size, size);
             Marshal.Release(windowPrivate);
+        }
+
+        private static int QueryInterface(object obj, in Guid iid, out IntPtr result)
+        {
+#if CSWINRT3_0
+            // Unlike NativeObject.ThisPtr, this hands back a reference of its own.
+            if (!WindowsRuntimeMarshal.TryGetNativeObject(obj, out void* native))
+            {
+                result = IntPtr.Zero;
+                return unchecked((int)0x80004002); // E_NOINTERFACE
+            }
+
+            var hr = Marshal.QueryInterface((IntPtr)native, in iid, out result);
+            Marshal.Release((IntPtr)native);
+            return hr;
+#else
+            return Marshal.QueryInterface(((IWinRTObject)obj).NativeObject.ThisPtr, in iid, out result);
+#endif
         }
     }
 }

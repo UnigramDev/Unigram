@@ -180,7 +180,7 @@ namespace Telegram.Common
 
         public static unsafe void Buffer(this WriteableBitmap bitmap, out byte* imageBytes)
         {
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER && !CSWINRT3_0
             var access = bitmap.PixelBuffer.As<IBufferByteAccess>();
 #else
             var access = (IBufferByteAccess)bitmap.PixelBuffer;
@@ -190,7 +190,7 @@ namespace Telegram.Common
 
         public static unsafe void Buffer(this Windows.Storage.Streams.IBuffer buffer, out byte* bytes)
         {
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER && !CSWINRT3_0
             var access = buffer.As<IBufferByteAccess>();
 #else
             var access = (IBufferByteAccess)buffer;
@@ -200,7 +200,7 @@ namespace Telegram.Common
 
         public static unsafe Span<byte> Buffer(this WriteableBitmap bitmap)
         {
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER && !CSWINRT3_0
             var access = bitmap.PixelBuffer.As<IBufferByteAccess>();
 #else
             var access = (IBufferByteAccess)bitmap.PixelBuffer;
@@ -212,7 +212,7 @@ namespace Telegram.Common
 
         public static unsafe void Buffer(this IMemoryBufferReference reference, out byte* buffer, out uint capacity)
         {
-#if NET9_0_OR_GREATER
+#if NET9_0_OR_GREATER && !CSWINRT3_0
             var access = reference.As<IMemoryBufferByteAccess>();
 #else
             var access = (IMemoryBufferByteAccess)reference;

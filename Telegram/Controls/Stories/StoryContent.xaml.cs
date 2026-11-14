@@ -520,7 +520,7 @@ namespace Telegram.Controls.Stories
 
                 element.Width = area.Position.WidthPercentage / 100 * ActualWidth;
                 element.Height = area.Position.HeightPercentage / 100 * ActualHeight;
-                element.RenderTransformOrigin = new Point(0.5, 0.5);
+                element.RenderTransformOrigin = new Point(0.5f, 0.5f);
                 element.RenderTransform = new RotateTransform
                 {
                     Angle = area.Position.RotationAngle
@@ -1337,7 +1337,7 @@ namespace Telegram.Controls.Stories
 
             if (origin.IsEmpty && XamlRoot.Content is FrameworkElement root)
             {
-                origin = new Windows.Foundation.Rect(root.ActualWidth / 2, root.ActualHeight, 48, 48);
+                origin = new Windows.Foundation.Rect((float)(root.ActualWidth / 2), (float)root.ActualHeight, 48, 48);
             }
 
             var reoffset = new Vector2((float)origin.X, (float)origin.Y);

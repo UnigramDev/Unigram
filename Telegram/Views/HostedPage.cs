@@ -14,6 +14,9 @@ using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+#if CSWINRT3_0
+using WindowsRuntime.InteropServices;
+#endif
 
 namespace Telegram.Views
 {

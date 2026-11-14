@@ -1387,7 +1387,7 @@ namespace Telegram.Views
                     selector.ContentTemplate = relevantHashSet.ItemTemplate;
                     selector.Style = sender.ItemContainerStyle;
                     selector.IsHitTestVisible = !FromPreview;
-                    selector.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
+                    selector.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new ContextRequestedHandler(Message_ContextRequested), true);
 
                     args.ItemContainer = selector;
                 }
@@ -1556,12 +1556,12 @@ namespace Telegram.Views
             }
         }
 
-        private TypedEventHandler<UIElement, ContextRequestedEventArgs> _contextRequestedHandler;
+        private ContextRequestedHandler _contextRequestedHandler;
         private SizeChangedEventHandler _sizeChangedHandler;
 
         private void OnPreparingContainerForItem(object sender, ChatHistoryViewItem selector)
         {
-            selector.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
+            selector.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new ContextRequestedHandler(Message_ContextRequested), true);
         }
 
         private void Item_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -136,8 +136,8 @@ namespace Telegram.Controls
             _pointerPressed = true;
             _pointerPosition = e.GetCurrentPoint(ScrollingHost).Position;
 
-            _pointerPosition.X += ScrollingHost.HorizontalOffset;
-            _pointerPosition.Y += ScrollingHost.VerticalOffset;
+            _pointerPosition.X = (float)(_pointerPosition.X + ScrollingHost.HorizontalOffset);
+            _pointerPosition.Y = (float)(_pointerPosition.Y + ScrollingHost.VerticalOffset);
         }
 
         private void ScrollingHost_PointerMoved(object sender, PointerRoutedEventArgs e)

@@ -821,7 +821,7 @@ namespace Telegram.Navigation
         /// window's root element, so it replaces <c>CoreWindow.CharacterReceived</c> without
         /// needing a CoreWindow - which WinUI does not have.
         /// </summary>
-        public event TypedEventHandler<WindowContext, CharacterReceivedRoutedEventArgs> CharacterReceived;
+        public event EventHandler<WindowContext, CharacterReceivedRoutedEventArgs> CharacterReceived;
 
         private void OnContentCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {

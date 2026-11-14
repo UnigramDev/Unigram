@@ -160,13 +160,13 @@ namespace Telegram.Td.Api
                     width -= 1;
                 }
 
-                rects[i] = new Rect(x, y, width, height);
+                rects[i] = new Rect((float)x, (float)y, (float)width, (float)height);
             }
 
             var finalWidth = Sanitize(positions.Item2.Width * ratio);
             var finalHeight = Sanitize(positions.Item2.Height * ratio);
 
-            return (rects, new Size(finalWidth, finalHeight));
+            return (rects, new Size((float)finalWidth, (float)finalHeight));
         }
 
         private double Sanitize(double value)

@@ -32,6 +32,10 @@ namespace Telegram.Common
 #endif
         }
 
+#if CSWINRT3_0
+        // Only ReleaseHandle releases, and it leaves the WinUI flavour's handles alone.
+        internal static bool IsReleased(object handle) => false;
+#else
         [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_disposedFlags")]
         private static extern ref int DisposedFlags(WinRT.IObjectReference objRef);
 
@@ -39,6 +43,7 @@ namespace Telegram.Common
         internal static bool IsReleased(object handle)
             => handle is WinRT.IWinRTObject projected
             && Volatile.Read(ref DisposedFlags(projected.NativeObject)) != 0;
+#endif
 #endif
 
         public static byte[] ComputeSHA1(byte[] data)

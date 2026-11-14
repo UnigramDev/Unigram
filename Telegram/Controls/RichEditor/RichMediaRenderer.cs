@@ -688,7 +688,7 @@ namespace Telegram.Controls.RichEditor
             }
             else
             {
-                _extent = new Size(width, height);
+                _extent = new Size((float)width, (float)height);
                 Width = double.NaN;
                 Height = double.NaN;
             }
@@ -771,15 +771,15 @@ namespace Telegram.Controls.RichEditor
                         child.Visibility = visibility;
                     }
 
-                    child.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                    child.Measure(new Size(float.PositiveInfinity, float.PositiveInfinity));
                 }
                 else
                 {
-                    child.Measure(new Size(Math.Max(0, rect.Width * scale - 2), Math.Max(0, rect.Height * scale - 2)));
+                    child.Measure(new Size((float)Math.Max(0, rect.Width * scale - 2), (float)Math.Max(0, rect.Height * scale - 2)));
                 }
             }
 
-            return new Size(_extent.Width * scale, _extent.Height * scale);
+            return new Size((float)(_extent.Width * scale), (float)(_extent.Height * scale));
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -802,11 +802,11 @@ namespace Telegram.Controls.RichEditor
 
                 if (IsCorners)
                 {
-                    child.Arrange(new Rect(x + CornerInset, y + CornerInset, child.DesiredSize.Width, child.DesiredSize.Height));
+                    child.Arrange(new Rect((float)(x + CornerInset), (float)(y + CornerInset), child.DesiredSize.Width, child.DesiredSize.Height));
                 }
                 else
                 {
-                    child.Arrange(new Rect(x, y, Math.Max(0, rect.Width * scale - 2), Math.Max(0, rect.Height * scale - 2)));
+                    child.Arrange(new Rect((float)x, (float)y, (float)Math.Max(0, rect.Width * scale - 2), (float)Math.Max(0, rect.Height * scale - 2)));
                 }
             }
 

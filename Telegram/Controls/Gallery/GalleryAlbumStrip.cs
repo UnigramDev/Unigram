@@ -321,7 +321,7 @@ namespace Telegram.Controls.Gallery
                 ? availableSize.Width / width
                 : 1;
 
-            var itemSize = new Size(ItemWidth * _scale, ItemHeight * _scale);
+            var itemSize = new Size((float)(ItemWidth * _scale), (float)(ItemHeight * _scale));
 
             foreach (var thumb in _thumbs)
             {
@@ -329,7 +329,7 @@ namespace Telegram.Controls.Gallery
                 thumb.Measure(itemSize);
             }
 
-            return new Size(width * _scale, ItemHeight * _scale);
+            return new Size((float)(width * _scale), (float)(ItemHeight * _scale));
         }
 
         private void GetLayout(int selected, double finalWidth, double[] x, double[] w, double[] o)
@@ -391,9 +391,9 @@ namespace Telegram.Controls.Gallery
                     thumb.SetFrom(1);
                 }
 
-                thumb.Image.Arrange(new Rect(0, 0, full, height));
+                thumb.Image.Arrange(new Rect(0, 0, (float)full, (float)height));
 
-                thumb.Arrange(new Rect(xa[i], 0, wa[i], height));
+                thumb.Arrange(new Rect((float)xa[i], 0, (float)wa[i], (float)height));
             }
 
             return finalSize;

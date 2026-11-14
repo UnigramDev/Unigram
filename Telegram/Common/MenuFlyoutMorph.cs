@@ -813,19 +813,19 @@ namespace Telegram.Common
 
                 // The menu inside the presenter: all of it, or all of it but the strip, which reaches
                 // from the menu's edge to the source's far edge.
-                var menu = new Rect(0, 0, width, height);
+                var menu = new Rect(0, 0, (float)width, (float)height);
                 double x;
                 double y;
 
                 if (strip > 0 && _growth == Axis.Vertical)
                 {
-                    menu = _stripAfter ? new Rect(0, strip, width, height - strip - _room) : new Rect(0, _room, width, height - strip - _room);
+                    menu = _stripAfter ? new Rect(0, (float)strip, (float)width, (float)(height - strip - _room)) : new Rect(0, (float)_room, (float)width, (float)(height - strip - _room));
                     x = Place(_horizontal, anchor.Left, anchor.Right, width, window.Left, window.Right, false);
                     y = _stripAfter ? current.Top : current.Bottom - height;
                 }
                 else if (strip > 0)
                 {
-                    menu = _stripAfter ? new Rect(strip, 0, width - strip - _room, height) : new Rect(_room, 0, width - strip - _room, height);
+                    menu = _stripAfter ? new Rect((float)strip, 0, (float)(width - strip - _room), (float)height) : new Rect((float)_room, 0, (float)(width - strip - _room), (float)height);
                     x = _stripAfter ? current.Left : current.Right - width;
                     y = Place(_vertical, anchor.Top, anchor.Bottom, height, window.Top, window.Bottom, false);
                 }
@@ -849,10 +849,10 @@ namespace Telegram.Common
                 var fromHeight = Math.Min(current.Height, height);
 
                 var from = new Rect(
-                    Math.Max(0, Math.Min(current.X - x, width - fromWidth)),
-                    Math.Max(0, Math.Min(current.Y - y, height - fromHeight)),
-                    fromWidth,
-                    fromHeight);
+                    (float)Math.Max(0, Math.Min(current.X - x, width - fromWidth)),
+                    (float)Math.Max(0, Math.Min(current.Y - y, height - fromHeight)),
+                    (float)fromWidth,
+                    (float)fromHeight);
 
                 if (_presenter.Parent is Popup popup)
                 {
@@ -1321,13 +1321,13 @@ namespace Telegram.Common
             {
                 var margin = root.Margin;
                 return new Rect(
-                    margin.Left,
-                    margin.Top,
-                    Math.Max(0, target.ActualWidth - margin.Left - margin.Right),
-                    Math.Max(0, target.ActualHeight - margin.Top - margin.Bottom));
+                    (float)margin.Left,
+                    (float)margin.Top,
+                    (float)Math.Max(0, target.ActualWidth - margin.Left - margin.Right),
+                    (float)Math.Max(0, target.ActualHeight - margin.Top - margin.Bottom));
             }
 
-            return new Rect(0, 0, target.ActualWidth, target.ActualHeight);
+            return new Rect(0, 0, (float)target.ActualWidth, (float)target.ActualHeight);
         }
 
         private static Rect GetBounds(FrameworkElement element, UIElement relativeTo)

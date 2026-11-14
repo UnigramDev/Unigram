@@ -124,7 +124,7 @@ namespace Telegram.Controls
             }
         }
 
-        public event TypedEventHandler<ColorTextBox, ColorChangedEventArgs> ColorChanged;
+        public event EventHandler<ColorTextBox, ColorChangedEventArgs> ColorChanged;
 
         #region Color
 

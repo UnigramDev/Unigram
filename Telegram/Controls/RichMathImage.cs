@@ -262,7 +262,7 @@ namespace Telegram.Controls
         public IList<Rect> GetHighlightRectangles(int from, int to)
         {
             return to > from
-                ? new[] { new Rect(0, 0, ActualWidth, ActualHeight) }
+                ? new[] { new Rect(0, 0, (float)ActualWidth, (float)ActualHeight) }
                 : null;
         }
 

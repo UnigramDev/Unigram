@@ -675,7 +675,7 @@ namespace Telegram.Controls
                     var rect = rectangles[i];
 
                     (result ??= new List<Rect>()).Add(new Rect(
-                        rect.X + paragraph.Margin.Left,
+                        (float)(rect.X + paragraph.Margin.Left),
                         rect.Y + relative.Y,
                         rect.Width,
                         rect.Height));
@@ -1090,7 +1090,7 @@ namespace Telegram.Controls
         // Static so it captures nothing: the Hyperlink outlives the block in the pool, and an
         // instance handler would root it there - which unsubscribing on Unloaded only fixes when
         // Unloaded is raised, and microsoft-ui-xaml#1900 says it isn't always.
-        private static readonly TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> _entityHandler = OnEntityClick;
+        private static readonly HyperlinkClickHandler _entityHandler = OnEntityClick;
 
         private static void OnEntityClick(Hyperlink sender, HyperlinkClickEventArgs e)
         {
@@ -1978,7 +1978,7 @@ namespace Telegram.Controls
                                     player.Width = autoFontSize * (20d / 14d);
                                     player.Height = autoFontSize * (20d / 14d);
                                     player.Margin = new Thickness(0, -2 * (20d / 14d), 0, -6 * (20d / 14d));
-                                    player.FrameSize = new Size(autoFontSize * (20d / 14d), autoFontSize * (20d / 14d));
+                                    player.FrameSize = new Size((float)(autoFontSize * (20d / 14d)), (float)(autoFontSize * (20d / 14d)));
                                 }
                                 else if (xamlFontSize == 14)
                                 {
@@ -2551,7 +2551,7 @@ namespace Telegram.Controls
                     var rectangles = format.RangeMetrics(xoffset, xlength, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, wrap, maxLines);
                     var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
-                    var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y);
+                    var point = new Windows.Foundation.Point((float)(paragraph.Margin.Left + position.X), relative.Y + position.Y);
 
                     for (int i = 0; i < rectangles?.Length; i++)
                     {
@@ -2669,8 +2669,8 @@ namespace Telegram.Controls
                     for (int i = 0; i < rectangles.Count; i++)
                     {
                         var rectangle = rectangles[i];
-                        rectangle.X -= minX;
-                        rectangle.Y -= minY;
+                        rectangle.X = (float)(rectangle.X - minX);
+                        rectangle.Y = (float)(rectangle.Y - minY);
 
                         builder.AddGeometry(CanvasGeometry.CreateRectangle(null, rectangle));
                     }
@@ -3307,7 +3307,7 @@ namespace Telegram.Controls
                 var rectangles = format.LineMetrics(0, partial.Length, size, layoutWidth, styled.Direction == TextDirectionality.RightToLeft, true);
                 var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
-                var point = new Windows.Foundation.Point(paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/);
+                var point = new Windows.Foundation.Point((float)paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/);
 
                 for (int i = 0; i < rectangles?.Length; i++)
                 {

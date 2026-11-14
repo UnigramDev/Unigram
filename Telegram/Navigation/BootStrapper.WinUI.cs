@@ -283,7 +283,7 @@ namespace Telegram.Navigation
 
             // Logical pixels in, physical out: AppWindow measures in raw pixels, and these two are
             // the same numbers the UWP flavour hands to SetPreferredMinSize.
-            var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+            var handle = WindowContext.GetWindowHandle(window);
             var scale = Win32.GetDpiForWindow(handle) / 96.0;
             window.AppWindow.Resize(new Windows.Graphics.SizeInt32(
                 (int)(DefaultWidth * scale),

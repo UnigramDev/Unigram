@@ -236,7 +236,7 @@ namespace Telegram.Controls.Messages
 
             ElementCompositionPreview.SetElementChildVisual(Shadow, pillReceiver);
 
-            var x = position.X - 6;
+            double x = position.X - 6;
             var y = position.Y + element.ActualHeight + 8;
 
             if (alignment == EmojiFlyoutAlignment.TopRight)

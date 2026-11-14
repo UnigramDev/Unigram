@@ -52,7 +52,7 @@ namespace Telegram.Collections
         /// Raised on the dispatcher for every participant update, whether or not it moved
         /// a row.
         /// </summary>
-        public event TypedEventHandler<GroupCallParticipantsCollection, VoipGroupCallParticipantChangedEventArgs> ParticipantChanged;
+        public event EventHandler<GroupCallParticipantsCollection, VoipGroupCallParticipantChangedEventArgs> ParticipantChanged;
 
         /// <summary>
         /// Asks for another page. Joining is the one moment worth calling this on: until

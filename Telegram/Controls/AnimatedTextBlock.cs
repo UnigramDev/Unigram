@@ -366,7 +366,7 @@ namespace Telegram.Controls
             var width = Math.Max(0, Math.Round(_prefixRight + _nextRight + Width(SuffixPart, false, out double height3)));
             var height = Math.Max(0, Math.Max(height1, Math.Max(height2, height3)));
 
-            return new Size(width, height);
+            return new Size((float)width, (float)height);
         }
 
         public Size DoArrange(Size finalSize)
@@ -383,8 +383,8 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    NextPart.Arrange(new Rect(_prefixRight, 0, NextPart.DesiredSize.Width, NextPart.DesiredSize.Height));
-                    PrevPart?.Arrange(new Rect(_prefixRight, 0, PrevPart.DesiredSize.Width, PrevPart.DesiredSize.Height));
+                    NextPart.Arrange(new Rect((float)_prefixRight, 0, NextPart.DesiredSize.Width, NextPart.DesiredSize.Height));
+                    PrevPart?.Arrange(new Rect((float)_prefixRight, 0, PrevPart.DesiredSize.Width, PrevPart.DesiredSize.Height));
                 }
 
                 width += NextPart.DesiredSize.Width;
@@ -396,7 +396,7 @@ namespace Telegram.Controls
             }
             else
             {
-                SuffixPart?.Arrange(new Rect(_prefixRight + _nextRight, 0, SuffixPart.DesiredSize.Width, SuffixPart.DesiredSize.Height));
+                SuffixPart?.Arrange(new Rect((float)(_prefixRight + _nextRight), 0, SuffixPart.DesiredSize.Width, SuffixPart.DesiredSize.Height));
             }
 
             return finalSize;

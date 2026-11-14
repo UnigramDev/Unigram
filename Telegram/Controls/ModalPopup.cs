@@ -290,21 +290,21 @@ namespace Telegram.Controls
 
         public bool IsOpen => _isOpen;
 
-        public event TypedEventHandler<ModalPopup, ModalPopupOpenedEventArgs> Opened;
+        public event EventHandler<ModalPopup, ModalPopupOpenedEventArgs> Opened;
 
         /// <summary>
         /// Raised before the popup starts closing, and able to stop it.
         /// </summary>
-        public event TypedEventHandler<ModalPopup, ModalPopupClosingEventArgs> Closing;
+        public event EventHandler<ModalPopup, ModalPopupClosingEventArgs> Closing;
 
         /// <summary>
         /// Raised once the popup is off the screen, animation included.
         /// </summary>
-        public event TypedEventHandler<ModalPopup, ModalPopupClosedEventArgs> Closed;
+        public event EventHandler<ModalPopup, ModalPopupClosedEventArgs> Closed;
 
-        public event TypedEventHandler<ModalPopup, ModalPopupButtonClickEventArgs> PrimaryButtonClick;
-        public event TypedEventHandler<ModalPopup, ModalPopupButtonClickEventArgs> SecondaryButtonClick;
-        public event TypedEventHandler<ModalPopup, ModalPopupButtonClickEventArgs> CloseButtonClick;
+        public event EventHandler<ModalPopup, ModalPopupButtonClickEventArgs> PrimaryButtonClick;
+        public event EventHandler<ModalPopup, ModalPopupButtonClickEventArgs> SecondaryButtonClick;
+        public event EventHandler<ModalPopup, ModalPopupButtonClickEventArgs> CloseButtonClick;
 
         #region Show and hide
 
@@ -1930,7 +1930,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            TypedEventHandler<ModalPopup, ModalPopupButtonClickEventArgs> handler;
+            EventHandler<ModalPopup, ModalPopupButtonClickEventArgs> handler;
             ContentDialogResult result;
 
             switch (button)

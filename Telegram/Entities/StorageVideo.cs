@@ -115,10 +115,10 @@ namespace Telegram.Entities
 
             if (rectangle.Width <= 0 || rectangle.Height <= 0)
             {
-                return new Size(orientedWidth, orientedHeight);
+                return new Size((float)orientedWidth, (float)orientedHeight);
             }
 
-            return new Size(rectangle.Width * orientedWidth, rectangle.Height * orientedHeight);
+            return new Size((float)(rectangle.Width * orientedWidth), (float)(rectangle.Height * orientedHeight));
         }
 
         // Every level smaller than the crop, and the last one, which is the crop's own size.
@@ -143,8 +143,8 @@ namespace Telegram.Entities
             var scale = Math.Min(1, QualitySides[level] / Math.Max(crop.Width, crop.Height));
 
             return new Size(
-                Math.Max(4, Math.Floor(crop.Width * scale / 4) * 4),
-                Math.Max(4, Math.Floor(crop.Height * scale / 4) * 4));
+                (float)Math.Max(4, Math.Floor(crop.Width * scale / 4) * 4),
+                (float)Math.Max(4, Math.Floor(crop.Height * scale / 4) * 4));
         }
 
         /// <summary>

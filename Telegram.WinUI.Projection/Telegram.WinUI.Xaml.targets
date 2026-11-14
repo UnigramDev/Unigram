@@ -1,0 +1,83 @@
+<Project>
+
+  <!--
+    The WinUI 2.6.5 XAML compiler predates CsWinRT 3. These adapt it, after the workarounds in CsWinRT's
+    src/Tests/ObjectLifetimeTests/ObjectLifetimeTests.Lifted.csproj (staging/3.0), which are labelled
+    temporary until a WinUI package addresses them.
+
+    Each pass gets its own pair of targets: a target runs once per build, so one shared between two passes
+    leaves the second with the original reference list.
+  -->
+
+  <!-- UsingCSWinRT makes the compiler emit CsWinRT 2's ComWrappersSupport and CastExtensions calls. -->
+  <Target Name="TelegramDisableLegacyXamlInitialization" BeforeTargets="MarkupCompilePass1;MarkupCompilePass2">
+    <ItemGroup>
+      <XamlFeatureControlFlags Remove="UsingCSWinRT" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Pass 1 reads @(ReferencePath), where the projection is its forwarder, so it gets the reference
+       assemblies as XamlPreCompile and pass 2 do below. Not the .winmd files CsWinRT's test app hands it
+       instead: read from a .winmd, genxbf applies .NET Framework's WinRT type redirections and looks for
+       Windows.UI.Color, Point and the rest in System.Runtime.WindowsRuntime, which .NET no longer has
+       (WMC0003, WMC1006). The flag FlagFrameworkReferencesAsSystem sets is repeated here, since this list
+       is not the one it flagged. -->
+  <Target Name="TelegramRefAssembliesForMarkupCompilePass1" BeforeTargets="MarkupCompilePass1" DependsOnTargets="ResolveReferences;FindReferenceAssembliesForReferences;FlagFrameworkReferencesAsSystem">
+    <ItemGroup>
+      <_TelegramPass1Saved Include="@(ReferencePath)" />
+      <ReferencePath Remove="@(ReferencePath)" />
+      <ReferencePath Include="@(ReferencePathWithRefAssemblies)" />
+      <ReferencePath Condition="'%(ReferencePath.FrameworkReferenceName)' == 'Microsoft.NETCore.App'">
+        <IsSystemReference>true</IsSystemReference>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+  <Target Name="TelegramRestoreAfterMarkupCompilePass1" AfterTargets="MarkupCompilePass1">
+    <ItemGroup>
+      <ReferencePath Remove="@(ReferencePath)" />
+      <ReferencePath Include="@(_TelegramPass1Saved)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- XamlPreCompile and pass 2 read @(ReferencePath), which holds the projection's forwarder; only
+       @(ReferencePathWithRefAssemblies) carries the reference assembly with the real types (WMC1007, CS1069). -->
+  <Target Name="TelegramRefAssembliesForXamlPreCompile" BeforeTargets="XamlPreCompile" DependsOnTargets="ResolveReferences;FindReferenceAssembliesForReferences">
+    <ItemGroup>
+      <_TelegramPreCompileSaved Include="@(ReferencePath)" />
+      <ReferencePath Remove="@(ReferencePath)" />
+      <ReferencePath Include="@(ReferencePathWithRefAssemblies)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="TelegramRestoreAfterXamlPreCompile" AfterTargets="XamlPreCompile">
+    <ItemGroup>
+      <ReferencePath Remove="@(ReferencePath)" />
+      <ReferencePath Include="@(_TelegramPreCompileSaved)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="TelegramRefAssembliesForMarkupCompilePass2" BeforeTargets="MarkupCompilePass2" DependsOnTargets="ResolveReferences;FindReferenceAssembliesForReferences">
+    <ItemGroup>
+      <_TelegramPass2Saved Include="@(ReferencePath)" />
+      <ReferencePath Remove="@(ReferencePath)" />
+      <ReferencePath Include="@(ReferencePathWithRefAssemblies)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="TelegramRestoreAfterMarkupCompilePass2" AfterTargets="MarkupCompilePass2">
+    <ItemGroup>
+      <ReferencePath Remove="@(ReferencePath)" />
+      <ReferencePath Include="@(_TelegramPass2Saved)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- WebView2's build targets add its CsWinRT 2 projection as a plain Reference whenever the Windows App
+       SDK is present, which ExcludeAssets does not reach (CSWINRTINTEROPGEN0035), and its .winmd as a
+       CsWinRTInputs item. The types are in Telegram.WinUI.Projection, whose .winmd files reach the merged
+       projection through the ProjectReference. -->
+  <Target Name="TelegramRemoveWebView2Projection" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Core.Projection'" />
+      <CsWinRTInputs Remove="@(CsWinRTInputs)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Core'" />
+    </ItemGroup>
+  </Target>
+
+</Project>

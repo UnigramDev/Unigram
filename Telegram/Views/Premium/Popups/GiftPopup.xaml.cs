@@ -130,7 +130,7 @@ namespace Telegram.Views.Premium.Popups
             InitializeGifts(clientService, false, false);
         }
 
-        private void AddLink(TextBlock block, string text, TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> handler)
+        private void AddLink(TextBlock block, string text, HyperlinkClickHandler handler)
         {
             var hyperlink = new Hyperlink();
             hyperlink.UnderlineStyle = UnderlineStyle.None;

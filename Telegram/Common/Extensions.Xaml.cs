@@ -135,7 +135,7 @@ namespace Telegram.Common
         {
             figure.Segments.Add(new LineSegment
             {
-                Point = new Point(x, y),
+                Point = new Point((float)x, (float)y),
             });
         }
 

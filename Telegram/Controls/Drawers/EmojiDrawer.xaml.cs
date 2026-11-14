@@ -75,7 +75,7 @@ namespace Telegram.Controls.Drawers
         public EmojiDrawerViewModel ViewModel => DataContext as EmojiDrawerViewModel;
 
         public event EventHandler<EmojiDrawerItemClickEventArgs> ItemClick;
-        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<StickerViewModel>> ItemContextRequested;
+        public event EventHandler<UIElement, ItemContextRequestedEventArgs<StickerViewModel>> ItemContextRequested;
 
         private EmojiDrawerMode _mode;
 

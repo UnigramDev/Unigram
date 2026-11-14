@@ -698,11 +698,11 @@ namespace Telegram.Controls
         {
             if (CustomEmojiFitsLine)
             {
-                Layout().SetInlineObject(range.Offset, range.Length, new Size(_emojiSize, FittedEmojiHeight), FittedEmojiBaseline);
+                Layout().SetInlineObject(range.Offset, range.Length, new Size((float)_emojiSize, (float)FittedEmojiHeight), FittedEmojiBaseline);
             }
             else
             {
-                Layout().SetInlineObject(range.Offset, range.Length, new Size(_emojiSize, _emojiSize), EmojiBaseline);
+                Layout().SetInlineObject(range.Offset, range.Length, new Size((float)_emojiSize, (float)_emojiSize), EmojiBaseline);
             }
         }
 
@@ -737,7 +737,7 @@ namespace Telegram.Controls
             {
                 player.Width = _emojiSize;
                 player.Height = _emojiSize;
-                player.FrameSize = new Size(_emojiSize, _emojiSize);
+                player.FrameSize = new Size((float)_emojiSize, (float)_emojiSize);
             }
         }
 
@@ -1052,7 +1052,7 @@ namespace Telegram.Controls
 
             return minX > maxX || minY > maxY
                 ? default
-                : new Rect(minX, minY, maxX - minX, maxY - minY);
+                : new Rect((float)minX, (float)minY, (float)(maxX - minX), (float)(maxY - minY));
         }
 
         /// <summary>
@@ -3037,7 +3037,7 @@ namespace Telegram.Controls
                 bottom = Math.Max(bottom, rects[i].Bottom);
             }
 
-            return new Rect(left, top, right - left, bottom - top);
+            return new Rect((float)left, (float)top, (float)(right - left), (float)(bottom - top));
         }
 
         // What the automation tree needs to know about the links: how many there are, what each
@@ -3219,7 +3219,7 @@ namespace Telegram.Controls
             // The buttons first, and before the text: the layout has to flow it around a box
             // whose size is whatever the button measures to. Unbounded, because a button is as
             // wide as its label and the line it lands on does not decide that.
-            var unbounded = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            var unbounded = new Size(float.PositiveInfinity, float.PositiveInfinity);
 
             for (int i = 0; i < _buttonRanges?.Count; i++)
             {
@@ -3238,7 +3238,7 @@ namespace Telegram.Controls
 
             // The emoji are a box of a size we chose, so the layout already has it: they are
             // measured to it, and nothing about them can change what the text does.
-            var emoji = new Size(_emojiSize, _emojiSize);
+            var emoji = new Size((float)_emojiSize, (float)_emojiSize);
 
             for (int i = 0; i < _ranges?.Count; i++)
             {
@@ -3331,7 +3331,7 @@ namespace Telegram.Controls
                         ? rects[0].Y + (rects[0].Height - _emojiSize) / 2
                         : rects[0].Y;
 
-                    _emoji[i].Arrange(new Rect(rects[0].X, y, _emojiSize, _emojiSize));
+                    _emoji[i].Arrange(new Rect(rects[0].X, (float)y, (float)_emojiSize, (float)_emojiSize));
                 }
                 else
                 {

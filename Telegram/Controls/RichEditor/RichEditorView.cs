@@ -778,7 +778,7 @@ namespace Telegram.Controls.RichEditor
 
             if (right > left && bottom > top)
             {
-                bounds = new Rect(left, top, right - left, bottom - top);
+                bounds = new Rect(left, top, (float)(right - left), (float)(bottom - top));
             }
 
             return true;
@@ -2119,7 +2119,7 @@ namespace Telegram.Controls.RichEditor
         private static Point Toward(Point a, Point b, double r, double length)
         {
             return length > 0
-                ? new Point(a.X + (b.X - a.X) * r / length, a.Y + (b.Y - a.Y) * r / length)
+                ? new Point((float)(a.X + (b.X - a.X) * r / length), (float)(a.Y + (b.Y - a.Y) * r / length))
                 : a;
         }
 
@@ -2154,7 +2154,7 @@ namespace Telegram.Controls.RichEditor
                 _invalidOverlay = true;
             }
 
-            var bounds = element.TransformToVisual(Surface).TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+            var bounds = element.TransformToVisual(Surface).TransformBounds(new Rect(0, 0, (float)element.ActualWidth, (float)element.ActualHeight));
 
             Canvas.SetLeft(NodeOutline, bounds.X - 4);
             Canvas.SetTop(NodeOutline, bounds.Y - 4);

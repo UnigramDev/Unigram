@@ -443,12 +443,12 @@ namespace Telegram.Views.Popups
 
             foreach (var child in Children)
             {
-                child.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                child.Measure(new Size(float.PositiveInfinity, float.PositiveInfinity));
                 maxWidth = Math.Max(maxWidth, child.DesiredSize.Width);
                 maxHeight = Math.Max(maxHeight, child.DesiredSize.Height);
             }
 
-            return new Size(Math.Max(availableSize.Width, maxWidth * Children.Count), maxHeight);
+            return new Size((float)Math.Max(availableSize.Width, maxWidth * Children.Count), (float)maxHeight);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -458,7 +458,7 @@ namespace Telegram.Views.Popups
 
             foreach (var child in Children)
             {
-                child.Arrange(new Rect(x, 0, width, finalSize.Height));
+                child.Arrange(new Rect((float)x, 0, width, finalSize.Height));
                 x += width;
             }
 

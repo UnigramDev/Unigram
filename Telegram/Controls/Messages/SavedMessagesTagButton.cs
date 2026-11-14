@@ -323,15 +323,15 @@ namespace Telegram.Controls.Messages
             var tipp12 = width - (far - 28.2705f);
 
             _figure.Segments.Clear();
-            _figure.AddCubicBezier(new Point(2.47964, 0), new Point(0, 2.47964), new Point(0, 5.53846));
+            _figure.AddCubicBezier(new Point(2.47964f, 0), new Point(0, 2.47964f), new Point(0, 5.53846f));
             _figure.AddLine(0, 18.4638);
-            _figure.AddCubicBezier(new Point(0, 21.5225), new Point(2.47964, 24), new Point(5.53846, 24));
+            _figure.AddCubicBezier(new Point(0, 21.5225f), new Point(2.47964f, 24), new Point(5.53846f, 24));
             _figure.AddLine(blp, 24);
-            _figure.AddCubicBezier(new Point(brp1trp2, 24.0022), new Point(brp2trp1, 22.9825), new Point(brp, 21.2308));
+            _figure.AddCubicBezier(new Point(brp1trp2, 24.0022f), new Point(brp2trp1, 22.9825f), new Point(brp, 21.2308f));
             _figure.AddLine(tipep, 14.3088);
-            _figure.AddCubicBezier(new Point(tipp12, 12.9603), new Point(tipp12, 11.0442), new Point(tipep, 9.69554));
+            _figure.AddCubicBezier(new Point(tipp12, 12.9603f), new Point(tipp12, 11.0442f), new Point(tipep, 9.69554f));
             _figure.AddLine(brp, 2.77148);
-            _figure.AddCubicBezier(new Point(brp2trp1, 1.01976), new Point(brp1trp2, 0), new Point(trp, 0));
+            _figure.AddCubicBezier(new Point(brp2trp1, 1.01976f), new Point(brp1trp2, 0), new Point(trp, 0));
             _figure.AddLine(5.53846, 0);
 
             _ellipse?.Center = new Point(width - (far - 17), 9 + 3);

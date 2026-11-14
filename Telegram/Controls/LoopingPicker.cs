@@ -170,7 +170,7 @@ namespace Telegram.Controls
             }
         }
 
-        public event TypedEventHandler<LoopingPicker, LoopingPickerValueChangedEventArgs> ValueChanged;
+        public event EventHandler<LoopingPicker, LoopingPickerValueChangedEventArgs> ValueChanged;
 
         #region Value
 

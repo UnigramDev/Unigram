@@ -162,7 +162,7 @@ namespace Telegram.Controls
                 var centerColor = upgraded.Gift.Backdrop.Colors.CenterColor.ToColor().WithBrightness(0.3f);
 
                 var gradient = new RadialGradientBrush();
-                gradient.Center = new Point(0.5, 0.5);
+                gradient.Center = new Point(0.5f, 0.5f);
                 gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(166, centerColor.R, centerColor.G, centerColor.B) });
                 gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(166, centerColor.R, centerColor.G, centerColor.B), Offset = 0.3 });
                 gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0, centerColor.R, centerColor.G, centerColor.B), Offset = 1 });

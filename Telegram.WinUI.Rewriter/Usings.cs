@@ -284,6 +284,13 @@ namespace Telegram.WinUI.Rewriter
                     continue;
                 }
 
+                // CsWinRT 3 keeps the projected exceptions internal, so an alias to one does not
+                // compile there; the sources test the HRESULT instead.
+                if (IsException(metadata, type))
+                {
+                    continue;
+                }
+
                 var ns = metadata.GetString(type.Namespace);
                 if (!types.TryGetValue(ns, out var set))
                 {
@@ -292,6 +299,17 @@ namespace Telegram.WinUI.Rewriter
 
                 set.Add(name);
             }
+        }
+
+        private static bool IsException(MetadataReader metadata, TypeDefinition type)
+        {
+            if (type.BaseType.Kind != HandleKind.TypeReference)
+            {
+                return false;
+            }
+
+            var reference = metadata.GetTypeReference((TypeReferenceHandle)type.BaseType);
+            return metadata.GetString(reference.Name) == "Exception" && metadata.GetString(reference.Namespace) == "System";
         }
     }
 }

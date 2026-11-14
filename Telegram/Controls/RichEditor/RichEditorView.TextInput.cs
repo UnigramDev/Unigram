@@ -94,7 +94,7 @@ namespace Telegram.Controls.RichEditor
             }
 
             var occluded = args.OccludedRect;
-            var bounds = ScrollViewer.TransformToVisual(null).TransformBounds(new Rect(0, 0, ScrollViewer.ActualWidth, ScrollViewer.ActualHeight));
+            var bounds = ScrollViewer.TransformToVisual(null).TransformBounds(new Rect(0, 0, (float)ScrollViewer.ActualWidth, (float)ScrollViewer.ActualHeight));
 
             var overlap = bounds.Bottom - occluded.Top;
             if (overlap > 0)
@@ -922,7 +922,7 @@ namespace Telegram.Controls.RichEditor
             var bounds = window.Bounds;
 
             var text = Surface.TransformToVisual(null).TransformBounds(new Rect(caret.X, caret.Y, Math.Max(1, caret.Width), caret.Height));
-            var control = TransformToVisual(null).TransformBounds(new Rect(0, 0, ActualWidth, ActualHeight));
+            var control = TransformToVisual(null).TransformBounds(new Rect(0, 0, (float)ActualWidth, (float)ActualHeight));
 
             args.Request.LayoutBounds.TextBounds = Scale(text, bounds, scale);
             args.Request.LayoutBounds.ControlBounds = Scale(control, bounds, scale);
@@ -931,10 +931,10 @@ namespace Telegram.Controls.RichEditor
         private static Rect Scale(Rect rect, Rect window, double scale)
         {
             return new Rect(
-                (rect.X + window.X) * scale,
-                (rect.Y + window.Y) * scale,
-                rect.Width * scale,
-                rect.Height * scale);
+                (float)((rect.X + window.X) * scale),
+                (float)((rect.Y + window.Y) * scale),
+                (float)(rect.Width * scale),
+                (float)(rect.Height * scale));
         }
 
         private void OnCompositionStarted(CoreTextEditContext sender, CoreTextCompositionStartedEventArgs args)

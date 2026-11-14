@@ -12,7 +12,12 @@ using Telegram.Common;
 using Telegram.Native.AI;
 using Telegram.Td.Api;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System;
+#if !CSWINRT3_0
+using WindowsRuntimeStorageExtensions = System.IO.WindowsRuntimeStorageExtensions;
+using WindowsRuntimeStreamExtensions = System.IO.WindowsRuntimeStreamExtensions;
+#endif
 
 namespace Telegram.Services
 {
@@ -186,7 +191,7 @@ namespace Telegram.Services
             try
             {
                 using (var zipStream = await file.OpenReadAsync())
-                using (var zipInput = System.IO.WindowsRuntimeStreamExtensions.AsStreamForRead(zipStream))
+                using (var zipInput = WindowsRuntimeStreamExtensions.AsStreamForRead(zipStream))
                 using (var archive = new System.IO.Compression.ZipArchive(zipInput))
                 {
                     foreach (var entry in archive.Entries)
@@ -198,7 +203,7 @@ namespace Telegram.Services
                         var entryFile = await destination.CreateFileAsync(entryPath, CreationCollisionOption.ReplaceExisting);
 
                         using (var entryStream = entry.Open())
-                        using (var outStream = await System.IO.WindowsRuntimeStorageExtensions.OpenStreamForWriteAsync(entryFile))
+                        using (var outStream = await WindowsRuntimeStorageExtensions.OpenStreamForWriteAsync(entryFile))
                         {
                             await entryStream.CopyToAsync(outStream);
                         }

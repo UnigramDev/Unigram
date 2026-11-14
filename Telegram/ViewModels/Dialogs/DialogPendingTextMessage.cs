@@ -243,9 +243,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public event TypedEventHandler<DialogPendingMessage, MessageViewModel> Updated;
+        public event EventHandler<DialogPendingMessage, MessageViewModel> Updated;
 
-        public event TypedEventHandler<DialogPendingMessage, Message> Completed;
+        public event EventHandler<DialogPendingMessage, Message> Completed;
 
         protected void RaiseCompleted()
         {

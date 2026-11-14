@@ -440,13 +440,13 @@ namespace Telegram.ViewModels
                     var transform = target.TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
-                    return new Rect(point.X, point.Y, target.ActualWidth, target.ActualHeight);
+                    return new Rect(point.X, point.Y, (float)target.ActualWidth, (float)target.ActualHeight);
                 }
 
                 var transform = target.TransformToVisual(null);
 
                 var point = transform.TransformPoint(new Point());
-                var origin = new Rect(point.X, point.Y, target.ActualWidth, target.ActualHeight);
+                var origin = new Rect(point.X, point.Y, (float)target.ActualWidth, (float)target.ActualHeight);
 
                 StoriesWindow.ShowStory(NavigationService, story.Story, StoryOpenOrigin.Card, origin, GetOrigin);
             }

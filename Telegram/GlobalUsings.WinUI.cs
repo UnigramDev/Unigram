@@ -150,8 +150,6 @@ global using DraggingEventArgs = Microsoft.UI.Input.DraggingEventArgs;
 global using DraggingState = Microsoft.UI.Input.DraggingState;
 global using DropShadow = Microsoft.UI.Composition.DropShadow;
 global using ElasticEasingFunction = Microsoft.UI.Composition.ElasticEasingFunction;
-global using ElementNotAvailableException = Microsoft.UI.Xaml.Automation.ElementNotAvailableException;
-global using ElementNotEnabledException = Microsoft.UI.Xaml.Automation.ElementNotEnabledException;
 global using Ellipse = Microsoft.UI.Xaml.Shapes.Ellipse;
 global using ExponentialEasingFunction = Microsoft.UI.Composition.ExponentialEasingFunction;
 global using ExpressionAnimation = Microsoft.UI.Composition.ExpressionAnimation;
@@ -207,7 +205,6 @@ global using InteractionTrackerVector2InertiaNaturalMotion = Microsoft.UI.Compos
 global using KeyFrameAnimation = Microsoft.UI.Composition.KeyFrameAnimation;
 global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 global using LayerVisual = Microsoft.UI.Composition.LayerVisual;
-global using LayoutCycleException = Microsoft.UI.Xaml.LayoutCycleException;
 global using LetterCase = Microsoft.UI.Text.LetterCase;
 global using Line = Microsoft.UI.Xaml.Shapes.Line;
 global using LineSpacingRule = Microsoft.UI.Text.LineSpacingRule;
@@ -281,7 +278,6 @@ global using VisualInteractionSourceRedirectionMode = Microsoft.UI.Composition.I
 global using VisualUnorderedCollection = Microsoft.UI.Composition.VisualUnorderedCollection;
 global using WindowActivatedEventArgs = Telegram.Navigation.WindowActivatedEventArgs;
 global using WindowSizeChangedEventArgs = Telegram.Navigation.WindowSizeChangedEventArgs;
-global using XamlParseException = Microsoft.UI.Xaml.Markup.XamlParseException;
 
 namespace Windows.UI.Xaml.Automation.Peers { }
 namespace Windows.UI.Xaml.Automation.Provider { }

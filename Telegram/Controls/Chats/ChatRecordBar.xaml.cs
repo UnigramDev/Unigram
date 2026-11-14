@@ -20,6 +20,7 @@ using Telegram.Td.Api;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -211,7 +212,7 @@ namespace Telegram.Controls.Chats
                     Stretch = Stretch.UniformToFill,
                     Width = 272,
                     Height = 272,
-                    RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5),
+                    RenderTransformOrigin = new Windows.Foundation.Point(0.5f, 0.5f),
                     RenderTransform = new ScaleTransform
                     {
                         ScaleX = -1

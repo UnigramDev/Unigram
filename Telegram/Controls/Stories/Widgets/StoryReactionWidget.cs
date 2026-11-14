@@ -151,7 +151,7 @@ namespace Telegram.Controls.Stories.Widgets
             Canvas.SetLeft(_bubble, -left);
             Canvas.SetLeft(_shadow, -left);
 
-            _circle.Center = new Point(left + side / 2, side / 2);
+            _circle.Center = new Point((float)(left + side / 2), (float)(side / 2));
             _circle.RadiusX = _circle.RadiusY = side / 2;
 
             UpdateTail(_large, TailLarge, left, side);
@@ -162,7 +162,7 @@ namespace Telegram.Controls.Stories.Widgets
         {
             var x = _isFlipped ? 1 - circle.X : circle.X;
 
-            geometry.Center = new Point(left + x * side, circle.Y * side);
+            geometry.Center = new Point((float)(left + x * side), (float)(circle.Y * side));
             geometry.RadiusX = geometry.RadiusY = circle.Z * side;
         }
     }
