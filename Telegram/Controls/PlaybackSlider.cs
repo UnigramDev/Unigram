@@ -8,7 +8,6 @@
 using System;
 using Telegram.Common;
 using Telegram.Navigation;
-using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Input;
 using Windows.UI.Xaml;

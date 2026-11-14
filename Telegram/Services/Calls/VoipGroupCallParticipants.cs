@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Windows.Foundation;
 
 namespace Telegram.Services.Calls
 {

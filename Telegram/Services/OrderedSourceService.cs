@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Td.Api;
-using Windows.Foundation;
 
 namespace Telegram.Services
 {

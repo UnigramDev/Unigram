@@ -6,7 +6,6 @@
 //
 
 using System;
-using Windows.Foundation;
 using Windows.UI.Composition.Interactions;
 
 namespace Telegram.Composition

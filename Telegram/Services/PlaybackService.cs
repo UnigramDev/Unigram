@@ -16,7 +16,6 @@ using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;

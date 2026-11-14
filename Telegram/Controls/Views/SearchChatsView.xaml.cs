@@ -18,7 +18,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
 using Telegram.Views.Profile;
-using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using Telegram.ViewModels.Gallery;
-using Windows.Foundation;
 
 namespace Telegram.Controls
 {

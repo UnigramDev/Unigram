@@ -12,7 +12,6 @@ using Telegram.Common;
 using Telegram.Native.AI;
 using Telegram.Td.Api;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.System;
 #if !CSWINRT3_0
 using WindowsRuntimeStorageExtensions = System.IO.WindowsRuntimeStorageExtensions;

@@ -10,6 +10,7 @@ using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Chats

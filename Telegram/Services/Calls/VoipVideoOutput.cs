@@ -10,7 +10,6 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 

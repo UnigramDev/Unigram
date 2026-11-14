@@ -16,7 +16,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views.Stars.Popups;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 
 namespace Telegram.Services

@@ -9,7 +9,6 @@ using System;
 using System.Globalization;
 using System.Text;
 using Telegram.Common;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

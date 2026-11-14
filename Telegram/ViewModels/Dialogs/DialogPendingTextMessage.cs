@@ -8,7 +8,6 @@
 using System;
 using Telegram.Common;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 
 namespace Telegram.ViewModels

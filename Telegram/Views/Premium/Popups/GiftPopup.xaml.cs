@@ -20,7 +20,6 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Stars.Popups;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;

@@ -9,7 +9,6 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
-using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Composition;
 

@@ -15,7 +15,6 @@ using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Calls;
 using Windows.ApplicationModel.Calls;
-using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.UI.Xaml;
 

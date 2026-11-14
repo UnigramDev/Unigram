@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td.Api;
-using Windows.Foundation;
 
 namespace Telegram.Services
 {

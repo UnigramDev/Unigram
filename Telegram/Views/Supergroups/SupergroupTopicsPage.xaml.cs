@@ -10,6 +10,7 @@ using Telegram.Controls;
 using Telegram.Streams;
 using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Supergroups
 {
@@ -52,7 +53,7 @@ namespace Telegram.Views.Supergroups
         {
             Play(SidebarButton);
         }
-        
+
         private void Play(RadioButton button)
         {
             var animated = button.GetChild<AnimatedImage>();

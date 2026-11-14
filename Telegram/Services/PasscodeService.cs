@@ -14,7 +14,6 @@ using Telegram.Navigation;
 using Telegram.Services.Settings;
 using Telegram.Services.Updates;
 using Windows.Security.Cryptography;
-using Windows.Storage.Streams;
 
 namespace Telegram.Services
 {

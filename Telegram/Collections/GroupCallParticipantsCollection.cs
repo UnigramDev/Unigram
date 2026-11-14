@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
-using Windows.Foundation;
 
 namespace Telegram.Collections
 {

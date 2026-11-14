@@ -15,9 +15,13 @@
 // from every header included after this one.
 #include <shellscalingapi.h>
 #else
-#define WINAPI_PARTITION_DESKTOP TRUE
+// Restored rather than set to FALSE: the SDK's definition reads WINAPI_FAMILY, which a file can
+// override around a desktop-only header of its own.
+#pragma push_macro("WINAPI_PARTITION_DESKTOP")
+#undef WINAPI_PARTITION_DESKTOP
+#define WINAPI_PARTITION_DESKTOP 1
 #include <shellscalingapi.h>
-#define WINAPI_PARTITION_DESKTOP FALSE
+#pragma pop_macro("WINAPI_PARTITION_DESKTOP")
 #endif
 
 #include <wrl.h>

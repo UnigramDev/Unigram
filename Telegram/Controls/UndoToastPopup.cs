@@ -9,7 +9,6 @@ using System;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
