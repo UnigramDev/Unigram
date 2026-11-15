@@ -169,6 +169,7 @@
                     </controls:TopNavView>
 
                     <controls:GlyphButton x:Name="Settings"
+                                          AutomationProperties.Name="{CustomResource Settings}"
                                           Click="Settings_Click"
                                           HorizontalAlignment="Right"
                                           Width="40"

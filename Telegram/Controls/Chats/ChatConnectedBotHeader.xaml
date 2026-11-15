@@ -49,6 +49,7 @@
                                  Grid.Column="2" />
 
         <controls:GlyphButton x:Name="MenuButton"
+                              AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
                               Glyph="&#xE9E9;"
                               Click="Menu_ContextRequested"
                               CornerRadius="20"

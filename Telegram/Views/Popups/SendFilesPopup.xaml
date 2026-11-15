@@ -278,6 +278,7 @@
                                                 Grid.Column="1" />
 
                     <controls:GlyphButton Glyph="&#xE74D;"
+                                          AutomationProperties.Name="{CustomResource Delete}"
                                           Click="Remove_Click"
                                           Tag="{x:Bind}"
                                           Width="36"

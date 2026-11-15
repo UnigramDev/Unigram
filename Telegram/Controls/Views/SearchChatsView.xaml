@@ -36,6 +36,7 @@
                            Margin="12,12,0,4" />
 
                 <controls:GlyphButton Click="ClearRecentChats_Click"
+                                      AutomationProperties.Name="{CustomResource Clear}"
                                       AllowFocusOnInteraction="False"
                                       VerticalAlignment="Bottom"
                                       Margin="0,0,0,-6"
@@ -302,6 +303,7 @@
                         Grid.ColumnSpan="5" />
 
                 <controls:GlyphButton x:Name="ButtonManage"
+                                      AutomationProperties.Name="{CustomResource Cancel}"
                                       Glyph="&#xE711;"
                                       Click="{x:Bind ViewModel.UnselectMessages}"
                                       CornerRadius="13,4,4,13" />

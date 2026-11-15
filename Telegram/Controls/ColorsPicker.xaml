@@ -82,6 +82,7 @@
     </RadioButton>
 
     <controls:GlyphButton x:Name="RemoveColorButton"
+                          AutomationProperties.Name="{CustomResource Remove}"
                           Click="RemoveColor_Click"
                           Glyph="&#xE711;"
                           Margin="0,0,-18,0"

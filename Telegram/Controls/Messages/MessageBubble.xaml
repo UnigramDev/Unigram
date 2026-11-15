@@ -322,6 +322,7 @@
                                                             Grid.ColumnSpan="3" />
 
                                 <controls:GlyphButton x:Name="PsaInfo"
+                                                      AutomationProperties.Name="{CustomResource Info}"
                                                       x:Load="False"
                                                       Glyph="&#xE9CE;"
                                                       Margin="0,-6,-10,-8"
