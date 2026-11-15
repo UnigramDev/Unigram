@@ -255,6 +255,7 @@
                     Grid.ColumnSpan="8" />
 
             <controls:GlyphButton Click="{x:Bind ViewModel.UnselectStories}"
+                                  AutomationProperties.Name="{CustomResource Cancel}"
                                   CornerRadius="13,4,4,13"
                                   Glyph="&#xE711;" />
 

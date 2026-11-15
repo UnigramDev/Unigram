@@ -105,6 +105,7 @@
                                       Grid.Column="1" />
 
                 <controls:GlyphButton Click="Edit_Click"
+                                      AutomationProperties.Name="{CustomResource Edit}"
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                       VerticalAlignment="Bottom"
                                       FontSize="28"

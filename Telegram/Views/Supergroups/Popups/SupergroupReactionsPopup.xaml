@@ -85,6 +85,7 @@
                                                     Margin="10,4,-2,-2" />
 
                         <controls:GlyphButton x:Name="EmojiButton"
+                                              AutomationProperties.Name="{CustomResource Emoji}"
                                               Click="Emoji_Click"
                                               Glyph="&#xF164;"
                                               AllowFocusOnInteraction="False"

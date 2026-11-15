@@ -61,6 +61,7 @@
         </HyperlinkButton>
 
         <controls:GlyphButton x:Name="DeleteButton"
+                              AutomationProperties.Name="{CustomResource Delete}"
                               Glyph="&#xE74D;"
                               CornerRadius="20"
                               Grid.Column="2" />

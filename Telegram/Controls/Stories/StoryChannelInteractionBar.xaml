@@ -51,6 +51,7 @@
                                     Grid.Column="1" />
 
         <controls:GlyphButton x:Name="ShareButton"
+                              AutomationProperties.Name="{CustomResource ShareFile}"
                               CornerRadius="20"
                               Glyph="&#xE72D;"
                               Grid.Column="3" />

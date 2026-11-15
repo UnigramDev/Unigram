@@ -63,6 +63,7 @@
                             </Grid.ColumnDefinitions>
                             <cells:ProfileCell x:Name="UserBotCell" />
                             <controls:GlyphButton Click="{x:Bind ViewModel.Clear}"
+                                                  AutomationProperties.Name="{CustomResource Clear}"
                                                   Glyph="&#xE711;"
                                                   Grid.Column="1" />
                         </Grid>

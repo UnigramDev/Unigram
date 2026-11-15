@@ -368,6 +368,7 @@
                 <!--<GridView.Footer>
                     <StackPanel Orientation="Horizontal">
                         <controls:GlyphButton Click="Settings_Click"
+                                              AutomationProperties.Name="{CustomResource Settings}"
                                               Width="{ThemeResource AppBarThemeCompactHeight}"
                                               Height="{ThemeResource AppBarThemeCompactHeight}"
                                               Glyph="&#xE713;" />

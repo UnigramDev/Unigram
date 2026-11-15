@@ -41,6 +41,7 @@
                         Width="32"
                         Height="32" />
                 <controls:GlyphButton x:Name="Back"
+                                      AutomationProperties.Name="{CustomResource Back}"
                                       Click="Back_Click"
                                       Glyph="&#xE72B;"
                                       CornerRadius="16"

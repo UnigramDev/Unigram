@@ -737,6 +737,7 @@
                                     Grid.ColumnSpan="8" />
 
                             <controls:GlyphButton x:Name="ButtonManage"
+                                                  AutomationProperties.Name="{CustomResource Cancel}"
                                                   CornerRadius="13,4,4,13"
                                                   Glyph="&#xE711;"
                                                   Click="Manage_Click" />

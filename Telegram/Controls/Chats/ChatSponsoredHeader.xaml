@@ -122,6 +122,7 @@
                                      Grid.Row="1" />
 
         <controls:GlyphButton x:Name="RemoveButton"
+                              AutomationProperties.Name="{CustomResource Hide}"
                               Click="Remove_Click"
                               Glyph="&#xE711;"
                               VerticalAlignment="Top"

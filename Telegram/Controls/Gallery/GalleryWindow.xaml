@@ -113,6 +113,7 @@
 
             <StackPanel Orientation="Horizontal">
                 <controls:GlyphButton Click="{x:Bind ViewModel.OpenStickers}"
+                                      AutomationProperties.Name="{CustomResource AccDescrStickers}"
                                       Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
                                       Glyph="&#xF4AA;"
                                       FontSize="{StaticResource GlyphMediumFontSize}"
