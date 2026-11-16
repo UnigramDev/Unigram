@@ -536,45 +536,109 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid x:Name="Header"
-              Height="{StaticResource NavigationViewTopPaneHeight}"
+              SizeChanged="Header_IslandsSizeChanged"
               Margin="8,8,8,0"
               Grid.ColumnSpan="2"
               Canvas.ZIndex="3">
-            <Rectangle x:Name="HeaderShadow"
-                       RadiusX="24"
-                       RadiusY="24" />
-            <Border x:Name="HeaderCard"
-                    BackgroundSizing="OuterBorderEdge"
-                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                    BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                    BorderThickness="0"
-                    CornerRadius="24" />
-
-            <Grid x:Name="HeaderLeft"
-                  HorizontalAlignment="Left"
-                  Padding="0,0,12,0"
-                  Canvas.ZIndex="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="36" />
-                </Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid x:Name="HeaderLeft" HorizontalAlignment="Left" VerticalAlignment="Top">
                 <controls:BackButton x:Name="BackButton"
-                                     RenderTransformOrigin="0.5,0.5"
-                                     Width="48"
-                                     Height="48"
-                                     Margin="-4,0,-8,0"
-                                     CornerRadius="20"
-                                     Glyph="&#xe93e;">
-                    <Button.RenderTransform>
-                        <ScaleTransform ScaleX="0.8"
-                                        ScaleY="0.8" />
-                    </Button.RenderTransform>
-                </controls:BackButton>
+                                     Width="48" Height="48" CornerRadius="24"
+                                     Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                     Glyph="&#xe93e;" />
+            </Grid>
+            <Grid x:Name="HeaderIdentity" Grid.Column="1"
+                  HorizontalAlignment="Center" Height="48"
+                  Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                  CornerRadius="24">
+                <local:ChatHeaderButton x:Name="Profile"
+                                        Click="Profile_Click"
+                                        Style="{StaticResource AccentTextButtonStyle}"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch"
+                                        BorderThickness="0"
+                                        CornerRadius="24"
+                                        Padding="58,0,14,0">
+                    <Grid Background="Transparent"
+                          VerticalAlignment="Center"
+                          Margin="0,-2,0,2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="TitleRoot"
+                              HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <controls:CustomEmojiIcon x:Name="BotVerified"
+                                                      Visibility="Collapsed"
+                                                      VerticalAlignment="Bottom"
+                                                      Margin="0,-2,4,-2" />
+
+                            <TextBlock x:Name="Title"
+                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       MaxLines="1"
+                                       Grid.Column="1" />
+
+                            <controls:IdentityIcon x:Name="Identity"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="4,0,0,0"
+                                                   Grid.Column="2" />
+                        </Grid>
+
+                        <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                              Grid.Row="1">
+                            <TextBlock x:Name="Subtitle"
+                                       Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
+                                       Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis" />
+                            <StackPanel x:Name="ChatActionPanel"
+                                        Orientation="Horizontal"
+                                        Visibility="Collapsed">
+                                <chats:ChatActionIndicator x:Name="ChatActionIndicator"
+                                                           Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                                                           VerticalAlignment="Bottom"
+                                                           Width="20"
+                                                           Height="20"
+                                                           Margin="0,-2,4,-2" />
+                                <TextBlock x:Name="ChatActionLabel"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           VerticalAlignment="Top" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </local:ChatHeaderButton>
 
                 <Grid x:Name="PhotoRoot"
                       Width="36"
                       Height="36"
-                      Grid.Column="1">
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Margin="10,0,0,0"
+                      Canvas.ZIndex="1">
                     <controls:ActiveStoriesSegments x:Name="Segments"
                                                     Click="Segments_Click"
                                                     Width="36"
@@ -643,82 +707,11 @@
                           Visibility="Collapsed" />
                 </Grid>
             </Grid>
-
-            <local:ChatHeaderButton x:Name="Profile"
-                                    Click="Profile_Click"
-                                    Style="{StaticResource AccentTextButtonStyle}"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    HorizontalContentAlignment="Stretch"
-                                    VerticalContentAlignment="Stretch"
-                                    BorderThickness="0"
-                                    CornerRadius="24"
-                                    Padding="92,0,0,0">
-                <Grid Background="Transparent"
-                      VerticalAlignment="Center"
-                      Margin="0,-2,0,2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid x:Name="TitleRoot"
-                          HorizontalAlignment="Left">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <controls:CustomEmojiIcon x:Name="BotVerified"
-                                                  Visibility="Collapsed"
-                                                  VerticalAlignment="Bottom"
-                                                  Margin="0,-2,4,-2" />
-
-                        <TextBlock x:Name="Title"
-                                   Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis"
-                                   MaxLines="1"
-                                   Grid.Column="1" />
-
-                        <controls:IdentityIcon x:Name="Identity"
-                                               VerticalAlignment="Bottom"
-                                               Margin="4,0,0,0"
-                                               Grid.Column="2" />
-                    </Grid>
-
-                    <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                          Grid.Row="1">
-                        <TextBlock x:Name="Subtitle"
-                                   Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
-                                   Foreground="{ThemeResource PageHeaderDisabledBrush}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis" />
-                        <StackPanel x:Name="ChatActionPanel"
-                                    Orientation="Horizontal"
-                                    Visibility="Collapsed">
-                            <chats:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                       Fill="{ThemeResource AccentFillColorDefaultBrush}"
-                                                       VerticalAlignment="Bottom"
-                                                       Width="20"
-                                                       Height="20"
-                                                       Margin="0,-2,4,-2" />
-                            <TextBlock x:Name="ChatActionLabel"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       Foreground="{ThemeResource AccentFillColorDefaultBrush}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       VerticalAlignment="Top" />
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-            </local:ChatHeaderButton>
-
             <Grid x:Name="Options"
                   SizeChanged="Options_SizeChanged"
+                  Grid.Column="2"
+                  Height="48"
+                  VerticalAlignment="Top"
                   Background="Transparent"
                   HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
@@ -732,37 +725,46 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+
                     <controls:GlyphButton x:Name="VideoCall"
+                                          Width="48" Height="48"
+                                          Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                           Visibility="Collapsed"
                                           Click="{x:Bind ViewModel.VideoCall}"
                                           Glyph="&#xE714;"
                                           AutomationProperties.Name="{CustomResource VideoCall}"
                                           ToolTipService.ToolTip="{CustomResource VideoCall}"
-                                          CornerRadius="20"
-                                          Margin="0,0,-4,0" />
+                                          CornerRadius="24"
+                                          Margin="0,0,8,0" />
 
                     <controls:GlyphButton x:Name="Call"
+                                          Width="48" Height="48"
+                                          Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                           Visibility="Collapsed"
                                           Click="{x:Bind ViewModel.VoiceCall}"
                                           Glyph="&#xE717;"
                                           AutomationProperties.Name="{CustomResource Call}"
                                           ToolTipService.ToolTip="{CustomResource Call}"
-                                          CornerRadius="20"
-                                          Margin="0,0,-4,0"
+                                          CornerRadius="24"
+                                          Margin="0,0,8,0"
                                           Grid.Column="1" />
 
                     <controls:GlyphButton x:Name="SearchOption"
+                                          Width="48" Height="48"
+                                          Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                           Click="{x:Bind Search}"
                                           Glyph="&#xE721;"
                                           AutomationProperties.Name="{CustomResource Search}"
                                           ToolTipService.ToolTip="{CustomResource Search}"
-                                          CornerRadius="20"
-                                          Margin="0,0,-4,0"
+                                          CornerRadius="24"
+                                          Margin="0,0,8,0"
                                           Grid.Column="2" />
 
                 </Grid>
                 <!-- Outside SecondaryOptions, which narrow windows hide, so an open sidebar can always be closed. -->
                 <controls:GlyphToggleButton x:Name="ForumSidebarButton"
+                                          Width="48" Height="48"
+                                          Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                             Click="ForumSidebar_Click"
                                             Glyph="&#xF7B8;"
                                             CheckedGlyph="&#xF7B8;"
@@ -771,13 +773,25 @@
                                             Visibility="Collapsed"
                                             AutomationProperties.Name="{CustomResource Topics}"
                                             ToolTipService.ToolTip="{CustomResource Topics}"
-                                            Margin="0,0,-4,0"
+                                            Margin="0,0,8,0"
                                             Grid.Column="1" />
                 <controls:MoreButton x:Name="HeaderMore"
+                                          Width="48" Height="48"
+                                          Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                      Click="Menu_ContextRequested"
-                                     CornerRadius="20"
+                                     CornerRadius="24"
                                      Grid.Column="2" />
             </Grid>
+            <controls:SlidePanel x:Name="HeaderPins"
+                                 Grid.Row="1" Grid.ColumnSpan="3"
+                                 HorizontalAlignment="Right" VerticalAlignment="Top"
+                                 CardBackground="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                 CardCornerRadius="24" IsCardShadowVisible="True">
+                <chats:ChatPinnedMessage x:Name="PinnedMessage"
+                                         Click="Reply_Click"
+                                         Visibility="Collapsed"
+                                         Canvas.ZIndex="1" />
+            </controls:SlidePanel>
         </Grid>
 
         <Grid x:Name="RootGrid"
@@ -808,7 +822,7 @@
 
             <controls:SlidePanel x:Name="ClipperOuter"
                                  SizeChanged="ClipperOuter_SizeChanged"
-                                 CardBackground="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                 CardBackground="Transparent"
                                  CardCornerRadius="16"
                                  VerticalAlignment="Top"
                                  Margin="8,0"
@@ -829,10 +843,6 @@
                 <chats:ChatConnectedBotHeader x:Name="ConnectedBot"
                                               Visibility="Collapsed"
                                               Canvas.ZIndex="1" />
-                <chats:ChatPinnedMessage x:Name="PinnedMessage"
-                                         Click="Reply_Click"
-                                         Visibility="Collapsed"
-                                         Canvas.ZIndex="1" />
                 <chats:ChatTranslateBar x:Name="TranslateHeader"
                                         Visibility="Collapsed"
                                         Canvas.ZIndex="1" />
@@ -857,12 +867,9 @@
                             40: join request
                             32: translate
                             -->
-                    <Border x:Name="ClipperScrim">
-                        <Border.Background>
-                            <media:LinearGaussianBrush StartPoint="0,1"
-                                                       EndPoint="0,0" />
-                        </Border.Background>
-                    </Border>
+                    <Border x:Name="ClipperScrim"
+                            Visibility="Collapsed"
+                            IsHitTestVisible="False" />
                 </Grid>
 
                 <StackPanel x:Name="DateHeaderRelative"

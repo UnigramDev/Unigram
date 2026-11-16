@@ -132,7 +132,6 @@ namespace Telegram.Views
 
         private bool _needActivation = true;
 
-        private readonly ThemeShadowEx _headerShadow;
         private readonly ThemeShadowEx _footerShadow;
 
         public ChatView()
@@ -302,7 +301,6 @@ namespace Telegram.Views
             }
 
             _footerShadow = new ThemeShadowEx(ShadowCaster, Constants.BubbleElevation);
-            _headerShadow = new ThemeShadowEx(HeaderShadow, Constants.BubbleElevation);
 
             UpdateIslands(AppSettings.Appearance.CornerRadius, AppSettings.IsAdaptiveWideEnabled);
 
@@ -875,6 +873,7 @@ namespace Telegram.Views
                 Options.Visibility = Visibility.Collapsed;
 
                 ClipperOuter.Visibility = Visibility.Collapsed;
+                HeaderPins.Visibility = Visibility.Collapsed;
 
                 HeaderLeft.SizeChanged += Options_SizeChanged;
                 HeaderLeft.Padding = new Thickness(12, 0, 0, 0);
@@ -7102,7 +7101,6 @@ namespace Telegram.Views
 
             var surface = merged ? 0 : radius;
             var card = Math.Min(surface, 16);
-            var button = new CornerRadius(Math.Max(4, radius - 4));
 
             _islandMargin = merged ? 0 : 8;
             _islandSpacing = merged ? 0 : 6;
@@ -7113,27 +7111,17 @@ namespace Telegram.Views
             // Docked, the chrome spans the whole chat instead.
             var width = adaptive && !merged ? 1024 - 2 * margin : double.PositiveInfinity;
 
-            Header.Margin = new Thickness(margin, margin, margin, 0);
+            Header.Margin = new Thickness(8, 8, 8, 0);
             Header.MaxWidth = width;
-            HeaderCard.CornerRadius = new CornerRadius(surface);
-            HeaderCard.BorderThickness = merged ? new Thickness(0, 0, 0, 1) : new Thickness();
-            HeaderShadow.RadiusX = HeaderShadow.RadiusY = surface;
-            _headerShadow.IsVisible = !merged;
-            _headerShadow.Invalidate();
-
-            // It spans the whole header, so it is the header's surface rather than one of its buttons.
-            Profile.CornerRadius = new CornerRadius(surface);
-            BackButton.CornerRadius =
-                VideoCall.CornerRadius =
-                Call.CornerRadius =
-                SearchOption.CornerRadius =
-                ForumSidebarButton.CornerRadius =
-                HeaderMore.CornerRadius = button;
+            HeaderIdentity.CornerRadius = Profile.CornerRadius = new CornerRadius(24);
+            BackButton.CornerRadius = VideoCall.CornerRadius = Call.CornerRadius = SearchOption.CornerRadius =
+                ForumSidebarButton.CornerRadius = HeaderMore.CornerRadius = new CornerRadius(24);
+            UpdateHeaderIslandsLayout();
 
             ClipperOuter.MaxWidth = width;
             ClipperOuter.LeadingSpacing = _islandSpacing;
             ClipperOuter.CardCornerRadius = card;
-            ClipperOuter.IsCardShadowVisible = !merged;
+            ClipperOuter.IsCardShadowVisible = false;
             UpdateForumLeftInset(_forumPlacement == ForumPlacement.Left);
             UpdateClipperScrim();
 
@@ -8044,9 +8032,37 @@ namespace Telegram.Views
             }
         }
 
+        private void Header_IslandsSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateHeaderIslandsLayout();
+            UpdateClipperScrim();
+        }
+
+        private void UpdateHeaderIslandsLayout()
+        {
+            if (HeaderIdentity == null || HeaderPins == null || PinnedMessage == null || Options == null)
+            {
+                return;
+            }
+
+            var width = Header.ActualWidth;
+            if (width <= 0) return;
+
+            HeaderIdentity.MaxWidth = Math.Max(72, width / 3 - 16);
+            var available = width / 3 - Options.ActualWidth - 16;
+            var inline = width >= 1000 && available >= 216;
+            Grid.SetRow(HeaderPins, inline ? 0 : 1);
+            Grid.SetColumn(HeaderPins, inline ? 2 : 0);
+            Grid.SetColumnSpan(HeaderPins, inline ? 1 : 3);
+            HeaderPins.Width = inline ? Math.Min(320, available) : Math.Min(360, width);
+            HeaderPins.Margin = inline
+                ? new Thickness(0, 0, Options.ActualWidth + 8, 0)
+                : new Thickness(0, PinnedMessage.SlideState.IsVisible ? 6 : 0, 0, 0);
+        }
+
         private void Options_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Profile.Padding = new Thickness(HeaderLeft.ActualWidth, 0, e.NewSize.Width, 0);
+            UpdateHeaderIslandsLayout();
         }
 
         private void EmptyChat_Click(object sender, RoutedEventArgs e)
@@ -8137,7 +8153,6 @@ namespace Telegram.Views
             + TranslateHeader.AnimatedHeight
             + ActionBar.AnimatedHeight
             + ConnectedBot.AnimatedHeight
-            + PinnedMessage.AnimatedHeight
             + AccountInfoHeader.AnimatedHeight
             + Sponsored.AnimatedHeight
             + (_forumPlacement == ForumPlacement.Top ? ForumIslandHeight : 0)
@@ -8167,6 +8182,7 @@ namespace Telegram.Views
 
         public void UpdateMessagesHeaderPadding()
         {
+            UpdateHeaderIslandsLayout();
             if (_headerUnreadNotReady)
             {
                 _headerUnreadRetry = true;
@@ -8883,11 +8899,6 @@ namespace Telegram.Views
             }
 
             foreach (var visual in ConnectedBot.GetAnimatableVisuals())
-            {
-                yield return visual;
-            }
-
-            foreach (var visual in PinnedMessage.GetAnimatableVisuals())
             {
                 yield return visual;
             }
