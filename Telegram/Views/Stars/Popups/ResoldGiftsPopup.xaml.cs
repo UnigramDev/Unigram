@@ -61,7 +61,7 @@ namespace Telegram.Views.Stars.Popups
             TotalCount = symbol.TotalCount;
             Id = symbol.Symbol.Sticker.Id;
             Sticker = symbol.Symbol.Sticker;
-            Attribute = new UpgradedGiftAttributeIdModel(symbol.Symbol.Sticker.Id);
+            Attribute = new UpgradedGiftAttributeIdSymbol(symbol.Symbol.Sticker.Id);
         }
 
         public string Name { get; }

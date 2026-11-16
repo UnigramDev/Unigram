@@ -27,14 +27,6 @@ namespace Telegram.Controls.Messages.Service
                 return;
             }
 
-            var user = message.ClientService.GetUser(message.Chat);
-            var self = message.ClientService.GetUser(message.ClientService.Options.MyId);
-
-            if (user == null || self == null)
-            {
-                return;
-            }
-
             var centerColor = upgradedGift.Gift.Backdrop.Colors.CenterColor.ToColor();
             var edgeColor = upgradedGift.Gift.Backdrop.Colors.EdgeColor.ToColor();
 
@@ -48,9 +40,20 @@ namespace Telegram.Controls.Messages.Service
             {
                 Title.Text = Strings.Gift2ActionSelfTitle;
             }
+            else if (upgradedGift.ReceiverId is MessageSenderChat)
+            {
+                Title.Text = Strings.Gift2UniqueTitle2;
+            }
             else
             {
-                Title.Text = string.Format(Strings.Gift2UniqueTitle, message.IsOutgoing ? self.FirstName : user.FullName(true));
+                // Without a sender: a transfer comes from whoever posted the message, while an upgrade is
+                // posted by the receiver, so that gift came from the other side.
+                var upgrade = upgradedGift.Origin is UpgradedGiftOriginUpgrade;
+                var senderId = upgradedGift.SenderId ?? (upgrade != message.IsOutgoing
+                    ? new MessageSenderUser(message.ClientService.Options.MyId)
+                    : message.Chat.ToMessageSender());
+
+                Title.Text = string.Format(Strings.Gift2UniqueTitle, message.ClientService.GetTitle(senderId, true));
             }
 
             Subtitle.Text = upgradedGift.Gift.ToName();

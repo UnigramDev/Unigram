@@ -11883,6 +11883,7 @@
     <string name="ActionGiftSelf">You bought a gift for **un2**</string>
     <string name="Gift2UniqueRibbon">gift</string>
     <string name="Gift2UniqueTitle">Gift from {0}</string>
+    <string name="Gift2UniqueTitle2">Gift</string>
     <string name="Gift2UniqueView">View</string>
     <string name="Gift2AttributeModel">Model</string>
     <string name="Gift2AttributeBackdrop">Backdrop</string>

@@ -2163,11 +2163,11 @@ namespace Telegram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = string.Format(Strings.GiftOfferOfferedTextTONOut, user.FullName(true), resalePriceGram.GramCentCount, upgradedGift.Gift.ToName());
+                    content = string.Format(Strings.GiftOfferOfferedTextTONOut, user.FullName(true), resalePriceGram.GramCentCount / 100d, upgradedGift.Gift.ToName());
                 }
                 else
                 {
-                    content = string.Format(Strings.GiftOfferOfferedTextTON, user.FullName(true), resalePriceGram.GramCentCount, upgradedGift.Gift.ToName());
+                    content = string.Format(Strings.GiftOfferOfferedTextTON, user.FullName(true), resalePriceGram.GramCentCount / 100d, upgradedGift.Gift.ToName());
                 }
             }
 
@@ -2211,7 +2211,7 @@ namespace Telegram.Controls.Messages
                 {
                     if (message.IsOutgoing)
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextStarsRejectedOut, user.FullName(true), upgradedGift.Gift.ToName(), resalePriceStar.StarCount.ToString("N0")));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextStarsRejectedOut, user.FullName(true), resalePriceStar.StarCount.ToString("N0"), upgradedGift.Gift.ToName()));
                     }
                     else
                     {
@@ -2222,11 +2222,11 @@ namespace Telegram.Controls.Messages
                 {
                     if (message.IsOutgoing)
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejectedOut, user.FullName(true), upgradedGift.Gift.ToName(), resalePriceGram.GramCentCount));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejectedOut, user.FullName(true), resalePriceGram.GramCentCount / 100d, upgradedGift.Gift.ToName()));
                     }
                     else
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejected, user.FullName(true), resalePriceGram.GramCentCount, upgradedGift.Gift.ToName()));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejected, user.FullName(true), resalePriceGram.GramCentCount / 100d, upgradedGift.Gift.ToName()));
                     }
                 }
             }
@@ -2236,7 +2236,7 @@ namespace Telegram.Controls.Messages
                 {
                     if (message.IsOutgoing)
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextStarsRejectedOut, user.FullName(true), upgradedGift.Gift.ToName(), resalePriceStar.StarCount.ToString("N0")));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextStarsRejectedOut, user.FullName(true), resalePriceStar.StarCount.ToString("N0"), upgradedGift.Gift.ToName()));
                     }
                     else
                     {
@@ -2247,11 +2247,11 @@ namespace Telegram.Controls.Messages
                 {
                     if (message.IsOutgoing)
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejectedOut, user.FullName(true), upgradedGift.Gift.ToName(), resalePriceGram.GramCentCount));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejectedOut, user.FullName(true), resalePriceGram.GramCentCount / 100d, upgradedGift.Gift.ToName()));
                     }
                     else
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejected, user.FullName(true), resalePriceGram.GramCentCount, upgradedGift.Gift.ToName()));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejected, user.FullName(true), resalePriceGram.GramCentCount / 100d, upgradedGift.Gift.ToName()));
                     }
                 }
             }
