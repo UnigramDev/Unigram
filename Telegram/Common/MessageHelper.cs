@@ -2225,6 +2225,10 @@ namespace Telegram.Common
                 {
                     navigation.NavigateToChat(info.ChatId);
                 }
+                else if (info.SubscriptionInfo != null && !info.SubscriptionInfo.CanReuse)
+                {
+                    NavigateToSubscriptionInviteLink(clientService, navigation, link, info);
+                }
                 else
                 {
                     var popup = new JoinChatPopup(clientService, info);
@@ -2256,6 +2260,34 @@ namespace Telegram.Common
                 {
                     navigation.ShowPopup(Strings.JoinToGroupErrorNotExist, Strings.AppName, Strings.OK);
                 }
+            }
+        }
+
+        private static async void NavigateToSubscriptionInviteLink(IClientService clientService, INavigationService navigation, string link, ChatInviteLinkInfo info)
+        {
+            var subscription = info.SubscriptionInfo;
+            if (subscription.FormId == 0)
+            {
+                navigation.ShowToast(Strings.LinkHashExpired, ToastPopupIcon.Info);
+                return;
+            }
+
+            var popup = new SubscribeChannelPopup(clientService, link, info);
+
+            var confirm = await navigation.ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                // A successful payment joins the channel, but returns no chat: checking the link
+                // again does, now that the user is a member.
+                var response = await clientService.CheckChatInviteLinkAsync(link);
+                if (response is ChatInviteLinkInfo joined && joined.ChatId != 0)
+                {
+                    navigation.NavigateToChat(joined.ChatId);
+                }
+            }
+            else if (popup.IsStarsNeeded)
+            {
+                await navigation.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForSubscription(subscription.Pricing.StarCount, info.Title));
             }
         }
 

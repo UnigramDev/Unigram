@@ -1870,8 +1870,8 @@
     <Compile Include="Views\Stars\Popups\SendGiftPopup.xaml.cs">
       <DependentUpon>SendGiftPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Stars\Popups\JoinChatPopup.xaml.cs">
-      <DependentUpon>JoinChatPopup.xaml</DependentUpon>
+    <Compile Include="Views\Stars\Popups\SubscribeChannelPopup.xaml.cs">
+      <DependentUpon>SubscribeChannelPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stars\Popups\ReactPopup.xaml.cs">
       <DependentUpon>ReactPopup.xaml</DependentUpon>
@@ -4523,7 +4523,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Stars\Popups\JoinChatPopup.xaml">
+    <Page Include="Views\Stars\Popups\SubscribeChannelPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

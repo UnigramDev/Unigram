@@ -38,6 +38,21 @@ namespace Telegram.Views.Stars.Popups
         /// </summary>
         public long PurposeChatId { get; set; }
 
+        /// <summary>
+        /// The title of the channel a subscription invite link joins. The user is not a member
+        /// yet, so there is no chat to name through ChatId or to record as the purpose.
+        /// </summary>
+        public string SubscriptionTitle { get; set; }
+
+        public static BuyStarsArgs ForSubscription(long starCount, string subscriptionTitle)
+        {
+            return new BuyStarsArgs
+            {
+                StarCount = starCount,
+                SubscriptionTitle = subscriptionTitle
+            };
+        }
+
         public static BuyStarsArgs ForReceiverUser(long receiverUserId)
         {
             return new BuyStarsArgs
@@ -89,7 +104,12 @@ namespace Telegram.Views.Stars.Popups
         {
             if (parameter is BuyStarsArgs args)
             {
-                if (ViewModel.ClientService.TryGetChat(args.ChatId, out Chat chat))
+                if (args.SubscriptionTitle != null)
+                {
+                    TitleLabel.Text = Locale.Declension(Strings.R.StarsNeededTitle, args.StarCount);
+                    TextBlockHelper.SetMarkdown(SubtitleLabel, string.Format(Strings.StarsNeededTextBuySubscription, args.SubscriptionTitle));
+                }
+                else if (ViewModel.ClientService.TryGetChat(args.ChatId, out Chat chat))
                 {
                     TitleLabel.Text = Locale.Declension(Strings.R.StarsNeededTitle, args.StarCount);
                     TextBlockHelper.SetMarkdown(SubtitleLabel, string.Format(Strings.StarsNeededTextReactions, chat.Title));

@@ -1720,6 +1720,7 @@
 
     <string name="JoinToGroupErrorFull">Sorry, this group is already full.</string>
     <string name="JoinToGroupErrorNotExist">Sorry, this chat doesn\'t seem to exist.</string>
+    <string name="LinkHashExpired">Link is no longer active</string>
 
 
 
@@ -7833,6 +7834,7 @@
 
 
     <string name="StarsNeededTextReactions">Buy **Stars** to send paid reactions to **{0}** and other channels.</string>
+    <string name="StarsNeededTextBuySubscription">Buy **Stars** and subscribe to **{0}** and other channels.</string>
 
 
 
@@ -8149,6 +8151,15 @@
     <string name="StarsSubscriptionCancel">Cancel Subscription</string>
     <string name="StarsSubscriptionCancelInfo">If you cancel now, you will still be able to access your subscription until {0}.</string>
     <string name="StarsSubscriptionExpiredInfo">Your subscription expired on {0}.</string>
+    <string name="StarsSubscribeTitle">Subscribe to the Channel</string>
+    <string name="StarsSubscribeText_one">Do you want to subscribe to **{1}** for **{0} Star** per month?</string>
+    <string name="StarsSubscribeText_other">Do you want to subscribe to **{1}** for **{0} Stars** per month?</string>
+    <string name="StarsSubscribeButton">Subscribe</string>
+    <string name="StarsSubscribeInfo">By subscribing you agree to the **Terms of Service**.</string>
+    <string name="StarsSubscribeInfoLink">https://telegram.org/tos/stars</string>
+    <string name="StarsSubscriptionCompleted">Subscription successful!</string>
+    <string name="StarsSubscriptionCompletedText_one">{0} Star transferred to **{1}**.</string>
+    <string name="StarsSubscriptionCompletedText_other">{0} Stars transferred to **{1}**.</string>
 
 
 
