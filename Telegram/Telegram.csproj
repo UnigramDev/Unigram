@@ -2544,6 +2544,8 @@
     <Compile Include="Shims\FocusManagerEx.cs" />
     <Compile Include="Shims\IncrementalLoading.cs" />
     <Compile Include="Shims\PickerExtensions.cs" />
+    <Compile Include="Storage\StorageAliases.cs" />
+    <Compile Include="Storage\StorageEdge.Uwp.cs" />
     <Compile Include="Common\Extensions.Collections.cs" />
     <Compile Include="Common\Extensions.Geometry.cs" />
     <Compile Include="Common\Extensions.Rpc.cs" />
