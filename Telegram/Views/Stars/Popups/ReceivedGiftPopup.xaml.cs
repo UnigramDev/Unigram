@@ -7,6 +7,7 @@
 
 using System;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -18,12 +19,16 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Supergroups;
+using Telegram.Views.Chats.Popups;
 using Telegram.Views.Gifts.Popups;
 using Telegram.Views.Popups;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Stars.Popups
@@ -53,10 +58,13 @@ namespace Telegram.Views.Stars.Popups
         private enum GiftPage
         {
             Details,
-            Upgrade
+            Upgrade,
+            Wear
         }
 
         private GiftPage _page;
+
+        private bool _shownWearInfo;
 
         // Whether the current user can act for the gift's owner: the receiver of a regular gift,
         // the owner_id of an upgraded one. Recomputed when the gift is upgraded in place.
@@ -76,6 +84,8 @@ namespace Telegram.Views.Stars.Popups
 
             UpdateOwned();
             UpdateVisibility();
+
+            ElementCompositionPreview.SetIsTranslationEnabled(UpgradedAnimatedPhoto, true);
 
             if (gift.Gift is SentGiftRegular regular)
             {
@@ -105,23 +115,34 @@ namespace Telegram.Views.Stars.Popups
 
         private void UpdateVisibility()
         {
-            var upgraded = _gift?.Gift is SentGiftUpgraded;
+            var upgraded = (_gift?.Gift as SentGiftUpgraded)?.Gift;
             var details = _page == GiftPage.Details;
+            var wear = _page == GiftPage.Wear;
 
             // The upgrade page previews the upgraded look over a regular gift.
-            var upgradedHeader = upgraded || !details;
+            var upgradedHeader = upgraded != null || !details;
 
             DismissButtonRequestedTheme = upgradedHeader ? ElementTheme.Dark : ElementTheme.Default;
             Header.Visibility = upgradedHeader ? Visibility.Collapsed : Visibility.Visible;
             UpgradedHeader.Visibility = upgradedHeader ? Visibility.Visible : Visibility.Collapsed;
 
+            // The wear page turns the header into a preview of the owner's profile. The gift stays
+            // laid out under the avatar, both are 140 tall, because PlayWearTransition flies it
+            // into the badge and back and hides it through its visual.
+            UpgradedFooter.Visibility = wear ? Visibility.Collapsed : Visibility.Visible;
+            WearPhoto.Visibility = wear ? Visibility.Visible : Visibility.Collapsed;
+            WearFooter.Visibility = wear ? Visibility.Visible : Visibility.Collapsed;
+
             DetailRoot.Visibility = details ? Visibility.Visible : Visibility.Collapsed;
-            UpgradeRoot.Visibility = details ? Visibility.Collapsed : Visibility.Visible;
+            UpgradeRoot.Visibility = _page == GiftPage.Upgrade ? Visibility.Visible : Visibility.Collapsed;
+            WearRoot.Visibility = wear ? Visibility.Visible : Visibility.Collapsed;
 
-            RegularRoot.Visibility = upgraded ? Visibility.Collapsed : Visibility.Visible;
-            UpgradedRoot.Visibility = upgraded ? Visibility.Visible : Visibility.Collapsed;
+            RegularRoot.Visibility = upgraded != null ? Visibility.Collapsed : Visibility.Visible;
+            UpgradedRoot.Visibility = upgraded != null ? Visibility.Visible : Visibility.Collapsed;
 
-            MoreButton.Visibility = upgraded && details ? Visibility.Visible : Visibility.Collapsed;
+            Ribbon.Visibility = details && upgraded?.IsCrafted is true ? Visibility.Visible : Visibility.Collapsed;
+            ResaleStarCountRoot.Visibility = details && upgraded?.ResaleParameters != null ? Visibility.Visible : Visibility.Collapsed;
+            MoreButton.Visibility = details && upgraded != null ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private bool IsOwned(IClientService clientService, MessageSender receiverId)
@@ -321,11 +342,7 @@ namespace Telegram.Views.Stars.Popups
             UpgradedAnimatedPhoto.Source = DelayedFileSource.FromSticker(clientService, gift.Model.Sticker);
             UpgradedTitle.Text = gift.Title;
 
-            if (gift.IsCrafted)
-            {
-                Ribbon.Visibility = Visibility.Visible;
-                Ribbon.Text = Strings.GiftCrafted;
-            }
+            Ribbon.Text = Strings.GiftCrafted;
 
             if (clientService.TryGetChat(gift.PublisherChatId, out Chat publisherChat)
                 && clientService.TryGetSupergroup(publisherChat, out Supergroup publisher)
@@ -461,9 +478,6 @@ namespace Telegram.Views.Stars.Popups
 
                 if (gift.ResaleParameters != null)
                 {
-                    ResaleStarCountRoot.Visibility = Visibility.Visible;
-                    ResaleStarCount.Text = gift.ResaleParameters.StarCount.ToString("N0");
-
                     ResellButton.Glyph = Icons.TagOffFilled;
                     ResellButton.Content = Strings.Gift2ActionUnlist;
                 }
@@ -473,37 +487,27 @@ namespace Telegram.Views.Stars.Popups
                     ResellButton.Content = Strings.Gift2ActionResell;
                 }
 
-                if (user != null)
-                {
-                    if (user.EmojiStatus?.Type is EmojiStatusTypeUpgradedGift upgradedGift && upgradedGift.UpgradedGiftId == gift.Id)
-                    {
-                        WearButton.Glyph = Icons.CrownOffFilled;
-                        WearButton.Content = Strings.Gift2Unwear;
-                    }
-                    else
-                    {
-                        WearButton.Glyph = Icons.CrownFilled;
-                        WearButton.Content = Strings.Gift2Wear;
-                    }
-                }
-
-                PrimaryButtonText = Strings.OK;
+                UpdateWearButton(IsWorn(gift));
             }
             else
             {
                 Info.Visibility = Visibility.Collapsed;
-
-                if (gift.ResaleParameters != null)
-                {
-                    ResaleStarCountRoot.Visibility = Visibility.Visible;
-                    ResaleStarCount.Text = gift.ResaleParameters.StarCount.ToString("N0");
-                }
-
-                // Opened from a link, the current user's own gift arrives without a received gift identifier.
-                PrimaryButtonText = gift.ResaleParameters != null && !_owned
-                    ? Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium)
-                    : Strings.OK;
             }
+
+            if (gift.ResaleParameters != null)
+            {
+                ResaleStarCount.Text = gift.ResaleParameters.StarCount.ToString("N0");
+            }
+
+            PrimaryButtonText = GetUpgradedPrimaryButtonText(gift);
+        }
+
+        private string GetUpgradedPrimaryButtonText(UpgradedGift gift)
+        {
+            // Opened from a link, the current user's own gift arrives without a received gift identifier.
+            return gift.ResaleParameters != null && !_owned
+                ? Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium)
+                : Strings.OK;
         }
 
         private void InitializeResaleStarCount(long regularGiftId)
@@ -567,7 +571,12 @@ namespace Telegram.Views.Stars.Popups
 
             _submitted = true;
 
-            if (_gift?.Gift is SentGiftRegular)
+            if (_page == GiftPage.Wear)
+            {
+                _shownWearInfo = true;
+                ToggleWear();
+            }
+            else if (_gift?.Gift is SentGiftRegular)
             {
                 var upgradable = _owned
                     ? _gift.CanBeUpgraded
@@ -750,6 +759,12 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
+            var previous = _page;
+            var upgradedHeader = UpgradedHeader.Visibility == Visibility.Visible;
+
+            // Leaving the wear page, the badge has to be measured while it is still laid out.
+            var badgeOffset = previous == GiftPage.Wear ? GetBadgeOffset() : Vector3.Zero;
+
             _page = page;
             _submitted = false;
 
@@ -759,10 +774,184 @@ namespace Telegram.Views.Stars.Popups
             {
                 InitializeUpgradePage();
             }
+            else if (page == GiftPage.Wear)
+            {
+                InitializeWearPage();
+            }
             else if (_gift.Gift is SentGiftRegular regular)
             {
                 InitializeRegular(_clientService, _gift, regular.Gift, _receiverId);
             }
+            else if (_gift.Gift is SentGiftUpgraded upgraded)
+            {
+                PrimaryButtonText = GetUpgradedPrimaryButtonText(upgraded.Gift);
+            }
+
+            // The card's height eases by itself (ModalPopup), so what is left is the content.
+            FadeIn(page switch
+            {
+                GiftPage.Upgrade => UpgradeRoot,
+                GiftPage.Wear => WearRoot,
+                _ => DetailRoot
+            });
+
+            if (upgradedHeader != (UpgradedHeader.Visibility == Visibility.Visible))
+            {
+                FadeIn(upgradedHeader ? Header : UpgradedHeader);
+            }
+
+            // After the page is filled in: the badge sits right after the owner's name.
+            if (page == GiftPage.Wear)
+            {
+                PlayWearTransition(true, Vector3.Zero);
+            }
+            else if (previous == GiftPage.Wear)
+            {
+                PlayWearTransition(false, badgeOffset);
+            }
+        }
+
+        private static void FadeIn(UIElement element)
+        {
+            var visual = ElementComposition.GetElementVisual(element);
+
+            var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 0);
+            opacity.InsertKeyFrame(1, 1);
+            opacity.Duration = Constants.FastAnimation;
+
+            visual.StartAnimation("Opacity", opacity);
+        }
+
+        /// <summary>
+        /// Where the badge next to the owner's name is, as a translation from the gift's own spot.
+        /// </summary>
+        private Vector3 GetBadgeOffset()
+        {
+            if (WearIcon.ActualWidth == 0 || UpgradedAnimatedPhoto.ActualWidth == 0)
+            {
+                return Vector3.Zero;
+            }
+
+            var badge = WearIcon.TransformToVisual(UpgradedHeader).TransformPoint(new Point(WearIcon.ActualWidth / 2, WearIcon.ActualHeight / 2));
+            var photo = UpgradedAnimatedPhoto.TransformToVisual(UpgradedHeader).TransformPoint(new Point(UpgradedAnimatedPhoto.ActualWidth / 2, UpgradedAnimatedPhoto.ActualHeight / 2));
+
+            return new Vector3((float)(badge.X - photo.X), (float)(badge.Y - photo.Y), 0);
+        }
+
+        /// <summary>
+        /// Flies the gift into the badge after the owner's name while their photo takes its place,
+        /// or back out of it. The large image does the flying in both directions, so it is only
+        /// ever drawn at or below its own size; the 24 px badge takes over once it has landed.
+        /// </summary>
+        private void PlayWearTransition(bool wear, Vector3 badgeOffset)
+        {
+            if (wear)
+            {
+                // WearFooter was collapsed until now.
+                UpdateLayout();
+                badgeOffset = GetBadgeOffset();
+            }
+
+            var photo = ElementComposition.GetElementVisual(UpgradedAnimatedPhoto);
+            var badge = ElementComposition.GetElementVisual(WearIcon);
+            var avatar = ElementComposition.GetElementVisual(WearPhoto);
+            var compositor = photo.Compositor;
+
+            var landed = UpgradedAnimatedPhoto.ActualWidth > 0
+                ? (float)(WearIcon.ActualWidth / UpgradedAnimatedPhoto.ActualWidth)
+                : 0.2f;
+
+            photo.CenterPoint = new Vector3(UpgradedAnimatedPhoto.ActualSize / 2, 0);
+            avatar.CenterPoint = new Vector3(WearPhoto.ActualSize / 2, 0);
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, wear ? Vector3.One : new Vector3(landed, landed, 1));
+            scale.InsertKeyFrame(1, wear ? new Vector3(landed, landed, 1) : Vector3.One);
+            scale.Duration = Constants.FastAnimation;
+
+            var translation = compositor.CreateVector3KeyFrameAnimation();
+            translation.InsertKeyFrame(0, wear ? Vector3.Zero : badgeOffset);
+            translation.InsertKeyFrame(1, wear ? badgeOffset : Vector3.Zero);
+            translation.Duration = Constants.FastAnimation;
+
+            // The swap between the flying image and the badge happens on the last frame, with no
+            // completion handler: a page change in the middle simply starts the other direction.
+            var photoOpacity = compositor.CreateScalarKeyFrameAnimation();
+            photoOpacity.InsertKeyFrame(0, 1);
+            photoOpacity.InsertKeyFrame(0.99f, 1);
+            photoOpacity.InsertKeyFrame(1, wear ? 0 : 1);
+            photoOpacity.Duration = Constants.FastAnimation;
+
+            photo.StartAnimation("Scale", scale);
+            photo.StartAnimation("Translation", translation);
+            photo.StartAnimation("Opacity", photoOpacity);
+
+            if (wear)
+            {
+                var badgeOpacity = compositor.CreateScalarKeyFrameAnimation();
+                badgeOpacity.InsertKeyFrame(0, 0);
+                badgeOpacity.InsertKeyFrame(0.99f, 0);
+                badgeOpacity.InsertKeyFrame(1, 1);
+                badgeOpacity.Duration = Constants.FastAnimation;
+
+                var avatarScale = compositor.CreateVector3KeyFrameAnimation();
+                avatarScale.InsertKeyFrame(0, new Vector3(0.5f, 0.5f, 1));
+                avatarScale.InsertKeyFrame(1, Vector3.One);
+                avatarScale.Duration = Constants.FastAnimation;
+
+                var avatarOpacity = compositor.CreateScalarKeyFrameAnimation();
+                avatarOpacity.InsertKeyFrame(0, 0);
+                avatarOpacity.InsertKeyFrame(1, 1);
+                avatarOpacity.Duration = Constants.FastAnimation;
+
+                badge.StartAnimation("Opacity", badgeOpacity);
+                avatar.StartAnimation("Scale", avatarScale);
+                avatar.StartAnimation("Opacity", avatarOpacity);
+
+                // The name and status come in with the photo; the badge stays out of it.
+                FadeIn(WearName);
+                FadeIn(WearStatus);
+            }
+            else
+            {
+                FadeIn(UpgradedFooter);
+            }
+        }
+
+        private void InitializeWearPage()
+        {
+            if (_gift.Gift is not SentGiftUpgraded upgraded)
+            {
+                return;
+            }
+
+            var gift = upgraded.Gift;
+
+            if (_clientService.TryGetUser(gift.OwnerId, out User user))
+            {
+                WearPhoto.Source = ProfilePictureSource.User(_clientService, user);
+                WearName.Text = user.FullName();
+                WearStatus.Text = Strings.Online;
+            }
+            else if (_clientService.TryGetChat(gift.OwnerId, out Chat chat))
+            {
+                WearPhoto.Source = ProfilePictureSource.Chat(_clientService, chat);
+                WearName.Text = chat.Title;
+
+                if (_clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    WearStatus.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
+                }
+            }
+
+            WearIcon.Source = DelayedFileSource.FromSticker(_clientService, gift.Model.Sticker);
+            WearTitle.Text = string.Format(Strings.Gift2WearTitle, gift.ToName());
+
+            // Only a user's own emoji status needs Premium; a channel's is gated by its boost level instead.
+            PrimaryButtonText = gift.OwnerId is MessageSenderUser && !_clientService.IsPremium
+                ? Strings.Gift2WearStart + " " + Icons.LockClosedFilled14
+                : Strings.Gift2WearStart;
         }
 
         private void InitializeUpgradePage()
@@ -989,7 +1178,7 @@ namespace Telegram.Views.Stars.Popups
                     {
                         upgraded.Gift.ResaleParameters = null;
 
-                        ResaleStarCountRoot.Visibility = Visibility.Collapsed;
+                        UpdateVisibility();
 
                         ResellButton.Glyph = Icons.TagFilled;
                         ResellButton.Content = Strings.Gift2ActionResell;
@@ -1069,7 +1258,7 @@ namespace Telegram.Views.Stars.Popups
 
                 _aggregator.Publish(new UpdateGiftUpgraded(_gift.ReceivedGiftId, _gift.ReceivedGiftId, _gift));
 
-                ResaleStarCountRoot.Visibility = Visibility.Visible;
+                UpdateVisibility();
                 ResaleStarCount.Text = upgraded.Gift.ResaleParameters.StarCount.ToString("N0");
 
                 ResellButton.Glyph = Icons.TagOffFilled;
@@ -1188,7 +1377,135 @@ namespace Telegram.Views.Stars.Popups
 
         private void WearButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_gift.Gift is not SentGiftUpgraded upgraded)
+            {
+                return;
+            }
 
+            if (_shownWearInfo || IsWorn(upgraded.Gift))
+            {
+                ToggleWear();
+            }
+            else
+            {
+                ShowPage(GiftPage.Wear);
+            }
+        }
+
+        private async void ToggleWear()
+        {
+            if (_gift.Gift is not SentGiftUpgraded upgraded)
+            {
+                _submitted = false;
+                return;
+            }
+
+            var gift = upgraded.Gift;
+            var worn = IsWorn(gift);
+
+            EmojiStatus status = null;
+
+            if (worn is false)
+            {
+                if (gift.OwnerId is MessageSenderChat senderChat)
+                {
+                    if (await CanSetChatEmojiStatusAsync(senderChat.ChatId) is false)
+                    {
+                        _submitted = false;
+                        return;
+                    }
+                }
+                else if (_clientService.IsPremium is false)
+                {
+                    _submitted = false;
+                    ToastPopup.ShowFeaturePromo(_navigationService, Strings.Gift2ActionWearNeededPremium, new PremiumFeatureEmojiStatus());
+                    return;
+                }
+
+                var type = ToEmojiStatusType(gift);
+                if (type == null)
+                {
+                    _submitted = false;
+                    return;
+                }
+
+                status = new EmojiStatus(type, 0);
+            }
+
+            Function function = gift.OwnerId is MessageSenderChat ownerChat
+                ? new SetChatEmojiStatus(ownerChat.ChatId, status)
+                : new SetEmojiStatus(status);
+
+            var response = await _clientService.SendAsync(function);
+            if (response is Ok)
+            {
+                UpdateWearButton(!worn);
+                ShowPage(GiftPage.Details);
+
+                ToastPopup.Show(XamlRoot, string.Format(worn ? Strings.Gift2ActionWearOffDone : Strings.Gift2ActionWearDone, gift.ToName()), new DelayedFileSource(_clientService, gift.Model.Sticker));
+            }
+            else if (response is Error error)
+            {
+                ToastPopup.ShowError(XamlRoot, error);
+            }
+
+            _submitted = false;
+        }
+
+        private async Task<bool> CanSetChatEmojiStatusAsync(long chatId)
+        {
+            if (!_clientService.TryGetChat(chatId, out Chat chat))
+            {
+                return false;
+            }
+
+            var response1 = await _clientService.SendAsync(new GetChatBoostFeatures(true));
+            var response2 = await _clientService.SendAsync(new GetChatBoostStatus(chatId));
+
+            // If the level can't be read, the server has the last word.
+            if (response1 is not ChatBoostFeatures features || response2 is not ChatBoostStatus status || status.Level >= features.MinEmojiStatusBoostLevel)
+            {
+                return true;
+            }
+
+            Hide();
+
+            await _navigationService.ShowPopupAsync(new ChatBoostFeaturesPopup(_clientService, _navigationService, chat, status, null, features, ChatBoostFeature.EmojiStatus, features.MinEmojiStatusBoostLevel));
+            await this.ShowQueuedAsync(XamlRoot);
+
+            return false;
+        }
+
+        private bool IsWorn(UpgradedGift gift)
+        {
+            EmojiStatus status = null;
+
+            if (_clientService.TryGetUser(gift.OwnerId, out User user))
+            {
+                status = user.EmojiStatus;
+            }
+            else if (_clientService.TryGetChat(gift.OwnerId, out Chat chat))
+            {
+                status = chat.EmojiStatus;
+            }
+
+            return status?.Type is EmojiStatusTypeUpgradedGift upgradedGift && upgradedGift.UpgradedGiftId == gift.Id;
+        }
+
+        private static EmojiStatusTypeUpgradedGift ToEmojiStatusType(UpgradedGift gift)
+        {
+            if (gift.Model.Sticker.FullType is StickerFullTypeCustomEmoji model && gift.Symbol.Sticker.FullType is StickerFullTypeCustomEmoji symbol)
+            {
+                return new EmojiStatusTypeUpgradedGift(gift.Id, gift.Title, gift.Name, model.CustomEmojiId, symbol.CustomEmojiId, gift.Backdrop.Colors);
+            }
+
+            return null;
+        }
+
+        private void UpdateWearButton(bool worn)
+        {
+            WearButton.Glyph = worn ? Icons.CrownOffFilled : Icons.CrownFilled;
+            WearButton.Content = worn ? Strings.Gift2ActionWearOff : Strings.Gift2ActionWear;
         }
 
         private void ResellButton_Click(object sender, RoutedEventArgs e)

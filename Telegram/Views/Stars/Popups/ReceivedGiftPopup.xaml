@@ -69,81 +69,124 @@
                                                 Padding="0">
                         <controls:PatternBackground.Footer>
                             <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock x:Name="UpgradedTitle"
-                                           Text="{CustomResource GiftTelegramPremiumTitle}"
-                                           Style="{StaticResource PopupTextBlockStyle}"
-                                           TextAlignment="Center"
-                                           VerticalAlignment="Top"
-                                           Margin="12,0" />
-
-                                <messages:MessageService x:Name="UpgradedPublisher"
-                                                         Click="UpgradedPublisher_Click"
-                                                         Background="#22000000"
-                                                         CornerRadius="12"
-                                                         HorizontalAlignment="Center"
-                                                         Padding="8,2,8,3"
-                                                         Margin="0,0,0,8"
-                                                         Visibility="Collapsed"
-                                                         Grid.Row="1">
-                                    <TextBlock x:Name="UpgradedPublisherLabel"
-                                               Foreground="#DDFFFFFF"
+                                <Grid x:Name="UpgradedFooter">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock x:Name="UpgradedTitle"
+                                               Text="{CustomResource GiftTelegramPremiumTitle}"
+                                               Style="{StaticResource PopupTextBlockStyle}"
                                                TextAlignment="Center"
-                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                               TextWrapping="NoWrap" />
-                                </messages:MessageService>
+                                               VerticalAlignment="Top"
+                                               Margin="12,0" />
 
-                                <TextBlock x:Name="UpgradedSubtitle"
-                                           Style="{StaticResource BodyTextBlockStyle}"
-                                           Foreground="#AAFFFFFF"
-                                           TextAlignment="Center"
-                                           Margin="24,0,24,8"
-                                           Grid.Row="1" />
+                                    <messages:MessageService x:Name="UpgradedPublisher"
+                                                             Click="UpgradedPublisher_Click"
+                                                             Background="#22000000"
+                                                             CornerRadius="12"
+                                                             HorizontalAlignment="Center"
+                                                             Padding="8,2,8,3"
+                                                             Margin="0,0,0,8"
+                                                             Visibility="Collapsed"
+                                                             Grid.Row="1">
+                                        <TextBlock x:Name="UpgradedPublisherLabel"
+                                                   Foreground="#DDFFFFFF"
+                                                   TextAlignment="Center"
+                                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                                   TextWrapping="NoWrap" />
+                                    </messages:MessageService>
 
-                                <Grid x:Name="UpgradedButtons"
-                                      ColumnSpacing="8"
-                                      Margin="8,0,8,8"
-                                      Visibility="Collapsed"
-                                      Grid.Row="2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <controls:SettingsButton x:Name="TransferButton"
-                                                             Click="TransferButton_Click"
-                                                             Content="{CustomResource Gift2ActionTransfer}"
-                                                             Style="{StaticResource GlyphGridBadgeButtonStyle}"
-                                                             Glyph="&#xEAC6;" />
+                                    <TextBlock x:Name="UpgradedSubtitle"
+                                               Style="{StaticResource BodyTextBlockStyle}"
+                                               Foreground="#AAFFFFFF"
+                                               TextAlignment="Center"
+                                               Margin="24,0,24,8"
+                                               Grid.Row="1" />
 
-                                    <controls:SettingsButton x:Name="WearButton"
-                                                             Click="WearButton_Click"
-                                                             Content="{CustomResource Gift2Wear}"
-                                                             Style="{StaticResource GlyphGridBadgeButtonStyle}"
-                                                             Glyph="&#xEAB3;"
-                                                             Grid.Column="1" />
+                                    <Grid x:Name="UpgradedButtons"
+                                          ColumnSpacing="8"
+                                          Margin="8,0,8,8"
+                                          Visibility="Collapsed"
+                                          Grid.Row="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <controls:SettingsButton x:Name="TransferButton"
+                                                                 Click="TransferButton_Click"
+                                                                 Content="{CustomResource Gift2ActionTransfer}"
+                                                                 Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                                                 Glyph="&#xEAC6;" />
 
-                                    <controls:SettingsButton x:Name="ResellButton"
-                                                             Click="ResellButton_Click"
-                                                             Content="{CustomResource Gift2ActionResell}"
-                                                             Style="{StaticResource GlyphGridBadgeButtonStyle}"
-                                                             Glyph="&#xEA68;"
-                                                             Grid.Column="2" />
+                                        <controls:SettingsButton x:Name="WearButton"
+                                                                 Click="WearButton_Click"
+                                                                 Content="{CustomResource Gift2ActionWear}"
+                                                                 Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                                                 Glyph="&#xEAB3;"
+                                                                 Grid.Column="1" />
+
+                                        <controls:SettingsButton x:Name="ResellButton"
+                                                                 Click="ResellButton_Click"
+                                                                 Content="{CustomResource Gift2ActionResell}"
+                                                                 Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                                                 Glyph="&#xEA68;"
+                                                                 Grid.Column="2" />
+                                    </Grid>
+                                </Grid>
+
+                                <Grid x:Name="WearFooter"
+                                      Visibility="Collapsed">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid HorizontalAlignment="Center"
+                                          Margin="12,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Name="WearName"
+                                                   Style="{StaticResource PopupTextBlockStyle}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   TextWrapping="NoWrap"
+                                                   VerticalAlignment="Center" />
+                                        <controls:AnimatedImage x:Name="WearIcon"
+                                                                Width="24"
+                                                                Height="24"
+                                                                FrameSize="24,24"
+                                                                DecodeFrameType="Logical"
+                                                                IsViewportAware="True"
+                                                                Margin="4,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                Grid.Column="1" />
+                                    </Grid>
+                                    <TextBlock x:Name="WearStatus"
+                                               Style="{StaticResource BodyTextBlockStyle}"
+                                               Foreground="#AAFFFFFF"
+                                               TextAlignment="Center"
+                                               Margin="24,0,24,8"
+                                               Grid.Row="1" />
                                 </Grid>
                             </Grid>
                         </controls:PatternBackground.Footer>
-                        <controls:AnimatedImage x:Name="UpgradedAnimatedPhoto"
-                                                Width="120"
-                                                Height="120"
-                                                FrameSize="120,120"
-                                                DecodeFrameType="Logical"
-                                                IsViewportAware="True"
-                                                LoopCount="1"
-                                                Margin="0,12,0,8" />
+                        <Grid>
+                            <controls:AnimatedImage x:Name="UpgradedAnimatedPhoto"
+                                                    Width="120"
+                                                    Height="120"
+                                                    FrameSize="120,120"
+                                                    DecodeFrameType="Logical"
+                                                    IsViewportAware="True"
+                                                    LoopCount="1"
+                                                    Margin="0,12,0,8" />
+                            <controls:ProfilePicture x:Name="WearPhoto"
+                                                     Size="96"
+                                                     Margin="0,24,0,20"
+                                                     Visibility="Collapsed" />
+                        </Grid>
                     </controls:PatternBackground>
 
                     <Grid x:Name="ResaleStarCountRoot"
@@ -482,6 +525,48 @@
                                   Content="{CustomResource Gift2AddSenderName}"
                                   Margin="24,0,0,0"
                                   Grid.Row="3" />
+                    </Grid>
+                    <Grid x:Name="WearRoot"
+                          Visibility="Collapsed"
+                          Grid.Row="1"
+                          Grid.RowSpan="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="WearTitle"
+                                   Style="{StaticResource PopupTextBlockStyle}"
+                                   TextAlignment="Center"
+                                   Margin="24,16,24,0" />
+                        <TextBlock Text="{CustomResource Gift2WearSubtitle}"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   TextAlignment="Center"
+                                   Margin="24,0,24,8"
+                                   Grid.Row="1" />
+                        <controls:SettingsButton Content="{CustomResource Gift2WearFeature1Title}"
+                                                 Badge="{CustomResource Gift2WearFeature1Text}"
+                                                 Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
+                                                 Glyph="&#xEABD;"
+                                                 Margin="12,0,12,0"
+                                                 IsHitTestVisible="False"
+                                                 Grid.Row="2" />
+                        <controls:SettingsButton Content="{CustomResource Gift2WearFeature2Title}"
+                                                 Badge="{CustomResource Gift2WearFeature2Text}"
+                                                 Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
+                                                 Glyph="&#xE2B1;"
+                                                 Margin="12,-8,12,0"
+                                                 IsHitTestVisible="False"
+                                                 Grid.Row="3" />
+                        <controls:SettingsButton Content="{CustomResource Gift2WearFeature3Title}"
+                                                 Badge="{CustomResource Gift2WearFeature3Text}"
+                                                 Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
+                                                 Glyph="&#xEA8B;"
+                                                 Margin="12,-8,12,0"
+                                                 IsHitTestVisible="False"
+                                                 Grid.Row="4" />
                     </Grid>
                 </Grid>
             </Grid>
