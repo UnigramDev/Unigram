@@ -181,8 +181,15 @@ namespace Telegram.Controls
             }
 #endif
 
-            var task = await GetTaskAsync();
-            return task?.State;
+            try
+            {
+                var task = await GetTaskAsync();
+                return task?.State;
+            }
+            catch
+            {
+                return StartupTaskState.DisabledByPolicy;
+            }
         }
 
         private async Task SetEnabledAsync(bool enabled)
