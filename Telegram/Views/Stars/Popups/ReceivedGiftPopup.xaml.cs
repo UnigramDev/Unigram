@@ -50,6 +50,18 @@ namespace Telegram.Views.Stars.Popups
         private GiftUpgradePreview _preview;
         private int _index;
 
+        private enum GiftPage
+        {
+            Details,
+            Upgrade
+        }
+
+        private GiftPage _page;
+
+        // Whether the current user can act for the gift's owner: the receiver of a regular gift,
+        // the owner_id of an upgraded one. Recomputed when the gift is upgraded in place.
+        private bool _owned;
+
         public ReceivedGiftPopup(IClientService clientService, INavigationService navigationService, ReceivedGift gift, MessageSender receiverId, MessageSender sendGiftTo)
         {
             InitializeComponent();
@@ -62,9 +74,12 @@ namespace Telegram.Views.Stars.Popups
             _receiverId = receiverId;
             _sendGiftTo = sendGiftTo;
 
+            UpdateOwned();
+            UpdateVisibility();
+
             if (gift.Gift is SentGiftRegular regular)
             {
-                if (gift.PrepaidUpgradeHash.Length > 0 || (gift.CanBeUpgraded && IsOwned(clientService, receiverId)))
+                if (gift.PrepaidUpgradeHash.Length > 0 || (gift.CanBeUpgraded && _owned))
                 {
                     InitializeGift();
                 }
@@ -76,6 +91,37 @@ namespace Telegram.Views.Stars.Popups
                 InitializeValue(upgraded.Gift);
                 InitializeUpgraded(clientService, gift, upgraded.Gift);
             }
+        }
+
+        private void UpdateOwned()
+        {
+            _owned = _gift?.Gift switch
+            {
+                SentGiftRegular => IsOwned(_clientService, _receiverId),
+                SentGiftUpgraded upgraded => IsOwned(_clientService, upgraded.Gift.OwnerId),
+                _ => false
+            };
+        }
+
+        private void UpdateVisibility()
+        {
+            var upgraded = _gift?.Gift is SentGiftUpgraded;
+            var details = _page == GiftPage.Details;
+
+            // The upgrade page previews the upgraded look over a regular gift.
+            var upgradedHeader = upgraded || !details;
+
+            DismissButtonRequestedTheme = upgradedHeader ? ElementTheme.Dark : ElementTheme.Default;
+            Header.Visibility = upgradedHeader ? Visibility.Collapsed : Visibility.Visible;
+            UpgradedHeader.Visibility = upgradedHeader ? Visibility.Visible : Visibility.Collapsed;
+
+            DetailRoot.Visibility = details ? Visibility.Visible : Visibility.Collapsed;
+            UpgradeRoot.Visibility = details ? Visibility.Collapsed : Visibility.Visible;
+
+            RegularRoot.Visibility = upgraded ? Visibility.Collapsed : Visibility.Visible;
+            UpgradedRoot.Visibility = upgraded ? Visibility.Visible : Visibility.Collapsed;
+
+            MoreButton.Visibility = upgraded && details ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private bool IsOwned(IClientService clientService, MessageSender receiverId)
@@ -94,11 +140,6 @@ namespace Telegram.Views.Stars.Popups
 
         private void InitializeRegular(IClientService clientService, ReceivedGift receivedGift, Gift gift, MessageSender receiverId)
         {
-            DismissButtonRequestedTheme = ElementTheme.Default;
-            UpgradedHeader.Visibility = Visibility.Collapsed;
-            UpgradedRoot.Visibility = Visibility.Collapsed;
-            MoreButton.Visibility = Visibility.Collapsed;
-
             if (clientService.TryGetUser(receivedGift.SenderId, out User user))
             {
                 FromPhoto.Source = ProfilePictureSource.User(clientService, user);
@@ -121,7 +162,7 @@ namespace Telegram.Views.Stars.Popups
             From.Header = Strings.Gift2From;
             Title.Text = Strings.Gift2TitleReceived;
 
-            if (IsOwned(clientService, receiverId))
+            if (_owned)
             {
                 if (receivedGift.IsSaved)
                 {
@@ -276,11 +317,6 @@ namespace Telegram.Views.Stars.Popups
                 });
             }
 
-            DismissButtonRequestedTheme = ElementTheme.Dark;
-            Header.Visibility = Visibility.Collapsed;
-            RegularRoot.Visibility = Visibility.Collapsed;
-            MoreButton.Visibility = Visibility.Visible;
-
             UpgradedHeader.Update(clientService, gift);
             UpgradedAnimatedPhoto.Source = DelayedFileSource.FromSticker(clientService, gift.Model.Sticker);
             UpgradedTitle.Text = gift.Title;
@@ -403,7 +439,7 @@ namespace Telegram.Views.Stars.Popups
                 UpgradedCaption.SetText(clientService, text);
             }
 
-            if (IsOwned(clientService, gift.OwnerId) && receivedGift.ReceivedGiftId.Length > 0)
+            if (_owned && receivedGift.ReceivedGiftId.Length > 0)
             {
                 if (receivedGift.IsSaved)
                 {
@@ -464,7 +500,7 @@ namespace Telegram.Views.Stars.Popups
                 }
 
                 // Opened from a link, the current user's own gift arrives without a received gift identifier.
-                PrimaryButtonText = gift.ResaleParameters != null && !IsOwned(clientService, gift.OwnerId)
+                PrimaryButtonText = gift.ResaleParameters != null && !_owned
                     ? Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium)
                     : Strings.OK;
             }
@@ -492,9 +528,7 @@ namespace Telegram.Views.Stars.Popups
             _clientService = clientService;
             _navigationService = navigationService;
 
-            DismissButtonRequestedTheme = ElementTheme.Default;
-            UpgradedHeader.Visibility = Visibility.Collapsed;
-            UpgradedRoot.Visibility = Visibility.Collapsed;
+            UpdateVisibility();
 
             From.Visibility = Visibility.Collapsed;
 
@@ -535,7 +569,7 @@ namespace Telegram.Views.Stars.Popups
 
             if (_gift?.Gift is SentGiftRegular)
             {
-                var upgradable = IsOwned(_clientService, _receiverId)
+                var upgradable = _owned
                     ? _gift.CanBeUpgraded
                     : _gift.PrepaidUpgradeHash.Length > 0;
 
@@ -543,16 +577,16 @@ namespace Telegram.Views.Stars.Popups
                 {
                     Hide(ContentDialogResult.Primary);
                 }
-                else if (_upgradeCollapsed)
+                else if (_page == GiftPage.Details)
                 {
-                    ShowHideUpgrade(true);
+                    ShowPage(GiftPage.Upgrade);
                 }
                 else
                 {
                     Upgrade2();
                 }
             }
-            else if (_gift?.Gift is SentGiftUpgraded { Gift.ResaleParameters: not null } upgraded && !IsOwned(_clientService, upgraded.Gift.OwnerId))
+            else if (_gift?.Gift is SentGiftUpgraded { Gift.ResaleParameters: not null } && !_owned)
             {
                 BuyResale();
             }
@@ -577,7 +611,7 @@ namespace Telegram.Views.Stars.Popups
             var starCount = _gift.PrepaidUpgradeStarCount > 0 || _gift.IsUpgradeSeparate ? 0 : regular.Gift.UpgradeStarCount;
 
             Function function;
-            if (IsOwned(_clientService, _receiverId))
+            if (_owned)
             {
                 function = new UpgradeGift(_gift.ReceivedGiftId, KeepOriginalDetails.IsChecked is true, starCount);
             }
@@ -605,12 +639,10 @@ namespace Telegram.Views.Stars.Popups
 
                 UpgradedAnimatedPhoto.LoopCompleted -= OnLoopCompleted;
 
-                DismissButtonRequestedTheme = ElementTheme.Dark;
-                UpgradedHeader.Visibility = Visibility.Visible;
-                UpgradedRoot.Visibility = Visibility.Visible;
+                _page = GiftPage.Details;
 
-                DetailRoot.Visibility = Visibility.Visible;
-                UpgradeRoot.Visibility = Visibility.Collapsed;
+                UpdateOwned();
+                UpdateVisibility();
 
                 InitializeUpgraded(_clientService, _gift, result.Gift);
             }
@@ -711,55 +743,61 @@ namespace Telegram.Views.Stars.Popups
             }
         }
 
-        private bool _upgradeCollapsed = true;
-
-        private void ShowHideUpgrade(bool show)
+        private void ShowPage(GiftPage page)
         {
-            if (_upgradeCollapsed != show)
+            if (_page == page)
             {
                 return;
             }
 
-            _upgradeCollapsed = !show;
+            _page = page;
             _submitted = false;
 
-            if (IsOwned(_clientService, _receiverId))
+            UpdateVisibility();
+
+            if (page == GiftPage.Upgrade)
+            {
+                InitializeUpgradePage();
+            }
+            else if (_gift.Gift is SentGiftRegular regular)
+            {
+                InitializeRegular(_clientService, _gift, regular.Gift, _receiverId);
+            }
+        }
+
+        private void InitializeUpgradePage()
+        {
+            if (_gift.Gift is not SentGiftRegular regular)
+            {
+                return;
+            }
+
+            if (_owned)
             {
                 UpgradedTitle.Text = Strings.Gift2UpgradeTitle;
                 UpgradedSubtitle.Text = Strings.Gift2UpgradeText;
             }
             else
             {
-                UpgradedTitle.Text = Strings.Gift2PrepayUpgradeTitle;
-                UpgradedSubtitle.Text = string.Format(Strings.Gift2PrepayUpgradeText, _clientService.GetTitle(_receiverId, true));
+                var receiverName = _clientService.GetTitle(_receiverId, true);
 
-                UpgradeText1.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature1Text, _clientService.GetTitle(_receiverId, true));
-                UpgradeText2.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature2Text, _clientService.GetTitle(_receiverId, true));
-                UpgradeText3.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature3Text, _clientService.GetTitle(_receiverId, true));
+                UpgradedTitle.Text = Strings.Gift2PrepayUpgradeTitle;
+                UpgradedSubtitle.Text = string.Format(Strings.Gift2PrepayUpgradeText, receiverName);
+
+                UpgradeText1.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature1Text, receiverName);
+                UpgradeText2.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature2Text, receiverName);
+                UpgradeText3.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature3Text, receiverName);
 
                 KeepOriginalDetails.Visibility = Visibility.Collapsed;
             }
 
-            DismissButtonRequestedTheme = show ? ElementTheme.Dark : ElementTheme.Default;
-            Header.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
-            UpgradedHeader.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            UpdateGift();
 
-            DetailRoot.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
-            UpgradeRoot.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-
-            if (show)
-            {
-                UpdateGift();
-
-                if (_gift.Gift is SentGiftRegular regular)
-                {
-                    PrimaryButtonText = _gift.PrepaidUpgradeHash.Length > 0
-                        ? string.Format(Strings.Gift2PrepayUpgradeButton.ReplaceStar(Icons.Premium), regular.Gift.UpgradeStarCount)
-                        : _gift.PrepaidUpgradeStarCount > 0
-                        ? Strings.Gift2UpgradeButtonFree
-                        : string.Format(Strings.Gift2UpgradeButton.ReplaceStar(Icons.Premium), regular.Gift.UpgradeStarCount);
-                }
-            }
+            PrimaryButtonText = _gift.PrepaidUpgradeHash.Length > 0
+                ? string.Format(Strings.Gift2PrepayUpgradeButton.ReplaceStar(Icons.Premium), regular.Gift.UpgradeStarCount)
+                : _gift.PrepaidUpgradeStarCount > 0
+                ? Strings.Gift2UpgradeButtonFree
+                : string.Format(Strings.Gift2UpgradeButton.ReplaceStar(Icons.Premium), regular.Gift.UpgradeStarCount);
         }
 
         private async void InitializeValue(UpgradedGift gift)
@@ -798,7 +836,7 @@ namespace Telegram.Views.Stars.Popups
 
                 _preview = preview;
 
-                if (_upgradeCollapsed is false)
+                if (_page == GiftPage.Upgrade)
                 {
                     UpdateGift();
                 }
@@ -834,18 +872,14 @@ namespace Telegram.Views.Stars.Popups
 
         protected override void OnDismissButtonClick()
         {
-            if (_upgradeCollapsed)
+            // The dismiss button goes back from a page to the details.
+            if (_page == GiftPage.Details)
             {
                 base.OnDismissButtonClick();
             }
             else
             {
-                ShowHideUpgrade(false);
-
-                if (_gift.Gift is SentGiftRegular regular)
-                {
-                    InitializeRegular(_clientService, _gift, regular.Gift, _receiverId);
-                }
+                ShowPage(GiftPage.Details);
             }
         }
 
