@@ -805,7 +805,27 @@ namespace Telegram.Views.Stars.Popups
             else if (response is Ok)
             {
                 Hide();
-                ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.StarsGiftUpgradeCompleted, string.Format(Strings.StarsGiftUpgradeCompletedText, _clientService.GetTitle(_receiverId, true))), ToastPopupIcon.Gift);
+
+                var receiverId = _receiverId;
+                var text = string.Format("**{0}**\n{1}", Strings.StarsGiftUpgradeCompleted, string.Format(Strings.StarsGiftUpgradeCompletedText, _clientService.GetTitle(receiverId, true)));
+
+                // Paid for from elsewhere, the upgrade lands in the receiver's chat, with a way on to
+                // the rest of their gifts that can still be upgraded.
+                var chat = await _clientService.GetChatFromMessageSenderAsync(receiverId);
+                if (chat != null && !_navigationService.IsChatOpen(chat.Id))
+                {
+                    _navigationService.NavigateToChat(chat);
+
+                    var confirm = await ToastPopup.ShowActionAsync(XamlRoot, text, Strings.StarsGiftUpgradeCompletedMoreButton, ToastPopupIcon.Gift);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        _navigationService.NavigateToSender(receiverId, new NavigationState { { "open_gifts", true }, { "open_gifts_upgradable", true } });
+                    }
+                }
+                else
+                {
+                    ToastPopup.Show(XamlRoot, text, ToastPopupIcon.Gift);
+                }
             }
             else if (response is Error error)
             {

@@ -100,6 +100,9 @@ namespace Telegram.ViewModels
             set => Set(ref _reportReactions, value);
         }
 
+        // Opened for its gifts: the gifts tab is selected once it exists, without becoming the main tab.
+        private bool _openGifts;
+
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is ChatMessageTopic chatMessageTopic)
@@ -121,6 +124,16 @@ namespace Telegram.ViewModels
                         ForumTopic = topic;
                         Topic = new MessageTopicForum(topic.Info.ForumTopicId);
                     }
+                }
+            }
+
+            if (state != null && state.TryGet("open_gifts", out bool openGifts))
+            {
+                _openGifts = openGifts;
+
+                if (state.TryGet("open_gifts_upgradable", out bool upgradable) && upgradable)
+                {
+                    _giftsTabViewModel.ShowUpgradableOnly();
                 }
             }
 
@@ -363,6 +376,12 @@ namespace Telegram.ViewModels
 
             Items.ReplaceWith(tabs);
             SelectedItem = already ?? tabs.FirstOrDefault();
+
+            if (_openGifts && tabs.FirstOrDefault(x => x.Type is ProfileTabGifts) is ProfileTabItem gifts)
+            {
+                _openGifts = false;
+                SelectedItem = gifts;
+            }
 
             _mainTab = mainTab;
 

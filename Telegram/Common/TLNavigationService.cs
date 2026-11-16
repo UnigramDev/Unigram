@@ -852,11 +852,11 @@ namespace Telegram.Common
                     var user = ClientService.GetUser(userId);
                     if (user?.Type is UserTypeBot || toChat)
                     {
-                        NavigateToChat(created);
+                        NavigateToChat(created, state: state);
                     }
                     else
                     {
-                        Navigate(typeof(ProfilePage), created.Id);
+                        Navigate(typeof(ProfilePage), created.Id, state: state, infoOverride: infoOverride);
                     }
                 }
             }

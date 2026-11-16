@@ -13020,6 +13020,7 @@
     <string name="Gift2PrepayUpgradeTitle">Make Unique</string>
     <string name="StarsGiftUpgradeCompleted">Gift Upgrade sent!</string>
     <string name="StarsGiftUpgradeCompletedText">{0} can now upgrade this gift for free.</string>
+    <string name="StarsGiftUpgradeCompletedMoreButton">Gift More</string>
     <string name="ActionPrepaidGiftInbound">un1 sent an upgrade worth **un2** for your gift</string>
     <string name="ActionPrepaidGiftOutbound">You sent an upgrade worth **un2** for **un1**\'s gift</string>
 

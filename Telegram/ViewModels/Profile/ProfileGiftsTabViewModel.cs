@@ -493,6 +493,25 @@ namespace Telegram.ViewModels.Profile
             }
         }
 
+        /// <summary>
+        /// Limits the list to gifts that can still be upgraded, as the type filters would; takes
+        /// effect on the next load.
+        /// </summary>
+        public void ShowUpgradableOnly()
+        {
+            _excludeUnlimited = true;
+            _excludeUpgradable = false;
+            _excludeNonUpgradable = true;
+            _excludeUpgraded = true;
+
+            RaisePropertyChanged(nameof(ExcludeUnlimited));
+            RaisePropertyChanged(nameof(ExcludeUpgradable));
+            RaisePropertyChanged(nameof(ExcludeNonUpgradable));
+            RaisePropertyChanged(nameof(ExcludeUpgraded));
+
+            Reload(false);
+        }
+
         public void Preload()
         {
             if (Items.Empty())
