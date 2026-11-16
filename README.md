@@ -10,8 +10,6 @@
     <br>
     <br>
     <a href="https://apps.microsoft.com/detail/9n97zckpd60q">Microsoft Store</a>
-    &middot;
-    <a href="https://unigramdev.github.io">Direct Download</a>
     <br>
     <a href="https://t.me/unigraminsiders">Insiders Group</a>
   </p>
@@ -26,7 +24,7 @@ For feature requests, make sure to have read our [contributing guidelines](/CONT
 
 <a name="changelog"></a>
 ## Changelog
-Changelogs are provided both in [Unigram News channel](https://t.me/unigram) and in the [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases).
+Changelogs are provided both in [Unigram News channel](https://t.me/unigram) and in the [Releases section of our GitHub project](https://github.com/TelegramMessenger/Unigram/releases).
 
 <a name="screenshots"></a>
 ## Screenshots
@@ -41,7 +39,7 @@ Unigram has 28 built-in languages and has access to unlimited packs using Telegr
 If you are wishing to improve or complete the current translations you can do it [here](https://translations.telegram.org/en/Unigram). You can also work on the translation of a missing language from there.
 
 ## Shortcuts
-We have a list of shortcuts to ease the use with a keyboard. An up-to-date list can be found [here](https://github.com/UnigramDev/Unigram/blob/develop/Documentation/Shortcuts.md).
+We have a list of shortcuts to ease the use with a keyboard. An up-to-date list can be found [here](Documentation/Shortcuts.md).
 
 ## Windows 10 N
 In order to be able to use Unigram in Windows 10 N, you will need Media Feature pack. To install it properly, go to ```Settings > Apps and Features > Add a feature.``` At this point, select ```Media Feature pack```, install it and reboot.

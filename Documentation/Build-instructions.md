@@ -12,7 +12,7 @@ The following tools and SDKs are mandatory for the project development:
 
 1. First, check that you have the [necessary tools](#requirements) installed.
 2. Go to <https://my.telegram.org/apps> and register a new app.
-3. Clone the repository __*recursively*__ by using `git clone --recursive https://github.com/UnigramDev/Unigram.git`.
+3. Clone the repository __*recursively*__ by using `git clone --recursive https://github.com/TelegramMessenger/Unigram.git`.
 4. Create a new file inside `Unigram/Telegram` and name it `Constants.Secret.cs`:
 ```csharp
 namespace Telegram
@@ -123,4 +123,4 @@ scripts, the patches and the packaging, and documents how to publish a new archi
 
 ### Code fails to build?
 
-If the code fails to build make sure to create a [new issue](https://github.com/UnigramDev/Unigram/issues/new?assignees=&labels=needs-triage&template=anything-else.md&title=) or to open a [pull request](https://github.com/UnigramDev/Unigram/compare).
+If the code fails to build make sure to create a [new issue](https://github.com/TelegramMessenger/Unigram/issues/new?labels=needs-triage) or to open a [pull request](https://github.com/TelegramMessenger/Unigram/compare).

@@ -256,7 +256,7 @@ remote-tracking refs, which are routinely stale *and* carry unpushed local commi
 `origin/develop` there is not the branch the PR will merge into:
 
 ```
-git -C <workdir> remote add github https://github.com/UnigramDev/Unigram
+git -C <workdir> remote add github https://github.com/TelegramMessenger/Unigram
 git -C <workdir> fetch github develop
 git -C <workdir> checkout -b <short-slug> github/develop
 ```
@@ -276,7 +276,7 @@ Open the PR against `develop`:
 
 ```
 git -C <workdir> push -u github <short-slug>
-gh pr create --repo UnigramDev/Unigram --base develop --head <short-slug> --title "..." --body "..."
+gh pr create --repo TelegramMessenger/Unigram --base develop --head <short-slug> --title "..." --body "..."
 ```
 
 The PR body should carry: the error type and message, the versions affected, the symbolicated
@@ -330,7 +330,7 @@ That is expected; the status reflects that a fix exists, not that it has reached
 To notice the merge, watch the PR:
 
 ```
-gh pr view <pr> --repo UnigramDev/Unigram --json state -q .state
+gh pr view <pr> --repo TelegramMessenger/Unigram --json state -q .state
 ```
 
 A polling watcher must filter out its own comments. `gh` posts under the user's account, so
