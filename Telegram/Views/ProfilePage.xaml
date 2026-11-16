@@ -63,25 +63,22 @@
                                                  ItemsSource="{x:Bind ViewModel.Items}"
                                                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                                                  Height="48"
-                                                 Padding="8,0,8,4"
-                                                 Margin="-4">
+                                                 Padding="8,0,0,4"
+                                                 Margin="-4,-4,0,-4">
                                 <controls:TopNavView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal"
-                                                    HorizontalAlignment="Center"
-                                                    Margin="0,0,8,0" />
+                                                    HorizontalAlignment="Center" />
                                     </ItemsPanelTemplate>
                                 </controls:TopNavView.ItemsPanel>
                             </controls:TopNavView>
 
-                            <!-- Outside the strip rather than its footer, so it stays in view when the tabs overflow and scroll. -->
                             <StackPanel x:Name="SearchSlot"
                                         Orientation="Horizontal"
                                         Grid.Column="1">
                                 <Border Background="{ThemeResource DividerStrokeColorDefaultBrush}"
                                         Width="1"
                                         Height="20"
-                                        Margin="-12,0,0,0"
                                         VerticalAlignment="Center" />
 
                                 <controls:GlyphButton x:Name="SearchButton"
