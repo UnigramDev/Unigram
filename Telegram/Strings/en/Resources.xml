@@ -8265,14 +8265,27 @@
 
     <string name="Gift2TitleReceived">Received Gift</string>
     <string name="TelegramPremiumShort">Premium</string>
-    <string name="Gift2Info_one">You can add this gift to your profile or convert it to **{0}** Star.</string>
-    <string name="Gift2Info_other">You can add this gift to your profile or convert it to **{0}** Stars.</string>
     <string name="Gift2InfoOut_one">{1} can add this gift to their profile or convert it to **{0}** Star.</string>
     <string name="Gift2InfoOut_other">{1} can add this gift to their profile or convert it to **{0}** Stars.</string>
     <string name="Gift2InfoConverted_one">You converted this gift to **{0}** Star.</string>
     <string name="Gift2InfoConverted_other">You converted this gift to **{0}** Stars.</string>
-    <string name="Gift2InfoPinned">You added this gift to your profile.</string>
     <string name="Gift2Info2OutExpired">{0} can add this gift to their Profile.</string>
+    <string name="Gift2TitleSaved">Saved Gift</string>
+    <string name="Gift2TitleProfile">Gift</string>
+    <string name="Gift2SelfInfoUpgrade">You can display this gift on your page or turn it into a unique collectible and send to others.</string>
+    <string name="Gift2SelfInfoConvert_one">Display this gift on your page or convert it to **{0} Star**.</string>
+    <string name="Gift2SelfInfoConvert_other">Display this gift on your page or convert it to **{0} Stars**.</string>
+    <string name="Gift2SelfInfo">You can display this gift on your page.</string>
+    <string name="Gift2Info2ChannelKeep">Your channel can keep this gift in channel\'s Gifts.</string>
+    <string name="Gift2Info2BotKeep">You can keep this gift in your Profile.</string>
+    <string name="Gift2Info2ChannelRemove">Your channel can hide this gift from channel\'s Gifts.</string>
+    <string name="Gift2Info2BotRemove">You can remove this gift from your Profile.</string>
+    <string name="Gift2Info2OutUpgrade">{0} can keep this gift in their Profile or upgrade to unique collectible.</string>
+    <string name="Gift2Info3_one">You can keep this gift in your Profile or convert it to **{0}** Star.</string>
+    <string name="Gift2Info3_other">You can keep this gift in your Profile or convert it to **{0}** Stars.</string>
+    <string name="Gift2Info3Channel_one">Your channel can keep this gift in channel\'s Gifts or convert it to **{0}** Star.</string>
+    <string name="Gift2Info3Channel_other">Your channel can keep this gift in channel\'s Gifts or convert it to **{0}** Stars.</string>
+    <string name="Gift2InfoOutPinned">{0} kept this gift in your Profile.</string>
 
 
 
@@ -11557,8 +11570,6 @@
 
     <string name="Gift2ConvertText2_one">Do you want to convert this gift from **{1}** to **{2}**?\n\nConversion is available for the next **{0} day**.\n\nThis action cannot be undone. This will permanently destroy the gift.</string>
     <string name="Gift2ConvertText2_other">Do you want to convert this gift from **{1}** to **{2}**?\n\nConversion is available for the next **{0} days**.\n\nThis action cannot be undone. This will permanently destroy the gift.</string>
-    <string name="Gift2Info2Expired_one">You can add this gift of {0} Star to your profile.</string>
-    <string name="Gift2Info2Expired_other">You can add this gift of {0} Stars to your profile.</string>
 
     <string name="NoResult">No results</string>
     <string name="NoResultFoundFor2">There were no results for \"{0}\".\nTry a new search.</string>

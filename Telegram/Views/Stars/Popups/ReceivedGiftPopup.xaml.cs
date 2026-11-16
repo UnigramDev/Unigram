@@ -188,57 +188,56 @@ namespace Telegram.Views.Stars.Popups
             }
 
             From.Header = Strings.Gift2From;
-            Title.Text = Strings.Gift2TitleReceived;
+
+            var sentByMe = receivedGift.SenderId?.IsUser(clientService.Options.MyId) is true;
+            var forChannel = receiverId is MessageSenderChat;
+            var self = _owned && sentByMe && !forChannel;
+
+            // A refunded gift has nothing left to sell.
+            var sellable = !receivedGift.WasRefunded
+                && receivedGift.SellStarCount > 0
+                && receivedGift.Date + clientService.Options.GiftSellPeriod > DateTime.Now.ToUnixTimeSeconds();
+
+            Title.Text = self
+                ? Strings.Gift2TitleSaved
+                : _owned
+                ? Strings.Gift2TitleReceived
+                : sentByMe && !forChannel
+                ? Strings.Gift2TitleSent
+                : Strings.Gift2TitleProfile;
+
+            SetSubtitle(receivedGift.WasRefunded ? null : GetRegularSubtitle(clientService, receivedGift, receiverId, sentByMe, forChannel, self, sellable));
 
             if (_owned)
             {
+                if (sellable)
+                {
+                    Convert.Glyph = Locale.Declension(Strings.R.Gift2ButtonSell, receivedGift.SellStarCount);
+                    Convert.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    Convert.Visibility = Visibility.Collapsed;
+                }
+
                 if (receivedGift.IsSaved)
                 {
-                    if (receivedGift.Date + clientService.Options.GiftSellPeriod > DateTime.Now.ToUnixTimeSeconds())
-                    {
-                        TextBlockHelper.SetMarkdown(Subtitle, Strings.Gift2InfoPinned);
-                        Convert.Glyph = Locale.Declension(Strings.R.Gift2ButtonSell, receivedGift.SellStarCount);
-                    }
-                    else
-                    {
-                        TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.Gift2Info2Expired, gift.StarCount));
-                        Convert.Visibility = Visibility.Collapsed;
-                    }
-
-                    Info.Text = receiverId is MessageSenderChat
+                    Info.Text = forChannel
                         ? Strings.Gift2ChannelProfileVisible3
                         : Strings.Gift2ProfileVisible4;
                 }
                 else
                 {
-                    if (receivedGift.SellStarCount > 0 && receivedGift.Date + clientService.Options.GiftSellPeriod > DateTime.Now.ToUnixTimeSeconds())
-                    {
-                        TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.Gift2Info, receivedGift.SellStarCount));
-                        Convert.Glyph = Locale.Declension(Strings.R.Gift2ButtonSell, receivedGift.SellStarCount);
-                    }
-                    else
-                    {
-                        TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.Gift2Info2Expired, gift.StarCount));
-                        Convert.Visibility = Visibility.Collapsed;
-                    }
-
-                    Info.Text = receiverId is MessageSenderChat
+                    Info.Text = forChannel
                         ? Strings.Gift2ChannelProfileInvisible3
                         : Strings.Gift2ProfileInvisible4;
                 }
 
                 if (receivedGift.CanBeUpgraded)
                 {
-                    if (receivedGift.PrepaidUpgradeStarCount > 0)
-                    {
-                        TextBlockHelper.SetMarkdown(Subtitle, Strings.Gift2InfoInFreeUpgrade);
-
-                        PrimaryButtonText = Strings.Gift2UpgradeButtonFree;
-                    }
-                    else
-                    {
-                        PrimaryButtonText = Strings.Gift2UpgradeButtonGift;
-                    }
+                    PrimaryButtonText = receivedGift.PrepaidUpgradeStarCount > 0
+                        ? Strings.Gift2UpgradeButtonFree
+                        : Strings.Gift2UpgradeButtonGift;
                 }
                 else
                 {
@@ -249,27 +248,12 @@ namespace Telegram.Views.Stars.Popups
             }
             else
             {
-                Subtitle.Visibility = Visibility.Collapsed;
                 Convert.Visibility = Visibility.Collapsed;
                 Info.Visibility = Visibility.Collapsed;
 
-                if (string.IsNullOrEmpty(receivedGift.PrepaidUpgradeHash))
-                {
-                    PrimaryButtonText = Strings.OK;
-                }
-                else
-                {
-                    PrimaryButtonText = Strings.Gift2GiftAnUpgrade;
-                }
-
-                if (receivedGift.CanBeUpgraded)
-                {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Gift2ActionUpgradeOut, clientService.GetTitle(receiverId, true)));
-                }
-                else
-                {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Gift2Info2OutExpired, clientService.GetTitle(receiverId, true)));
-                }
+                PrimaryButtonText = string.IsNullOrEmpty(receivedGift.PrepaidUpgradeHash)
+                    ? Strings.OK
+                    : Strings.Gift2GiftAnUpgrade;
             }
 
             AnimatedPhoto.LoopCount = 0;
@@ -315,6 +299,80 @@ namespace Telegram.Views.Stars.Popups
                 CaptionRoot.Visibility = Visibility.Visible;
                 Caption.SetText(clientService, receivedGift.Text);
             }
+        }
+
+        private void SetSubtitle(string markdown)
+        {
+            if (string.IsNullOrEmpty(markdown))
+            {
+                Subtitle.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                TextBlockHelper.SetMarkdown(Subtitle, markdown);
+                Subtitle.Visibility = Visibility.Visible;
+            }
+        }
+
+        /// <summary>
+        /// What the viewer can do with a regular gift, worded for who they are to it: whoever acts
+        /// for the receiver, the sender, or anybody else, who is told nothing.
+        /// </summary>
+        private string GetRegularSubtitle(IClientService clientService, ReceivedGift receivedGift, MessageSender receiverId, bool sentByMe, bool forChannel, bool self, bool sellable)
+        {
+            var prepaidUpgrade = receivedGift.PrepaidUpgradeStarCount > 0;
+
+            if (self)
+            {
+                return receivedGift.CanBeUpgraded
+                    ? Strings.Gift2SelfInfoUpgrade
+                    : receivedGift.SellStarCount > 0
+                    ? Locale.Declension(Strings.R.Gift2SelfInfoConvert, receivedGift.SellStarCount)
+                    : Strings.Gift2SelfInfo;
+            }
+            else if (!_owned && (!sentByMe || forChannel))
+            {
+                return null;
+            }
+
+            var name = clientService.GetTitle(receiverId, true);
+
+            if (prepaidUpgrade && (!_owned || receivedGift.CanBeUpgraded))
+            {
+                return _owned
+                    ? Strings.Gift2InfoInFreeUpgrade
+                    : string.Format(Strings.Gift2InfoFreeUpgrade, name);
+            }
+
+            // A bot cannot sell what it is given, so a gift to one only ever stays or goes.
+            var fromBot = clientService.TryGetUser(receiverId, out User receiver) && receiver.Type is UserTypeBot;
+
+            if (_owned)
+            {
+                if (fromBot || !sellable)
+                {
+                    return receivedGift.IsSaved
+                        ? forChannel ? Strings.Gift2Info2ChannelRemove : Strings.Gift2Info2BotRemove
+                        : forChannel ? Strings.Gift2Info2ChannelKeep : Strings.Gift2Info2BotKeep;
+                }
+
+                return Locale.Declension(forChannel ? Strings.R.Gift2Info3Channel : Strings.R.Gift2Info3, receivedGift.SellStarCount);
+            }
+
+            if (receivedGift.CanBeUpgraded && prepaidUpgrade)
+            {
+                return string.Format(Strings.Gift2Info2OutUpgrade, name);
+            }
+            else if (fromBot || !sellable)
+            {
+                return string.Format(Strings.Gift2Info2OutExpired, name);
+            }
+            else if (receivedGift.IsSaved)
+            {
+                return string.Format(Strings.Gift2InfoOutPinned, name);
+            }
+
+            return Locale.Declension(Strings.R.Gift2InfoOut, receivedGift.SellStarCount, name);
         }
 
         private void InitializeUpgraded(IClientService clientService, ReceivedGift receivedGift, UpgradedGift gift)
