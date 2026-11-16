@@ -54,7 +54,7 @@ namespace Telegram.Services
 
         private async void Initialize(Message fromMessage)
         {
-            var response = await _clientService.SendAsync(new GetChatHistory(_chat.Id, fromMessage.Id, 0, 10, false));
+            var response = await _clientService.SendAsync(new GetChatHistory(_chat.Id, fromMessage.Id, 0, 10, true));
             if (response is Messages album && album.MessagesValue.Count > 0)
             {
                 UpdateLastMessage(album, fromMessage, true);
@@ -91,7 +91,7 @@ namespace Telegram.Services
             var count = 10 - _messages.Count;
             var fromMessage = _messages[0];
 
-            var response = await _clientService.SendAsync(new GetChatHistory(_chat.Id, fromMessage.Id, -count, count, false));
+            var response = await _clientService.SendAsync(new GetChatHistory(_chat.Id, fromMessage.Id, -count, count, true));
             if (response is Messages album && album.MessagesValue.Count > 0)
             {
                 UpdateLastMessage(album, fromMessage, false);
