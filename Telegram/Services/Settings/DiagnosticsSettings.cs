@@ -258,14 +258,14 @@ namespace Telegram.Services.Settings
         private bool? _albumPreloadDebug;
         public bool AlbumPreloadDebug
         {
-            get => _albumPreloadDebug ??= GetValueOrDefault("AlbumPreloadDebug", ApiInfo.IsPackagedRelease);
+            get => _albumPreloadDebug ??= GetValueOrDefault("AlbumPreloadDebug", false);
             set => AddOrUpdateValue(ref _albumPreloadDebug, "AlbumPreloadDebug", value);
         }
 
         private bool? _connectedAnimationsDebug;
         public bool ConnectedAnimationsDebug
         {
-            get => _connectedAnimationsDebug ??= GetValueOrDefault("ConnectedAnimationsDebug", ApiInfo.IsPackagedRelease);
+            get => _connectedAnimationsDebug ??= GetValueOrDefault("ConnectedAnimationsDebug", false);
             set => AddOrUpdateValue(ref _connectedAnimationsDebug, "ConnectedAnimationsDebug", value);
         }
 
