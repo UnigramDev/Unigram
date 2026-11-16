@@ -195,11 +195,11 @@ namespace Telegram.Views.Stars.Popups
 
                 if (receivedGift.CanBeUpgraded)
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Gift2ActionUpgradeOut, user.FullName(true)));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Gift2ActionUpgradeOut, clientService.GetTitle(receiverId, true)));
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Gift2Info2OutExpired, user.FullName(true)));
+                    TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Gift2Info2OutExpired, clientService.GetTitle(receiverId, true)));
                 }
             }
 
@@ -251,33 +251,30 @@ namespace Telegram.Views.Stars.Popups
         private void InitializeUpgraded(IClientService clientService, ReceivedGift receivedGift, UpgradedGift gift)
         {
             _resaleStarCount = new();
-            _clientService.Send(new GetAvailableGifts(), result =>
+
+            if (gift.RegularGiftId != 0)
             {
-                if (result is not AvailableGifts availableGifts)
+                InitializeResaleStarCount(gift.RegularGiftId);
+            }
+            else
+            {
+                // regular_gift_id can be 0 for a short time for old gifts loaded from the database.
+                _clientService.Send(new GetAvailableGifts(), result =>
                 {
-                    _resaleStarCount.TrySetResult(0);
-                    return;
-                }
+                    var availableGift = result is AvailableGifts availableGifts
+                        ? availableGifts.Gifts.FirstOrDefault(x => x.Title == gift.Title)
+                        : null;
 
-                var availableGift = availableGifts.Gifts.FirstOrDefault(x => x.Title == gift.Title);
-                if (availableGift == null)
-                {
-                    _resaleStarCount.TrySetResult(0);
-                    return;
-                }
-
-                _clientService.Send(new SearchGiftsForResale(availableGift.Gift.Id, new GiftForResaleOrderPrice(), false, false, Array.Empty<UpgradedGiftAttributeId>(), string.Empty, 1), result =>
-                {
-                    if (result is GiftsForResale gifts && gifts.Gifts.Count > 0)
+                    if (availableGift != null)
                     {
-                        _resaleStarCount.TrySetResult(gifts.Gifts[0].Gift.ResaleParameters.StarCount);
+                        InitializeResaleStarCount(availableGift.Gift.Id);
                     }
                     else
                     {
                         _resaleStarCount.TrySetResult(0);
                     }
                 });
-            });
+            }
 
             DismissButtonRequestedTheme = ElementTheme.Dark;
             Header.Visibility = Visibility.Collapsed;
@@ -464,14 +461,28 @@ namespace Telegram.Views.Stars.Popups
                 {
                     ResaleStarCountRoot.Visibility = Visibility.Visible;
                     ResaleStarCount.Text = gift.ResaleParameters.StarCount.ToString("N0");
+                }
 
-                    PrimaryButtonText = Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium);
+                // Opened from a link, the current user's own gift arrives without a received gift identifier.
+                PrimaryButtonText = gift.ResaleParameters != null && !IsOwned(clientService, gift.OwnerId)
+                    ? Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium)
+                    : Strings.OK;
+            }
+        }
+
+        private void InitializeResaleStarCount(long regularGiftId)
+        {
+            _clientService.Send(new SearchGiftsForResale(regularGiftId, new GiftForResaleOrderPrice(), false, false, Array.Empty<UpgradedGiftAttributeId>(), string.Empty, 1), result =>
+            {
+                if (result is GiftsForResale gifts && gifts.Gifts.Count > 0)
+                {
+                    _resaleStarCount.TrySetResult(gifts.Gifts[0].Gift.ResaleParameters.StarCount);
                 }
                 else
                 {
-                    PrimaryButtonText = Strings.OK;
+                    _resaleStarCount.TrySetResult(0);
                 }
-            }
+            });
         }
 
         public ReceivedGiftPopup(IClientService clientService, INavigationService navigationService, Gift gift)
@@ -522,28 +533,17 @@ namespace Telegram.Views.Stars.Popups
 
             _submitted = true;
 
-            if (IsOwned(_clientService, _receiverId))
+            if (_gift?.Gift is SentGiftRegular)
             {
-                if (_gift?.Gift is SentGiftRegular && _gift.CanBeUpgraded && _upgradeCollapsed)
-                {
-                    ShowHideUpgrade(true);
-                }
-                else if (_gift?.Gift is SentGiftRegular && (_gift.PrepaidUpgradeStarCount > 0 || !_upgradeCollapsed))
-                {
-                    Upgrade2();
-                }
-                else if (_gift?.Gift is SentGiftUpgraded { Gift.ResaleParameters: not null } && !IsOwned(_clientService, _receiverId))
-                {
-                    BuyResale();
-                }
-                else
+                var upgradable = IsOwned(_clientService, _receiverId)
+                    ? _gift.CanBeUpgraded
+                    : _gift.PrepaidUpgradeHash.Length > 0;
+
+                if (upgradable is false)
                 {
                     Hide(ContentDialogResult.Primary);
                 }
-            }
-            else if (_gift?.PrepaidUpgradeHash.Length > 0)
-            {
-                if (_upgradeCollapsed)
+                else if (_upgradeCollapsed)
                 {
                     ShowHideUpgrade(true);
                 }
@@ -552,7 +552,7 @@ namespace Telegram.Views.Stars.Popups
                     Upgrade2();
                 }
             }
-            else if (_gift?.Gift is SentGiftUpgraded { Gift.ResaleParameters: not null })
+            else if (_gift?.Gift is SentGiftUpgraded { Gift.ResaleParameters: not null } upgraded && !IsOwned(_clientService, upgraded.Gift.OwnerId))
             {
                 BuyResale();
             }
@@ -1136,7 +1136,15 @@ namespace Telegram.Views.Stars.Popups
         private void Owner_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
             Hide();
-            _navigationService.NavigateToSender(_receiverId);
+
+            if (_gift.Gift is SentGiftUpgraded upgraded && upgraded.Gift.OwnerId != null)
+            {
+                _navigationService.NavigateToSender(upgraded.Gift.OwnerId);
+            }
+            else
+            {
+                _navigationService.NavigateToSender(_receiverId);
+            }
         }
 
         private void TransferButton_Click(object sender, RoutedEventArgs e)
