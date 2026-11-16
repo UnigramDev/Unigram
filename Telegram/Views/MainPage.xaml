@@ -565,6 +565,11 @@
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </controls:ChatFoldersNavView.ItemTemplate>
+                                            <controls:ChatFoldersNavView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <controls:TopNavViewPanel />
+                                                </ItemsPanelTemplate>
+                                            </controls:ChatFoldersNavView.ItemsPanel>
                                             <controls:ChatFoldersNavView.ItemContainerTransitions>
                                                 <TransitionCollection>
                                                     <AddDeleteThemeTransition />

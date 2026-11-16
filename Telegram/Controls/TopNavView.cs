@@ -17,7 +17,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
@@ -453,6 +452,181 @@ namespace Telegram.Controls
             }
 
             return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
+        }
+    }
+
+    // A row of items at their natural widths that, when they leave part of the viewport empty, widens
+    // them to fill it. ListViewBase only reorders over its own panels, through an interface that is
+    // not public, so a list hosting this one has to drive the reorder through SetReorderPreview.
+    public partial class TopNavViewPanel : Panel
+    {
+        private double _slotWidth;
+
+        private int _draggedIndex = -1;
+        private int _insertionIndex = -1;
+
+        public int InsertionIndex => _insertionIndex;
+
+        public void SetReorderPreview(int draggedIndex, int insertionIndex)
+        {
+            if (_draggedIndex != draggedIndex || _insertionIndex != insertionIndex)
+            {
+                _draggedIndex = draggedIndex;
+                _insertionIndex = insertionIndex;
+                InvalidateArrange();
+            }
+        }
+
+        public void ClearReorderPreview()
+        {
+            SetReorderPreview(-1, -1);
+        }
+
+        // The index the dragged item takes when its left edge is at the given offset: it passes each
+        // other item once that edge crosses the middle of the space the item would have without it.
+        // That ignores where the preview currently puts things, so the answer cannot flip back and forth.
+        public int GetInsertionIndex(int draggedIndex, double left)
+        {
+            var children = Children;
+            var count = children.Count;
+
+            var x = 0d;
+            var index = 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i == draggedIndex)
+                {
+                    continue;
+                }
+
+                var width = GetArrangedWidth(children[i]);
+                if (left < x + width / 2)
+                {
+                    break;
+                }
+
+                x += width;
+                index++;
+            }
+
+            return index;
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var children = Children;
+            var count = children.Count;
+            var constraint = new Size(float.PositiveInfinity, availableSize.Height);
+
+            var width = 0d;
+            var height = 0d;
+
+            for (int i = 0; i < count; i++)
+            {
+                var child = children[i];
+                child.Measure(constraint);
+
+                var size = child.DesiredSize;
+                width += size.Width;
+                height = Math.Max(height, size.Height);
+            }
+
+            // Never the stretched width: this is the ScrollViewer's extent, which arranges the panel
+            // at the viewport's width anyway whenever the items are narrower.
+            return new Size((float)width, (float)height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var children = Children;
+            var count = children.Count;
+
+            _slotWidth = GetSlotWidth(children, count, finalSize.Width);
+
+            var draggedIndex = _draggedIndex < count ? _draggedIndex : -1;
+            var position = 0;
+            var x = 0d;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i == draggedIndex)
+                {
+                    continue;
+                }
+
+                if (draggedIndex != -1 && position++ == _insertionIndex)
+                {
+                    x = ArrangeChild(children[draggedIndex], x, finalSize.Height);
+                }
+
+                x = ArrangeChild(children[i], x, finalSize.Height);
+            }
+
+            if (draggedIndex != -1 && _insertionIndex >= position)
+            {
+                ArrangeChild(children[draggedIndex], x, finalSize.Height);
+            }
+
+            return finalSize;
+        }
+
+        private double ArrangeChild(UIElement child, double x, double height)
+        {
+            var width = GetArrangedWidth(child);
+            child.Arrange(new Rect((float)x, 0, (float)width, (float)height));
+
+            return x + width;
+        }
+
+        private double GetArrangedWidth(UIElement child)
+        {
+            return Math.Max(child.DesiredSize.Width, _slotWidth);
+        }
+
+        // The width every item is widened to: an equal share of the row, except that items already
+        // wider than their share keep their own width and the rest split what they leave. Each pass
+        // can only move more items into the wider set, and stops when it moves none.
+        private static double GetSlotWidth(UIElementCollection children, int count, double available)
+        {
+            var natural = 0d;
+
+            for (int i = 0; i < count; i++)
+            {
+                natural += children[i].DesiredSize.Width;
+            }
+
+            if (count == 0 || natural >= available)
+            {
+                return 0;
+            }
+
+            var slot = available / count;
+            var widerCount = 0;
+
+            while (true)
+            {
+                var wider = 0d;
+                var nextCount = 0;
+
+                for (int i = 0; i < count; i++)
+                {
+                    var width = children[i].DesiredSize.Width;
+                    if (width > slot)
+                    {
+                        wider += width;
+                        nextCount++;
+                    }
+                }
+
+                if (nextCount == widerCount)
+                {
+                    return slot;
+                }
+
+                widerCount = nextCount;
+                slot = (available - wider) / (count - nextCount);
+            }
         }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
@@ -22,6 +23,9 @@ namespace Telegram.Controls
         // The container a drag is over: DragLeave can arrive while a deferred DragEnter still waits.
         private object _dragContainer;
 
+        private object _draggedItem;
+        private double _grabOffset = double.NaN;
+
         public ChatFoldersNavView()
         {
             _switchTimer = new DispatcherTimer();
@@ -34,6 +38,9 @@ namespace Telegram.Controls
 
         private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
+            _draggedItem = e.Items.Count == 1 ? e.Items[0] : null;
+            _grabOffset = double.NaN;
+
             if (ItemsPanelRoot is not Panel panel)
             {
                 return;
@@ -47,14 +54,105 @@ namespace Telegram.Controls
 
         private void OnDragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
+            _draggedItem = null;
+
             if (ItemsPanelRoot is not Panel panel)
             {
                 return;
             }
 
+            if (panel is TopNavViewPanel reorderPanel)
+            {
+                reorderPanel.ClearReorderPreview();
+            }
+
             foreach (var container in panel.Children)
             {
                 container.AllowDrop = true;
+            }
+        }
+
+        // CanReorderItems is switched on by the owner only for a drag that may reorder. Over a
+        // TopNavViewPanel the list ignores it, so it gates the reorder done here instead.
+        private bool TryGetReorder(out TopNavViewPanel panel, out int draggedIndex)
+        {
+            panel = ItemsPanelRoot as TopNavViewPanel;
+            draggedIndex = panel != null && _draggedItem != null && CanReorderItems
+                ? Items.IndexOf(_draggedItem)
+                : -1;
+
+            return draggedIndex != -1;
+        }
+
+        protected override void OnDragOver(DragEventArgs e)
+        {
+            // The base still scrolls the list when the pointer nears its edges.
+            base.OnDragOver(e);
+
+            if (TryGetReorder(out var panel, out var draggedIndex))
+            {
+                // Taken before the preview first moves the dragged item, so it stays where it was grabbed.
+                if (double.IsNaN(_grabOffset))
+                {
+                    _grabOffset = ContainerFromIndex(draggedIndex) is UIElement container
+                        ? e.GetPosition(container).X
+                        : 0;
+                }
+
+                var left = e.GetPosition(panel).X - _grabOffset;
+                panel.SetReorderPreview(draggedIndex, panel.GetInsertionIndex(draggedIndex, left));
+
+                e.AcceptedOperation = DataPackageOperation.Move;
+
+                if (e.DragUIOverride is DragUIOverride ui)
+                {
+                    ui.IsCaptionVisible = false;
+                    ui.IsGlyphVisible = false;
+                }
+            }
+        }
+
+        protected override void OnDragLeave(DragEventArgs e)
+        {
+            base.OnDragLeave(e);
+
+            if (ItemsPanelRoot is TopNavViewPanel panel)
+            {
+                panel.ClearReorderPreview();
+            }
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            // Until the base has completed the drop, removing the dragged item from the collection
+            // cancels the drag instead of moving the item.
+            base.OnDrop(e);
+
+            if (TryGetReorder(out var panel, out var draggedIndex))
+            {
+                var insertionIndex = panel.InsertionIndex;
+                panel.ClearReorderPreview();
+
+                if (insertionIndex != -1 && insertionIndex != draggedIndex && ItemsSource is IList items)
+                {
+                    var item = items[draggedIndex];
+                    var selected = SelectedItem == item;
+
+                    items.RemoveAt(draggedIndex);
+                    items.Insert(insertionIndex, item);
+
+                    if (selected)
+                    {
+                        SelectedItem = item;
+                    }
+
+                    // DragItemsCompleted reads this as its DropResult, and the owner applies the new order there.
+                    e.AcceptedOperation = DataPackageOperation.Move;
+                }
+                else
+                {
+                    e.AcceptedOperation = DataPackageOperation.None;
+                }
             }
         }
 
