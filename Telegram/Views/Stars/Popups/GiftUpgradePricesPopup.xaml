@@ -1,0 +1,28 @@
+<controls:ModalPopup x:Class="Telegram.Views.Stars.Popups.GiftUpgradePricesPopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d"
+                     IsDismissButtonVisible="True">
+
+    <StackPanel>
+        <TextBlock Text="{CustomResource Gift2UpgradeCostsTitle}"
+                   Style="{StaticResource PopupTextBlockStyle}"
+                   TextAlignment="Center"
+                   Margin="12,0" />
+        <TextBlock Text="{CustomResource Gift2UpgradeCostsText}"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextAlignment="Center"
+                   Margin="24,4,24,0" />
+
+        <controls:TableView x:Name="Table"
+                            Margin="8,16,8,0" />
+
+        <TextBlock Text="{CustomResource Gift2UpgradeCostsFooter}"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   TextAlignment="Center"
+                   Margin="24,8,24,0" />
+    </StackPanel>
+</controls:ModalPopup>

@@ -32,6 +32,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
+                        <Border x:Name="RollLayer"
+                                Grid.RowSpan="2" />
+
                         <controls:ProfilePatternCover x:Name="Pattern"
                                                       Opacity="0.4"
                                                       Grid.RowSpan="2" />

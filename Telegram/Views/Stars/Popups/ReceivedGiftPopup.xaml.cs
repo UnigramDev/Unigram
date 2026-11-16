@@ -71,6 +71,13 @@ namespace Telegram.Views.Stars.Popups
 
         private bool _shownWearInfo;
 
+        // The upgrade price follows a schedule; the timer fires when its next entry takes effect.
+        private DispatcherTimer _priceTimer;
+        private long _upgradeStarCount;
+
+        // The next gift in the profile list that can be upgraded, offered once this one is.
+        private ReceivedGift _nextUpgrade;
+
         // Whether the current user can act for the gift's owner: the receiver of a regular gift,
         // the owner_id of an upgraded one. Recomputed when the gift is upgraded in place.
         private bool _owned;
@@ -93,6 +100,8 @@ namespace Telegram.Views.Stars.Popups
             UpdateVisibility();
 
             ElementCompositionPreview.SetIsTranslationEnabled(UpgradedAnimatedPhoto, true);
+
+            Closed += OnClosed;
 
             if (gift.Gift is SentGiftRegular regular)
             {
@@ -499,15 +508,7 @@ namespace Telegram.Views.Stars.Popups
             From.Header = Strings.Gift2From;
             Title.Text = Strings.Gift2TitleReceived;
 
-            UpgradedModel.Text = gift.Model.Name;
-            UpgradedModelRarity.Glyph = gift.Model.Rarity.ToText();
-            gift.Model.Rarity.ToColor(UpgradedModelRarity);
-            UpgradedBackdrop.Text = gift.Backdrop.Name;
-            UpgradedBackdropRarity.Glyph = gift.Backdrop.Rarity.ToText();
-            gift.Backdrop.Rarity.ToColor(UpgradedBackdropRarity);
-            UpgradedSymbol.Text = gift.Symbol.Name;
-            UpgradedSymbolRarity.Glyph = gift.Symbol.Rarity.ToText();
-            gift.Symbol.Rarity.ToColor(UpgradedSymbolRarity);
+            UpdateAttributes(gift);
 
             if (gift.ValueAmount != 0)
             {
@@ -610,11 +611,26 @@ namespace Telegram.Views.Stars.Popups
             PrimaryButtonText = GetUpgradedPrimaryButtonText(gift);
         }
 
+        private void UpdateAttributes(UpgradedGift gift)
+        {
+            UpgradedModel.Text = gift.Model.Name;
+            UpgradedModelRarity.Glyph = gift.Model.Rarity.ToText();
+            gift.Model.Rarity.ToColor(UpgradedModelRarity);
+            UpgradedBackdrop.Text = gift.Backdrop.Name;
+            UpgradedBackdropRarity.Glyph = gift.Backdrop.Rarity.ToText();
+            gift.Backdrop.Rarity.ToColor(UpgradedBackdropRarity);
+            UpgradedSymbol.Text = gift.Symbol.Name;
+            UpgradedSymbolRarity.Glyph = gift.Symbol.Rarity.ToText();
+            gift.Symbol.Rarity.ToColor(UpgradedSymbolRarity);
+        }
+
         private string GetUpgradedPrimaryButtonText(UpgradedGift gift)
         {
             // Opened from a link, the current user's own gift arrives without a received gift identifier.
             return gift.ResaleParameters != null && !_owned
                 ? Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium)
+                : _nextUpgrade != null
+                ? Strings.Gift2UpgradeNext
                 : Strings.OK;
         }
 
@@ -672,8 +688,18 @@ namespace Telegram.Views.Stars.Popups
 
         private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
+            if (_rolling)
+            {
+                args.Cancel = true;
+                SkipRoll();
+                return;
+            }
+
+            // The popup hides after the click unless cancelled. Branches that stay open cancel;
+            // the resale purchase must not, because its confirmation queues behind this popup.
             if (_submitted)
             {
+                args.Cancel = true;
                 return;
             }
 
@@ -681,6 +707,7 @@ namespace Telegram.Views.Stars.Popups
 
             if (_page == GiftPage.Wear)
             {
+                args.Cancel = true;
                 _shownWearInfo = true;
                 ToggleWear();
             }
@@ -696,16 +723,23 @@ namespace Telegram.Views.Stars.Popups
                 }
                 else if (_page == GiftPage.Details)
                 {
+                    args.Cancel = true;
                     ShowPage(GiftPage.Upgrade);
                 }
                 else
                 {
+                    args.Cancel = true;
                     Upgrade2();
                 }
             }
             else if (_gift?.Gift is SentGiftUpgraded { Gift.ResaleParameters: not null } && !_owned)
             {
                 BuyResale();
+            }
+            else if (_nextUpgrade != null)
+            {
+                Hide();
+                _profile.OpenGift(_nextUpgrade);
             }
             else
             {
@@ -718,14 +752,14 @@ namespace Telegram.Views.Stars.Popups
 
         private async void Upgrade2()
         {
-            if (_gift.Gift is not SentGiftRegular regular)
+            if (_gift.Gift is not SentGiftRegular)
             {
                 return;
             }
 
             IsPrimaryButtonPending = true;
 
-            var starCount = _gift.PrepaidUpgradeStarCount > 0 || _gift.IsUpgradeSeparate ? 0 : regular.Gift.UpgradeStarCount;
+            var starCount = _gift.PrepaidUpgradeStarCount > 0 || _gift.IsUpgradeSeparate ? 0 : _upgradeStarCount;
 
             Function function;
             if (_owned)
@@ -755,13 +789,18 @@ namespace Telegram.Views.Stars.Popups
                 _aggregator.Publish(new UpdateGiftUpgraded(id, result.ReceivedGiftId, _gift));
 
                 UpgradedAnimatedPhoto.LoopCompleted -= OnLoopCompleted;
-
-                _page = GiftPage.Details;
+                _priceTimer?.Stop();
 
                 UpdateOwned();
-                UpdateVisibility();
+                _nextUpgrade = FindNextUpgrade();
 
                 InitializeUpgraded(_clientService, _gift, result.Gift);
+                ShowPage(GiftPage.Details);
+
+                if (!StartRoll(result.Gift))
+                {
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2UpgradedTitle, string.Format(Strings.Gift2UpgradedText, result.Gift.ToName())), ToastPopupIcon.Gift);
+                }
             }
             else if (response is Ok)
             {
@@ -778,6 +817,34 @@ namespace Telegram.Views.Stars.Popups
 
             //Hide();
             //ViewModel.Submit();
+        }
+
+        /// <summary>
+        /// The first gift after this one in the profile list, wrapping around, that can still be
+        /// upgraded.
+        /// </summary>
+        private ReceivedGift FindNextUpgrade()
+        {
+            if (_profile == null || !_owned)
+            {
+                return null;
+            }
+
+            // The list may already have swapped this gift for its upgraded copy, and then the scan
+            // starts from the top.
+            var items = _profile.Items;
+            var start = items.IndexOf(_gift) + 1;
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                var item = items[(start + i) % items.Count];
+                if (item.Gift is SentGiftRegular && item.CanBeUpgraded)
+                {
+                    return item;
+                }
+            }
+
+            return null;
         }
 
         private async void Convert_Click(object sender, RoutedEventArgs e)
@@ -915,6 +982,8 @@ namespace Telegram.Views.Stars.Popups
 
             var previous = _page;
             var upgradedHeader = UpgradedHeader.Visibility == Visibility.Visible;
+
+            _priceTimer?.Stop();
 
             // Leaving the wear page, the badge has to be measured while it is still laid out.
             var badgeOffset = previous == GiftPage.Wear ? GetBadgeOffset() : Vector3.Zero;
@@ -1119,6 +1188,14 @@ namespace Telegram.Views.Stars.Popups
             {
                 UpgradedTitle.Text = Strings.Gift2UpgradeTitle;
                 UpgradedSubtitle.Text = Strings.Gift2UpgradeText;
+
+                KeepOriginalDetails.Content = _gift.IsPrivate
+                    ? _receiverId is MessageSenderChat ? Strings.Gift2AddMyNameNameChannel : Strings.Gift2AddMyNameName
+                    : _gift.Text?.Text.Length > 0 ? Strings.Gift2AddSenderNameComment : Strings.Gift2AddSenderName;
+
+                // An upgrade the sender paid for along with the gift is one they meant to sign.
+                KeepOriginalDetails.IsChecked = !_gift.IsPrivate && _gift.PrepaidUpgradeStarCount > 0 && !_gift.IsUpgradeSeparate;
+                KeepOriginalDetails.Visibility = Visibility.Visible;
             }
             else
             {
@@ -1127,20 +1204,126 @@ namespace Telegram.Views.Stars.Popups
                 UpgradedTitle.Text = Strings.Gift2PrepayUpgradeTitle;
                 UpgradedSubtitle.Text = string.Format(Strings.Gift2PrepayUpgradeText, receiverName);
 
+                UpgradeText1.Content = Strings.Gift2UpgradeFeature1Title;
                 UpgradeText1.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature1Text, receiverName);
+                UpgradeText2.Content = Strings.Gift2UpgradeFeature2Title;
                 UpgradeText2.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature2Text, receiverName);
+                UpgradeText3.Content = Strings.Gift2UpgradeFeature3Title;
                 UpgradeText3.Badge = string.Format(Strings.Gift2PrepayUpgradeFeature3Text, receiverName);
 
                 KeepOriginalDetails.Visibility = Visibility.Collapsed;
             }
 
             UpdateGift();
+            UpdateUpgradePrice();
+        }
+
+        /// <summary>
+        /// Prices the upgrade from the schedule in the preview, falling back to the gift's own
+        /// price until the preview arrives, and arms the timer for the next drop.
+        /// </summary>
+        private void UpdateUpgradePrice()
+        {
+            if (_gift.Gift is not SentGiftRegular regular)
+            {
+                return;
+            }
+
+            var now = DateTime.Now.ToUnixTimeSeconds();
+            var price = regular.Gift.UpgradeStarCount;
+            var effective = 0L;
+            var next = 0L;
+
+            if (_preview != null)
+            {
+                FindUpgradePrice(_preview.Prices, now, ref price, ref effective, ref next);
+                FindUpgradePrice(_preview.NextPrices, now, ref price, ref effective, ref next);
+            }
+
+            _upgradeStarCount = price;
 
             PrimaryButtonText = _gift.PrepaidUpgradeHash.Length > 0
-                ? string.Format(Strings.Gift2PrepayUpgradeButton.ReplaceStar(Icons.Premium), regular.Gift.UpgradeStarCount)
+                ? string.Format(Strings.Gift2PrepayUpgradeButton.ReplaceStar(Icons.Premium), price)
                 : _gift.PrepaidUpgradeStarCount > 0
                 ? Strings.Gift2UpgradeButtonFree
-                : string.Format(Strings.Gift2UpgradeButton.ReplaceStar(Icons.Premium), regular.Gift.UpgradeStarCount);
+                : string.Format(Strings.Gift2UpgradeButton.ReplaceStar(Icons.Premium), price);
+
+            var paid = _gift.PrepaidUpgradeStarCount == 0;
+
+            UpgradeCostsInfo.Visibility = paid && next != 0 && _preview?.Prices.Count > 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (paid && next != 0)
+            {
+                if (_priceTimer == null)
+                {
+                    _priceTimer = new DispatcherTimer();
+                    _priceTimer.Tick += OnPriceTick;
+                }
+
+                _priceTimer.Interval = TimeSpan.FromSeconds(Math.Max(1, next - now));
+                _priceTimer.Start();
+            }
+            else
+            {
+                _priceTimer?.Stop();
+            }
+        }
+
+        /// <summary>
+        /// The entry that took effect last is the price now; the earliest one still ahead is when
+        /// it next drops.
+        /// </summary>
+        private static void FindUpgradePrice(Vector<GiftUpgradePrice> prices, long now, ref long price, ref long effective, ref long next)
+        {
+            foreach (var entry in prices)
+            {
+                if (entry.Date <= now)
+                {
+                    if (entry.Date >= effective)
+                    {
+                        effective = entry.Date;
+                        price = entry.StarCount;
+                    }
+                }
+                else if (next == 0 || entry.Date < next)
+                {
+                    next = entry.Date;
+                }
+            }
+        }
+
+        private void OnPriceTick(object sender, object e)
+        {
+            _priceTimer.Stop();
+
+            if (_page == GiftPage.Upgrade)
+            {
+                UpdateUpgradePrice();
+            }
+        }
+
+        private void OnClosed(ModalPopup sender, ModalPopupClosedEventArgs args)
+        {
+            _priceTimer?.Stop();
+            StopRoll();
+        }
+
+        private async void UpgradeCosts_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            if (_preview == null)
+            {
+                return;
+            }
+
+            Hide();
+
+            await _navigationService.ShowPopupAsync(new GiftUpgradePricesPopup(_preview));
+            await this.ShowQueuedAsync(XamlRoot);
+
+            // Closing stopped the timer, and the price may have dropped meanwhile.
+            UpdateUpgradePrice();
         }
 
         private async void InitializeValue(UpgradedGift gift)
@@ -1167,14 +1350,15 @@ namespace Telegram.Views.Stars.Popups
             var response = await _clientService.SendAsync(new GetGiftUpgradePreview(gift.Gift.Id));
             if (response is GiftUpgradePreview preview)
             {
+                // The roll after the upgrade only spins through models that have loaded.
                 foreach (var item in preview.Models.Reverse())
                 {
-                    _clientService.DownloadFile(item.Sticker.StickerValue.Id, 32);
+                    PreloadRoll(item.Sticker.StickerValue, 32);
                 }
 
                 foreach (var item in preview.Symbols.Reverse())
                 {
-                    _clientService.DownloadFile(item.Sticker.StickerValue.Id, 31);
+                    PreloadRoll(item.Sticker.StickerValue, 31);
                 }
 
                 _preview = preview;
@@ -1182,6 +1366,7 @@ namespace Telegram.Views.Stars.Popups
                 if (_page == GiftPage.Upgrade)
                 {
                     UpdateGift();
+                    UpdateUpgradePrice();
                 }
             }
         }
@@ -1203,6 +1388,10 @@ namespace Telegram.Views.Stars.Popups
             var model = _preview.Models[random.Next(_preview.Models.Count)];
             var symbol = _preview.Symbols[random.Next(_preview.Symbols.Count)];
             var backdrop = _preview.Backdrops[random.Next(_preview.Backdrops.Count)];
+
+            _shownModel = model;
+            _shownSymbol = symbol;
+            _shownBackdrop = backdrop;
 
             var pattern = new DelayedFileSource(_clientService, symbol.Sticker);
             var centerColor = backdrop.Colors.CenterColor.ToColor();

@@ -182,6 +182,63 @@
                                                     IsViewportAware="True"
                                                     LoopCount="1"
                                                     Margin="0,12,0,8" />
+                            <Grid x:Name="RollModels"
+                                  Visibility="Collapsed">
+                                <controls:AnimatedImage x:Name="RollModel0"
+                                                        Width="120"
+                                                        Height="120"
+                                                        FrameSize="120,120"
+                                                        DecodeFrameType="Logical"
+                                                        IsViewportAware="True"
+                                                        LoopCount="1"
+                                                        Opacity="0"
+                                                        Margin="0,12,0,8">
+                                    <controls:AnimatedImage.RenderTransform>
+                                        <CompositeTransform x:Name="RollModel0Transform"
+                                                            CenterX="60"
+                                                            CenterY="60" />
+                                    </controls:AnimatedImage.RenderTransform>
+                                    <controls:AnimatedImage.Projection>
+                                        <PlaneProjection x:Name="RollModel0Projection" />
+                                    </controls:AnimatedImage.Projection>
+                                </controls:AnimatedImage>
+                                <controls:AnimatedImage x:Name="RollModel1"
+                                                        Width="120"
+                                                        Height="120"
+                                                        FrameSize="120,120"
+                                                        DecodeFrameType="Logical"
+                                                        IsViewportAware="True"
+                                                        LoopCount="1"
+                                                        Opacity="0"
+                                                        Margin="0,12,0,8">
+                                    <controls:AnimatedImage.RenderTransform>
+                                        <CompositeTransform x:Name="RollModel1Transform"
+                                                            CenterX="60"
+                                                            CenterY="60" />
+                                    </controls:AnimatedImage.RenderTransform>
+                                    <controls:AnimatedImage.Projection>
+                                        <PlaneProjection x:Name="RollModel1Projection" />
+                                    </controls:AnimatedImage.Projection>
+                                </controls:AnimatedImage>
+                                <controls:AnimatedImage x:Name="RollModel2"
+                                                        Width="120"
+                                                        Height="120"
+                                                        FrameSize="120,120"
+                                                        DecodeFrameType="Logical"
+                                                        IsViewportAware="True"
+                                                        LoopCount="1"
+                                                        Opacity="0"
+                                                        Margin="0,12,0,8">
+                                    <controls:AnimatedImage.RenderTransform>
+                                        <CompositeTransform x:Name="RollModel2Transform"
+                                                            CenterX="60"
+                                                            CenterY="60" />
+                                    </controls:AnimatedImage.RenderTransform>
+                                    <controls:AnimatedImage.Projection>
+                                        <PlaneProjection x:Name="RollModel2Projection" />
+                                    </controls:AnimatedImage.Projection>
+                                </controls:AnimatedImage>
+                            </Grid>
                             <controls:ProfilePicture x:Name="WearPhoto"
                                                      Size="96"
                                                      Margin="0,24,0,20"
@@ -410,10 +467,22 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="UpgradedModel"
-                                                   Margin="8,5,8,6"
-                                                   Style="{StaticResource BodyTextBlockStyle}"
-                                                   VerticalAlignment="Top" />
+                                        <Grid x:Name="UpgradedModelRoll">
+                                            <TextBlock x:Name="UpgradedModel"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top" />
+                                            <TextBlock x:Name="UpgradedModelRoll1"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top"
+                                                       Visibility="Collapsed" />
+                                            <TextBlock x:Name="UpgradedModelRoll2"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top"
+                                                       Visibility="Collapsed" />
+                                        </Grid>
 
                                         <controls:SettingsButton x:Name="UpgradedModelRarity"
                                                                  Click="UpgradedModelRarity_Click"
@@ -434,10 +503,22 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="UpgradedBackdrop"
-                                                   Margin="8,5,8,6"
-                                                   Style="{StaticResource BodyTextBlockStyle}"
-                                                   VerticalAlignment="Top" />
+                                        <Grid x:Name="UpgradedBackdropRoll">
+                                            <TextBlock x:Name="UpgradedBackdrop"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top" />
+                                            <TextBlock x:Name="UpgradedBackdropRoll1"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top"
+                                                       Visibility="Collapsed" />
+                                            <TextBlock x:Name="UpgradedBackdropRoll2"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top"
+                                                       Visibility="Collapsed" />
+                                        </Grid>
 
                                         <controls:SettingsButton x:Name="UpgradedBackdropRarity"
                                                                  Click="UpgradedBackdropRarity_Click"
@@ -458,10 +539,22 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="UpgradedSymbol"
-                                                   Margin="8,5,8,6"
-                                                   Style="{StaticResource BodyTextBlockStyle}"
-                                                   VerticalAlignment="Top" />
+                                        <Grid x:Name="UpgradedSymbolRoll">
+                                            <TextBlock x:Name="UpgradedSymbol"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top" />
+                                            <TextBlock x:Name="UpgradedSymbolRoll1"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top"
+                                                       Visibility="Collapsed" />
+                                            <TextBlock x:Name="UpgradedSymbolRoll2"
+                                                       Margin="8,5,8,6"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       VerticalAlignment="Top"
+                                                       Visibility="Collapsed" />
+                                        </Grid>
 
                                         <controls:SettingsButton x:Name="UpgradedSymbolRarity"
                                                                  Click="UpgradedSymbolRarity_Click"
@@ -547,25 +640,26 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <controls:SettingsButton x:Name="UpgradeText1"
                                                  Content="{CustomResource Gift2UpgradeFeature1Title}"
-                                                 Badge="{CustomResource Gift2UpgradeFeature1Text}"
+                                                 Badge="{CustomResource GiftsFeature1Text}"
                                                  Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
                                                  Glyph="&#xE76E;"
                                                  Margin="12,0,12,0"
                                                  IsHitTestVisible="False" />
                         <controls:SettingsButton x:Name="UpgradeText2"
-                                                 Content="{CustomResource Gift2UpgradeFeature2Title}"
-                                                 Badge="{CustomResource Gift2UpgradeFeature2Text}"
+                                                 Content="{CustomResource Gift2UpgradeFeature3Title}"
+                                                 Badge="{CustomResource GiftsFeature2Text}"
                                                  Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
                                                  Glyph="&#xE76E;"
                                                  Margin="12,-8,12,0"
                                                  IsHitTestVisible="False"
                                                  Grid.Row="1" />
                         <controls:SettingsButton x:Name="UpgradeText3"
-                                                 Content="{CustomResource Gift2UpgradeFeature3Title}"
-                                                 Badge="{CustomResource Gift2UpgradeFeature3Text}"
+                                                 Content="{CustomResource GiftsFeature3Title}"
+                                                 Badge="{CustomResource GiftsFeature3Text}"
                                                  Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
                                                  Glyph="&#xE76E;"
                                                  Margin="12,-8,12,0"
@@ -576,6 +670,18 @@
                                   Content="{CustomResource Gift2AddSenderName}"
                                   Margin="24,0,0,0"
                                   Grid.Row="3" />
+
+                        <TextBlock x:Name="UpgradeCostsInfo"
+                                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                                   TextAlignment="Center"
+                                   Margin="24,8,24,4"
+                                   Visibility="Collapsed"
+                                   Grid.Row="4">
+                            <Hyperlink Click="UpgradeCosts_Click"
+                                       UnderlineStyle="None">
+                                <Run Text="{CustomResource Gift2UpgradeCostsInfo}" />
+                            </Hyperlink>
+                        </TextBlock>
                     </Grid>
                     <Grid x:Name="WearRoot"
                           Visibility="Collapsed"
