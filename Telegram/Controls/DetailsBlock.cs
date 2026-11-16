@@ -6,6 +6,7 @@
 //
 
 using System.Numerics;
+using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
@@ -42,6 +43,7 @@ namespace Telegram.Controls
             if (Toggle != null)
             {
                 Toggle.Click += OnToggleClick;
+                Toggle.Text = _headerText;
             }
 
             UpdateBody();
@@ -68,6 +70,22 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register("Header", typeof(object), typeof(DetailsBlock), new PropertyMetadata(null));
+
+        private RichText _headerText;
+
+        /// <summary>
+        /// What <see cref="Header"/> says, which the header is read as: a text block given as
+        /// content leaves a button with no name.
+        /// </summary>
+        public RichText HeaderText
+        {
+            get => _headerText;
+            set
+            {
+                _headerText = value;
+                Toggle?.Text = value;
+            }
+        }
 
         #endregion
 
@@ -116,6 +134,9 @@ namespace Telegram.Controls
         {
             return new DetailsBlockHeaderAutomationPeer(this);
         }
+
+        /// <summary>The name a screen reader gives the header when it has none of its own.</summary>
+        public RichText Text { get; set; }
 
         #region IsOpen
 
@@ -188,6 +209,17 @@ namespace Telegram.Controls
             return patternInterface == PatternInterface.ExpandCollapse
                 ? this
                 : base.GetPatternCore(patternInterface);
+        }
+
+        protected override string GetNameCore()
+        {
+            var name = base.GetNameCore();
+            if (string.IsNullOrEmpty(name) && _owner.Text != null)
+            {
+                return _owner.Text.ToPlainText();
+            }
+
+            return name;
         }
 
         protected override AutomationControlType GetAutomationControlTypeCore()

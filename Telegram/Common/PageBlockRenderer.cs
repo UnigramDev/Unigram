@@ -719,6 +719,7 @@ namespace Telegram.Common
             return new DetailsBlock
             {
                 Header = ProcessText(clientService, details, false, false),
+                HeaderText = details.Header,
                 IsOpen = details.IsOpen,
                 Content = inner
             };
