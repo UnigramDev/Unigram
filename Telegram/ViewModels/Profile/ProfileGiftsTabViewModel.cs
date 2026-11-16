@@ -293,6 +293,16 @@ namespace Telegram.ViewModels.Profile
 
                 receivedGift.IsSaved = update.IsSaved;
 
+                // The server drops a gift from the pinned list when it leaves the profile page.
+                if (!update.IsSaved && receivedGift.IsPinned)
+                {
+                    receivedGift.IsPinned = false;
+                    Items.Pinned.Remove(receivedGift.ReceivedGiftId);
+
+                    PlaceUnpinned(receivedGift);
+                    return;
+                }
+
                 var index = Items.IndexOf(receivedGift);
                 Items.Remove(receivedGift);
                 Items.Insert(index, receivedGift);
@@ -633,7 +643,7 @@ namespace Telegram.ViewModels.Profile
                 return;
             }
 
-            ShowPopup(new ReceivedGiftPopup(ClientService, NavigationService, receivedGift, _senderId, null));
+            ShowPopup(new ReceivedGiftPopup(ClientService, NavigationService, receivedGift, _senderId, null, this));
         }
 
         public bool IsOwned
@@ -657,53 +667,89 @@ namespace Telegram.ViewModels.Profile
 
         public async void PinGift(ReceivedGift gift)
         {
-            if (gift.IsPinned)
+            await PinGiftAsync(gift);
+        }
+
+        public async Task PinGiftAsync(ReceivedGift gift)
+        {
+            var pin = !gift.IsPinned;
+            if (pin && Items.Pinned.Count == ClientService.Options.PinnedGiftCountMax)
             {
-                Items.Pinned.Remove(gift.ReceivedGiftId);
+                ShowToast(Locale.Declension(Strings.R.GiftsPinLimit, ClientService.Options.PinnedGiftCountMax), ToastPopupIcon.Info);
+                return;
             }
-            else
+
+            // setPinnedGifts refuses a gift that is not on the profile page.
+            if (pin && !gift.IsSaved)
             {
-                if (Items.Pinned.Count == ClientService.Options.PinnedGiftCountMax)
+                var saved = await ClientService.SendAsync(new ToggleGiftIsSaved(gift.ReceivedGiftId, true));
+                if (saved is not Ok)
                 {
-                    ShowToast(Locale.Declension(Strings.R.GiftsPinLimit, ClientService.Options.PinnedGiftCountMax), ToastPopupIcon.Info);
                     return;
                 }
 
+                gift.IsSaved = true;
+                Aggregator.Publish(new UpdateGiftIsSaved(gift.ReceivedGiftId, true));
+            }
+
+            if (pin)
+            {
                 Items.Pinned.Insert(0, gift.ReceivedGiftId);
+            }
+            else
+            {
+                Items.Pinned.Remove(gift.ReceivedGiftId);
             }
 
             var response = await ClientService.SendAsync(new SetPinnedGifts(_senderId, Items.Pinned));
-            if (response is Ok)
+            if (response is not Ok)
             {
-                gift.IsPinned = !gift.IsPinned;
-
-                if (gift.IsPinned)
+                if (pin)
                 {
-                    Items.Remove(gift);
-                    Items.Insert(0, gift);
+                    Items.Pinned.Remove(gift.ReceivedGiftId);
                 }
                 else
                 {
-                    // The search has to follow the removal: a position found in the longer list
-                    // is one slot too far down, and Items.Count when the gift sorts last.
-                    Items.Remove(gift);
-
-                    var index = Items.BinarySearch(gift, (x, y) => Items.Pinned.Contains(y.ReceivedGiftId) ? 1 : y.Date.CompareTo(x.Date));
-                    if (index < 0)
-                    {
-                        index = ~index;
-                    }
-
-                    if (index < Items.Count || !Items.HasMoreItems)
-                    {
-                        Items.Insert(index, gift);
-                    }
+                    Items.Pinned.Insert(0, gift.ReceivedGiftId);
                 }
 
-                if (gift.IsPinned)
-                {
-                    ShowToast(string.Format("**{0}**\n{1}", Strings.Gift2PinnedTitle, Strings.Gift2PinnedSubtitle), ToastPopupIcon.Pin);
-                }
+                return;
+            }
+
+            gift.IsPinned = pin;
+
+            if (pin)
+            {
+                Items.Remove(gift);
+                Items.Insert(0, gift);
+
+                ShowToast(string.Format("**{0}**\n{1}", Strings.Gift2PinnedTitle, Strings.Gift2PinnedSubtitle), ToastPopupIcon.Pin);
+            }
+            else
+            {
+                PlaceUnpinned(gift);
+                ShowToast(Strings.Gift2Unpinned, ToastPopupIcon.Unpin);
+            }
+        }
+
+        /// <summary>
+        /// Moves a gift that just lost its pin back among the others, sorted by date.
+        /// </summary>
+        private void PlaceUnpinned(ReceivedGift gift)
+        {
+            // The search has to follow the removal: a position found in the longer list
+            // is one slot too far down, and Items.Count when the gift sorts last.
+            Items.Remove(gift);
+
+            var index = Items.BinarySearch(gift, (x, y) => Items.Pinned.Contains(y.ReceivedGiftId) ? 1 : y.Date.CompareTo(x.Date));
+            if (index < 0)
+            {
+                index = ~index;
+            }
+
+            if (index < Items.Count || !Items.HasMoreItems)
+            {
+                Items.Insert(index, gift);
             }
         }
 

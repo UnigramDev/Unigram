@@ -19,6 +19,7 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Supergroups;
 using Telegram.Views.Chats.Popups;
 using Telegram.Views.Gifts.Popups;
@@ -48,6 +49,9 @@ namespace Telegram.Views.Stars.Popups
 
         private readonly MessageSender _sendGiftTo;
 
+        // The profile list the popup was opened from, if any: pinning edits that list's order.
+        private readonly ProfileGiftsTabViewModel _profile;
+
         private TaskCompletionSource<long> _resaleStarCount;
 
         private TaskCompletionSource<UpgradedGiftValueInfo> _valueInfo;
@@ -70,9 +74,11 @@ namespace Telegram.Views.Stars.Popups
         // the owner_id of an upgraded one. Recomputed when the gift is upgraded in place.
         private bool _owned;
 
-        public ReceivedGiftPopup(IClientService clientService, INavigationService navigationService, ReceivedGift gift, MessageSender receiverId, MessageSender sendGiftTo)
+        public ReceivedGiftPopup(IClientService clientService, INavigationService navigationService, ReceivedGift gift, MessageSender receiverId, MessageSender sendGiftTo, ProfileGiftsTabViewModel profile = null)
         {
             InitializeComponent();
+
+            _profile = profile;
 
             _clientService = clientService;
             _navigationService = navigationService;
@@ -142,7 +148,8 @@ namespace Telegram.Views.Stars.Popups
 
             Ribbon.Visibility = details && upgraded?.IsCrafted is true ? Visibility.Visible : Visibility.Collapsed;
             ResaleStarCountRoot.Visibility = details && upgraded?.ResaleParameters != null ? Visibility.Visible : Visibility.Collapsed;
-            MoreButton.Visibility = details && upgraded != null ? Visibility.Visible : Visibility.Collapsed;
+            MoreButton.Visibility = details && (upgraded != null || CanToggleSaved || _gift?.CanBeDeleted is true) ? Visibility.Visible : Visibility.Collapsed;
+            MoreButton.RequestedTheme = upgradedHeader ? ElementTheme.Dark : ElementTheme.Default;
         }
 
         private bool IsOwned(IClientService clientService, MessageSender receiverId)
@@ -458,18 +465,7 @@ namespace Telegram.Views.Stars.Popups
 
             if (_owned && receivedGift.ReceivedGiftId.Length > 0)
             {
-                if (receivedGift.IsSaved)
-                {
-                    Info.Text = gift.OwnerId is MessageSenderUser
-                        ? Strings.Gift2ProfileVisible4
-                        : Strings.Gift2ChannelProfileVisible3;
-                }
-                else
-                {
-                    Info.Text = gift.OwnerId is MessageSenderUser
-                        ? Strings.Gift2ProfileInvisible4
-                        : Strings.Gift2ChannelProfileInvisible3;
-                }
+                UpdateUpgradedInfo(receivedGift, gift);
 
                 UpgradedButtons.Visibility = Visibility.Visible;
                 UpgradedCaptionRemove.Visibility = receivedGift.DropOriginalDetailsStarCount > 0
@@ -698,7 +694,40 @@ namespace Telegram.Views.Stars.Popups
             }
         }
 
-        private async void Visibility_Click(object sender, TextUrlClickEventArgs e)
+        private void UpdateUpgradedInfo(ReceivedGift receivedGift, UpgradedGift gift)
+        {
+            if (receivedGift.IsSaved)
+            {
+                Info.Text = gift.OwnerId is MessageSenderUser
+                    ? Strings.Gift2ProfileVisible4
+                    : Strings.Gift2ChannelProfileVisible3;
+            }
+            else
+            {
+                Info.Text = gift.OwnerId is MessageSenderUser
+                    ? Strings.Gift2ProfileInvisible4
+                    : Strings.Gift2ChannelProfileInvisible3;
+            }
+        }
+
+        private void UpdateSavedInfo()
+        {
+            if (_gift.Gift is SentGiftRegular regular)
+            {
+                InitializeRegular(_clientService, _gift, regular.Gift, _receiverId);
+            }
+            else if (_gift.Gift is SentGiftUpgraded upgraded)
+            {
+                UpdateUpgradedInfo(_gift, upgraded.Gift);
+            }
+        }
+
+        private void Visibility_Click(object sender, TextUrlClickEventArgs e)
+        {
+            ToggleSaved();
+        }
+
+        private async void ToggleSaved()
         {
             var response = await _clientService.SendAsync(new ToggleGiftIsSaved(_gift.ReceivedGiftId, !_gift.IsSaved));
             if (response is Ok)
@@ -706,10 +735,7 @@ namespace Telegram.Views.Stars.Popups
                 _gift.IsSaved = !_gift.IsSaved;
                 _aggregator.Publish(new UpdateGiftIsSaved(_gift.ReceivedGiftId, _gift.IsSaved));
 
-                if (_gift.Gift is SentGiftRegular regular)
-                {
-                    InitializeRegular(_clientService, _gift, regular.Gift, _receiverId);
-                }
+                UpdateSavedInfo();
 
                 if (_gift.IsSaved)
                 {
@@ -1072,30 +1098,50 @@ namespace Telegram.Views.Stars.Popups
             }
         }
 
+        // Pinning and the profile toggle edit the profile list, so they are offered where it is on
+        // screen; everywhere else the footer's link still toggles the profile.
+        private bool CanToggleSaved => _profile != null && _owned && _gift?.ReceivedGiftId.Length > 0;
+
         private void More_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
+            var upgraded = (_gift.Gift as SentGiftUpgraded)?.Gift;
 
-            flyout.CreateFlyoutItem(CopyLink, Strings.CopyLink, Icons.Link);
-            flyout.CreateFlyoutItem(Share, Strings.ShareFile, Icons.Share);
-
-            if (_gift.Gift is SentGiftUpgraded upgraded && upgraded.Gift.OwnerId.AreTheSame(_clientService.MyId))
+            // setPinnedGifts takes upgraded gifts only.
+            if (upgraded != null && CanToggleSaved)
             {
-                if (upgraded.Gift.CraftProbabilityPerMille != 0)
+                flyout.CreateFlyoutItem(Pin, _gift.IsPinned ? Strings.Gift2Unpin : Strings.Gift2Pin, _gift.IsPinned ? Icons.PinOff : Icons.Pin);
+            }
+
+            if (upgraded != null && _owned)
+            {
+                if (upgraded.CraftProbabilityPerMille != 0)
                 {
                     // TODO: Icon
                     flyout.CreateFlyoutItem(Craft, Strings.GiftCraft, Icons.Hamburger);
                 }
 
-                if (upgraded.Gift.ResaleParameters != null)
+                if (upgraded.ResaleParameters != null)
                 {
                     flyout.CreateFlyoutItem(ChangePrice, Strings.Gift2ChangePrice, Icons.Tag);
                 }
+            }
 
-                if (upgraded.Gift.IsThemeAvailable)
+            if (upgraded != null)
+            {
+                flyout.CreateFlyoutItem(CopyLink, Strings.CopyLink, Icons.Link);
+                flyout.CreateFlyoutItem(Share, Strings.ShareFile, Icons.Share);
+
+                // A chat theme belongs to a user, so a channel's gift cannot be one.
+                if (upgraded.IsThemeAvailable && upgraded.OwnerId.IsUser(_clientService.Options.MyId))
                 {
                     flyout.CreateFlyoutItem(SetTheme, Strings.GiftThemesSetIn, Icons.PaintBrush);
                 }
+            }
+
+            if (CanToggleSaved)
+            {
+                flyout.CreateFlyoutItem(ToggleSaved, _gift.IsSaved ? Strings.Gift2HideFromProfile : Strings.Gift2ShowOnProfile, _gift.IsSaved ? Icons.EyeOff : Icons.Eye);
             }
 
             if (_gift.CanBeTransferred)
@@ -1103,7 +1149,44 @@ namespace Telegram.Views.Stars.Popups
                 flyout.CreateFlyoutItem(Transfer, Strings.Gift2TransferOption, Icons.Replace);
             }
 
+            if (_gift.CanBeDeleted)
+            {
+                flyout.CreateFlyoutItem(Delete, Strings.Gift2DeleteOption, Icons.Delete, destructive: true);
+            }
+
             flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private async void Pin()
+        {
+            await _profile.PinGiftAsync(_gift);
+
+            // Pinning saves a hidden gift first.
+            UpdateSavedInfo();
+        }
+
+        private async void Delete()
+        {
+            var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.Gift2DeleteText, Strings.Gift2DeleteOption, Strings.Delete, Strings.Cancel, destructive: true);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await _clientService.SendAsync(new DeleteGift(_gift.ReceivedGiftId));
+            if (response is Ok)
+            {
+                Hide(ContentDialogResult.Secondary);
+
+                // The profile list drops a sold gift and a deleted one the same way.
+                _aggregator.Publish(new UpdateGiftIsSold(_gift.ReceivedGiftId));
+
+                ToastPopup.Show(XamlRoot, Strings.Gift2Deleted, new DelayedFileSource(_clientService, _gift.GetSticker()));
+            }
+            else if (response is Error error)
+            {
+                ToastPopup.ShowError(XamlRoot, error);
+            }
         }
 
         private void Craft()

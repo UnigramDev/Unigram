@@ -12032,6 +12032,12 @@
     <string name="Gift2ShowGift">Show</string>
     <string name="Gift2PinnedSubtitle">Now it will always be shown on top.</string>
     <string name="Gift2PinnedTitle">Gift pinned</string>
+    <string name="Gift2Unpinned">Gift unpinned</string>
+    <string name="Gift2ShowOnProfile">Show on Profile</string>
+    <string name="Gift2HideFromProfile">Hide from Profile</string>
+    <string name="Gift2DeleteOption">Delete Gift</string>
+    <string name="Gift2DeleteText">Do you want to delete this gift?\n\nIt will disappear from your profile and can\'t be restored.</string>
+    <string name="Gift2Deleted">Gift deleted</string>
 
     <string name="ReportSpamUserEmojiStatusHint2">{0} is a mark for **Premium subscribers &gt;**</string>
     <string name="MessageLockedStarsRemoveFee">{0} must pay &#11088;&#65039; {1} for each message to you.\n**Remove Fee**</string>
