@@ -821,7 +821,13 @@ namespace Telegram.ViewModels.Profile
                 gift.IsSaved = !gift.IsSaved;
                 Aggregator.Publish(new UpdateGiftIsSaved(gift.ReceivedGiftId, gift.IsSaved));
 
-                if (gift.IsSaved)
+                if (_senderId is MessageSenderChat)
+                {
+                    ToastPopup.Show(XamlRoot, gift.IsSaved
+                        ? string.Format("**{0}**\n{1}", Strings.Gift2ChannelMadePublicTitle, Strings.Gift2ChannelMadePublic)
+                        : string.Format("**{0}**\n{1}", Strings.Gift2ChannelMadePrivateTitle, Strings.Gift2ChannelMadePrivate), new DelayedFileSource(ClientService, gift.GetSticker()));
+                }
+                else if (gift.IsSaved)
                 {
                     ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2MadePublicTitle, Strings.Gift2MadePublic), new DelayedFileSource(ClientService, gift.GetSticker()));
                 }

@@ -247,9 +247,23 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
+                            <TextBlock x:Name="RefundedNote"
+                                       Text="{CustomResource Gift2Refunded}"
+                                       Foreground="{ThemeResource DangerButtonForeground}"
+                                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       TextAlignment="Center"
+                                       Margin="24,8,24,0"
+                                       Visibility="Collapsed" />
+                            <TextBlock x:Name="SenderHiddenNote"
+                                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       TextAlignment="Center"
+                                       Margin="24,8,24,0"
+                                       Visibility="Collapsed" />
                             <controls:TableView x:Name="TableRoot"
-                                                Margin="8,8,8,0">
+                                                Margin="8,8,8,0"
+                                                Grid.Row="1">
                                 <controls:TableViewItem x:Name="FirstSale"
                                                         Header="{CustomResource Gift2SoldOutSheetFirstSale}"
                                                         Visibility="Collapsed" />
@@ -260,6 +274,7 @@
                                                         Padding="0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
@@ -273,6 +288,42 @@
                                     <Hyperlink Click="From_Click"
                                                UnderlineStyle="None">
                                         <Run x:Name="FromTitle" />
+                                    </Hyperlink>
+                                        </TextBlock>
+
+                                        <controls:SettingsButton x:Name="FromSendGift"
+                                                                 Click="FromSendGift_Click"
+                                                                 Glyph="{CustomResource Gift2ButtonSendGift}"
+                                                                 Style="{StaticResource SmallButtonStyle}"
+                                                                 VerticalAlignment="Center"
+                                                                 FontSize="11"
+                                                                 Padding="8,0"
+                                                                 CornerRadius="8"
+                                                                 BorderThickness="0"
+                                                                 Height="16"
+                                                                 Visibility="Collapsed"
+                                                                 Grid.Column="2" />
+                                    </Grid>
+                                </controls:TableViewItem>
+                                <controls:TableViewItem x:Name="To"
+                                                        Header="{CustomResource Gift2To}"
+                                                        Padding="0"
+                                                        Visibility="Collapsed">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <controls:ProfilePicture x:Name="ToPhoto"
+                                                                 Margin="8,4,0,4"
+                                                                 Size="24" />
+                                        <TextBlock Margin="8,5,4,6"
+                                                   Style="{StaticResource BodyTextBlockStyle}"
+                                                   VerticalAlignment="Top"
+                                                   Grid.Column="1">
+                                    <Hyperlink Click="To_Click"
+                                               UnderlineStyle="None">
+                                        <Run x:Name="ToTitle" />
                                     </Hyperlink>
                                         </TextBlock>
                                     </Grid>
@@ -317,7 +368,7 @@
                                     CornerRadius="0,0,4,4"
                                     Margin="8,0,8,0"
                                     Visibility="Collapsed"
-                                    Grid.Row="1">
+                                    Grid.Row="2">
                                 <controls:FormattedTextBlock x:Name="Caption"
                                                              Margin="8,5,4,6" />
                             </Border>
