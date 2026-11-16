@@ -10,8 +10,8 @@
                         d:DesignHeight="300"
                         d:DesignWidth="400">
 
-    <Grid Margin="0,0,0,-40"
-          Height="80">
+    <Grid Margin="0,0,0,-32"
+          Height="72">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />

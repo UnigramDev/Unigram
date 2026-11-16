@@ -16,7 +16,7 @@ namespace Telegram.Composition
 {
     public partial class CompositionCurveVisual : CompositionLevelVisual
     {
-        internal const float BarHeight = 40;
+        internal const float BarHeight = 32;
 
         // How far each layer rests below the one in front. The back layer rests at twice this, so
         // past 8 it would rest lower than where a voice takes it.
