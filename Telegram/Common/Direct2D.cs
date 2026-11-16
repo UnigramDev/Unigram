@@ -120,7 +120,7 @@ namespace Telegram.Common
         {
             try
             {
-                var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                var item = await FileItem.GetFileFromPathAsync(file.Local.Path);
                 using (var stream = await item.OpenReadAsync())
                 {
                     var surface = LoadedImageSurface.StartLoadFromStream(stream);

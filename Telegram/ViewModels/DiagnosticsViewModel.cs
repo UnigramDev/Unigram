@@ -53,42 +53,42 @@ namespace Telegram.ViewModels
 
             PowerSavingPolicy.Changed += OnPowerSavingChanged;
 
-            var calls = await AppPaths.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
+            var calls = await AppPaths.LocalFolder.TryGetItemAsync("tgcalls.txt") as FileItem;
             if (calls != null)
             {
                 var basic = await calls.GetBasicPropertiesAsync();
                 LogCallsSize = basic.Size;
             }
 
-            var group = await AppPaths.LocalFolder.TryGetItemAsync("tgcalls_group.txt") as StorageFile;
+            var group = await AppPaths.LocalFolder.TryGetItemAsync("tgcalls_group.txt") as FileItem;
             if (group != null)
             {
                 var basic = await group.GetBasicPropertiesAsync();
                 LogGroupCallsSize = basic.Size;
             }
 
-            var log = await AppPaths.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
+            var log = await AppPaths.LocalFolder.TryGetItemAsync("tdlib_log.txt") as FileItem;
             if (log != null)
             {
                 var basic = await log.GetBasicPropertiesAsync();
                 LogSize = basic.Size;
             }
 
-            var logOld = await AppPaths.LocalFolder.TryGetItemAsync("tdlib_log.txt.old") as StorageFile;
+            var logOld = await AppPaths.LocalFolder.TryGetItemAsync("tdlib_log.txt.old") as FileItem;
             if (logOld != null)
             {
                 var basic = await logOld.GetBasicPropertiesAsync();
                 LogOldSize = basic.Size;
             }
 
-            var app = await AppPaths.LocalFolder.TryGetItemAsync(Logger.LogFileName) as StorageFile;
+            var app = await AppPaths.LocalFolder.TryGetItemAsync(Logger.LogFileName) as FileItem;
             if (app != null)
             {
                 var basic = await app.GetBasicPropertiesAsync();
                 AppLogSize = basic.Size;
             }
 
-            var appOld = await AppPaths.LocalFolder.TryGetItemAsync(Logger.OldLogFileName) as StorageFile;
+            var appOld = await AppPaths.LocalFolder.TryGetItemAsync(Logger.OldLogFileName) as FileItem;
             if (appOld != null)
             {
                 var basic = await appOld.GetBasicPropertiesAsync();
@@ -645,7 +645,7 @@ namespace Telegram.ViewModels
 
         private async void SendFile(string fileName, bool logs)
         {
-            var file = await AppPaths.LocalFolder.TryGetItemAsync(fileName) as StorageFile;
+            var file = await AppPaths.LocalFolder.TryGetItemAsync(fileName) as FileItem;
             if (file != null)
             {
                 ChooseChatsConfiguration configuration = logs
@@ -678,7 +678,7 @@ namespace Telegram.ViewModels
             {
                 var file = await AppPaths.LocalFolder.CreateFileAsync("video_info.txt", CreationCollisionOption.ReplaceExisting);
 
-                await FileIO.WriteTextAsync(file, builder.ToString());
+                await FileItemIO.WriteTextAsync(file, builder.ToString());
                 await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputDocument(new InputFileLocal(file.Path), null, true), null)));
             }
             catch { }

@@ -29,9 +29,9 @@ namespace Telegram.Services
         IList<ThemeInfoBase> GetThemes();
         Task<IList<ThemeInfoBase>> GetCustomThemesAsync();
 
-        Task SerializeAsync(StorageFile file, ThemeCustomInfo theme);
+        Task SerializeAsync(FileItem file, ThemeCustomInfo theme);
 
-        Task InstallThemeAsync(StorageFile file, XamlRoot xamlRoot);
+        Task InstallThemeAsync(FileItem file, XamlRoot xamlRoot);
         void SetTheme(ThemeInfoBase info, bool apply, XamlRoot xamlRoot);
         void SendDefaultBackground(TelegramTheme requested);
 
@@ -100,7 +100,7 @@ namespace Telegram.Services
             return result;
         }
 
-        public async Task SerializeAsync(StorageFile file, ThemeCustomInfo theme)
+        public async Task SerializeAsync(FileItem file, ThemeCustomInfo theme)
         {
             var lines = new StringBuilder();
             lines.AppendLine("!");
@@ -173,12 +173,12 @@ namespace Telegram.Services
                 }
             }
 
-            await FileIO.WriteTextAsync(file, lines.ToString());
+            await FileItemIO.WriteTextAsync(file, lines.ToString());
         }
 
 
 
-        public async Task InstallThemeAsync(StorageFile file, XamlRoot xamlRoot)
+        public async Task InstallThemeAsync(FileItem file, XamlRoot xamlRoot)
         {
             var info = await ThemeCustomInfo.FromFileAsync(_clientService, file);
             if (info == null)

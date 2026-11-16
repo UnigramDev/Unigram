@@ -14,7 +14,7 @@ namespace Telegram.Entities
 {
     public partial class StorageAudio : StorageMedia
     {
-        private StorageAudio(StorageFile file, ulong fileSize, double totalMilliseconds, string title, string performer)
+        private StorageAudio(FileItem file, ulong fileSize, double totalMilliseconds, string title, string performer)
             : base(file, fileSize)
         {
             Title = title;
@@ -44,7 +44,7 @@ namespace Telegram.Entities
             }
         }
 
-        public static async Task<StorageAudio> CreateAsync(StorageFile file, ulong fileSize)
+        public static async Task<StorageAudio> CreateAsync(FileItem file, ulong fileSize)
         {
             try
             {

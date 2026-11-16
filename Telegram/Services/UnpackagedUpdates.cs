@@ -105,7 +105,7 @@ namespace Telegram.Services
         /// The package, once it has been extracted to app.new; null if it could not be. Until then
         /// it is not an update the user can restart into.
         /// </summary>
-        public static async Task<StorageFile> StageAsync(StorageFile package, Version version)
+        public static async Task<FileItem> StageAsync(FileItem package, Version version)
         {
             if (package == null)
             {

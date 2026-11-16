@@ -29,7 +29,7 @@ namespace Telegram.ViewModels.Settings
         private ThemeBrush[] _index;
         private HashSet<string> _keys;
 
-        private StorageFile _file;
+        private FileItem _file;
 
         public SettingsThemeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService)
             : base(clientService, settingsService, aggregator)
@@ -173,7 +173,7 @@ namespace Telegram.ViewModels.Settings
 
         private async Task CommitAsync()
         {
-            _file ??= await StorageFile.GetFileFromPathAsync(_theme.Path);
+            _file ??= await FileItem.GetFileFromPathAsync(_theme.Path);
             await _themeService.SerializeAsync(_file, _theme);
         }
     }

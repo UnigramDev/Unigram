@@ -188,7 +188,7 @@ namespace Telegram.Services
             return tsc.Task;
         }
 
-        public async Task<StorageFile> GetFileAsync(File file, bool completed = true)
+        public async Task<FileItem> GetFileAsync(File file, bool completed = true)
         {
             if (file == null)
             {
@@ -210,7 +210,7 @@ namespace Telegram.Services
             {
                 try
                 {
-                    return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    return await FileItem.GetFileFromPathAsync(file.Local.Path);
                 }
                 catch (System.IO.FileNotFoundException)
                 {
@@ -224,7 +224,7 @@ namespace Telegram.Services
             return null;
         }
 
-        public async Task<StorageFile> GetPermanentFileAsync(File file)
+        public async Task<FileItem> GetPermanentFileAsync(File file)
         {
             if (file == null)
             {
@@ -254,7 +254,7 @@ namespace Telegram.Services
                             _completedDownloads.Add(file.Remote.UniqueId);
                         }
 
-                        var source = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                        var source = await FileItem.GetFileFromPathAsync(file.Local.Path);
                         if (_downloadFolder.CanRemember(source))
                         {
                             return source;
@@ -317,7 +317,7 @@ namespace Telegram.Services
             }
         }
 
-        public async void AddFileToDownloads(File file, long chatId, long messageId, StorageFile destination, int priority = 30)
+        public async void AddFileToDownloads(File file, long chatId, long messageId, FileItem destination, int priority = 30)
         {
             TrackExplicitDownload(file.Id);
 
@@ -366,8 +366,8 @@ namespace Telegram.Services
 
                 try
                 {
-                    StorageFile source = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    StorageFile destination = await _downloadFolder.GetStagedAsync(file.Remote.UniqueId);
+                    FileItem source = await FileItem.GetFileFromPathAsync(file.Local.Path);
+                    FileItem destination = await _downloadFolder.GetStagedAsync(file.Remote.UniqueId);
 
                     var sourceName = source.Name;
 

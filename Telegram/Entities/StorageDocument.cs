@@ -11,7 +11,7 @@ namespace Telegram.Entities
 {
     public partial class StorageDocument : StorageMedia
     {
-        public StorageDocument(StorageFile file, ulong fileSize)
+        public StorageDocument(FileItem file, ulong fileSize)
             : base(file, fileSize)
         {
         }

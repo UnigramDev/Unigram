@@ -315,7 +315,7 @@ namespace Telegram.Controls.Gallery
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(path);
+                var file = await FileItem.GetFileFromPathAsync(path);
                 using (var stream = await file.OpenReadAsync())
                 {
                     await bitmap.SetSourceAsync(stream);

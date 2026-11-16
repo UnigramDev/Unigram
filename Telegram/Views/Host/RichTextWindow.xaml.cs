@@ -909,7 +909,7 @@ namespace Telegram.Views.Host
             return await RichMediaFactory.CreateAsync(files, false);
         }
 
-        private async Task<IReadOnlyList<StorageFile>> PickAsync(PickerLocationId location, IEnumerable<string> types)
+        private async Task<IReadOnlyList<FileItem>> PickAsync(PickerLocationId location, IEnumerable<string> types)
         {
             try
             {
@@ -940,7 +940,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        private async Task InsertFilesAsync(IReadOnlyList<IStorageItem> files, bool asDocuments)
+        private async Task InsertFilesAsync(IReadOnlyList<IFileSystemItem> files, bool asDocuments)
         {
             if (files == null || files.Count == 0)
             {
@@ -1015,7 +1015,7 @@ namespace Telegram.Views.Host
             {
                 if (content.Contains(StandardDataFormats.StorageItems))
                 {
-                    var items = await content.GetStorageItemsAsync();
+                    var items = (await content.GetStorageItemsAsync()).ToFileSystemItems();
                     await InsertFilesAsync(items, false);
                 }
                 else if (content.Contains(StandardDataFormats.Bitmap))

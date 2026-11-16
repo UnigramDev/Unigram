@@ -4116,7 +4116,7 @@ namespace Telegram.Controls
                 try
                 {
                     // If the image fails to decode as WebP, we try to decode it again using system image decoders.
-                    var file = await StorageFile.GetFileFromPathAsync(local.FilePath);
+                    var file = await FileItem.GetFileFromPathAsync(local.FilePath);
 
                     using var stream = await file.OpenReadAsync();
                     var decoder = await BitmapDecoder.CreateAsync(stream);

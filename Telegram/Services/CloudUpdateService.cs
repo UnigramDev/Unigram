@@ -122,7 +122,7 @@ namespace Telegram.Services
                 var files = await folder.GetFilesAsync();
 
                 var current = AppIdentity.Version.ToVersion();
-                var versions = new List<(Version Version, StorageFile File)>();
+                var versions = new List<(Version Version, FileItem File)>();
 
                 Logger.Info($"Found {files.Count} files");
 
@@ -166,15 +166,16 @@ namespace Telegram.Services
                             if (installed is false)
                             {
                                 // But only if App Installer is available
+                                var file = await update.File.ToStorageFileAsync();
                                 var result = checkAvailability
-                                        ? await Launcher.QueryFileSupportAsync(update.File)
+                                        ? await Launcher.QueryFileSupportAsync(file)
                                         : LaunchQuerySupportStatus.Available;
 
                                 Logger.Info($"QueryFileSupportAsync: {result}");
 
                                 if (result == LaunchQuerySupportStatus.Available)
                                 {
-                                    await Launcher.LaunchFileAsync(update.File);
+                                    await Launcher.LaunchFileAsync(file);
                                     await BootStrapper.ConsolidateAsync();
                                 }
                             }
@@ -216,7 +217,7 @@ namespace Telegram.Services
         }
 #endif
 
-        private static async Task<bool> InstallUpdateAsync(INavigationService navigation, StorageFile file)
+        private static async Task<bool> InstallUpdateAsync(INavigationService navigation, FileItem file)
         {
             if (AppSettings.Diagnostics.DisablePackageManager)
             {
@@ -506,7 +507,7 @@ namespace Telegram.Services
             }
             else
             {
-                next.File = await PrepareAsync(await folder.TryGetItemAsync($"{next.Version}{Extension}") as StorageFile, next.Version);
+                next.File = await PrepareAsync(await folder.TryGetItemAsync($"{next.Version}{Extension}") as FileItem, next.Version);
             }
 
 #if UNPACKAGED
@@ -559,7 +560,7 @@ namespace Telegram.Services
 #endif
 
         // Unpackaged, a download is not ready to restart into until it has been extracted.
-        private static Task<StorageFile> PrepareAsync(StorageFile file, Version version)
+        private static Task<FileItem> PrepareAsync(FileItem file, Version version)
         {
 #if UNPACKAGED
             if (!ApiInfo.HasPackageIdentity)
@@ -571,16 +572,16 @@ namespace Telegram.Services
             return Task.FromResult(file);
         }
 
-        private static async Task<StorageFile> TryCopyPartLocally(StorageFolder folder, string path, Version version)
+        private static async Task<FileItem> TryCopyPartLocally(FolderItem folder, string path, Version version)
         {
             var fileName = $"{version}{Extension}";
 
-            var cache = await folder.TryGetItemAsync(fileName) as StorageFile;
+            var cache = await folder.TryGetItemAsync(fileName) as FileItem;
             if (cache == null)
             {
                 try
                 {
-                    var result = await StorageFile.GetFileFromPathAsync(path);
+                    var result = await FileItem.GetFileFromPathAsync(path);
                     cache = await result.CopyAsync(folder, fileName, NameCollisionOption.FailIfExists);
                 }
                 catch { }
@@ -598,7 +599,7 @@ namespace Telegram.Services
         public string Changelog { get; set; }
 
         public File Document { get; set; }
-        public StorageFile File { get; set; }
+        public FileItem File { get; set; }
 
         // A Store update has neither: there is no bundle to fetch from the app channel, and Document is
         // null, so nothing may reach through it without checking this first.

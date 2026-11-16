@@ -60,16 +60,16 @@ namespace Telegram
             : EnsureFolder("LocalCache");
 
         public static AppFolder LocalFolder { get; } = _packaged
-            ? new AppFolder(ApplicationData.Current.LocalFolder)
+            ? new AppFolder(ApplicationData.Current.LocalFolder.ToFolderItem())
             : new AppFolder(LocalPath);
 
         public static AppFolder TemporaryFolder { get; } = _packaged
-            ? new AppFolder(ApplicationData.Current.TemporaryFolder)
+            ? new AppFolder(ApplicationData.Current.TemporaryFolder.ToFolderItem())
             : new AppFolder(TemporaryPath);
 
-        public static Task<StorageFolder> GetLocalFolderAsync() => LocalFolder.GetAsync();
+        public static Task<FolderItem> GetLocalFolderAsync() => LocalFolder.GetAsync();
 
-        public static Task<StorageFolder> GetTemporaryFolderAsync() => TemporaryFolder.GetAsync();
+        public static Task<FolderItem> GetTemporaryFolderAsync() => TemporaryFolder.GetAsync();
 
         /// <summary>
         /// A URI naming a file under <see cref="LocalFolder"/>. <c>ms-appdata:</c> is resolved by
@@ -131,13 +131,13 @@ namespace Telegram
 
         public static string GetCanvasFontFamily(string source) => source;
 
-        public static StorageFolder LocalFolder => ApplicationData.Current.LocalFolder;
+        public static FolderItem LocalFolder => ApplicationData.Current.LocalFolder;
 
-        public static StorageFolder TemporaryFolder => ApplicationData.Current.TemporaryFolder;
+        public static FolderItem TemporaryFolder => ApplicationData.Current.TemporaryFolder;
 
-        public static Task<StorageFolder> GetLocalFolderAsync() => Task.FromResult(ApplicationData.Current.LocalFolder);
+        public static Task<FolderItem> GetLocalFolderAsync() => Task.FromResult(ApplicationData.Current.LocalFolder);
 
-        public static Task<StorageFolder> GetTemporaryFolderAsync() => Task.FromResult(ApplicationData.Current.TemporaryFolder);
+        public static Task<FolderItem> GetTemporaryFolderAsync() => Task.FromResult(ApplicationData.Current.TemporaryFolder);
 
         public static Uri GetLocalUri(string relativePath) => new Uri("ms-appdata:///local/" + relativePath);
 #endif
@@ -164,9 +164,9 @@ namespace Telegram
     public sealed class AppFolder
     {
         private readonly string _path;
-        private Task<StorageFolder> _folder;
+        private Task<FolderItem> _folder;
 
-        internal AppFolder(StorageFolder folder)
+        internal AppFolder(FolderItem folder)
         {
             _folder = Task.FromResult(folder);
         }
@@ -177,36 +177,36 @@ namespace Telegram
         }
 
         // Two callers racing here both resolve the same folder, and either result will do.
-        public Task<StorageFolder> GetAsync()
+        public Task<FolderItem> GetAsync()
         {
-            return _folder ??= StorageFolder.GetFolderFromPathAsync(_path).AsTask();
+            return _folder ??= FolderItem.GetFolderFromPathAsync(_path);
         }
 
-        public async Task<StorageFile> CreateFileAsync(string desiredName, CreationCollisionOption options)
+        public async Task<FileItem> CreateFileAsync(string desiredName, CreationCollisionOption options)
         {
             var folder = await GetAsync().ConfigureAwait(false);
             return await folder.CreateFileAsync(desiredName, options);
         }
 
-        public async Task<StorageFolder> CreateFolderAsync(string desiredName, CreationCollisionOption options)
+        public async Task<FolderItem> CreateFolderAsync(string desiredName, CreationCollisionOption options)
         {
             var folder = await GetAsync().ConfigureAwait(false);
             return await folder.CreateFolderAsync(desiredName, options);
         }
 
-        public async Task<StorageFile> GetFileAsync(string name)
+        public async Task<FileItem> GetFileAsync(string name)
         {
             var folder = await GetAsync().ConfigureAwait(false);
             return await folder.GetFileAsync(name);
         }
 
-        public async Task<StorageFolder> GetFolderAsync(string name)
+        public async Task<FolderItem> GetFolderAsync(string name)
         {
             var folder = await GetAsync().ConfigureAwait(false);
             return await folder.GetFolderAsync(name);
         }
 
-        public async Task<IStorageItem> TryGetItemAsync(string name)
+        public async Task<IFileSystemItem> TryGetItemAsync(string name)
         {
             var folder = await GetAsync().ConfigureAwait(false);
             return await folder.TryGetItemAsync(name);

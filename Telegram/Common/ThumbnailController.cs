@@ -261,7 +261,7 @@ namespace Telegram.Common
                 return stream;
             }
 
-            var file = await StorageFile.GetFileFromPathAsync(path);
+            var file = await FileItem.GetFileFromPathAsync(path);
             return await file.OpenReadAsync();
         }
 

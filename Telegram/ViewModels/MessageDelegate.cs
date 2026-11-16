@@ -213,7 +213,7 @@ namespace Telegram.ViewModels
             try
             {
                 var storage = await ClientService.GetFileAsync(file);
-                var text = await FileIO.ReadTextAsync(storage);
+                var text = await FileItemIO.ReadTextAsync(storage);
 
                 var blocks = MarkdownToInstantView.Parse(text);
                 if (blocks.Count > 0)

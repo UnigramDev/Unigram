@@ -581,7 +581,7 @@ namespace Telegram.Controls
         // restart, when the picked file can no longer be opened. It goes among TDLib's own photos,
         // which TDLib clears out in time and the storage settings can clear at once. PNG, so that
         // a transparent photo stays transparent.
-        private static async Task<ImportedPhoto> ImportPhotoAsync(StorageFile file, int sessionId)
+        private static async Task<ImportedPhoto> ImportPhotoAsync(FileItem file, int sessionId)
         {
             using var input = await file.OpenReadAsync();
 
@@ -636,7 +636,7 @@ namespace Telegram.Controls
         }
 
         // Where the media was taken, as its tags say, or null to start from the device.
-        private static async Task<Location> GetMediaLocationAsync(StorageFile file)
+        private static async Task<Location> GetMediaLocationAsync(FileItem file)
         {
             if (file == null)
             {

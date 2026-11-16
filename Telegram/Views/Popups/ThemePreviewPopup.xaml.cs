@@ -20,12 +20,12 @@ namespace Telegram.Views.Popups
     public sealed partial class ThemePreviewPopup : ModalPopup
     {
         private readonly IClientService _clientService;
-        private readonly StorageFile _file;
+        private readonly FileItem _file;
         private readonly ThemeCustomInfo _theme;
 
         private readonly MessageBubbleBackgroundCoordinator _background;
 
-        public ThemePreviewPopup(IClientService clientService, StorageFile file, ThemeCustomInfo theme)
+        public ThemePreviewPopup(IClientService clientService, FileItem file, ThemeCustomInfo theme)
         {
             InitializeComponent();
 

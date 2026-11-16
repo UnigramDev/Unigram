@@ -208,8 +208,8 @@ namespace Telegram.Streams
                 catch
                 {
                     // A download folder outside the app's own storage is only reachable this way.
-                    var storage = StorageFile.GetFileFromPathAsync(file.Local.Path).AsTask().Result;
-                    return FileIO.ReadTextAsync(storage).AsTask().Result;
+                    var storage = FileItem.GetFileFromPathAsync(file.Local.Path).AsTask().Result;
+                    return FileItemIO.ReadTextAsync(storage).AsTask().Result;
                 }
             }
             catch (Exception ex)

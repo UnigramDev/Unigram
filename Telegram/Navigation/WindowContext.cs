@@ -1570,10 +1570,11 @@ namespace Telegram.Navigation
                     service.NavigateToMain(string.Empty);
                 }
 
-                if (file.Files[0] is StorageFile item)
+                if (file.Files[0] is StorageFile activated)
                 {
                     // TODO: WinUI - most likely XamlRoot is going to be null at this stage.
                     // As well, Content may be null too.
+                    var item = activated.ToFileItem();
                     var clientService = service.Session.Resolve<IClientService>();
                     var theme = await ThemeCustomInfo.FromFileAsync(clientService, item);
                     if (theme != null)

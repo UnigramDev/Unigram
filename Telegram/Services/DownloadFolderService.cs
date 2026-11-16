@@ -46,37 +46,37 @@ namespace Telegram.Services
 
         Task<DownloadFolder> GetFolderAsync();
 
-        Task<DownloadFolder> SetFolderAsync(StorageFolder folder);
+        Task<DownloadFolder> SetFolderAsync(FolderItem folder);
 
-        Task<StorageFolder> GetDefaultFolderAsync();
+        Task<FolderItem> GetDefaultFolderAsync();
 
         /// <summary>
         /// Creates a file in the download folder without recording it, for a copy that is made
         /// in one go rather than staged and filled in later.
         /// </summary>
-        Task<StorageFile> CreateAsync(string fileName);
+        Task<FileItem> CreateAsync(string fileName);
 
         /// <summary>
         /// Reserves a placeholder in the download folder for a file that is about to download, so
         /// that the folder is known to be writable before the bytes arrive rather than after.
         /// </summary>
-        Task<StorageFile> StageAsync(string uniqueId, string fileName);
+        Task<FileItem> StageAsync(string uniqueId, string fileName);
 
-        void Stage(string uniqueId, StorageFile file);
+        void Stage(string uniqueId, FileItem file);
 
-        Task<StorageFile> GetStagedAsync(string uniqueId);
+        Task<FileItem> GetStagedAsync(string uniqueId);
 
         /// <summary>
         /// Gives a file created by <see cref="CreateAsync"/> or <see cref="StageAsync"/> the bytes
         /// of the downloaded <paramref name="source"/>, replacing whatever it held.
         /// </summary>
-        Task FillAsync(StorageFile source, StorageFile destination);
+        Task FillAsync(FileItem source, FileItem destination);
 
         /// <summary>
         /// Marks a file the app wrote outside its own folders as coming from the internet, so
         /// that SmartScreen and Protected View treat it as a browser download.
         /// </summary>
-        void MarkFromInternet(StorageFile file);
+        void MarkFromInternet(FileItem file);
 
         bool IsStaged(string uniqueId);
 
@@ -88,9 +88,9 @@ namespace Telegram.Services
         /// <summary>
         /// Promotes a placeholder to the saved copy, once its bytes are in place.
         /// </summary>
-        void Commit(string uniqueId, StorageFile file);
+        void Commit(string uniqueId, FileItem file);
 
-        Task<StorageFile> GetSavedAsync(string uniqueId);
+        Task<FileItem> GetSavedAsync(string uniqueId);
 
         Task<bool> ContainsAsync(string uniqueId);
 
@@ -100,7 +100,7 @@ namespace Telegram.Services
         /// Whether the file is already somewhere durable that the app is allowed to keep, and so
         /// can be remembered where it is instead of being copied into the download folder.
         /// </summary>
-        bool CanRemember(StorageFile file);
+        bool CanRemember(FileItem file);
     }
 
     public partial class DownloadFolderService : IDownloadFolderService
@@ -119,7 +119,7 @@ namespace Telegram.Services
 
         #region Files
 
-        public async Task<StorageFile> StageAsync(string uniqueId, string fileName)
+        public async Task<FileItem> StageAsync(string uniqueId, string fileName)
         {
             var file = await CreateAsync(fileName);
             if (file != null)
@@ -130,17 +130,17 @@ namespace Telegram.Services
             return file;
         }
 
-        public void Stage(string uniqueId, StorageFile file)
+        public void Stage(string uniqueId, FileItem file)
         {
             AddOrReplace(Staged(uniqueId), file);
         }
 
-        public Task<StorageFile> GetStagedAsync(string uniqueId)
+        public Task<FileItem> GetStagedAsync(string uniqueId)
         {
             return GetFileAsync(Staged(uniqueId));
         }
 
-        public async Task FillAsync(StorageFile source, StorageFile destination)
+        public async Task FillAsync(FileItem source, FileItem destination)
         {
 #if UNPACKAGED
             // Outside the app container both are plain paths, and the cache and the download
@@ -157,7 +157,7 @@ namespace Telegram.Services
 #endif
         }
 
-        public void MarkFromInternet(StorageFile file)
+        public void MarkFromInternet(FileItem file)
         {
 #if UNPACKAGED
             // The broker tags what a packaged app writes to Downloads; nothing does it for us.
@@ -250,13 +250,13 @@ namespace Telegram.Services
             }
         }
 
-        public void Commit(string uniqueId, StorageFile file)
+        public void Commit(string uniqueId, FileItem file)
         {
             Remove(Staged(uniqueId));
             AddOrReplace(uniqueId, file);
         }
 
-        public Task<StorageFile> GetSavedAsync(string uniqueId)
+        public Task<FileItem> GetSavedAsync(string uniqueId)
         {
             return GetFileAsync(uniqueId);
         }
@@ -272,7 +272,7 @@ namespace Telegram.Services
             Remove(Staged(uniqueId));
         }
 
-        public bool CanRemember(StorageFile file)
+        public bool CanRemember(FileItem file)
         {
             // A file in our own local folder is TDLib's copy, which it is free to evict.
             if (Extensions.IsRelativePath(AppPaths.LocalPath, file.Path, out _))
@@ -334,7 +334,7 @@ namespace Telegram.Services
             return new DownloadFolder(false, Strings.DownloadFolderDefault);
         }
 
-        public async Task<DownloadFolder> SetFolderAsync(StorageFolder folder)
+        public async Task<DownloadFolder> SetFolderAsync(FolderItem folder)
         {
             if (folder == null)
             {
@@ -369,13 +369,13 @@ namespace Telegram.Services
             return await GetFolderAsync();
         }
 
-        public async Task<StorageFolder> GetDefaultFolderAsync()
+        public async Task<FolderItem> GetDefaultFolderAsync()
         {
             if (ApiInfo.HasKnownFolders)
             {
                 try
                 {
-                    var downloads = await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+                    var downloads = (await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder)).ToFolderItem();
 #if UNPACKAGED
                     // A packaged app's downloads go to a folder of its own that Windows keeps
                     // under Downloads; without package identity there is none, so this is it.
@@ -395,7 +395,7 @@ namespace Telegram.Services
             return null;
         }
 
-        public async Task<StorageFile> CreateAsync(string fileName)
+        public async Task<FileItem> CreateAsync(string fileName)
         {
             if (!IsSupported)
             {
@@ -428,7 +428,7 @@ namespace Telegram.Services
             }
 #endif
 
-            return await DownloadsFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+            return (await DownloadsFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName)).ToFileItem();
         }
 
         /// <summary>
@@ -449,7 +449,7 @@ namespace Telegram.Services
                 {
                     try
                     {
-                        var folder = await SAP.MostRecentlyUsedList.GetFolderAsync(FolderToken);
+                        var folder = (await SAP.MostRecentlyUsedList.GetFolderAsync(FolderToken)).ToFolderItem();
                         AddOrReplace(FolderToken, folder);
                     }
                     catch
@@ -492,7 +492,7 @@ namespace Telegram.Services
             }
         }
 
-        private static async Task<StorageFile> GetFileAsync(string token)
+        private static async Task<FileItem> GetFileAsync(string token)
         {
             try
             {
@@ -510,7 +510,7 @@ namespace Telegram.Services
             }
         }
 
-        private static void AddOrReplace(string token, IStorageItem item)
+        private static void AddOrReplace(string token, IFileSystemItem item)
         {
             RemoveOverflow();
 

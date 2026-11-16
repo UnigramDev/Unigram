@@ -17,6 +17,9 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Path = System.IO.Path;
+#if WINUI3
+using System.Runtime.InteropServices;
+#endif
 
 namespace Telegram.Services
 {
@@ -28,7 +31,7 @@ namespace Telegram.Services
 
         public bool IsCustom { get; }
 
-        public DownloadFolder(bool custom, StorageFolder folder)
+        public DownloadFolder(bool custom, FolderItem folder)
         {
             var directoryName = System.IO.Path.GetDirectoryName(folder.Path);
             var path = System.IO.Path.Combine(directoryName, folder.DisplayName);
@@ -73,8 +76,15 @@ namespace Telegram.Services
 
         Task<DownloadFolder> GetDownloadFolderAsync();
 
-        Task<DownloadFolder> SetDownloadFolderAsync(StorageFolder folder);
+        Task<DownloadFolder> SetDownloadFolderAsync(FolderItem folder);
+
+        /// <summary>
+        /// The volume the app's own data is on.
+        /// </summary>
+        Task<DiskSpace> GetDiskSpaceAsync();
     }
+
+    public readonly record struct DiskSpace(ulong FreeSpace, ulong Capacity);
 
     public partial class StorageService : IStorageService
     {
@@ -219,8 +229,8 @@ namespace Telegram.Services
                 }
 
                 var opened = options != null
-                    ? await Launcher.LaunchFileAsync(permanent, options)
-                    : await Launcher.LaunchFileAsync(permanent);
+                    ? await Launcher.LaunchFileAsync(await permanent.ToStorageFileAsync(), options)
+                    : await Launcher.LaunchFileAsync(await permanent.ToStorageFileAsync());
 
                 if (opened)
                 {
@@ -278,10 +288,10 @@ namespace Telegram.Services
 
                     var destination = await cached.CopyAsync(folder, text.TextValue, NameCollisionOption.GenerateUniqueName);
                     _downloadFolder.MarkFromInternet(destination);
-                    options.ItemsToSelect.Add(destination);
+                    options.ItemsToSelect.Add(await destination.ToStorageFileAsync());
                 }
 
-                await Launcher.LaunchFolderAsync(folder, options);
+                await Launcher.LaunchFolderAsync(await folder.ToStorageFolderAsync(), options);
             }
             catch { }
         }
@@ -314,7 +324,7 @@ namespace Telegram.Services
                     {
                         var destination = await cached.CopyAsync(folder, text.TextValue, NameCollisionOption.GenerateUniqueName);
                         _downloadFolder.MarkFromInternet(destination);
-                        options.ItemsToSelect.Add(destination);
+                        options.ItemsToSelect.Add(await destination.ToStorageFileAsync());
                     }
                     else
                     {
@@ -323,7 +333,7 @@ namespace Telegram.Services
                     }
                 }
 
-                await Launcher.LaunchFolderAsync(folder, options);
+                await Launcher.LaunchFolderAsync(await folder.ToStorageFolderAsync(), options);
             }
             catch { }
         }
@@ -340,7 +350,7 @@ namespace Telegram.Services
             await OpenFolderAsync(permanent);
         }
 
-        private async Task OpenFolderAsync(StorageFile permanent)
+        private async Task OpenFolderAsync(FileItem permanent)
         {
             try
             {
@@ -350,9 +360,9 @@ namespace Telegram.Services
                 if (folder != null && Extensions.IsRelativePath(folder.Path, permanent.Path, out _))
                 {
                     var options = new FolderLauncherOptions();
-                    options.ItemsToSelect.Add(permanent);
+                    options.ItemsToSelect.Add(await permanent.ToStorageFileAsync());
 
-                    await Launcher.LaunchFolderAsync(folder, options);
+                    await Launcher.LaunchFolderAsync(await folder.ToStorageFolderAsync(), options);
                 }
             }
             catch { }
@@ -375,9 +385,37 @@ namespace Telegram.Services
             return _downloadFolder.GetFolderAsync();
         }
 
-        public Task<DownloadFolder> SetDownloadFolderAsync(StorageFolder folder)
+        public Task<DownloadFolder> SetDownloadFolderAsync(FolderItem folder)
         {
             return _downloadFolder.SetFolderAsync(folder);
         }
+
+#if WINUI3
+        public Task<DiskSpace> GetDiskSpaceAsync()
+        {
+            // Free space available to this user, so a disk quota counts against it.
+            if (GetDiskFreeSpaceExW(AppPaths.LocalPath, out ulong available, out ulong total, out _))
+            {
+                return Task.FromResult(new DiskSpace(available, total));
+            }
+
+            throw new System.ComponentModel.Win32Exception();
+        }
+
+        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool GetDiskFreeSpaceExW(string lpDirectoryName, out ulong lpFreeBytesAvailableToCaller, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
+#else
+        public async Task<DiskSpace> GetDiskSpaceAsync()
+        {
+            const string FreeSpace = "System.FreeSpace";
+            const string Capacity = "System.Capacity";
+
+            var folder = await AppPaths.GetLocalFolderAsync();
+            var properties = await folder.Properties.RetrievePropertiesAsync(new[] { FreeSpace, Capacity });
+
+            return new DiskSpace((ulong)properties[FreeSpace], (ulong)properties[Capacity]);
+        }
+#endif
     }
 }

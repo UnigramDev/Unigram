@@ -197,7 +197,7 @@ namespace Telegram.ViewModels.Settings
 
                 try
                 {
-                    var file = await StorageFile.GetFileFromPathAsync(AppearanceSettings.GetThemeFilePath(identity.Id));
+                    var file = await FileItem.GetFileFromPathAsync(AppearanceSettings.GetThemeFilePath(identity.Id));
                     info = await ThemeCustomInfo.FromFileAsync(ClientService, file);
                 }
                 catch

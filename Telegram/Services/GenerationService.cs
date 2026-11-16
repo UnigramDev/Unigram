@@ -77,7 +77,7 @@ namespace Telegram.Services
         /// Turns a file the user picked into the input TDLib should be given for it: a path where
         /// TDLib can read it directly, and a generation otherwise.
         /// </summary>
-        public static async Task<InputFile> PrepareAsync(StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null, bool forceCopy = false)
+        public static async Task<InputFile> PrepareAsync(FileItem file, ConversionType conversion = ConversionType.Copy, string arguments = null, bool forceCopy = false)
         {
             // On UWP taken even for the branches that never generate: TDLib then uploads straight
             // from the user's own path, and the picker's grant on it dies with the session, so an
@@ -118,7 +118,7 @@ namespace Telegram.Services
 
         // TDLib names the file it sends after this path, and takes its type from the extension: a
         // transcode always comes out as MP4, even when what it holds is a photo.
-        private static string GetGeneratedPath(string path, StorageFile file, ConversionType conversion)
+        private static string GetGeneratedPath(string path, FileItem file, ConversionType conversion)
         {
             if (conversion == ConversionType.Compress)
             {
@@ -148,7 +148,7 @@ namespace Telegram.Services
             return await PrepareVideoThumbnailAsync(file.File, new Size((float)originalWidth, (float)originalHeight), arguments);
         }
 
-        public static async Task<InputThumbnail> PrepareVideoThumbnailAsync(StorageFile file, Size output, string arguments)
+        public static async Task<InputThumbnail> PrepareVideoThumbnailAsync(FileItem file, Size output, string arguments)
         {
             double ratioX = 90 / output.Width;
             double ratioY = 90 / output.Height;
@@ -259,7 +259,7 @@ namespace Telegram.Services
             }
         }
 
-        private bool IsTemporary(StorageFile source)
+        private bool IsTemporary(FileItem source)
         {
             if (string.IsNullOrEmpty(source.Path))
             {
@@ -283,7 +283,7 @@ namespace Telegram.Services
 
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.ExpectContinue = false;
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await FileItem.GetFileFromPathAsync(update.DestinationPath);
                 var request = new HttpRequestMessage(HttpMethod.Get, result);
                 var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                 var length = int.Parse(response.Content.Headers.GetValues("Content-Length").FirstOrDefault());
@@ -337,7 +337,7 @@ namespace Telegram.Services
             try
             {
                 var file = await GenerationSources.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await FileItem.GetFileFromPathAsync(update.DestinationPath);
 
                 if (IsTemporary(file))
                 {
@@ -363,7 +363,7 @@ namespace Telegram.Services
             try
             {
                 var file = await GenerationSources.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await FileItem.GetFileFromPathAsync(update.DestinationPath);
 
                 var maxSize = highQuality
                     ? Constants.ImageHighQuality
@@ -420,7 +420,7 @@ namespace Telegram.Services
             try
             {
                 var file = await GenerationSources.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await FileItem.GetFileFromPathAsync(update.DestinationPath);
 
                 await ImageHelper.ScaleAsync(BitmapEncoder.PngEncoderId, file, temp, 0, true);
 
@@ -444,7 +444,7 @@ namespace Telegram.Services
             try
             {
                 var file = await GenerationSources.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await FileItem.GetFileFromPathAsync(update.DestinationPath);
 
                 if (args.Length > 3)
                 {
@@ -891,7 +891,7 @@ namespace Telegram.Services
         private readonly record struct StillImage(IBuffer Pixels, int Width, int Height);
 
         // Upright and premultiplied, as the transcoder holds a still.
-        private static async Task<StillImage> DecodeStillAsync(StorageFile file)
+        private static async Task<StillImage> DecodeStillAsync(FileItem file)
         {
             using var stream = await file.OpenReadAsync();
             var decoder = await BitmapDecoder.CreateAsync(stream);
@@ -921,7 +921,7 @@ namespace Telegram.Services
         /// The size a photo held as a video comes out at, read from the photo as the transcode
         /// will decode it.
         /// </summary>
-        public static async Task<Size> GetStillOutputSizeAsync(StorageFile file, VideoGeneration generation)
+        public static async Task<Size> GetStillOutputSizeAsync(FileItem file, VideoGeneration generation)
         {
             using var stream = await file.OpenReadAsync();
             var decoder = await BitmapDecoder.CreateAsync(stream);
@@ -1028,7 +1028,7 @@ namespace Telegram.Services
 
         // The frame's upright size, as the transcoder sees it once the source's own rotation is
         // applied, and a bitrate taken from the file's size, which no container reliably states.
-        private static async Task<VideoProbe> ProbeVideoAsync(StorageFile file)
+        private static async Task<VideoProbe> ProbeVideoAsync(FileItem file)
         {
             var properties = await file.GetBasicPropertiesAsync();
 
@@ -1195,7 +1195,7 @@ namespace Telegram.Services
             try
             {
                 var file = await GenerationSources.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await FileItem.GetFileFromPathAsync(update.DestinationPath);
 
                 var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.VideoGeneration);
 
@@ -1245,7 +1245,7 @@ namespace Telegram.Services
             try
             {
                 var file = await GenerationSources.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await FileItem.GetFileFromPathAsync(update.DestinationPath);
 
                 var mode = file.HasExtension(".mp3", ".wav", ".m4a", ".ogg", ".oga", ".opus", ".flac")
                     ? ThumbnailMode.MusicView
@@ -1260,7 +1260,7 @@ namespace Telegram.Services
                             await reader.LoadAsync((uint)thumbnail.Size);
                             var buffer = new byte[(int)thumbnail.Size];
                             reader.ReadBytes(buffer);
-                            await FileIO.WriteBytesAsync(temp, buffer);
+                            await FileItemIO.WriteBytesAsync(temp, buffer);
                         }
 
                         _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
@@ -1284,7 +1284,7 @@ namespace Telegram.Services
             try
             {
                 var file = await GenerationSources.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await FileItem.GetFileFromPathAsync(update.DestinationPath);
 
                 using var stream = await file.OpenReadAsync();
                 using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), true, false, true));

@@ -331,7 +331,7 @@ namespace Telegram.ViewModels
             await EditMediaAsync(cached, true);
         }
 
-        public async Task EditMediaAsync(StorageFile file, bool mediaSelected)
+        public async Task EditMediaAsync(FileItem file, bool mediaSelected)
         {
             var storage = await StorageMedia.CreateAsync(file);
             if (storage != null)

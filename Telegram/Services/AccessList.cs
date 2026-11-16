@@ -32,7 +32,7 @@ namespace Telegram.Services
     {
         bool ContainsItem(string token);
 
-        void AddOrReplace(string token, IStorageItem item);
+        void AddOrReplace(string token, IFileSystemItem item);
 
         void Remove(string token);
 
@@ -40,14 +40,14 @@ namespace Telegram.Services
         /// Throws when the file is gone, as the access list does: every caller either reports the
         /// failure back to TDLib or drops the token.
         /// </summary>
-        Task<StorageFile> GetFileAsync(string token);
+        Task<FileItem> GetFileAsync(string token);
 
-        Task<StorageFolder> GetFolderAsync(string token);
+        Task<FolderItem> GetFolderAsync(string token);
 
         /// <summary>
         /// Whether the item is somewhere the app may still reach after a restart.
         /// </summary>
-        bool CheckAccess(IStorageItem item);
+        bool CheckAccess(IFileSystemItem item);
     }
 
     public static class AccessList
@@ -89,19 +89,19 @@ namespace Telegram.Services
 
         public bool ContainsItem(string token) => SAP.FutureAccessList.ContainsItem(token);
 
-        public string Add(IStorageItem item) => SAP.FutureAccessList.Add(item);
+        public string Add(IFileSystemItem item) => SAP.FutureAccessList.Add(item);
 
-        public void AddOrReplace(string token, IStorageItem item) => SAP.FutureAccessList.AddOrReplace(token, item);
+        public void AddOrReplace(string token, IFileSystemItem item) => SAP.FutureAccessList.AddOrReplace(token, item);
 
         public void Remove(string token) => SAP.FutureAccessList.Remove(token);
 
         public void Clear() => SAP.FutureAccessList.Clear();
 
-        public Task<StorageFile> GetFileAsync(string token) => SAP.FutureAccessList.GetFileAsync(token).AsTask();
+        public Task<FileItem> GetFileAsync(string token) => SAP.FutureAccessList.GetFileAsync(token).AsTask();
 
-        public Task<StorageFolder> GetFolderAsync(string token) => SAP.FutureAccessList.GetFolderAsync(token).AsTask();
+        public Task<FolderItem> GetFolderAsync(string token) => SAP.FutureAccessList.GetFolderAsync(token).AsTask();
 
-        public bool CheckAccess(IStorageItem item) => SAP.FutureAccessList.CheckAccess(item);
+        public bool CheckAccess(IFileSystemItem item) => SAP.FutureAccessList.CheckAccess(item);
     }
 #endif
 
@@ -121,7 +121,7 @@ namespace Telegram.Services
 
         public bool ContainsItem(string token) => _store.ContainsKey(token) || ContainsLegacy(token);
 
-        public void AddOrReplace(string token, IStorageItem item) => _store.SetValue(token, item.Path);
+        public void AddOrReplace(string token, IFileSystemItem item) => _store.SetValue(token, item.Path);
 
         public void Remove(string token)
         {
@@ -133,29 +133,29 @@ namespace Telegram.Services
             }
         }
 
-        public async Task<StorageFile> GetFileAsync(string token)
+        public async Task<FileItem> GetFileAsync(string token)
         {
             if (_store.TryGet(token, out string path))
             {
-                return await StorageFile.GetFileFromPathAsync(path);
+                return await FileItem.GetFileFromPathAsync(path);
             }
             else if (ContainsLegacy(token))
             {
-                return await SAP.FutureAccessList.GetFileAsync(token);
+                return (await SAP.FutureAccessList.GetFileAsync(token)).ToFileItem();
             }
 
             throw new FileNotFoundException($"No file is held under {token}");
         }
 
-        public async Task<StorageFolder> GetFolderAsync(string token)
+        public async Task<FolderItem> GetFolderAsync(string token)
         {
             if (_store.TryGet(token, out string path))
             {
-                return await StorageFolder.GetFolderFromPathAsync(path);
+                return await FolderItem.GetFolderFromPathAsync(path);
             }
             else if (ContainsLegacy(token))
             {
-                return await SAP.FutureAccessList.GetFolderAsync(token);
+                return (await SAP.FutureAccessList.GetFolderAsync(token)).ToFolderItem();
             }
 
             throw new DirectoryNotFoundException($"No folder is held under {token}");
@@ -168,7 +168,7 @@ namespace Telegram.Services
 
         // There is no grant to check: the process holds the user's own token, so anything the user
         // can reach is reachable again after a restart.
-        public bool CheckAccess(IStorageItem item) => true;
+        public bool CheckAccess(IFileSystemItem item) => true;
     }
 #endif
 }

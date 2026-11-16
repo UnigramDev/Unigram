@@ -17,7 +17,7 @@ namespace Telegram.Entities
         private readonly int _width;
         private readonly int _height;
 
-        private StoragePhoto(StorageFile file, ulong fileSize, uint width, uint height, bool isAnimated)
+        private StoragePhoto(FileItem file, ulong fileSize, uint width, uint height, bool isAnimated)
             : base(file, fileSize)
         {
             _width = (int)width;
@@ -30,7 +30,7 @@ namespace Telegram.Entities
 
         public bool IsAnimated { get; private set; }
 
-        public static async Task<StoragePhoto> CreateAsync(StorageFile file, ulong fileSize)
+        public static async Task<StoragePhoto> CreateAsync(FileItem file, ulong fileSize)
         {
             try
             {

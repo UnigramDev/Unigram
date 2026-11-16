@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.System;
 #if !CSWINRT3_0
-using WindowsRuntimeStorageExtensions = System.IO.WindowsRuntimeStorageExtensions;
+using static System.IO.WindowsRuntimeStorageExtensions;
 using WindowsRuntimeStreamExtensions = System.IO.WindowsRuntimeStreamExtensions;
 #endif
 
@@ -179,7 +179,7 @@ namespace Telegram.Services
             return new TextRecognitionStatusUnavailable();
         }
 
-        private async Task<bool> ExtractModelAsync(StorageFolder destination, StorageFile file, File document)
+        private async Task<bool> ExtractModelAsync(FolderItem destination, FileItem file, File document)
         {
             if (!_extractLock.Wait(0))
             {
@@ -202,7 +202,7 @@ namespace Telegram.Services
                         var entryFile = await destination.CreateFileAsync(entryPath, CreationCollisionOption.ReplaceExisting);
 
                         using (var entryStream = entry.Open())
-                        using (var outStream = await WindowsRuntimeStorageExtensions.OpenStreamForWriteAsync(entryFile))
+                        using (var outStream = await entryFile.OpenStreamForWriteAsync())
                         {
                             await entryStream.CopyToAsync(outStream);
                         }
@@ -232,7 +232,7 @@ namespace Telegram.Services
             }
         }
 
-        private static async Task TryDeleteModelAsync(StorageFolder destination)
+        private static async Task TryDeleteModelAsync(FolderItem destination)
         {
             try
             {

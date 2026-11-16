@@ -504,7 +504,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void SendFileExecute(IReadOnlyList<StorageFile> files, FormattedText caption = null, bool media = true)
+        public void SendFileExecute(IReadOnlyList<FileItem> files, FormattedText caption = null, bool media = true)
         {
             if (files is { Count: > 0 })
             {
@@ -814,7 +814,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async Task SendVoiceNoteAsync(StorageFile file, ConversionType conversion, TimeSpan duration, byte[] waveform, FormattedText caption, MessageSelfDestructType selfDestructType)
+        public async Task SendVoiceNoteAsync(FileItem file, ConversionType conversion, TimeSpan duration, byte[] waveform, FormattedText caption, MessageSelfDestructType selfDestructType)
         {
             var plan = await PrepareSendAsync();
             if (plan == null)

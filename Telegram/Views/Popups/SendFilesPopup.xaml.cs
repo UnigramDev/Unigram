@@ -948,7 +948,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void AppendFiles(IReadOnlyList<StorageFile> files)
+        private void AppendFiles(IReadOnlyList<FileItem> files)
         {
             LoadAsync((resolved, cancellationToken) => StorageMedia.ProbeAsync(files, resolved, cancellationToken), files.Count, false);
         }

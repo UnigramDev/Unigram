@@ -478,7 +478,7 @@ namespace Telegram.Views.Popups
 
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(Path.Combine(AppPaths.InstalledPath, "Assets", "Map", "picker.html"));
+                var file = await FileItem.GetFileFromPathAsync(Path.Combine(AppPaths.InstalledPath, "Assets", "Map", "picker.html"));
                 var stream = await file.OpenReadAsync();
 
                 args.Response = sender.Environment.CreateWebResourceResponse(stream, 200, "OK", "Content-Type: text/html; charset=utf-8");

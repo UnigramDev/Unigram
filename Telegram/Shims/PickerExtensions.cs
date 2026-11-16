@@ -9,11 +9,44 @@ using System.Collections.Generic;
 using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+#if WINUI3
+using System;
+using System.Threading.Tasks;
+#endif
 
 namespace Windows.Storage.Pickers
 {
     public static class PickerExtensions
     {
+#if WINUI3
+        public static async Task<FileItem> PickSingleFileAsync(this FileOpenPicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return (await picker.PickSingleFileAsync()).ToFileItem();
+        }
+
+        public static async Task<IReadOnlyList<FileItem>> PickMultipleFilesAsync(this FileOpenPicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return (await picker.PickMultipleFilesAsync()).ToFileItems();
+        }
+
+        public static async Task<FileItem> PickSaveFileAsync(this FileSavePicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return (await picker.PickSaveFileAsync()).ToFileItem();
+        }
+
+        public static async Task<FolderItem> PickSingleFolderAsync(this FolderPicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return (await picker.PickSingleFolderAsync()).ToFolderItem();
+        }
+#else
         public static IAsyncOperation<StorageFile> PickSingleFileAsync(this FileOpenPicker picker, XamlRoot xamlRoot)
         {
             WindowContext.InitializeWithWindow(picker, xamlRoot);
@@ -41,6 +74,7 @@ namespace Windows.Storage.Pickers
 
             return picker.PickSingleFolderAsync();
         }
+#endif
     }
 }
 

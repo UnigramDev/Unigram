@@ -50,13 +50,13 @@ namespace Telegram.Services
             }
         }
 
-        public static async Task<ThemeCustomInfo> FromFileAsync(IClientService clientService, StorageFile file)
+        public static async Task<ThemeCustomInfo> FromFileAsync(IClientService clientService, FileItem file)
         {
             IList<string> lines;
 
             try
             {
-                lines = await FileIO.ReadLinesAsync(file);
+                lines = await FileItemIO.ReadLinesAsync(file);
             }
             catch
             {

@@ -227,7 +227,7 @@ namespace Telegram.ViewModels.Settings
 
                 // FileIO rather than System.IO: a picked file is reachable through the broker that
                 // granted it and nothing else.
-                await FileIO.WriteTextAsync(file, _shortcutsService.Export());
+                await FileItemIO.WriteTextAsync(file, _shortcutsService.Export());
             }
             catch
             {
@@ -254,7 +254,7 @@ namespace Telegram.ViewModels.Settings
                     return;
                 }
 
-                text = await FileIO.ReadTextAsync(file);
+                text = await FileItemIO.ReadTextAsync(file);
             }
             catch
             {

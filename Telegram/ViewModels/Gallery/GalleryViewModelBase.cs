@@ -346,7 +346,7 @@ namespace Telegram.ViewModels.Gallery
             if (cached != null)
             {
                 var dataPackage = new DataPackage();
-                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(cached));
+                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(await cached.ToStorageFileAsync()));
                 ClipboardEx.TrySetContent(dataPackage);
 
                 ToastPopup.Show(XamlRoot, Strings.ImageCopied, ToastPopupIcon.Copied);

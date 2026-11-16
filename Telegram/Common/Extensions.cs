@@ -79,7 +79,7 @@ namespace Telegram.Common
             return defaultValue;
         }
 
-        public static bool HasExtension(this IStorageFile file, params string[] extensions)
+        public static bool HasExtension(this FileItem file, params string[] extensions)
         {
             // A file dragged straight out of a ZIP archive arrives with an empty FileType, though
             // its Name still carries the extension. Falling back rather than always reading Name

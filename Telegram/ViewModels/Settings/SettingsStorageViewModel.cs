@@ -25,9 +25,12 @@ namespace Telegram.ViewModels.Settings
 {
     public partial class SettingsStorageViewModel : ViewModelBase
     {
-        public SettingsStorageViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IStorageService _storageService;
+
+        public SettingsStorageViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _storageService = storageService;
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -476,23 +479,15 @@ namespace Telegram.ViewModels.Settings
             TotalBytes = SelectedBytes;
         }
 
-        private async Task<(ulong FreeSpace, ulong Capacity)> GetSystemTotalBytes()
+        private async Task<DiskSpace> GetSystemTotalBytes()
         {
-            const String c_freeSpace = "System.FreeSpace";
-            const String c_capacity = "System.Capacity";
-
             try
             {
-                var folder = await AppPaths.GetLocalFolderAsync();
-                var retrieveProperties = await folder.Properties.RetrievePropertiesAsync(new[] { c_freeSpace, c_capacity });
-                var freeSpace = (ulong)retrieveProperties[c_freeSpace];
-                var capacity = (ulong)retrieveProperties[c_capacity];
-
-                return (freeSpace, capacity);
+                return await _storageService.GetDiskSpaceAsync();
             }
             catch
             {
-                return (0, 0);
+                return default;
             }
         }
 

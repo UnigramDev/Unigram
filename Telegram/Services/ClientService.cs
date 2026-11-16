@@ -39,14 +39,14 @@ namespace Telegram.Services
         Task<Object> CheckChatInviteLinkAsync(string inviteLink);
 
         Task<File> GetFileAsync(int fileId);
-        Task<StorageFile> GetFileAsync(File file, bool completed = true);
-        Task<StorageFile> GetPermanentFileAsync(File file);
+        Task<FileItem> GetFileAsync(File file, bool completed = true);
+        Task<FileItem> GetPermanentFileAsync(File file);
 
         void DownloadFile(int fileId, int priority, long offset = 0, long limit = 0, bool synchronous = false);
         Task<File> DownloadFileAsync(File file, int priority, long offset = 0, long limit = 0);
 
         void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30);
-        void AddFileToDownloads(File file, long chatId, long messageId, StorageFile destination, int priority = 30);
+        void AddFileToDownloads(File file, long chatId, long messageId, FileItem destination, int priority = 30);
         void CancelDownloadFile(File file, bool onlyIfPending = false);
         bool IsDownloadFileCanceled(int fileId);
         bool IsDownloadFileImplicit(int fileId);

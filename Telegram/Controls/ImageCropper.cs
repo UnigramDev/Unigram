@@ -1941,7 +1941,7 @@ namespace Telegram.Controls
 
         #region Source
 
-        public async Task SetSourceAsync(StorageFile file, ImageRotation rotation = ImageRotation.None, ImageFlip flip = ImageFlip.None, BitmapProportions proportions = BitmapProportions.Custom, Rect? cropRectangle = null, double angle = 0)
+        public async Task SetSourceAsync(FileItem file, ImageRotation rotation = ImageRotation.None, ImageFlip flip = ImageFlip.None, BitmapProportions proportions = BitmapProportions.Custom, Rect? cropRectangle = null, double angle = 0)
         {
             try
             {
@@ -1963,7 +1963,7 @@ namespace Telegram.Controls
         }
 
         // Upright only: the edit's own turns and mirror are part of the view transform.
-        private static async Task<SoftwareBitmap> DecodeAsync(StorageFile file)
+        private static async Task<SoftwareBitmap> DecodeAsync(FileItem file)
         {
             using var fileStream = await ImageHelper.OpenReadAsync(file);
 

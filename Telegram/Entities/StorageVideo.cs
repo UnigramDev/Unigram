@@ -15,7 +15,7 @@ namespace Telegram.Entities
 {
     public partial class StorageVideo : StorageMedia
     {
-        private StorageVideo(StorageFile file, ulong fileSize, double totalMilliseconds, int width, int height, bool hasAudio)
+        private StorageVideo(FileItem file, ulong fileSize, double totalMilliseconds, int width, int height, bool hasAudio)
             : base(file, fileSize)
         {
             TotalSeconds = (int)Math.Floor(totalMilliseconds / 1000);
@@ -30,7 +30,7 @@ namespace Telegram.Entities
         public override int Width { get; }
         public override int Height { get; }
 
-        public static async Task<StorageVideo> CreateAsync(StorageFile file, ulong fileSize)
+        public static async Task<StorageVideo> CreateAsync(FileItem file, ulong fileSize)
         {
             try
             {

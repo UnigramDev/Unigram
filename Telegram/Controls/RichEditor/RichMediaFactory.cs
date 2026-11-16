@@ -25,7 +25,7 @@ namespace Telegram.Controls.RichEditor
     {
         private const int PreviewSide = 720;
 
-        public static async Task<IList<RichMediaSource>> CreateAsync(IEnumerable<IStorageItem> items, bool asDocuments = false)
+        public static async Task<IList<RichMediaSource>> CreateAsync(IEnumerable<IFileSystemItem> items, bool asDocuments = false)
         {
             var result = new List<RichMediaSource>();
             var media = await StorageMedia.CreateAsync(items);

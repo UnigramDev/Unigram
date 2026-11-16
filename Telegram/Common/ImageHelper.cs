@@ -69,7 +69,7 @@ namespace Telegram.Common
 
         #endregion
 
-        public static async Task<SizeInt32> GetScaleAsync(StorageFile file, bool allowMultipleFrames = false, int requestedMinSide = 1280, ImageGeneration generation = null)
+        public static async Task<SizeInt32> GetScaleAsync(FileItem file, bool allowMultipleFrames = false, int requestedMinSide = 1280, ImageGeneration generation = null)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace Telegram.Common
         /// <param name="trimStart">
         /// For video sources, the position to take the frame from.
         /// </param>
-        public static async Task<StorageFile> ScaleAsync(Guid encoderId, StorageFile sourceFile, StorageFile resizedImageFile, int requestedMinSide, bool bestQuality = false, TimeSpan? trimStart = null)
+        public static async Task<FileItem> ScaleAsync(Guid encoderId, FileItem sourceFile, FileItem resizedImageFile, int requestedMinSide, bool bestQuality = false, TimeSpan? trimStart = null)
         {
             using (var source = await OpenReadAsync(sourceFile, trimStart))
             {
@@ -136,7 +136,7 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task<StorageFile> ScaleAsync(Guid encoderId, IRandomAccessStream source, StorageFile resizedImageFile, int requestedMinSide, bool bestQuality = false)
+        public static async Task<FileItem> ScaleAsync(Guid encoderId, IRandomAccessStream source, FileItem resizedImageFile, int requestedMinSide, bool bestQuality = false)
         {
             var decoder = await BitmapDecoder.CreateAsync(source);
             //if (decoder.FrameCount > 1)
@@ -186,7 +186,7 @@ namespace Telegram.Common
             return resizedImageFile;
         }
 
-        public static async Task<StorageFile> TranscodeAsync(IRandomAccessStream source, StorageFile resizedImageFile, Guid encoderId)
+        public static async Task<FileItem> TranscodeAsync(IRandomAccessStream source, FileItem resizedImageFile, Guid encoderId)
         {
             var decoder = await BitmapDecoder.CreateAsync(source);
             //if (decoder.FrameCount > 1)
@@ -369,7 +369,7 @@ namespace Telegram.Common
             };
         }
 
-        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, ImageRotation rotation = ImageRotation.None, ImageFlip flip = ImageFlip.None, TimeSpan? trimStart = null, bool bestQuality = false)
+        public static async Task<FileItem> CropAsync(FileItem sourceFile, FileItem file, Rect cropRectangle, int min = 1280, int max = 0, ImageRotation rotation = ImageRotation.None, ImageFlip flip = ImageFlip.None, TimeSpan? trimStart = null, bool bestQuality = false)
         {
             file ??= await AppPaths.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
 
@@ -542,7 +542,7 @@ namespace Telegram.Common
         /// <summary>
         /// Writes a free-angle crop, strokes and objects included, as a JPEG.
         /// </summary>
-        public static async Task<StorageFile> CropRotatedAsync(StorageFile sourceFile, StorageFile file, ImageGeneration generation, int min = 1280, int max = 0)
+        public static async Task<FileItem> CropRotatedAsync(FileItem sourceFile, FileItem file, ImageGeneration generation, int min = 1280, int max = 0)
         {
             using (var source = await OpenReadAsync(sourceFile, generation.TrimStartTime))
             using (var target = await RenderRotatedAsync(source, generation, min, max, true))
@@ -558,7 +558,7 @@ namespace Telegram.Common
         /// A story's frame as it is posted, gradient and media only, at <paramref name="size"/>,
         /// with a video's frame at <paramref name="time"/>.
         /// </summary>
-        public static async Task<SoftwareBitmap> RenderFrameAsync(StorageFile sourceFile, ImageGeneration generation, Size size, TimeSpan time)
+        public static async Task<SoftwareBitmap> RenderFrameAsync(FileItem sourceFile, ImageGeneration generation, Size size, TimeSpan time)
         {
             var frame = new ImageGeneration
             {
@@ -780,7 +780,7 @@ namespace Telegram.Common
         }
 
         // Not precise, a video's frame is the keyframe at or before trimStart.
-        public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile, TimeSpan? trimStart = null, bool precise = false)
+        public static async Task<IRandomAccessStream> OpenReadAsync(FileItem sourceFile, TimeSpan? trimStart = null, bool precise = false)
         {
             // The same set EditMediaPopup uses to decide whether a file is a video, so
             // the two cannot disagree about what reaches the frame extraction below.
@@ -873,7 +873,7 @@ namespace Telegram.Common
             return stream;
         }
 
-        public static async Task<StorageFile> DrawStrokesAsync(StorageFile file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, ImageRotation rotation, ImageFlip flip)
+        public static async Task<FileItem> DrawStrokesAsync(FileItem file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, ImageRotation rotation, ImageFlip flip)
         {
             var device = ElementComposition.GetSharedDevice();
 

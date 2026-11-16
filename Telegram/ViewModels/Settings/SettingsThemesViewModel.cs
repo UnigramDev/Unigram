@@ -354,7 +354,7 @@ namespace Telegram.ViewModels.Settings
 
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(theme.Path);
+                var file = await FileItem.GetFileFromPathAsync(theme.Path);
                 await file.DeleteAsync();
             }
             catch { }

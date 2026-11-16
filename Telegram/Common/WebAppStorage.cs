@@ -49,7 +49,7 @@ namespace Telegram.Common
             Secured = secured;
         }
 
-        private async Task<StorageFolder> GetStorageFolderAsync()
+        private async Task<FolderItem> GetStorageFolderAsync()
         {
             try
             {
@@ -69,7 +69,7 @@ namespace Telegram.Common
                 : $"{UserId}_{BotId}";
         }
 
-        private async Task<StorageFile> GetFileAsync(string storageId)
+        private async Task<FileItem> GetFileAsync(string storageId)
         {
             var folder = await GetStorageFolderAsync();
             if (folder == null) return null;
@@ -85,14 +85,14 @@ namespace Telegram.Common
         }
 
         // Scanning other storages must not create a file for every one of them.
-        private async Task<StorageFile> TryGetFileAsync(string storageId)
+        private async Task<FileItem> TryGetFileAsync(string storageId)
         {
             var folder = await GetStorageFolderAsync();
             if (folder == null) return null;
 
             try
             {
-                return await folder.TryGetItemAsync(GetFileName(storageId)) as StorageFile;
+                return await folder.TryGetItemAsync(GetFileName(storageId)) as FileItem;
             }
             catch
             {
@@ -100,7 +100,7 @@ namespace Telegram.Common
             }
         }
 
-        private async Task<StorageFile> GetFileAsync()
+        private async Task<FileItem> GetFileAsync()
         {
             if (Secured && string.IsNullOrEmpty(StorageId))
             {
@@ -130,7 +130,7 @@ namespace Telegram.Common
             return await GetFileAsync(StorageId);
         }
 
-        private async Task<StorageFile> GetConfigFileAsync()
+        private async Task<FileItem> GetConfigFileAsync()
         {
             var folder = await GetStorageFolderAsync();
             if (folder == null) return null;
@@ -209,11 +209,11 @@ namespace Telegram.Common
             }
         }
 
-        private async Task<byte[]> GetBytesAsync(StorageFile file)
+        private async Task<byte[]> GetBytesAsync(FileItem file)
         {
             try
             {
-                var buffer = await FileIO.ReadBufferAsync(file);
+                var buffer = await FileItemIO.ReadBufferAsync(file);
                 var bytes = new byte[buffer.Length];
                 using (var dataReader = DataReader.FromBuffer(buffer))
                 {
@@ -237,7 +237,7 @@ namespace Telegram.Common
             }
         }
 
-        private async Task SetBytesAsync(StorageFile file, byte[] bytes)
+        private async Task SetBytesAsync(FileItem file, byte[] bytes)
         {
             try
             {
@@ -247,7 +247,7 @@ namespace Telegram.Common
                 }
 
                 var buffer = CryptographicBuffer.CreateFromByteArray(bytes);
-                await FileIO.WriteBufferAsync(file, buffer);
+                await FileItemIO.WriteBufferAsync(file, buffer);
             }
             catch
             {
@@ -293,7 +293,7 @@ namespace Telegram.Common
             }
         }
 
-        private async Task<byte[]> DecryptDataAsync(StorageFile file, byte[] encryptedData)
+        private async Task<byte[]> DecryptDataAsync(FileItem file, byte[] encryptedData)
         {
             if (encryptedData.Length == 0)
             {
@@ -574,7 +574,7 @@ namespace Telegram.Common
             }
         }
 
-        private async Task<Dictionary<string, string>> GetJsonFromFileAsync(StorageFile file)
+        private async Task<Dictionary<string, string>> GetJsonFromFileAsync(FileItem file)
         {
             try
             {
@@ -647,11 +647,11 @@ namespace Telegram.Common
             catch { }
         }
 
-        private async Task<byte[]> GetRawBytesAsync(StorageFile file)
+        private async Task<byte[]> GetRawBytesAsync(FileItem file)
         {
             try
             {
-                var buffer = await FileIO.ReadBufferAsync(file);
+                var buffer = await FileItemIO.ReadBufferAsync(file);
                 var bytes = new byte[buffer.Length];
                 using (var dataReader = DataReader.FromBuffer(buffer))
                 {
@@ -665,10 +665,10 @@ namespace Telegram.Common
             }
         }
 
-        private async Task SaveRawBytesAsync(StorageFile file, byte[] bytes)
+        private async Task SaveRawBytesAsync(FileItem file, byte[] bytes)
         {
             var buffer = CryptographicBuffer.CreateFromByteArray(bytes);
-            await FileIO.WriteBufferAsync(file, buffer);
+            await FileItemIO.WriteBufferAsync(file, buffer);
         }
     }
 

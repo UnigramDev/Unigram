@@ -43,16 +43,16 @@ namespace Telegram.Services
 
         // A file with no path - on a device, or in a virtual folder - can be reopened only from the
         // object the picker gave, which does not outlive the process.
-        private static readonly ConcurrentDictionary<string, StorageFile> _pathless = new();
+        private static readonly ConcurrentDictionary<string, FileItem> _pathless = new();
 
         // Known gap: the broker's list follows a file that is moved or renamed, and a path does not.
         // A compress, transcode or thumbnail queued from a file that moves before it runs fails
         // instead of resuming; TDLib's mtime check cannot see it, as their path has a new extension.
-        public static string Add(IStorageItem item)
+        public static string Add(IFileSystemItem item)
         {
             if (string.IsNullOrEmpty(item.Path))
             {
-                if (item is StorageFile file)
+                if (item is FileItem file)
                 {
                     var token = Guid.NewGuid().ToString("N");
                     _pathless[token] = file;
@@ -65,19 +65,19 @@ namespace Telegram.Services
             return item.Path.Replace(Separator, Escape);
         }
 
-        public static void AddOrReplace(string token, IStorageItem item)
+        public static void AddOrReplace(string token, IFileSystemItem item)
         {
             // Only the *FromApp entry points need this, and they check no grants outside the
             // app container.
         }
 
-        public static Task<StorageFile> GetFileAsync(string token)
+        public static Task<FileItem> GetFileAsync(string token)
         {
             if (Path.IsPathFullyQualified(token))
             {
-                return StorageFile.GetFileFromPathAsync(token.Replace(Escape, Separator)).AsTask();
+                return FileItem.GetFileFromPathAsync(token.Replace(Escape, Separator));
             }
-            else if (_pathless.TryGetValue(token, out StorageFile file))
+            else if (_pathless.TryGetValue(token, out FileItem file))
             {
                 return Task.FromResult(file);
             }
@@ -90,7 +90,7 @@ namespace Telegram.Services
         /// Takes a handle on a file TDLib is about to read, and returns the token that names it in
         /// the conversion string.
         /// </summary>
-        public static string Add(IStorageItem item)
+        public static string Add(IFileSystemItem item)
         {
             DownloadFolderService.RemoveOverflow();
 
@@ -135,7 +135,7 @@ namespace Telegram.Services
         /// which is harmless: the next call puts it back.
         /// </para>
         /// </summary>
-        public static void AddOrReplace(string token, IStorageItem item)
+        public static void AddOrReplace(string token, IFileSystemItem item)
         {
             DownloadFolderService.RemoveOverflow();
 
@@ -153,7 +153,7 @@ namespace Telegram.Services
         /// Throws when the file is gone, as the access list does: every caller is a conversion that
         /// reports the failure back to TDLib.
         /// </summary>
-        public static Task<StorageFile> GetFileAsync(string token)
+        public static Task<FileItem> GetFileAsync(string token)
         {
             return AccessList.Future.GetFileAsync(token);
         }

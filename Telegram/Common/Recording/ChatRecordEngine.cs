@@ -60,7 +60,7 @@ namespace Telegram.Common.Recording
         private readonly DispatcherQueue _dispatcherQueue;
 
         private OpusRecorder _recorder;
-        private StorageFile _file;
+        private FileItem _file;
         private ChatRecordMode _mode;
         private Chat _chat;
 
@@ -226,7 +226,7 @@ namespace Telegram.Common.Recording
             RecordingFailed?.Invoke(this, EventArgs.Empty);
         }
 
-        private static async Task<StorageFile> CreateFileAsync(ChatRecordMode mode, bool streaming)
+        private static async Task<FileItem> CreateFileAsync(ChatRecordMode mode, bool streaming)
         {
             var fileName = string.Format(mode == ChatRecordMode.Video
                 ? "video_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.mp4"
@@ -656,7 +656,7 @@ namespace Telegram.Common.Recording
             });
         }
 
-        private async void Send(ComposeViewModel viewModel, ChatRecordMode mode, Chat chat, StorageFile file, bool mirroring, TimeSpan duration, byte[] waveform, bool encoded)
+        private async void Send(ComposeViewModel viewModel, ChatRecordMode mode, Chat chat, FileItem file, bool mirroring, TimeSpan duration, byte[] waveform, bool encoded)
         {
             var selfDestructType = IsViewOnce
                     ? new MessageSelfDestructTypeImmediately()
@@ -763,7 +763,7 @@ namespace Telegram.Common.Recording
                 return desiredDevice ?? allVideoDevices.FirstOrDefault();
             }
 
-            public async Task StartAsync(StorageFile file, int videoNoteLength)
+            public async Task StartAsync(FileItem file, int videoNoteLength)
             {
                 MediaEncodingProfile profile;
                 if (m_isVideo)
@@ -779,9 +779,11 @@ namespace Telegram.Common.Recording
                     profile.Audio.ChannelCount = 1;
                 }
 
+                var target = await file.ToStorageFileAsync();
+
                 try
                 {
-                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, file);
+                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, target);
                 }
                 catch when (m_isVideo)
                 {
@@ -790,7 +792,7 @@ namespace Telegram.Common.Recording
                     Logger.Error("Falling back to the camera's own resolution");
 
                     profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
-                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, file);
+                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, target);
                 }
 
                 await m_lowLag.StartAsync();

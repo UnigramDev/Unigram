@@ -30,7 +30,7 @@ namespace Telegram.Entities
 
     public abstract class StorageMedia : BindableBase
     {
-        public StorageMedia(StorageFile file, ulong fileSize)
+        public StorageMedia(FileItem file, ulong fileSize)
         {
             File = file;
             Size = fileSize;
@@ -38,7 +38,7 @@ namespace Telegram.Entities
             EditState = new ImageGeneration();
         }
 
-        public StorageFile File { get; private set; }
+        public FileItem File { get; private set; }
 
         public ulong Size { get; }
 
@@ -109,14 +109,14 @@ namespace Telegram.Entities
 
         public bool IsEdited => !_editState?.IsEmpty ?? false;
 
-        public static async Task<StorageMedia> CreateAsync(StorageFile file, bool probe = true)
+        public static async Task<StorageMedia> CreateAsync(FileItem file, bool probe = true)
         {
             if (file == null || !file.IsAvailable)
             {
                 return null;
             }
 
-            BasicProperties basicProperties;
+            FileItemProperties basicProperties;
             try
             {
                 basicProperties = await file.GetBasicPropertiesAsync();
@@ -192,14 +192,14 @@ namespace Telegram.Entities
         /// The files a data package carries, in order. Folders are dropped — nothing downstream
         /// expands them.
         /// </summary>
-        public static async Task<IReadOnlyList<StorageFile>> GetFilesAsync(DataPackageView package)
+        public static async Task<IReadOnlyList<FileItem>> GetFilesAsync(DataPackageView package)
         {
             var items = await package.GetStorageItemsAsync();
-            var files = new List<StorageFile>(items.Count);
+            var files = new List<FileItem>(items.Count);
 
             foreach (StorageFile file in items.OfType<StorageFile>())
             {
-                files.Add(file);
+                files.Add(file.ToFileItem());
             }
 
             return files;
@@ -209,9 +209,9 @@ namespace Telegram.Entities
         /// Types every file, concurrently, and returns them in the order they were given. Files
         /// that could not be typed are left out.
         /// </summary>
-        public static async Task<IList<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
+        public static async Task<IList<StorageMedia>> CreateAsync(IEnumerable<IFileSystemItem> items)
         {
-            var files = items.OfType<StorageFile>().ToArray();
+            var files = items.OfType<FileItem>().ToArray();
 
             // Indexed rather than appended: probing finishes out of order, and callers rely on the
             // order they gave — the share target attaches its caption to the last item.
@@ -242,7 +242,7 @@ namespace Telegram.Entities
         /// for every index including the ones that could not be typed, where it gets null. A caller
         /// reassembling the original order needs to know that a slot has settled either way.
         /// </remarks>
-        public static async Task ProbeAsync(IReadOnlyList<StorageFile> files, Action<int, StorageMedia> resolved, CancellationToken cancellationToken)
+        public static async Task ProbeAsync(IReadOnlyList<FileItem> files, Action<int, StorageMedia> resolved, CancellationToken cancellationToken)
         {
             // A probe is a file open plus a header decode, or a whole ffmpeg open for video and
             // audio. Running them one after another is what used to stall a large drop; the cap
@@ -314,9 +314,9 @@ namespace Telegram.Entities
     /// </summary>
     public sealed partial class StorageMediaSource
     {
-        private readonly IReadOnlyList<StorageFile> _files;
+        private readonly IReadOnlyList<FileItem> _files;
 
-        private StorageMediaSource(IReadOnlyList<StorageMedia> ready, IReadOnlyList<StorageFile> files)
+        private StorageMediaSource(IReadOnlyList<StorageMedia> ready, IReadOnlyList<FileItem> files)
         {
             Ready = ready;
             _files = files;
@@ -327,7 +327,7 @@ namespace Telegram.Entities
             return new StorageMediaSource(items, null);
         }
 
-        public static StorageMediaSource FromFiles(IReadOnlyList<StorageFile> files)
+        public static StorageMediaSource FromFiles(IReadOnlyList<FileItem> files)
         {
             return new StorageMediaSource(Array.Empty<StorageMedia>(), files);
         }
