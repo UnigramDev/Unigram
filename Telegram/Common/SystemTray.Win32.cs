@@ -27,6 +27,12 @@ namespace Telegram.Common
         private static NotifyIcon _icon;
         private static DispatcherQueue _queue;
 
+        // NotificationsService sends the state only when it changes, and it usually has before the
+        // icon exists - TDLib reports the counts during startup, and the setting can be turned on
+        // at any time - so the icon takes the last one when it is created.
+        private static NotifyIconIcon _state = NotifyIconIcon.Default;
+        private static readonly object _lock = new();
+
         public static partial bool IsShowing()
         {
             return _icon != null;
@@ -61,27 +67,40 @@ namespace Telegram.Common
                 // runs on: the click has to come back to it, and it must not run inside it.
                 _queue = DispatcherQueue.GetForCurrentThread();
 
-                _icon = new NotifyIcon(ResolveIcon, Strings.AppName);
-                _icon.Click += OnClick;
-                _icon.Exit += OnExit;
-                _icon.SessionEnding += OnSessionEnding;
-                _icon.SessionEndCancelled += OnSessionEndCancelled;
+                var icon = new NotifyIcon(ResolveIcon, Strings.AppName);
+                icon.Click += OnClick;
+                icon.Exit += OnExit;
+                icon.SessionEnding += OnSessionEnding;
+                icon.SessionEndCancelled += OnSessionEndCancelled;
 
-                _icon.UpdateOpenText(Strings.NotifyIconOpen);
-                _icon.UpdateExitText(Strings.NotifyIconExit);
+                icon.UpdateOpenText(Strings.NotifyIconOpen);
+                icon.UpdateExitText(Strings.NotifyIconExit);
+
+                lock (_lock)
+                {
+                    icon.Icon = _state;
+                    _icon = icon;
+                }
             }
         }
 
         public static partial Task HideAsync()
         {
-            if (_icon != null)
+            NotifyIcon icon;
+
+            lock (_lock)
             {
-                _icon.Click -= OnClick;
-                _icon.Exit -= OnExit;
-                _icon.SessionEnding -= OnSessionEnding;
-                _icon.SessionEndCancelled -= OnSessionEndCancelled;
-                _icon.Dispose();
+                icon = _icon;
                 _icon = null;
+            }
+
+            if (icon != null)
+            {
+                icon.Click -= OnClick;
+                icon.Exit -= OnExit;
+                icon.SessionEnding -= OnSessionEnding;
+                icon.SessionEndCancelled -= OnSessionEndCancelled;
+                icon.Dispose();
             }
 
             return Task.CompletedTask;
@@ -89,13 +108,18 @@ namespace Telegram.Common
 
         public static partial void SetUnreadCount(int unreadCount, int unreadUnmutedCount)
         {
-            if (_icon != null)
+            // Unmuted wins: an unmuted chat is the one worth colouring the icon for. The same
+            // rule the stub applies on the other side of the bridge.
+            var state = unreadCount > 0
+                ? unreadUnmutedCount > 0 ? NotifyIconIcon.Unmuted : NotifyIconIcon.Muted
+                : NotifyIconIcon.Default;
+
+            // Called off the UI thread: the lock keeps it from landing between the icon's creation
+            // and its assignment, and from racing its disposal.
+            lock (_lock)
             {
-                // Unmuted wins: an unmuted chat is the one worth colouring the icon for. The same
-                // rule the stub applies on the other side of the bridge.
-                _icon.Icon = unreadCount > 0
-                    ? unreadUnmutedCount > 0 ? NotifyIconIcon.Unmuted : NotifyIconIcon.Muted
-                    : NotifyIconIcon.Default;
+                _state = state;
+                _icon?.Icon = state;
             }
         }
 
