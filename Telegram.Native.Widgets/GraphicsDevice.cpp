@@ -29,6 +29,31 @@ namespace Widgets
         m_wic = winrt::create_instance<IWICImagingFactory>(CLSID_WICImagingFactory);
     }
 
+    // Runs at DLL detach. When the process is exiting, ExitProcess has already ended every other
+    // thread, the GPU driver's among them, and releasing the device waits on one of those forever,
+    // so everything is left to the OS. A plain FreeLibrary still releases.
+    GraphicsDevice::~GraphicsDevice()
+    {
+        // Looked up here rather than cached in a static: a static's first-use lock is one more
+        // thing a thread killed by ExitProcess could still be holding.
+        using PFN_RtlDllShutdownInProgress = BOOLEAN(NTAPI*)();
+        auto shutdownInProgress = reinterpret_cast<PFN_RtlDllShutdownInProgress>(GetProcAddress(GetModuleHandle(L"ntdll.dll"), "RtlDllShutdownInProgress"));
+
+        if (shutdownInProgress == nullptr || shutdownInProgress())
+        {
+            for (auto& [owner, device] : m_devices)
+            {
+                winrt::detach_abi(owner);
+                winrt::detach_abi(device);
+            }
+
+            m_d2dDevice.detach();
+            m_d2dFactory.detach();
+            m_dwrite.detach();
+            m_wic.detach();
+        }
+    }
+
     CompositionGraphicsDevice GraphicsDevice::CompositionDevice(Compositor const& compositor)
     {
         std::lock_guard guard(m_lock);

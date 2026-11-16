@@ -29,6 +29,7 @@ namespace Widgets
 
     private:
         GraphicsDevice();
+        ~GraphicsDevice();
 
         std::mutex m_lock;
         std::mutex m_drawLock;
