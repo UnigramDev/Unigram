@@ -1599,7 +1599,7 @@ namespace Telegram.Controls.RichEditor
         /// <summary>
         /// The two things a reader following the text pattern would miss: arriving on a block
         /// selected whole, which has no text, and a command changing the kind of the line the
-        /// caret is on - Ctrl+Alt+2 makes a heading without the caret moving at all.
+        /// caret is on - Ctrl+Shift+2 makes a heading without the caret moving at all.
         /// </summary>
         private void Announce()
         {

@@ -1330,11 +1330,20 @@ namespace Telegram.Controls.RichEditor
                 }
             }
 
-            // Ctrl+Alt+0 to 6: paragraph and the six headings, as in word processors.
-            if (ctrl && alt && key >= VirtualKey.Number0 && key <= VirtualKey.Number6)
+            // Ctrl+Shift+0 to 6: paragraph and the six headings. Not Ctrl+Alt: Windows sends AltGr
+            // as Ctrl+Alt, and AltGr+digit types @, #, | and more on many layouts. A kind the
+            // schema refuses lets the key through for the same reason.
+            if (ctrl && shift && !alt && key >= VirtualKey.Number0 && key <= VirtualKey.Number6)
             {
                 var level = key - VirtualKey.Number0;
-                _engine.SetTextKind(level == 0 ? RichBlockKind.Paragraph : RichBlockKind.Heading, Math.Max(1, level));
+                var kind = level == 0 ? RichBlockKind.Paragraph : RichBlockKind.Heading;
+
+                if (_engine.Schema?.AllowsTextKind(kind) == false)
+                {
+                    return false;
+                }
+
+                _engine.SetTextKind(kind, Math.Max(1, level));
                 return true;
             }
 
