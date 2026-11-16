@@ -403,7 +403,7 @@ namespace Telegram.ViewModels.Profile
 
         public void DeleteSelectedMessages()
         {
-            var messages = new List<MessageWithOwner>(SelectedItems);
+            var messages = new List<MessageWithOwner>(SelectedItems.Where(x => x != null));
 
             var first = messages.FirstOrDefault();
             if (first == null)
