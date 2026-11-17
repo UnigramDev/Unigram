@@ -133,8 +133,10 @@ namespace Telegram.Services
                     if (!keepAccent)
                     {
                         // Inside the same guard as the rest, and the fill's own first colour rather
-                        // than the text colour, so the glyph reads as a hole in the circle.
+                        // than the text colour, so the glyph reads as a hole in the circle. A chosen
+                        // reaction's pill is the same solid circle colour, so its count follows.
                         values["MessageMediaForegroundOutgoing"] = fill[0].ToColor();
+                        values["MessageReactionChosenForegroundOutgoing"] = fill[0].ToColor();
                     }
                 }
             }

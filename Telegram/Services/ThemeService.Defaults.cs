@@ -68,6 +68,7 @@ namespace Telegram.Services
             { "MessageMediaBackgroundOutgoing", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
             { "MessageMediaForegroundOutgoing", Color.FromArgb(0xFF, 0x4C, 0x9C, 0xE2) },
             { "MessageReactionBackgroundOutgoing", Color.FromArgb(0x35, 0xFF, 0xFF, 0xFF) },
+            { "MessageReactionForegroundOutgoing", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
             { "MessageReactionChosenBackgroundOutgoing", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
         };
 
@@ -91,6 +92,7 @@ namespace Telegram.Services
             { "MessageMediaBackgroundOutgoing", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
             { "MessageMediaForegroundOutgoing", Color.FromArgb(0xFF, 0x4C, 0x9C, 0xE2) },
             { "MessageReactionBackgroundOutgoing", Color.FromArgb(0x35, 0x00, 0x00, 0x00) },
+            { "MessageReactionForegroundOutgoing", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
             { "MessageReactionChosenBackgroundOutgoing", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
         };
 
