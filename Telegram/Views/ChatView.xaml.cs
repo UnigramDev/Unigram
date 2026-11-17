@@ -7080,7 +7080,9 @@ namespace Telegram.Views
         private float _islandMargin = 8;
 
         // Between two islands: the header, the headers under it, the forum tabs and the composer.
-        private float _islandSpacing = 6;
+        // A multiple of 4, so whole pixels at 125%, 150% and 175%: it reaches the history's padding
+        // and scroll bar margin, and 6 - 7.5 px at 125% - kept the list in a layout cycle there.
+        private float _islandSpacing = 4;
 
         // The islands take the composer's radius, which they are drawn for at its default of 24:
         // the header and the search bar take it as it is, the cards that are 32 tall or stack
@@ -7105,7 +7107,7 @@ namespace Telegram.Views
             var button = new CornerRadius(Math.Max(4, radius - 4));
 
             _islandMargin = merged ? 0 : 8;
-            _islandSpacing = merged ? 0 : 6;
+            _islandSpacing = merged ? 0 : 4;
 
             var margin = _islandMargin;
 
