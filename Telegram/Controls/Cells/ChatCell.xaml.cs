@@ -1783,12 +1783,17 @@ namespace Telegram.Controls.Cells
                 case MessageAudio audio:
                     return Text1("\U0001F3B5 ", audio.Caption, audio.Audio.GetTitle());
                 case MessageDocument document:
-                    if (string.IsNullOrEmpty(document.Document.FileName))
+                    var documentFallback = string.IsNullOrEmpty(document.Document.FileName)
+                        ? Strings.AttachDocument
+                        : document.Document.FileName;
+
+                    if (document.Document.Minithumbnail == null || forceEmoji)
                     {
-                        return Text1("\U0001F4CE ", document.Caption, Strings.AttachDocument);
+                        return Text1("\U0001F4CE ", document.Caption, documentFallback);
                     }
 
-                    return Text1("\U0001F4CE ", document.Caption, document.Document.FileName);
+                    thumbnail = new MinithumbnailId(document.Document.DocumentValue.Id, document.Document.Minithumbnail, false);
+                    return Text1(string.Empty, document.Caption, documentFallback);
                 case MessageInvoice invoice:
                     return Text1("\U0001F4CB ", invoice.PaidMediaCaption, invoice.ProductInfo.Title);
                 case MessageContact:
