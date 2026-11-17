@@ -59,6 +59,8 @@ namespace Telegram.Controls
 
         public CarouselViewer()
         {
+            _progress.InsertScalar("Progress", 0);
+
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
@@ -342,8 +344,6 @@ namespace Telegram.Controls
             _tracker.Properties.InsertScalar("RestingValue", _restingValue);
             _tracker.Properties.InsertBoolean("CanGoNext", _canGoNext);
             _tracker.Properties.InsertBoolean("CanGoPrev", _canGoPrev);
-
-            _progress.InsertScalar("Progress", 0);
 
             ConfigureAnimations();
             ConfigureRestingPoints();
