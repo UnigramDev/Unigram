@@ -301,3 +301,6 @@ _Pvt_Extensions
 /notes/
 
 /Telegram.Native.Widgets/Generated Files
+
+# Tools\Screenshots: its captures and the build it stages for Windows Sandbox.
+/Tools/Screenshots/work/

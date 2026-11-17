@@ -106,13 +106,27 @@ namespace Telegram.Td
 
         private readonly int _clientId;
 
+#if DEBUG
+        private readonly MockClient? _mock;
+#endif
+
         public Client(ClientResultHandler updateHandler)
         {
-            _clientId = td_create_client_id();
-
-            if (updateHandler != null)
+#if DEBUG
+            if (MockClient.IsEnabled)
             {
-                _updateHandlers[_clientId] = updateHandler;
+                _mock = new MockClient(updateHandler);
+                _clientId = _mock.Id;
+            }
+            else
+#endif
+            {
+                _clientId = td_create_client_id();
+
+                if (updateHandler != null)
+                {
+                    _updateHandlers[_clientId] = updateHandler;
+                }
             }
 
             Send(new GetOption("version"));
@@ -120,6 +134,14 @@ namespace Telegram.Td
 
         public unsafe void Send(Function function, Action<Object>? handler = null)
         {
+#if DEBUG
+            if (_mock != null)
+            {
+                _mock.Send(function, handler);
+                return;
+            }
+#endif
+
             var requestId = Interlocked.Increment(ref _currentRequestId);
             if (handler != null)
             {

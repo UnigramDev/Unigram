@@ -1,0 +1,56 @@
+// A small account to try the pipeline with: three people, a group and a channel.
+// The format, and what is filled in when left out, is described on MockClient.
+{
+    "options": {
+        "my_id": 1000001
+    },
+    "updates": [
+        { "@type": "updateUser", "user": { "@type": "user", "id": 1000001, "first_name": "Alex", "last_name": "Morgan", "phone_number": "15550100" } },
+        { "@type": "updateUser", "user": { "@type": "user", "id": 1000002, "first_name": "Emma", "last_name": "Wilson", "status": { "@type": "userStatusOnline", "expires": 300 } } },
+        { "@type": "updateUser", "user": { "@type": "user", "id": 1000003, "first_name": "Lucas", "last_name": "Bennett", "status": { "@type": "userStatusOffline", "was_online": -1800 } } },
+        { "@type": "updateUser", "user": { "@type": "user", "id": 1000004, "first_name": "Sofia", "last_name": "Ricci" } },
+        { "@type": "updateSupergroup", "supergroup": { "@type": "supergroup", "id": 2000001, "member_count": 12, "date": -2592000 } },
+        { "@type": "updateSupergroup", "supergroup": { "@type": "supergroup", "id": 2000002, "member_count": 4820, "is_channel": true, "date": -31536000 } },
+
+        { "@type": "updateNewChat", "chat": { "@type": "chat", "id": 1000002, "type": { "@type": "chatTypePrivate", "user_id": 1000002 } } },
+        { "@type": "updateNewChat", "chat": { "@type": "chat", "id": -1002000001, "title": "Design Team", "type": { "@type": "chatTypeSupergroup", "supergroup_id": 2000001, "is_channel": false }, "unread_count": 2 } },
+        { "@type": "updateNewChat", "chat": { "@type": "chat", "id": 1000003, "type": { "@type": "chatTypePrivate", "user_id": 1000003 }, "unread_count": 1 } },
+        { "@type": "updateNewChat", "chat": { "@type": "chat", "id": -1002000002, "title": "Tech Weekly", "type": { "@type": "chatTypeSupergroup", "supergroup_id": 2000002, "is_channel": true } } },
+        { "@type": "updateNewChat", "chat": { "@type": "chat", "id": 1000004, "type": { "@type": "chatTypePrivate", "user_id": 1000004 } } }
+    ],
+    "messages": {
+        "1000002": [
+            { "text": "Hey! Are we still on for Saturday?", "date": -5400 },
+            { "text": "Yes, absolutely 🙌", "is_outgoing": true, "date": -5300 },
+            { "text": "I booked the table for 7. The place by the river.", "is_outgoing": true, "date": -5280 },
+            { "text": "Perfect. Should I bring the photos from the trip?", "date": -3600 },
+            { "text": "Please do, everyone keeps asking about them", "is_outgoing": true, "date": -3500 },
+            { "text": "Ha, ok. I'll pick the best ones tonight 📸", "date": -600 }
+        ],
+        "-1002000001": [
+            { "text": "New mockups for the onboarding are up", "@from": 1000004, "date": -7200 },
+            { "text": "The second screen feels much lighter now", "@from": 1000003, "date": -7000 },
+            { "text": "Agreed. Can we try the accent color on the button?", "is_outgoing": true, "date": -6800 },
+            { "text": "Sure, give me ten minutes", "@from": 1000004, "date": -900 },
+            { "text": "Done, check the latest version", "@from": 1000004, "date": -120 }
+        ],
+        "1000003": [
+            { "text": "Did you get the report?", "date": -86400 },
+            { "text": "Got it, reading it now", "is_outgoing": true, "date": -86000 },
+            { "text": "Let me know what you think when you get a chance", "date": -1900 }
+        ],
+        "-1002000002": [
+            { "text": "This week: faster builds, smaller binaries and a look at what is coming next.", "date": -172800, "is_channel_post": true },
+            { "text": "Reader question of the week: how do you keep a large codebase fast? Send us your answers!", "date": -10800, "is_channel_post": true }
+        ],
+        "1000004": [
+            { "text": "Thanks for today!", "date": -259200 }
+        ]
+    },
+    "shots": [
+        { "name": "chat-light", "theme": "light", "chat": 1000002, "delay": 3000 },
+        { "name": "chat-dark", "theme": "dark" },
+        { "name": "group-dark", "chat": -1002000001 },
+        { "name": "group-light", "theme": "light" }
+    ]
+}

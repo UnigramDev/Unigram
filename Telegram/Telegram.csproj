@@ -827,6 +827,7 @@
     <Compile Include="Td\Api\UpdateTextRecognition.cs" />
     <Compile Include="Td\Client.cs" />
     <Compile Include="Td\ClientJson.cs" />
+    <Compile Include="Td\MockClient.cs" />
     <Compile Include="Td\PtrClientJson.cs" />
     <Compile Include="Td\TdJsonReader.cs" />
     <Compile Include="Td\Vector.cs" />
@@ -905,6 +906,7 @@
     <Compile Include="Common\ApiInfo.cs" />
     <Compile Include="Common\AppIdentity.cs" />
     <Compile Include="Common\AppPaths.cs" />
+    <Compile Include="Common\ScreenshotDriver.cs" />
     <Compile Include="Common\AutocompleteEntityFinder.cs" />
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Controls\MenuFlyoutSlider.cs" />
