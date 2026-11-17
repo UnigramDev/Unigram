@@ -72,7 +72,7 @@ namespace winrt::Telegram::Native::Opus::implementation
         }
 
         void Transcode(hstring fileName) {
-            HANDLE file = CreateFileFromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            HANDLE file = FileHelper::CreateFileW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
             if (file == INVALID_HANDLE_VALUE) {
                 return;
             }

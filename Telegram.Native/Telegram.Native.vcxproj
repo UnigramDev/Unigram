@@ -430,6 +430,7 @@
     <ClInclude Include="Helpers\BlurHelper.h" />
     <ClInclude Include="Helpers\COMHelper.h" />
     <ClInclude Include="Helpers\DebugHelper.h" />
+    <ClInclude Include="Helpers\FileHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
     <ClInclude Include="Helpers\StringHelper.h" />
     <ClInclude Include="Highlight\SyntaxLanguage.h" />

@@ -130,7 +130,7 @@ namespace winrt::Telegram::Native::Media::implementation
         {
             // FromApp, because a custom notification sound is a downloaded file outside the
             // package and the plain CreateFile2 is denied there.
-            auto file = CreateFile2FromAppW(path.c_str(), GENERIC_READ,
+            auto file = FileHelper::CreateFile2(path.c_str(), GENERIC_READ,
                 FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
             if (file == INVALID_HANDLE_VALUE)
             {

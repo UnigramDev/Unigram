@@ -11,7 +11,7 @@ namespace winrt::Telegram::Native::Cache
     // renamed into place once the index is written, which is what lets readers skip validation and
     // skip the writer's lock entirely.
     //
-    // The rename is MoveFileFromAppW, which has no replace flag - and that is the behaviour we
+    // The rename is FileHelper::MoveFileW, which has no replace flag - and that is the behaviour we
     // want. If someone else finished the same file first, the rename fails, we drop the temp, and
     // their copy stands. First writer wins, with no lock held across the build.
     //

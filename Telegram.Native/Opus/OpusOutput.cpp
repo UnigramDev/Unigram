@@ -156,7 +156,7 @@ buf[base] = (val) & 0xff; \
             return false;
         }
 
-        _fileOs = CreateFileFromAppW(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        _fileOs = FileHelper::CreateFileW(path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
         if (_fileOs == INVALID_HANDLE_VALUE) {
             return false;
         }

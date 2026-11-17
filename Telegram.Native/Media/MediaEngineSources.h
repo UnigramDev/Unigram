@@ -62,7 +62,7 @@ namespace winrt::Telegram::Native::Media::implementation
             {
                 // Opened once and kept: TDLib moves the file when the download completes, and an
                 // open handle follows it.
-                m_file = CreateFile2FromAppW(m_source.FilePath().c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+                m_file = FileHelper::CreateFile2(m_source.FilePath().c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
 
                 if (m_file == INVALID_HANDLE_VALUE)
                 {

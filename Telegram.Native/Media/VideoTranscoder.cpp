@@ -13,7 +13,6 @@
 #include <winrt/Windows.Storage.Streams.h>
 
 #include <d3d10.h>
-#include <fileapifromapp.h>
 #include <libyuv.h>
 
 #include <cmath>
@@ -900,7 +899,7 @@ namespace winrt::Telegram::Native::Media::implementation
         else
         {
             // Input.
-            session.input.handle = CreateFile2FromAppW(options.InputPath().c_str(), GENERIC_READ,
+            session.input.handle = FileHelper::CreateFile2(options.InputPath().c_str(), GENERIC_READ,
                 FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
 
             if (session.input.handle == INVALID_HANDLE_VALUE)

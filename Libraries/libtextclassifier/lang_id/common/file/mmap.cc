@@ -97,11 +97,33 @@ class Win32HandleCloser {
 
   SAFTM_DISALLOW_COPY_AND_ASSIGN(Win32HandleCloser);
 };
+
+// The FromApp functions are the UWP flavour's way past its container; WinUI runs unpackaged and
+// calls Win32 directly.
+HANDLE CreateFileForApp(LPCWSTR file_name, DWORD desired_access, DWORD share_mode,
+                        LPSECURITY_ATTRIBUTES security_attributes, DWORD creation_disposition,
+                        DWORD flags_and_attributes, HANDLE template_file) {
+#ifdef WINUI3
+  return CreateFileW(file_name, desired_access, share_mode, security_attributes,
+                     creation_disposition, flags_and_attributes, template_file);
+#else
+  return CreateFileFromAppW(file_name, desired_access, share_mode, security_attributes,
+                            creation_disposition, flags_and_attributes, template_file);
+#endif
+}
+
+HANDLE CreateReadOnlyMapping(HANDLE file_handle) {
+#ifdef WINUI3
+  return CreateFileMappingW(file_handle, nullptr, PAGE_READONLY, 0, 0, nullptr);
+#else
+  return CreateFileMappingFromApp(file_handle, nullptr, PAGE_READONLY, 0, nullptr);
+#endif
+}
 }  // namespace
 
 MmapHandle MmapFile(const std::string &filename) {
   HANDLE handle =
-      CreateFileFromAppW(WFromMB(filename.c_str()).c_str(),  // File to open.
+      CreateFileForApp(WFromMB(filename.c_str()).c_str(),  // File to open.
                  GENERIC_READ,      // Open for reading.
                  FILE_SHARE_READ,   // Share for reading.
                  NULL,              // Default security.
@@ -135,7 +157,7 @@ MmapHandle MmapFile(HANDLE file_handle) {
 
   // Create a file mapping object that refers to the file.
   HANDLE file_mapping_object =
-      CreateFileMappingFromApp(file_handle, nullptr, PAGE_READONLY, 0, nullptr);
+      CreateReadOnlyMapping(file_handle);
   if (file_mapping_object == NULL) {
     const std::string last_error = GetLastSystemError();
     SAFTM_LOG(ERROR) << "Error while mmapping: " << last_error;
@@ -172,7 +194,7 @@ MmapHandle MmapFile(HANDLE file_handle, size_t offset_in_bytes, size_t size_in_b
 
   // Create a file mapping object that refers to the file.
   HANDLE file_mapping_object =
-      CreateFileMappingFromApp(file_handle, nullptr, PAGE_READONLY, 0, nullptr);
+      CreateReadOnlyMapping(file_handle);
   if (file_mapping_object == NULL) {
     const std::string last_error = GetLastSystemError();
     SAFTM_LOG(ERROR) << "Error while mmapping: " << last_error;

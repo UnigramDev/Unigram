@@ -199,7 +199,7 @@ namespace winrt::Telegram::Native::implementation
         extended_parameters.dwSize = sizeof(extended_parameters);
         extended_parameters.dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
         extended_parameters.dwFileFlags = native_flags;
-        HANDLE handle = CreateFile2FromAppW(fileName.c_str(), desired_access, share_mode, creation_disposition, &extended_parameters);
+        HANDLE handle = FileHelper::CreateFile2(fileName.c_str(), desired_access, share_mode, creation_disposition, &extended_parameters);
 
         if (handle == INVALID_HANDLE_VALUE)
         {
@@ -352,7 +352,7 @@ namespace winrt::Telegram::Native::implementation
         extended_parameters.dwSize = sizeof(extended_parameters);
         extended_parameters.dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
         extended_parameters.dwFileFlags = native_flags;
-        HANDLE handle = CreateFile2FromAppW(fileName.c_str(), desired_access, share_mode, creation_disposition, &extended_parameters);
+        HANDLE handle = FileHelper::CreateFile2(fileName.c_str(), desired_access, share_mode, creation_disposition, &extended_parameters);
 
         if (handle == INVALID_HANDLE_VALUE)
         {
@@ -960,7 +960,7 @@ namespace winrt::Telegram::Native::implementation
     {
         HRESULT result;
 
-        HANDLE file = CreateFile2FromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
+        HANDLE file = FileHelper::CreateFile2(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
 
         if (file == INVALID_HANDLE_VALUE)
         {

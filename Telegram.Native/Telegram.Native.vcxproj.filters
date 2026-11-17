@@ -1053,6 +1053,9 @@
     <ClInclude Include="Helpers\DebugHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Helpers\FileHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
     <ClInclude Include="Helpers\LibraryHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>

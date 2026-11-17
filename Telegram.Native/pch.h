@@ -46,6 +46,8 @@
 #include <d2d1effects.h>
 #include <dwrite_1.h>
 
+#include "Helpers/FileHelper.h"
+
 #undef small
 
 // Disable debug string output on non-debug build

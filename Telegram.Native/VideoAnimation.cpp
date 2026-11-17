@@ -111,7 +111,7 @@ namespace winrt::Telegram::Native::implementation
 
                 if (info->fd == INVALID_HANDLE_VALUE)
                 {
-                    info->fd = CreateFile2FromAppW(info->file.FilePath().data(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+                    info->fd = FileHelper::CreateFile2(info->file.FilePath().data(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
                     if (info->fd == INVALID_HANDLE_VALUE)
                     {
                         return AVERROR_EOF;

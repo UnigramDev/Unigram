@@ -802,7 +802,7 @@ namespace winrt::Telegram::Native::implementation
     bool NativeUtils::FileExists(hstring path)
     {
         WIN32_FILE_ATTRIBUTE_DATA fileInfo;
-        return GetFileAttributesExFromAppW(path.data(), GetFileExInfoStandard, (void*)&fileInfo);
+        return FileHelper::GetFileAttributesExW(path.data(), GetFileExInfoStandard, (void*)&fileInfo);
     }
 
     int64_t NativeUtils::GetDirectorySize(hstring path)
@@ -1334,7 +1334,7 @@ namespace winrt::Telegram::Native::implementation
         extended_parameters.dwSize = sizeof(extended_parameters);
         extended_parameters.dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
         extended_parameters.dwFileFlags = native_flags;
-        auto handle = CreateFile2FromAppW(path.c_str(), desired_access, share_mode, creation_disposition, &extended_parameters);
+        auto handle = FileHelper::CreateFile2(path.c_str(), desired_access, share_mode, creation_disposition, &extended_parameters);
 
         if (handle == INVALID_HANDLE_VALUE)
         {

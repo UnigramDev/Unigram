@@ -3,8 +3,6 @@
 #include "FrameCacheReader.h"
 #include "FrameCodec.h"
 
-#include <fileapifromapp.h>
-
 namespace winrt::Telegram::Native::Cache
 {
     namespace
@@ -35,7 +33,7 @@ namespace winrt::Telegram::Native::Cache
 
         // Shared for write as well as read: a writer building a *different* size of the same
         // animation must not be blocked by us, and the atomic rename never touches this file.
-        auto handle = CreateFile2FromAppW(
+        auto handle = FileHelper::CreateFile2(
             path.c_str(),
             GENERIC_READ,
             FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,

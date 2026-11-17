@@ -3,8 +3,6 @@
 #include "FrameCacheWriter.h"
 #include "FrameCodec.h"
 
-#include <fileapifromapp.h>
-
 namespace winrt::Telegram::Native::Cache
 {
     namespace
@@ -48,7 +46,7 @@ namespace winrt::Telegram::Native::Cache
         // collide on it.
         m_temporary = path + L"." + std::to_wstring(GetCurrentThreadId()) + L".tmp";
 
-        auto handle = CreateFile2FromAppW(
+        auto handle = FileHelper::CreateFile2(
             m_temporary.c_str(),
             GENERIC_READ | GENERIC_WRITE,
             0,
@@ -74,7 +72,7 @@ namespace winrt::Telegram::Native::Cache
         if (!WriteExact(handle, &m_header, sizeof(m_header)))
         {
             CloseHandle(handle);
-            DeleteFileFromAppW(m_temporary.c_str());
+            FileHelper::DeleteFileW(m_temporary.c_str());
             m_temporary.clear();
             return false;
         }
@@ -153,10 +151,10 @@ namespace winrt::Telegram::Native::Cache
 
         // No replace flag, deliberately: if another builder got there first their file stands and
         // ours is dropped. Either way what is left on disk is a complete file.
-        auto renamed = MoveFileFromAppW(m_temporary.c_str(), m_path.c_str()) != FALSE;
+        auto renamed = FileHelper::MoveFileW(m_temporary.c_str(), m_path.c_str()) != FALSE;
         if (!renamed)
         {
-            DeleteFileFromAppW(m_temporary.c_str());
+            FileHelper::DeleteFileW(m_temporary.c_str());
         }
 
         m_temporary.clear();
@@ -176,7 +174,7 @@ namespace winrt::Telegram::Native::Cache
 
         if (!m_temporary.empty())
         {
-            DeleteFileFromAppW(m_temporary.c_str());
+            FileHelper::DeleteFileW(m_temporary.c_str());
             m_temporary.clear();
         }
 
