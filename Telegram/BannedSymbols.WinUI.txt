@@ -35,8 +35,23 @@ P:Microsoft.UI.Xaml.DependencyObject.Dispatcher;Always null outside UWP. Use Dis
 
 # Package identity. This flavour also runs unpackaged, and there each of these throws 0x80073D54,
 # "The process has no package identity". The shims that answer for them - AppPaths, AppIdentity,
-# ApiInfo, SettingsStore - are the only files that suppress RS0030.
+# ApiInfo, SettingsStore - and the storage shims below are the only files that suppress RS0030.
 
 P:Windows.ApplicationModel.Package.Current;Throws without package identity. AppPaths.InstalledPath for the payload, AppIdentity for Id and SignatureKind.
 P:Windows.Storage.ApplicationData.Current;Throws without package identity. AppPaths for the folders and their paths, SettingsStore.Local for LocalSettings.
 M:Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(System.Uri);Fails without package identity. Open a path under AppPaths.InstalledPath or AppPaths.LocalPath instead.
+
+# Files and folders. The app names them FileItem and FolderItem, which are these types on UWP and the
+# classes in Telegram/Storage here. Those classes and StorageEdge are the only files that may name the
+# WinRT types: an API that takes or returns one is an edge, and StorageEdge converts at it. The
+# aliases do not catch global::Windows.Storage.StorageFile, which skips them silently; this does.
+# KnownFolders, DownloadsFolder and StorageApplicationPermissions join the list when they are retired.
+
+T:Windows.Storage.StorageFile;Use FileItem. A WinRT API that wants a StorageFile gets one from FileItem.ToStorageFileAsync; one that returns it is converted with ToFileItem.
+T:Windows.Storage.StorageFolder;Use FolderItem. StorageEdge converts both ways at a WinRT API.
+T:Windows.Storage.IStorageItem;Use IFileSystemItem. StorageEdge.ToFileSystemItem converts what drag-drop, paste and activation hand over.
+T:Windows.Storage.IStorageFile;Use FileItem.
+T:Windows.Storage.IStorageFolder;Use FolderItem.
+T:Windows.Storage.FileIO;Use FileItemIO.
+T:Windows.Storage.PathIO;Use FileItemIO, or System.IO.File on a path.
+T:Windows.Storage.FileProperties.BasicProperties;Use FileItemProperties, from GetBasicPropertiesAsync.

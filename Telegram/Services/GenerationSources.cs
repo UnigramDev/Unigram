@@ -124,7 +124,7 @@ namespace Telegram.Services
         /// <para>
         /// A path-based read goes through the <c>*FromApp</c> entry points, and those match the
         /// path against the app's persisted grants - the grant the picker gave lives on the
-        /// <see cref="StorageFile"/> and never reaches them - so the file has to be in this list
+        /// <c>StorageFile</c> and never reaches them - so the file has to be in this list
         /// before it can be opened at all.
         /// </para>
         /// <para>

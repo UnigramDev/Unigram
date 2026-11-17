@@ -552,7 +552,7 @@ namespace Telegram.Services
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(path);
+                var file = await FileItem.GetFileFromPathAsync(path);
 
                 // The track can have moved on while the file was being opened, and the transport
                 // would then be left showing the cover of a track that is no longer playing.
@@ -561,7 +561,7 @@ namespace Telegram.Services
                     return;
                 }
 
-                _transport.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(file);
+                _transport.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(await file.ToStorageFileAsync());
                 _transport.DisplayUpdater.Update();
             }
             catch

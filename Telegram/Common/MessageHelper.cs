@@ -316,10 +316,10 @@ namespace Telegram.Common
 
                 try
                 {
-                    var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var item = await FileItem.GetFileFromPathAsync(file.Local.Path);
 
                     args.Data.RequestedOperation = DataPackageOperation.Copy;
-                    args.Data.SetStorageItems(new[] { item });
+                    args.Data.SetStorageItems(new[] { await item.ToStorageFileAsync() });
 
                     using (var stream = new InMemoryRandomAccessStream())
                     {

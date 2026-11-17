@@ -194,12 +194,15 @@ namespace Telegram.Entities
         /// </summary>
         public static async Task<IReadOnlyList<FileItem>> GetFilesAsync(DataPackageView package)
         {
-            var items = await package.GetStorageItemsAsync();
+            var items = (await package.GetStorageItemsAsync()).ToFileSystemItems();
             var files = new List<FileItem>(items.Count);
 
-            foreach (StorageFile file in items.OfType<StorageFile>())
+            foreach (var item in items)
             {
-                files.Add(file.ToFileItem());
+                if (item is FileItem file)
+                {
+                    files.Add(file);
+                }
             }
 
             return files;
