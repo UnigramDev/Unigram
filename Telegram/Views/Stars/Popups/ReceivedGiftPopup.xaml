@@ -435,10 +435,57 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
+                            <controls:SettingsFooter x:Name="UpgradedBlockchain"
+                                                     Text="{CustomResource Gift2InBlockchain}"
+                                                     IsLink="True"
+                                                     Click="Blockchain_Click"
+                                                     TextStyle="{StaticResource InfoBodyTextBlockStyle}"
+                                                     TextAlignment="Center"
+                                                     Margin="0,8,0,0"
+                                                     Visibility="Collapsed"
+                                                     Grid.Row="3" />
                             <controls:TableView x:Name="UpgradedTableRoot"
-                                                Margin="8,8,8,0">
-                                <controls:TableViewItem Header="{CustomResource Gift2Owner}"
+                                                Margin="8,8,8,0"
+                                                Grid.Row="1">
+                                <controls:TableViewItem x:Name="UpgradedOwnerAddress"
+                                                        Header="{CustomResource Gift2HostAddress}"
+                                                        HorizontalContentAlignment="Stretch"
+                                                        VerticalContentAlignment="Stretch"
+                                                        Visibility="Collapsed"
+                                                        Padding="0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Name="UpgradedOwnerAddressStart"
+                                                   Style="{StaticResource BodyTextBlockStyle}"
+                                                   FontFamily="Consolas"
+                                                   TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Margin="8,5,0,6"
+                                                   VerticalAlignment="Top" />
+                                        <TextBlock x:Name="UpgradedOwnerAddressEnd"
+                                                   Style="{StaticResource BodyTextBlockStyle}"
+                                                   FontFamily="Consolas"
+                                                   TextWrapping="NoWrap"
+                                                   Margin="0,5,8,6"
+                                                   VerticalAlignment="Top"
+                                                   Grid.Column="1" />
+
+                                        <Button Click="OwnerAddress_Click"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Opacity="0"
+                                                Grid.ColumnSpan="3" />
+                                    </Grid>
+                                </controls:TableViewItem>
+                                <controls:TableViewItem x:Name="UpgradedOwner"
+                                                        Header="{CustomResource Gift2Owner}"
                                                         Padding="0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -604,7 +651,7 @@
                                   CornerRadius="0,0,4,4"
                                   Margin="8,0,8,0"
                                   Visibility="Collapsed"
-                                  Grid.Row="1">
+                                  Grid.Row="2">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />

@@ -17,6 +17,7 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Gifts;
 using Telegram.Controls.Media;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -1342,9 +1343,35 @@ namespace Telegram.Views.Gifts.Popups
             {
                 _clientService.Send(new GetReceivedGift(success.ReceivedGiftId), SetResult);
             }
+            else if (result is CraftGiftResultTooEarly or CraftGiftResultInvalidGift)
+            {
+                // Nothing was spent, so the gifts go back on the table instead of being shown as lost.
+                _crafted.TrySetResult(result);
+
+                this.BeginOnUIThread(() =>
+                {
+                    Clear_Click(null, null);
+                    ShowUnavailable(result);
+                });
+            }
             else
             {
                 _crafted.TrySetResult(result);
+            }
+        }
+
+        private void ShowUnavailable(Object result)
+        {
+            if (result is CraftGiftResultTooEarly tooEarly)
+            {
+                var date = Formatter.DateAt(DateTime.Now.ToUnixTimeSeconds() + tooEarly.RetryAfter);
+                var text = ClientEx.ParseMarkdown(string.Format(Strings.GiftCraftUnavailableTextTime, date));
+
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, text, Strings.GiftCraftUnavailableTitle, Strings.OK, requestedTheme: ElementTheme.Dark);
+            }
+            else
+            {
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, Strings.GiftCraftUnavailableText, Strings.GiftCraftUnavailableTitle, Strings.OK, requestedTheme: ElementTheme.Dark);
             }
         }
 

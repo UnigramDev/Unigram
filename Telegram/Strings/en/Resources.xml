@@ -11917,6 +11917,11 @@
     <string name="Gift2QuantityIssuedNone_one">None of {0} left</string>
     <string name="Gift2QuantityIssuedNone_other">None of {0} left</string>
     <string name="Gift2Owner">Owner</string>
+    <string name="Gift2Host">Telegram</string>
+    <string name="Gift2HostAddress">Owner</string>
+    <string name="Gift2InBlockchain">This gift is in TON Blockchain. **View &gt;**</string>
+    <string name="Gift2CantDoTitle">Action Locked</string>
+    <string name="Gift2CantDoText">Transfer this gift to your Telegram account on Fragment to unlock this action.</string>
     <string name="Gift2OwnerChange">change</string>
     <string name="Gift2CollectionNumber_one">Collectible #{0}</string>
     <string name="Gift2CollectionNumber_other">Collectible #{0}</string>
@@ -12379,6 +12384,7 @@
     <string name="Gift2ChangePrice">Change Price</string>
     <string name="Gift2ActionResell">Sell</string>
     <string name="Gift2ActionUnlist">Unlist</string>
+    <string name="Gift2ActionShare">Share</string>
     <string name="Gift2UnlistTitle">Unlist {0}</string>
     <string name="Gift2UnlistText">Are you sure you want to unlist your gift?</string>
     <string name="Gift2AvailabilitySold_other">{0} sold</string>
@@ -13510,6 +13516,13 @@
     <string name="GiftCraftButtonEmpty">Tap + to add your first gift</string>
     <string name="GiftCraftButtonFailed">Craft New Gift</string>
     <string name="GiftCraftSuccessChance">**{0}** Success Chance</string>
+    <string name="GiftCraftLaterTitle">Try Later</string>
+    <string name="GiftCraftLaterText">You will be able to craft this gift {0}.</string>
+    <string name="GiftCraftUnavailableTitle">Crafting Unavailable</string>
+    <string name="GiftCraftUnavailableText">These gifts currently can\'t be crafted.</string>
+    <string name="GiftCraftUnavailableTextTime">This gift will become available for crafting on **{0}**.</string>
+    <string name="GiftCraftCantChooseFirstTitle">Can’t Choose First</string>
+    <string name="GiftCraftCantChooseFirst">This gift can’t be used as the first one in crafting, because it has been recorded on the blockchain.</string>
 
     <string name="DisableSharing">Disable Sharing</string>
     <string name="DisableSharingInfoButton">Disable Sharing</string>
@@ -14263,6 +14276,7 @@
     <string name="WalletTermsOfService">By using this service you agree to its **Terms**.</string>
 
     <string name="WalletCopyAddress">Copy address</string>
+    <string name="WalletAddressCopied">Wallet address is copied to clipboard</string>
     <string name="WalletAddressCopiedShort">Address copied</string>
     <string name="WalletShowMyQR">Show my QR</string>
     <string name="WalletReceiveInfo">Share your address or this\nQR code to receive GRAM.</string>

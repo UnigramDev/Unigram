@@ -25,6 +25,7 @@ using Telegram.Views.Chats.Popups;
 using Telegram.Views.Gifts.Popups;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -82,6 +83,10 @@ namespace Telegram.Views.Stars.Popups
         // the owner_id of an upgraded one. Recomputed when the gift is upgraded in place.
         private bool _owned;
 
+        // A gift on the blockchain stays with the Telegram account that hosts it; that account can
+        // wear and share it, but nothing that would move it.
+        private bool _hosted;
+
         public ReceivedGiftPopup(IClientService clientService, INavigationService navigationService, ReceivedGift gift, MessageSender receiverId, MessageSender sendGiftTo, ProfileGiftsTabViewModel profile = null)
         {
             InitializeComponent();
@@ -127,6 +132,9 @@ namespace Telegram.Views.Stars.Popups
                 SentGiftUpgraded upgraded => IsOwned(_clientService, upgraded.Gift.OwnerId),
                 _ => false
             };
+
+            _hosted = _gift?.Gift is SentGiftUpgraded { Gift.HostId: not null } hosted
+                && IsOwned(_clientService, hosted.Gift.HostId);
         }
 
         private void UpdateVisibility()
@@ -487,13 +495,47 @@ namespace Telegram.Views.Stars.Popups
                 UpgradedSubtitle.Text = Locale.Declension(Strings.R.Gift2CollectionNumber, gift.Number);
             }
 
-            if (clientService.TryGetUser(gift.OwnerId, out User user))
+            var hosted = gift.HostId != null;
+            var holder = HolderOf(gift);
+
+            if (gift.OwnerAddress.Length > 0)
+            {
+                // The tail stays whole so the address is cut in the middle, however much of it fits.
+                var split = Math.Max(0, gift.OwnerAddress.Length - 6);
+
+                UpgradedOwnerAddress.Header = hosted ? Strings.Gift2HostAddress : Strings.Gift2Owner;
+                UpgradedOwnerAddress.Visibility = Visibility.Visible;
+                UpgradedOwnerAddressStart.Text = gift.OwnerAddress.Substring(0, split);
+                UpgradedOwnerAddressEnd.Text = gift.OwnerAddress.Substring(split);
+            }
+            else
+            {
+                UpgradedOwnerAddress.Visibility = Visibility.Collapsed;
+            }
+
+            UpgradedOwner.Header = hosted ? Strings.Gift2Host : Strings.Gift2Owner;
+            UpgradedOwner.Visibility = hosted || gift.OwnerAddress.Length == 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (gift.OwnerAddress.Length > 0 && gift.GiftAddress.Length > 0)
+            {
+                // Above the table when a Telegram account hosts the gift, below it otherwise.
+                Grid.SetRow(UpgradedBlockchain, hosted ? 0 : 3);
+                UpgradedBlockchain.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                UpgradedBlockchain.Visibility = Visibility.Collapsed;
+            }
+
+            if (clientService.TryGetUser(holder, out User user))
             {
                 UpgradedFromPhoto.Source = ProfilePictureSource.User(clientService, user);
                 UpgradedFromPhoto.Visibility = Visibility.Visible;
                 UpgradedFromTitle.Text = user.FullName();
             }
-            else if (clientService.TryGetChat(gift.OwnerId, out Chat chat))
+            else if (clientService.TryGetChat(holder, out Chat chat))
             {
                 UpgradedFromPhoto.Source = ProfilePictureSource.Chat(clientService, chat);
                 UpgradedFromPhoto.Visibility = Visibility.Visible;
@@ -576,24 +618,38 @@ namespace Telegram.Views.Stars.Popups
                 UpgradedCaption.SetText(clientService, text);
             }
 
-            if (_owned && receivedGift.ReceivedGiftId.Length > 0)
+            if ((_owned || _hosted) && receivedGift.ReceivedGiftId.Length > 0)
             {
-                UpdateUpgradedInfo(receivedGift, gift);
-
                 UpgradedButtons.Visibility = Visibility.Visible;
-                UpgradedCaptionRemove.Visibility = receivedGift.DropOriginalDetailsStarCount > 0
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
 
-                if (gift.ResaleParameters != null)
+                // The host's Transfer stays in place, dimmed, and explains itself when clicked.
+                TransferButton.Opacity = _owned ? 1 : 0.5;
+
+                if (_owned)
                 {
-                    ResellButton.Glyph = Icons.TagOffFilled;
-                    ResellButton.Content = Strings.Gift2ActionUnlist;
+                    UpdateUpgradedInfo(receivedGift, gift);
+
+                    UpgradedCaptionRemove.Visibility = receivedGift.DropOriginalDetailsStarCount > 0
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+
+                    if (gift.ResaleParameters != null)
+                    {
+                        ResellButton.Glyph = Icons.TagOffFilled;
+                        ResellButton.Content = Strings.Gift2ActionUnlist;
+                    }
+                    else
+                    {
+                        ResellButton.Glyph = Icons.TagFilled;
+                        ResellButton.Content = Strings.Gift2ActionResell;
+                    }
                 }
                 else
                 {
-                    ResellButton.Glyph = Icons.TagFilled;
-                    ResellButton.Content = Strings.Gift2ActionResell;
+                    Info.Visibility = Visibility.Collapsed;
+
+                    ResellButton.Glyph = Icons.ShareFilled;
+                    ResellButton.Content = Strings.Gift2ActionShare;
                 }
 
                 UpdateWearButton(IsWorn(gift));
@@ -906,13 +962,13 @@ namespace Telegram.Views.Stars.Popups
         {
             if (receivedGift.IsSaved)
             {
-                Info.Text = gift.OwnerId is MessageSenderUser
+                Info.Text = HolderOf(gift) is MessageSenderUser
                     ? Strings.Gift2ProfileVisible4
                     : Strings.Gift2ChannelProfileVisible3;
             }
             else
             {
-                Info.Text = gift.OwnerId is MessageSenderUser
+                Info.Text = HolderOf(gift) is MessageSenderUser
                     ? Strings.Gift2ProfileInvisible4
                     : Strings.Gift2ChannelProfileInvisible3;
             }
@@ -1452,7 +1508,7 @@ namespace Telegram.Views.Stars.Popups
 
             if (upgraded != null && _owned)
             {
-                if (upgraded.CraftProbabilityPerMille != 0)
+                if (!upgraded.IsCrafted && _gift.CraftDate > 0)
                 {
                     // TODO: Icon
                     flyout.CreateFlyoutItem(Craft, Strings.GiftCraft, Icons.Hamburger);
@@ -1528,7 +1584,20 @@ namespace Telegram.Views.Stars.Popups
 
         private void Craft()
         {
-            if (_gift.Gift is SentGiftUpgraded upgraded)
+            if (_gift.Gift is not SentGiftUpgraded upgraded)
+            {
+                return;
+            }
+
+            if (_gift.CraftDate > DateTime.Now.ToUnixTimeSeconds())
+            {
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, string.Format(Strings.GiftCraftLaterText, Formatter.DateAt(_gift.CraftDate)), Strings.GiftCraftLaterTitle, Strings.OK);
+            }
+            else if (upgraded.Gift.GiftAddress.Length > 0)
+            {
+                _ = MessagePopup.ShowNestedAsync(XamlRoot, Strings.GiftCraftCantChooseFirst, Strings.GiftCraftCantChooseFirstTitle, Strings.OK);
+            }
+            else
             {
                 Hide();
                 _navigationService.ShowPopup(new GiftCraftPopup(_clientService, _navigationService, _gift));
@@ -1805,9 +1874,9 @@ namespace Telegram.Views.Stars.Popups
         {
             Hide();
 
-            if (_gift.Gift is SentGiftUpgraded upgraded && upgraded.Gift.OwnerId != null)
+            if (_gift.Gift is SentGiftUpgraded upgraded && HolderOf(upgraded.Gift) is MessageSender holder)
             {
-                _navigationService.NavigateToSender(upgraded.Gift.OwnerId);
+                _navigationService.NavigateToSender(holder);
             }
             else
             {
@@ -1817,7 +1886,48 @@ namespace Telegram.Views.Stars.Popups
 
         private void TransferButton_Click(object sender, RoutedEventArgs e)
         {
-            Transfer();
+            if (_owned)
+            {
+                Transfer();
+            }
+            else
+            {
+                ShowActionLocked();
+            }
+        }
+
+        private async void ShowActionLocked()
+        {
+            if (_gift.Gift is not SentGiftUpgraded upgraded)
+            {
+                return;
+            }
+
+            var confirm = await MessagePopup.ShowNestedAsync(XamlRoot, Strings.Gift2CantDoText, Strings.Gift2CantDoTitle, Strings.OpenFragment, Strings.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                MessageHelper.OpenUrl(_clientService, _navigationService, "https://fragment.com/gift/" + upgraded.Gift.Name);
+            }
+        }
+
+        private void OwnerAddress_Click(object sender, RoutedEventArgs e)
+        {
+            if (_gift.Gift is SentGiftUpgraded upgraded)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(upgraded.Gift.OwnerAddress);
+                ClipboardEx.TrySetContent(dataPackage);
+
+                ToastPopup.Show(XamlRoot, Strings.WalletAddressCopied, ToastPopupIcon.Copied);
+            }
+        }
+
+        private void Blockchain_Click(object sender, TextUrlClickEventArgs e)
+        {
+            if (_gift.Gift is SentGiftUpgraded upgraded)
+            {
+                MessageHelper.OpenUrl(_clientService, _navigationService, _clientService.Options.TonBlockchainExplorerUrl + upgraded.Gift.GiftAddress);
+            }
         }
 
         private void WearButton_Click(object sender, RoutedEventArgs e)
@@ -1852,7 +1962,7 @@ namespace Telegram.Views.Stars.Popups
 
             if (worn is false)
             {
-                if (gift.OwnerId is MessageSenderChat senderChat)
+                if (HolderOf(gift) is MessageSenderChat senderChat)
                 {
                     if (await CanSetChatEmojiStatusAsync(senderChat.ChatId) is false)
                     {
@@ -1877,7 +1987,7 @@ namespace Telegram.Views.Stars.Popups
                 status = new EmojiStatus(type, 0);
             }
 
-            Function function = gift.OwnerId is MessageSenderChat ownerChat
+            Function function = HolderOf(gift) is MessageSenderChat ownerChat
                 ? new SetChatEmojiStatus(ownerChat.ChatId, status)
                 : new SetEmojiStatus(status);
 
@@ -1921,15 +2031,26 @@ namespace Telegram.Views.Stars.Popups
             return false;
         }
 
+        /// <summary>
+        /// The Telegram account the gift is with: its owner, or for a gift on the blockchain the
+        /// account hosting it.
+        /// </summary>
+        private static MessageSender HolderOf(UpgradedGift gift)
+        {
+            return gift.HostId ?? gift.OwnerId;
+        }
+
         private bool IsWorn(UpgradedGift gift)
         {
             EmojiStatus status = null;
 
-            if (_clientService.TryGetUser(gift.OwnerId, out User user))
+            var holder = HolderOf(gift);
+
+            if (_clientService.TryGetUser(holder, out User user))
             {
                 status = user.EmojiStatus;
             }
-            else if (_clientService.TryGetChat(gift.OwnerId, out Chat chat))
+            else if (_clientService.TryGetChat(holder, out Chat chat))
             {
                 status = chat.EmojiStatus;
             }
@@ -1955,7 +2076,14 @@ namespace Telegram.Views.Stars.Popups
 
         private void ResellButton_Click(object sender, RoutedEventArgs e)
         {
-            Resell();
+            if (_owned)
+            {
+                Resell();
+            }
+            else
+            {
+                Share();
+            }
         }
 
         private void Publisher_Click(Hyperlink sender, HyperlinkClickEventArgs args)
