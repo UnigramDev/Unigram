@@ -866,6 +866,12 @@ namespace Telegram.Controls.Chats
                 if (_waitItemsPanelRoot.Task.Status == TaskStatus.RanToCompletion)
                 {
                     Logger.Info("ItemsPanelRoot == null, UpdateLayout");
+
+                    if (CollectionResetScope.InProgress)
+                    {
+                        Logger.Error("UpdateLayout during a reset");
+                    }
+
                     ScrollingHost.UpdateLayout();
                 }
                 else
@@ -889,6 +895,11 @@ namespace Telegram.Controls.Chats
             // 1.4-stable/dxaml/xcp/dxaml/lib/ModernCollectionBasePanel_WindowManagement_Partial.cpp#L2138
             if (fastPath)
             {
+                if (CollectionResetScope.InProgress)
+                {
+                    Logger.Error("ScrollIntoView and UpdateLayout during a reset");
+                }
+
                 ScrollIntoView(item, alignment);
                 panel.UpdateLayout();
 
@@ -920,6 +931,11 @@ namespace Telegram.Controls.Chats
                     panel.LayoutUpdated += layoutUpdated;
                     ScrollingHost.ViewChanged -= viewChanged;
                 }
+            }
+
+            if (CollectionResetScope.InProgress)
+            {
+                Logger.Error("ScrollIntoView during a reset");
             }
 
             try
