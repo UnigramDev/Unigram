@@ -39,18 +39,12 @@
                Grid.Column="1"
                Grid.Row="1" />
 
-    <StackPanel x:Name="Stars"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal"
-                Grid.Column="2">
-        <controls:PremiumStarCount Width="24"
-                                   Height="24"
-                                   Margin="0,-4" />
-
-        <TextBlock x:Name="StarCount"
-                   Style="{StaticResource BaseTextBlockStyle}"
-                   VerticalAlignment="Top" />
-    </StackPanel>
+    <TextBlock x:Name="StarCount"
+               Style="{StaticResource BaseTextBlockStyle}"
+               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Grid.Column="2" />
 
     <TextBlock x:Name="Date"
                Style="{StaticResource InfoCaptionTextBlockStyle}"

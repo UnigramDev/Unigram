@@ -9,19 +9,11 @@
              d:DesignWidth="400">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <controls:PremiumStarCount Width="24"
-                                   Height="24"
-                                   Margin="-4,-4,0,-4" />
-
-        <TextBlock Grid.Column="1">
+        <TextBlock FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}">
             <Run x:Name="CryptocurrencyAmountLabel"
                  FontWeight="SemiBold" /><Run x:Name="CryptocurrencyDecimalLabel"
                                               FontWeight="SemiBold"
@@ -32,7 +24,6 @@
         </TextBlock>
         <TextBlock x:Name="TextLabel"
                    Style="{StaticResource InfoCaptionTextBlockStyle}"
-                   Grid.Row="1"
-                   Grid.ColumnSpan="2" />
+                   Grid.Row="1" />
     </Grid>
 </UserControl>

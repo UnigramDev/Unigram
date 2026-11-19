@@ -152,17 +152,9 @@
 
                         <Button x:Name="Button"
                                 Style="{StaticResource InvoiceFileButtonStyle}">
-                            <RichTextBlock IsTextSelectionEnabled="False">
-                                <Paragraph>
-                                    <Run x:Name="TextPart1" />
-                                    <InlineUIContainer>
-                                        <controls:PremiumStarCount Width="24"
-                                                                   Height="24"
-                                                                   Margin="-4,-4,-2,-6" />
-                                    </InlineUIContainer>
-                                    <Run x:Name="TextPart2" />
-                                </Paragraph>
-                            </RichTextBlock>
+                            <TextBlock x:Name="UnlockText"
+                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                       TextWrapping="Wrap" />
                         </Button>
                     </Grid>
                 </ControlTemplate>

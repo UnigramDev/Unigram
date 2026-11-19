@@ -1316,14 +1316,8 @@ namespace Telegram.Views.Popups
 
             if (StarCount > 0)
             {
-                var text = Locale.Declension(Strings.R.UnlockPaidContent, StarCount);
-                var index = text.IndexOf("\u2B50\uFE0F");
-
-                var TextPart1 = root.FindName("TextPart1") as Run;
-                var TextPart2 = root.FindName("TextPart2") as Run;
-
-                TextPart1.Text = text.Substring(0, index);
-                TextPart2.Text = text.Substring(index + 2);
+                var UnlockText = root.FindName("UnlockText") as TextBlock;
+                UnlockText.Text = Locale.Declension(Strings.R.UnlockPaidContent, StarCount).ReplaceStar(Icons.PremiumStar);
 
                 PaidMediaButton.Visibility = Visibility.Visible;
             }

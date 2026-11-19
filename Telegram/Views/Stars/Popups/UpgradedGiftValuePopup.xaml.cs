@@ -8,6 +8,7 @@
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -43,7 +44,7 @@ namespace Telegram.Views.Stars.Popups
             TextBlockHelper.SetMarkdown(MessageLabel, string.Format(Strings.GiftValueAverage, gift.Title));
 
             InitialSale.Content = Formatter.DateAt(valueInfo.InitialSaleDate);
-            InitialPrice.Text = string.Format("{0} (~{1})", valueInfo.InitialSaleStarCount, Locale.FormatCurrency(valueInfo.InitialSalePrice, valueInfo.Currency));
+            InitialPrice.Text = string.Format("{0} {1} (~{2})", Icons.PremiumStar, valueInfo.InitialSaleStarCount, Locale.FormatCurrency(valueInfo.InitialSalePrice, valueInfo.Currency));
 
             if (valueInfo.LastSaleDate != 0)
             {

@@ -36,20 +36,13 @@
                                     Header="{CustomResource GiftValueInitialSale}" />
             <controls:TableViewItem Header="{CustomResource GiftValueInitialPrice}"
                                     Padding="0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <controls:PremiumStarCount Margin="8,0,0,0" />
-                    <TextBlock x:Name="InitialPrice"
-                               Margin="4,5,8,6"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               TextWrapping="NoWrap"
-                               TextTrimming="CharacterEllipsis"
-                               VerticalAlignment="Top"
-                               Grid.Column="1" />
-                </Grid>
+                <TextBlock x:Name="InitialPrice"
+                           Margin="8,5,8,6"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Top" />
             </controls:TableViewItem>
             <controls:TableViewItem x:Name="LastSale"
                                     Header="{CustomResource GiftValueLastSale}" />

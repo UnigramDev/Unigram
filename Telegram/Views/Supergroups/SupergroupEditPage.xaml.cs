@@ -147,12 +147,10 @@ namespace Telegram.Views.Supergroups
                     var price = ViewModel.ClientService.PaidMessageStarCount(directMessagesChat);
                     if (price > 0)
                     {
-                        ChannelDirectMessagesGroupStars.Visibility = Visibility.Visible;
-                        ChannelDirectMessagesGroupStarCount.Text = price.ToString("N0");
+                        ChannelDirectMessagesGroupStarCount.Text = Icons.PremiumStar + " " + price.ToString("N0");
                     }
                     else
                     {
-                        ChannelDirectMessagesGroupStars.Visibility = Visibility.Collapsed;
                         ChannelDirectMessagesGroupStarCount.Text = Strings.PostSuggestionsFree;
                     }
 
@@ -161,14 +159,12 @@ namespace Telegram.Views.Supergroups
                 }
                 else
                 {
-                    ChannelDirectMessagesGroupStars.Visibility = Visibility.Collapsed;
                     ChannelDirectMessagesGroupStarCount.Text = Strings.PostSuggestionsOff;
                 }
             }
             else
             {
                 ChannelDirectMessagesGroupRoot.Visibility = Visibility.Collapsed;
-                ChannelDirectMessagesGroupStars.Visibility = Visibility.Collapsed;
                 ChannelDirectMessagesGroupStarCount.Text = string.Empty;
 
                 ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.DiscussionInfoShort;

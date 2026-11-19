@@ -8,6 +8,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -49,7 +50,7 @@ namespace Telegram.Views.Stars.Popups
             Photo.Source = ProfilePictureSource.Chat(clientService, chat);
             Title.Text = Strings.StarsSubscriptionTitle;
 
-            StarCount.Text = string.Format(Strings.PricePerMonthMe, subscription.Pricing.StarCount.ToString("N0"));
+            StarCount.Text = Icons.PremiumStar + " " + string.Format(Strings.PricePerMonthMe, subscription.Pricing.StarCount.ToString("N0"));
 
             if (subscription.IsCanceled)
             {

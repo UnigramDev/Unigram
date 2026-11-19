@@ -71,12 +71,8 @@
                             Grid.Row="2">
                     <TextBlock x:Name="StarCount"
                                Style="{StaticResource BaseTextBlockStyle}"
+                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                VerticalAlignment="Center" />
-
-                    <controls:PremiumStarCount Width="24"
-                                               Height="24"
-                                               Grid.Column="4"
-                                               Grid.RowSpan="2" />
 
                     <controls:BadgeControl x:Name="Refund"
                                            Text="{CustomResource StarsRefunded}"
@@ -84,7 +80,7 @@
                                            Foreground="{ThemeResource SystemFillColorSuccessBrush}"
                                            CornerRadius="4"
                                            VerticalAlignment="Bottom"
-                                           Margin="0,0,0,3" />
+                                           Margin="4,0,0,3" />
                 </StackPanel>
                 <TextBlock x:Name="Subtitle"
                            Style="{StaticResource BodyTextBlockStyle}"

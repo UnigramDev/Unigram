@@ -36,8 +36,7 @@ namespace Telegram.Controls.Messages.Content
         private Border Overlay;
         private TextBlock Subtitle;
         private Button Button;
-        private Run TextPart1;
-        private Run TextPart2;
+        private TextBlock UnlockText;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -46,8 +45,7 @@ namespace Telegram.Controls.Messages.Content
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
             Button = GetTemplateChild(nameof(Button)) as Button;
-            TextPart1 = GetTemplateChild(nameof(TextPart1)) as Run;
-            TextPart2 = GetTemplateChild(nameof(TextPart2)) as Run;
+            UnlockText = GetTemplateChild(nameof(UnlockText)) as TextBlock;
 
             Button.Click += Button_Click;
 
@@ -76,14 +74,7 @@ namespace Telegram.Controls.Messages.Content
             var locked = album.Media.Any(x => x is PaidMediaPreview);
             if (locked)
             {
-                var text = Locale.Declension(Strings.R.UnlockPaidContent, album.StarCount);
-                var index = text.IndexOf("\u2B50\uFE0F");
-
-                if (index != -1)
-                {
-                    TextPart1.Text = text.Substring(0, index);
-                    TextPart2.Text = text.Substring(index + 2);
-                }
+                UnlockText.Text = Locale.Declension(Strings.R.UnlockPaidContent, album.StarCount).ReplaceStar(Icons.PremiumStar);
 
                 Button.Visibility = Visibility.Visible;
                 Overlay.Visibility = Visibility.Collapsed;

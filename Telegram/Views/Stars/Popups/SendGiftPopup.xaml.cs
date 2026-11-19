@@ -94,14 +94,7 @@ namespace Telegram.Views.Stars.Popups
                 {
                     UpgradeableInfo.Text = string.Format(Strings.Gift2UpgradeInfo, _clientService.GetTitle(receiverId));
 
-                    var text = string.Format(Strings.Gift2Upgrade, gift.UpgradeStarCount);
-                    var index = text.IndexOf("\u2B50\uFE0F");
-
-                    if (index != -1)
-                    {
-                        UpgradeableTextPart1.Text = text.Substring(0, index);
-                        UpgradeableTextPart2.Text = text.Substring(index + 2);
-                    }
+                    UpgradeableText.Text = string.Format(Strings.Gift2Upgrade, gift.UpgradeStarCount).ReplaceStar(Icons.PremiumStar);
                 }
                 else
                 {

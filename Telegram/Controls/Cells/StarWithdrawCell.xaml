@@ -16,25 +16,17 @@
                               BorderThickness="1"
                               CornerRadius="4">
         <StackPanel>
-            <Grid HorizontalAlignment="Center"
-                  Margin="-8,8,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <controls:PremiumStarCount Width="40"
-                                           Height="40" />
-
-                <TextBlock FontWeight="SemiBold"
-                           FontSize="28"
-                           Grid.Column="1">
-                    <Run x:Name="CryptocurrencyAmountLabel"
-                         FontWeight="SemiBold"
-                         FontSize="28" /><Run x:Name="CryptocurrencyDecimalLabel"
-                                              FontWeight="SemiBold"
-                                              FontSize="20" />
-                </TextBlock>
-            </Grid>
+            <TextBlock FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                       FontWeight="SemiBold"
+                       FontSize="28"
+                       HorizontalAlignment="Center"
+                       Margin="0,8,0,0">
+                <Run x:Name="CryptocurrencyAmountLabel"
+                     FontWeight="SemiBold"
+                     FontSize="28" /><Run x:Name="CryptocurrencyDecimalLabel"
+                                          FontWeight="SemiBold"
+                                          FontSize="20" />
+            </TextBlock>
 
             <TextBlock x:Name="AmountLabel"
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

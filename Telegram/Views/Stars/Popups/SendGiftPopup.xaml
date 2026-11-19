@@ -139,17 +139,9 @@
                               Checked="OnTextChanged"
                               Unchecked="OnTextChanged"
                               Margin="24,8,24,0">
-                        <RichTextBlock IsTextSelectionEnabled="False">
-                            <Paragraph>
-                                <Run x:Name="UpgradeableTextPart1" />
-                                <InlineUIContainer>
-                                    <controls:PremiumStarCount Width="24"
-                                                               Height="24"
-                                                               Margin="-4,-4,-2,-6" />
-                                </InlineUIContainer>
-                                <Run x:Name="UpgradeableTextPart2" />
-                            </Paragraph>
-                        </RichTextBlock>
+                        <TextBlock x:Name="UpgradeableText"
+                                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                   TextWrapping="Wrap" />
                     </CheckBox>
                     <controls:SettingsFooter x:Name="UpgradeableInfo"
                                              Click="UpgradeableInfo_Click"

@@ -119,7 +119,7 @@ namespace Telegram.Views.Popups
                     ? string.Format(Strings.Gift2BuyPriceTextTON, amount, name, _chat.Title)
                     : string.Format(Strings.Gift2BuyPriceSelfTextTON, amount, name));
 
-                PrimaryButtonText = string.Format(Strings.Gift2BuyDoPrice2TON, amount).ReplaceStar(Icons.Ton);
+                PrimaryButtonText = string.Format(Strings.Gift2BuyDoPrice2TON, amount).ReplaceStar(Icons.Gram14);
             }
             else
             {

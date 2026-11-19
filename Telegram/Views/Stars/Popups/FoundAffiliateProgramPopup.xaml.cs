@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -64,7 +65,7 @@ namespace Telegram.Views.Stars.Popups
                 MonthlyUsers.Content = userTypeBot.ActiveUserCount;
             }
 
-            StarCount.Text = program.Info.DailyRevenuePerUserAmount.ToValue();
+            StarCount.Text = Icons.PremiumStar + " " + program.Info.DailyRevenuePerUserAmount.ToValue();
         }
 
         private async void InitializeOwnedChats()

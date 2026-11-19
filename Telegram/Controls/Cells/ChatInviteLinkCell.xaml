@@ -75,19 +75,13 @@
         <Run x:Name="StatusText" />
     </TextBlock>
 
-    <StackPanel x:Name="PaidRoot"
-                Visibility="Collapsed"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal"
-                Grid.Column="1">
-        <controls:PremiumStarCount Width="24"
-                                   Height="24"
-                                   Margin="0,-4" />
-
-        <TextBlock x:Name="PaidStarCount"
-                   Style="{StaticResource BaseTextBlockStyle}"
-                   VerticalAlignment="Top" />
-    </StackPanel>
+    <TextBlock x:Name="PaidStarCount"
+               Style="{StaticResource BaseTextBlockStyle}"
+               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Visibility="Collapsed"
+               Grid.Column="1" />
     <TextBlock x:Name="PaidPeriod"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"

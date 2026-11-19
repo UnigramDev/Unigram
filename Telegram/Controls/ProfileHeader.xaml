@@ -666,18 +666,13 @@
                                            Grid.Column="1" />
                             </Grid>
 
-                            <Grid Visibility="{x:Bind ConvertStarVisibility(ViewModel.StarCount), Mode=OneWay}"
-                                  Grid.Column="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <controls:PremiumStarCount Margin="8,-4,4,-6"
-                                                           Width="20" />
-                                <TextBlock Text="{x:Bind ConvertStarCount(ViewModel.StarCount), Mode=OneWay}"
-                                           VerticalAlignment="Center"
-                                           Grid.Column="1" />
-                            </Grid>
+                            <TextBlock FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"
+                                       Visibility="{x:Bind ConvertStarVisibility(ViewModel.StarCount), Mode=OneWay}"
+                                       Grid.Column="1">
+                                <Run Text="&#xF78E;" /> <Run Text="{x:Bind ConvertStarCount(ViewModel.StarCount), Mode=OneWay}" />
+                            </TextBlock>
                         </Grid>
                     </controls:SettingsButton.Badge>
                 </controls:SettingsButton>

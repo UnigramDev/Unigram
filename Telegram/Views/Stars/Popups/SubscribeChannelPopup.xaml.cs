@@ -7,6 +7,7 @@
 
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
@@ -34,7 +35,7 @@ namespace Telegram.Views.Stars.Popups
             _title = info.Title;
             _subscription = info.SubscriptionInfo;
 
-            Balance.Text = clientService.OwnedStarCount.ToValue();
+            Balance.Text = Icons.PremiumStar + " " + clientService.OwnedStarCount.ToValue();
             Photo.Source = ProfilePictureSource.Chat(clientService, info);
 
             TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.StarsSubscribeText, _subscription.Pricing.StarCount, info.Title));

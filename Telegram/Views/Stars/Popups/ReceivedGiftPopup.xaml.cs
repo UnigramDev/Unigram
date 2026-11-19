@@ -332,7 +332,7 @@ namespace Telegram.Views.Stars.Popups
 
             // A prepaid upgrade is part of what the gift cost, unless it was bought afterwards.
             var value = gift.StarCount + (receivedGift.IsUpgradeSeparate ? 0 : receivedGift.PrepaidUpgradeStarCount);
-            StarCount.Text = value.ToString("N0");
+            StarCount.Text = Icons.PremiumStar + " " + value.ToString("N0");
 
             if (gift.OverallLimits != null && !receivedGift.WasRefunded)
             {
@@ -716,7 +716,7 @@ namespace Telegram.Views.Stars.Popups
             // Opened from a link, the current user's own gift arrives without a received gift identifier.
             return gift.ResaleParameters != null && !_owned
                 ? gift.ResaleParameters.GramOnly
-                    ? string.Format(Strings.ResellGiftBuyTON, TransferGiftPopup.FormatGram(gift.ResaleParameters.GramCentCount)).ReplaceStar(Icons.Ton)
+                    ? string.Format(Strings.ResellGiftBuyTON, TransferGiftPopup.FormatGram(gift.ResaleParameters.GramCentCount)).ReplaceStar(Icons.Gram14)
                     : Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium)
                 : _nextUpgrade != null
                 ? Strings.Gift2UpgradeNext
@@ -775,7 +775,7 @@ namespace Telegram.Views.Stars.Popups
 
             Date.Visibility = Visibility.Collapsed;
 
-            StarCount.Text = gift.StarCount.ToString("N0");
+            StarCount.Text = Icons.PremiumStar + " " + gift.StarCount.ToString("N0");
 
             Availability.Visibility = Visibility.Visible;
             Availability.Content = gift.RemainingText();
@@ -1818,12 +1818,10 @@ namespace Telegram.Views.Stars.Popups
 
         private void UpdateResalePrice(GiftResaleParameters parameters)
         {
-            ResaleStarIcon.Visibility = parameters.GramOnly ? Visibility.Collapsed : Visibility.Visible;
-            ResaleGramIcon.Visibility = parameters.GramOnly ? Visibility.Visible : Visibility.Collapsed;
-
+            // The glyphs are drawn for Segoe UI's baseline, so they go inline rather than beside the text.
             ResaleStarCount.Text = parameters.GramOnly
-                ? (parameters.GramCentCount / 100d).ToString("0.##")
-                : parameters.StarCount.ToString("N0");
+                ? Icons.Gram14 + " " + TransferGiftPopup.FormatGram(parameters.GramCentCount)
+                : Icons.Star14 + " " + parameters.StarCount.ToString("N0");
         }
 
         private void Transfer()

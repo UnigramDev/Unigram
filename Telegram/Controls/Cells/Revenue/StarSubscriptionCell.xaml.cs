@@ -7,6 +7,7 @@
 
 using System;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -41,7 +42,7 @@ namespace Telegram.Controls.Cells.Revenue
                 Date.Foreground = BootStrapper.Current.Resources["SystemFillColorCriticalBrush"] as Brush;
                 Date.VerticalAlignment = VerticalAlignment.Center;
 
-                Stars.Visibility = Visibility.Collapsed;
+                StarCount.Visibility = Visibility.Collapsed;
 
                 SetRow(Date, 0);
                 SetRowSpan(Date, 2);
@@ -53,7 +54,7 @@ namespace Telegram.Controls.Cells.Revenue
                 Date.Foreground = BootStrapper.Current.Resources["SystemFillColorCriticalBrush"] as Brush;
                 Date.VerticalAlignment = VerticalAlignment.Center;
 
-                Stars.Visibility = Visibility.Collapsed;
+                StarCount.Visibility = Visibility.Collapsed;
 
                 SetRow(Date, 0);
                 SetRowSpan(Date, 2);
@@ -61,12 +62,12 @@ namespace Telegram.Controls.Cells.Revenue
             else
             {
                 Subtitle.Text = string.Format(Strings.StarsSubscriptionRenews, Formatter.Date(subscription.ExpirationDate));
-                StarCount.Text = subscription.Pricing.StarCount.ToString("N0");
+                StarCount.Text = Icons.PremiumStar + " " + subscription.Pricing.StarCount.ToString("N0");
                 Date.Text = Strings.StarsParticipantSubscriptionPerMonth;
                 Date.ClearValue(TextBlock.ForegroundProperty);
                 Date.VerticalAlignment = VerticalAlignment.Top;
 
-                Stars.Visibility = Visibility.Visible;
+                StarCount.Visibility = Visibility.Visible;
 
                 SetRow(Date, 1);
                 SetRowSpan(Date, 1);

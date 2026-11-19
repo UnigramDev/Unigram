@@ -36,7 +36,7 @@
                                        Width="24"
                                        Height="24" />
             <TextBlock x:Name="TonCount"
-                       Text="&#xEA7E;"
+                       Text="&#xF7A9;"
                        Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                        FontSize="20"

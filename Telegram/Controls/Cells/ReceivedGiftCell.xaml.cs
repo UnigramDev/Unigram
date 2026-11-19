@@ -85,9 +85,7 @@ namespace Telegram.Controls.Cells
 
                 Animated.Source = new DelayedFileSource(clientService, regular.Gift.Sticker);
 
-                StarCount.Text = gift.SellStarCount > 0
-                    ? gift.SellStarCount.ToString("N0")
-                    : regular.Gift.StarCount.ToString("N0");
+                StarCount.Text = Icons.PremiumStar + " " + (gift.SellStarCount > 0 ? gift.SellStarCount : regular.Gift.StarCount).ToString("N0");
 
                 if (regular.Gift.OverallLimits != null)
                 {
@@ -169,12 +167,10 @@ namespace Telegram.Controls.Cells
 
         private void UpdateResalePrice(GiftResaleParameters parameters)
         {
-            ResaleStar.Visibility = parameters.GramOnly ? Visibility.Collapsed : Visibility.Visible;
-            ResaleGram.Visibility = parameters.GramOnly ? Visibility.Visible : Visibility.Collapsed;
-
+            // The glyphs are drawn for Segoe UI's baseline, so they go inline rather than beside the text.
             ResaleStarCount.Text = parameters.GramOnly
-                ? (parameters.GramCentCount / 100d).ToString("0.##")
-                : parameters.StarCount.ToString("N0");
+                ? Icons.Gram14 + " " + (parameters.GramCentCount / 100d).ToString("0.##")
+                : Icons.Star14 + " " + parameters.StarCount.ToString("N0");
         }
 
         public void UpdateGift(IClientService clientService, SentGiftUpgraded upgraded)
@@ -289,8 +285,6 @@ namespace Telegram.Controls.Cells
             FindName(nameof(ResaleStarCountRoot));
             ResaleStarCountRoot.Background = new SolidColorBrush(edgeColor.Darken());
             ResaleStarCount.Text = Strings.Gift2TransferMine;
-            ResaleStar.Visibility = Visibility.Collapsed;
-            ResaleGram.Visibility = Visibility.Collapsed;
 
             Ribbon.Visibility = Visibility.Visible;
             Ribbon.Text = string.Format("#{0:N0}", upgraded.Gift.Number);
@@ -321,7 +315,7 @@ namespace Telegram.Controls.Cells
 
             if (gift.Gift.OverallLimits != null && (gift.Gift.OverallLimits.RemainingCount > 0 || gift.MinResaleStarCount == 0))
             {
-                StarCount.Text = gift.Gift.StarCount.ToString("N0");
+                StarCount.Text = Icons.PremiumStar + " " + gift.Gift.StarCount.ToString("N0");
 
                 if (gift.Gift.OverallLimits.RemainingCount > 0)
                 {
@@ -364,7 +358,7 @@ namespace Telegram.Controls.Cells
             {
                 PremiumRoot?.Visibility = Visibility.Collapsed;
 
-                StarCount.Text = gift.MinResaleStarCount.ToString("N0");
+                StarCount.Text = Icons.PremiumStar + " " + gift.MinResaleStarCount.ToString("N0");
 
                 Ribbon.Visibility = Visibility.Visible;
                 Ribbon.Text = Strings.Gift2Resale;
@@ -376,7 +370,7 @@ namespace Telegram.Controls.Cells
             {
                 PremiumRoot?.Visibility = Visibility.Collapsed;
 
-                StarCount.Text = gift.Gift.StarCount.ToString("N0");
+                StarCount.Text = Icons.PremiumStar + " " + gift.Gift.StarCount.ToString("N0");
 
                 Ribbon.Visibility = Visibility.Collapsed;
             }

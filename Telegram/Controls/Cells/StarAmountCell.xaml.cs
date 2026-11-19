@@ -7,6 +7,7 @@
 
 using System;
 using System.Numerics;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
@@ -45,7 +46,7 @@ namespace Telegram.Controls.Cells
             var integerAmount = Math.Abs(amount.StarCount);
             var split = Formatter.SplitAmount(BigInteger.Abs(Formatter.Nanostars(amount)), 9, 9);
 
-            CryptocurrencyAmountLabel.Text = split.Integer;
+            CryptocurrencyAmountLabel.Text = Icons.PremiumStar + " " + split.Integer;
             CryptocurrencyDecimalLabel.Text = split.Fraction;
 
             AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(integerAmount * UsdRate), "USD"));

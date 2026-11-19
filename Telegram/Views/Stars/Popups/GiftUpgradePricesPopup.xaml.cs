@@ -8,6 +8,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
@@ -54,26 +55,18 @@ namespace Telegram.Views.Stars.Popups
 
         private static TableViewItem CreateRow(GiftUpgradePrice price)
         {
-            var grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-
+            // Table sets the font that carries the star glyph.
             var text = new TextBlock
             {
-                Text = price.StarCount.ToString("N0"),
-                Margin = new Thickness(4, 5, 8, 6),
+                Text = Icons.PremiumStar + " " + price.StarCount.ToString("N0"),
+                Margin = new Thickness(8, 5, 8, 6),
                 VerticalAlignment = VerticalAlignment.Top
             };
-
-            Grid.SetColumn(text, 1);
-
-            grid.Children.Add(new PremiumStarCount { Margin = new Thickness(8, 0, 0, 0) });
-            grid.Children.Add(text);
 
             return new TableViewItem
             {
                 Header = Formatter.DateAt(price.Date),
-                Content = grid,
+                Content = text,
                 Padding = new Thickness(0)
             };
         }

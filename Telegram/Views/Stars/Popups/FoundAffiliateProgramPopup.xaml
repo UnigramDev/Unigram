@@ -64,19 +64,11 @@
                                         Header="{CustomResource ChannelAffiliateProgramJoinMonthlyUsers}" />
                 <controls:TableViewItem Header="{CustomResource ChannelAffiliateProgramJoinDailyRevenue}"
                                         Padding="0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <controls:PremiumStarCount Margin="8,0,0,0" />
-                        <TextBlock x:Name="StarCount"
-                                   Margin="4,5,8,6"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   VerticalAlignment="Top"
-                                   Grid.Column="1" />
-                    </Grid>
+                    <TextBlock x:Name="StarCount"
+                               Margin="8,5,8,6"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                               VerticalAlignment="Top" />
                 </controls:TableViewItem>
             </controls:TableView>
 

@@ -109,15 +109,9 @@
                                              Content="{CustomResource StarsBalance}"
                                              Glyph="&#xEA8D;">
                         <controls:SettingsButton.Badge>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <controls:PremiumStarCount Margin="0,-4,0,-6" />
-                                <TextBlock Text="{x:Bind ConvertStarCount(ViewModel.StarCount), Mode=OneWay}"
-                                           Grid.Column="1" />
-                            </Grid>
+                            <TextBlock FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}">
+                                <Run Text="&#xF78E;" /> <Run Text="{x:Bind ConvertStarCount(ViewModel.StarCount), Mode=OneWay}" />
+                            </TextBlock>
                         </controls:SettingsButton.Badge>
                     </controls:SettingsButton>
                 </controls:HeaderedControl>

@@ -18,6 +18,7 @@
                    Margin="24,4,24,0" />
 
         <controls:TableView x:Name="Table"
+                            FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                             Margin="8,16,8,0" />
 
         <TextBlock Text="{CustomResource Gift2UpgradeCostsFooter}"

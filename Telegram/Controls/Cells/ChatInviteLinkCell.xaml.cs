@@ -212,14 +212,13 @@ namespace Telegram.Controls.Cells
             if (inviteLink.SubscriptionPricing != null)
             {
                 PaidPeriod.Text = Strings.StarsParticipantSubscriptionPerMonth;
-                PaidRoot.Visibility = Visibility.Visible;
-
-                PaidStarCount.Text = inviteLink.SubscriptionPricing.StarCount.ToString("N0");
+                PaidStarCount.Visibility = Visibility.Visible;
+                PaidStarCount.Text = Icons.PremiumStar + " " + inviteLink.SubscriptionPricing.StarCount.ToString("N0");
             }
             else
             {
                 PaidPeriod.Text = string.Empty;
-                PaidRoot.Visibility = Visibility.Collapsed;
+                PaidStarCount.Visibility = Visibility.Collapsed;
             }
 
             Photo.Visibility = Visibility.Collapsed;

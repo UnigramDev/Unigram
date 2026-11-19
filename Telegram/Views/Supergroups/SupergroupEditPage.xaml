@@ -143,19 +143,9 @@
                                              Glyph="&#xE992;"
                                              IsChevronVisible="True">
                         <controls:SettingsButton.Badge>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <controls:PremiumStarCount x:Name="ChannelDirectMessagesGroupStars"
-                                                           Visibility="Collapsed"
-                                                           Margin="8,-4,4,-6"
-                                                           Width="20" />
-                                <TextBlock x:Name="ChannelDirectMessagesGroupStarCount"
-                                           VerticalAlignment="Center"
-                                           Grid.Column="1" />
-                            </Grid>
+                            <TextBlock x:Name="ChannelDirectMessagesGroupStarCount"
+                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                       VerticalAlignment="Center" />
                         </controls:SettingsButton.Badge>
                     </controls:SettingsButton>
                 </controls:HeaderedControl>

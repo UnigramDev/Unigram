@@ -34,19 +34,12 @@
                                TextAlignment="Center"
                                VerticalAlignment="Top"
                                Grid.Row="1" />
-                    <StackPanel HorizontalAlignment="Center"
-                                Orientation="Horizontal"
-                                Margin="0,-2,0,0"
-                                Grid.Row="2">
-                        <controls:PremiumStarCount Width="24"
-                                                   Height="24"
-                                                   Grid.Column="4"
-                                                   Grid.RowSpan="2" />
-
-                        <TextBlock x:Name="StarCount"
-                                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
+                    <TextBlock x:Name="StarCount"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                               HorizontalAlignment="Center"
+                               Margin="0,-2,0,0"
+                               Grid.Row="2" />
                 </Grid>
 
                 <Grid BorderBrush="{ThemeResource ButtonBorderBrush}"
