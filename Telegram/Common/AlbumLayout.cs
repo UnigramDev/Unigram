@@ -188,6 +188,10 @@ namespace Telegram.Common
                         var h = Math.Round((availableWidth - 2 * spacing) / (itemInfos[1].AspectRatio + itemInfos[2].AspectRatio + itemInfos[3].AspectRatio));
                         var w0 = Math.Max(minWidth, Math.Min((availableWidth - 2 * spacing) * 0.4, h * itemInfos[1].AspectRatio));
                         var w2 = Math.Max(Math.Max(minWidth, (availableWidth - 2 * spacing) * 0.33), h * itemInfos[3].AspectRatio);
+
+                        // A very wide last item takes the whole row through h * aspect ratio, and
+                        // the middle one is left with a negative width.
+                        w2 = Math.Min(w2, w - w0 - minWidth - 2 * spacing);
                         var w1 = w - w0 - w2 - 2 * spacing;
                         h = Math.Max(minHeight, Math.Min(availableHeight - h0 - spacing, h));
                         itemInfos[1].LayoutFrame = Frame(0.0, h0 + spacing, w0, h);
