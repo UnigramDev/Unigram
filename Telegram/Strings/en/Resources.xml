@@ -12393,6 +12393,12 @@
     <string name="Gift2BuyInTON">Pay in Grams</string>
     <string name="ResellGiftBuyTON">Buy for &#11088;&#65039;{0} Grams</string>
     <string name="GiftOnchainErrorPriceChangedFixed">The price of this gift has changed. Please check the new price and try again.</string>
+    <string name="GiftMessageAddTitle">Add Message</string>
+    <string name="GiftMessageAddDescription">You can add a message for **{0}** or send **{1}** right away.</string>
+    <string name="GiftMessageAddHint">Add message...</string>
+    <string name="GiftMessagePreviewInChat">Preview in chat</string>
+    <string name="GiftMessageMakeMessagePublic">Make message public</string>
+    <string name="GiftMessageSendNow">Send Now</string>
     <string name="ResellGiftTitle">Price in Stars</string>
     <string name="ResellGiftTitleTON">Price in Grams</string>
     <string name="ResellGiftPriceTitle">Enter price in Stars</string>

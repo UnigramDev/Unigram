@@ -58,8 +58,48 @@ namespace Telegram.Controls.Messages.Service
 
             Subtitle.Text = upgradedGift.Gift.ToName();
 
-            AttributeInfo.Text = Strings.Gift2AttributeModel + "\n" + Strings.Gift2AttributeBackdrop + "\n" + Strings.Gift2AttributeSymbol;
-            AttributeText.Text = upgradedGift.Gift.Model.Name + "\n" + upgradedGift.Gift.Backdrop.Name + "\n" + upgradedGift.Gift.Symbol.Name;
+            // A message takes the place of the attributes, and its sender stays hidden with the name.
+            if (upgradedGift.Text?.Text.Length > 0)
+            {
+                if (GiftMessage == null)
+                {
+                    FindName(nameof(GiftMessage));
+                }
+
+                GiftMessage.Visibility = Visibility.Visible;
+                AttributeInfo.Visibility = Visibility.Collapsed;
+                AttributeText.Visibility = Visibility.Collapsed;
+
+                GiftMessageText.SetText(message.ClientService, upgradedGift.Text);
+
+                if (upgradedGift.IsPrivate || upgradedGift.SenderId == null)
+                {
+                    GiftMessagePhoto.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    GiftMessagePhoto.Visibility = Visibility.Visible;
+                    GiftMessagePhoto.Source = ProfilePictureSource.MessageSender(message.ClientService, upgradedGift.SenderId);
+                }
+            }
+            else
+            {
+                GiftMessage?.Visibility = Visibility.Collapsed;
+                AttributeInfo.Visibility = Visibility.Visible;
+                AttributeText.Visibility = Visibility.Visible;
+
+                AttributeInfo.Text = Strings.Gift2AttributeModel + "\n" + Strings.Gift2AttributeBackdrop + "\n" + Strings.Gift2AttributeSymbol;
+                AttributeText.Text = upgradedGift.Gift.Model.Name + "\n" + upgradedGift.Gift.Backdrop.Name + "\n" + upgradedGift.Gift.Symbol.Name;
+            }
+        }
+
+        /// <summary>
+        /// The label of the card's button: View in chat, Send Now in the preview before buying.
+        /// </summary>
+        public string ButtonText
+        {
+            get => ViewLabel.Text;
+            set => ViewLabel.Text = value;
         }
 
         public override void Recycle()

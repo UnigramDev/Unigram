@@ -1896,6 +1896,9 @@
     <Compile Include="Views\Stars\Popups\GiftResalePricePopup.xaml.cs">
       <DependentUpon>GiftResalePricePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stars\Popups\GiftMessagePopup.xaml.cs">
+      <DependentUpon>GiftMessagePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stars\StarsPage.xaml.cs">
       <DependentUpon>StarsPage.xaml</DependentUpon>
     </Compile>
@@ -4561,6 +4564,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stars\Popups\GiftResalePricePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stars\Popups\GiftMessagePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

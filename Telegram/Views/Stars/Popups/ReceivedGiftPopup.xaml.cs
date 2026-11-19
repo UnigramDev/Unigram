@@ -1869,8 +1869,25 @@ namespace Telegram.Views.Stars.Popups
 
             var chat = await _clientService.GetChatFromMessageSenderAsync(_sendGiftTo);
 
-            // TODO: text, isPrivate
-            var response = await TransferGiftPopup.BuyAsync(_clientService, _navigationService, upgraded.Gift, chat, _sendGiftTo ?? _clientService.MyId, string.Empty.AsFormattedText(), false);
+            var text = string.Empty.AsFormattedText();
+            var isPrivate = false;
+
+            if (_sendGiftTo != null && !_sendGiftTo.IsUser(_clientService.Options.MyId))
+            {
+                var popup = new GiftMessagePopup(_clientService, upgraded.Gift, _sendGiftTo);
+
+                var confirm = await _navigationService.ShowPopupAsync(popup);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    _submitted = false;
+                    return;
+                }
+
+                text = popup.Text;
+                isPrivate = popup.IsPrivate;
+            }
+
+            var response = await TransferGiftPopup.BuyAsync(_clientService, _navigationService, upgraded.Gift, chat, _sendGiftTo ?? _clientService.MyId, text, isPrivate);
             if (response is GiftResaleResultOk)
             {
                 _aggregator.Publish(new UpdateGiftIsSold(_gift.ReceivedGiftId));
