@@ -153,7 +153,7 @@ namespace Telegram.Controls.Cells
                     }
 
                     ResaleStarCountRoot.Background = new SolidColorBrush(edgeColor.Darken());
-                    ResaleStarCount.Text = upgraded.Gift.ResaleParameters.StarCount.ToString("N0");
+                    UpdateResalePrice(upgraded.Gift.ResaleParameters);
                 }
                 else
                 {
@@ -165,6 +165,16 @@ namespace Telegram.Controls.Cells
                     ResaleStarCountRoot?.Visibility = Visibility.Collapsed;
                 }
             }
+        }
+
+        private void UpdateResalePrice(GiftResaleParameters parameters)
+        {
+            ResaleStar.Visibility = parameters.GramOnly ? Visibility.Collapsed : Visibility.Visible;
+            ResaleGram.Visibility = parameters.GramOnly ? Visibility.Visible : Visibility.Collapsed;
+
+            ResaleStarCount.Text = parameters.GramOnly
+                ? (parameters.GramCentCount / 100d).ToString("0.##")
+                : parameters.StarCount.ToString("N0");
         }
 
         public void UpdateGift(IClientService clientService, SentGiftUpgraded upgraded)
@@ -246,7 +256,7 @@ namespace Telegram.Controls.Cells
 
             FindName(nameof(ResaleStarCountRoot));
             ResaleStarCountRoot.Background = new SolidColorBrush(edgeColor.Darken());
-            ResaleStarCount.Text = gift.Gift.ResaleParameters.StarCount.ToString("N0");
+            UpdateResalePrice(gift.Gift.ResaleParameters);
 
             Ribbon.Visibility = Visibility.Visible;
             Ribbon.Text = string.Format("#{0:N0}", gift.Gift.Number);
@@ -280,6 +290,7 @@ namespace Telegram.Controls.Cells
             ResaleStarCountRoot.Background = new SolidColorBrush(edgeColor.Darken());
             ResaleStarCount.Text = Strings.Gift2TransferMine;
             ResaleStar.Visibility = Visibility.Collapsed;
+            ResaleGram.Visibility = Visibility.Collapsed;
 
             Ribbon.Visibility = Visibility.Visible;
             Ribbon.Text = string.Format("#{0:N0}", upgraded.Gift.Number);

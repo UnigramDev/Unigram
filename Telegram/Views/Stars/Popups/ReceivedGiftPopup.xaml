@@ -272,6 +272,7 @@
                     </controls:PatternBackground>
 
                     <Grid x:Name="ResaleStarCountRoot"
+                          Tapped="ResaleStarCountRoot_Tapped"
                           Background="{ThemeResource MessageServiceBackgroundBrush}"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top"

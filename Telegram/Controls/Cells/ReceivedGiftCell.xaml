@@ -156,6 +156,14 @@
                 </controls:PremiumStarCount.Template>
             </controls:PremiumStarCount>
 
+            <TextBlock x:Name="ResaleGram"
+                       Text="&#xEA7E;"
+                       Foreground="#FFFFFF"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="14"
+                       VerticalAlignment="Center"
+                       Margin="0,0,4,0"
+                       Visibility="Collapsed" />
             <TextBlock x:Name="ResaleStarCount"
                        Foreground="#FFFFFF"
                        Style="{StaticResource CaptionTextBlockStyle}"
