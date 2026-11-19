@@ -1444,7 +1444,11 @@ namespace Telegram.Common
         public static async void NavigateToUpgradedGift(IClientService clientService, INavigationService navigation, string name)
         {
             var response = await clientService.SendAsync(new GetUpgradedGift(name));
-            if (response is UpgradedGift gift)
+            if (response is UpgradedGift { IsBurned: true } || response is Error { Message: "STARGIFT_ALREADY_BURNED" })
+            {
+                navigation.ShowToast(Strings.UniqueGiftNotFoundBurned, ToastPopupIcon.Error);
+            }
+            else if (response is UpgradedGift gift)
             {
                 var text = gift.OriginalDetails?.Text ?? string.Empty.AsFormattedText();
                 var receivedGift = new ReceivedGift(string.Empty, null, text, 0, true, false, false, false, false, false, false, 0, new SentGiftUpgraded(gift), Array.Empty<int>(), 0, 0, false, 0, 0, 0, 0, 0, string.Empty, 0);

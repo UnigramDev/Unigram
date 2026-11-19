@@ -166,7 +166,7 @@ namespace Telegram.Views.Stars.Popups
 
             Ribbon.Visibility = details && upgraded?.IsCrafted is true ? Visibility.Visible : Visibility.Collapsed;
             ResaleStarCountRoot.Visibility = details && upgraded?.ResaleParameters != null ? Visibility.Visible : Visibility.Collapsed;
-            MoreButton.Visibility = details && (upgraded != null || CanToggleSaved || _gift?.CanBeDeleted is true) ? Visibility.Visible : Visibility.Collapsed;
+            MoreButton.Visibility = details && (upgraded != null || CanToggleSaved || _gift?.CanBeDeleted is true || ProfileOwner != null) ? Visibility.Visible : Visibility.Collapsed;
             MoreButton.RequestedTheme = upgradedHeader ? ElementTheme.Dark : ElementTheme.Default;
         }
 
@@ -585,34 +585,28 @@ namespace Telegram.Views.Stars.Popups
                 var date = Formatter.Date(gift.OriginalDetails.Date);
                 var dateText = date.AsFormattedText();
 
-                FormattedText text = null;
+                FormattedText text;
 
-                if (gift.OriginalDetails.Text.Text.Length > 0)
+                var comment = gift.OriginalDetails.Text.Text.Length > 0;
+                var self = gift.OriginalDetails.SenderId.AreTheSame(gift.OriginalDetails.ReceiverId);
+
+                if (self)
                 {
-                    if (senderName.Length > 0 && receiverName.Length > 0)
-                    {
-                        text = ClientEx.Format(Strings.Gift2AttributeOriginalDetailsComment, senderText, receiverText, dateText, gift.OriginalDetails.Text);
-                    }
-                    else if (senderName.Length > 0)
-                    {
-                        text = ClientEx.Format(Strings.Gift2AttributeOriginalDetailsSelfComment, senderText, dateText, gift.OriginalDetails.Text);
-                    }
-                    else if (receiverName.Length > 0)
-                    {
-                        text = ClientEx.Format(Strings.Gift2AttributeOriginalDetailsNoSenderComment, receiverText, dateText, gift.OriginalDetails.Text);
-                    }
+                    text = comment
+                        ? ClientEx.Format(Strings.Gift2AttributeOriginalDetailsSelfComment, senderText, dateText, gift.OriginalDetails.Text)
+                        : ClientEx.Format(Strings.Gift2AttributeOriginalDetailsSelf, senderText, dateText);
                 }
-                else if (senderName.Length > 0 && receiverName.Length > 0)
+                else if (senderText != null)
                 {
-                    text = ClientEx.Format(Strings.Gift2AttributeOriginalDetails, senderText, receiverText, dateText);
+                    text = comment
+                        ? ClientEx.Format(Strings.Gift2AttributeOriginalDetailsComment, senderText, receiverText, dateText, gift.OriginalDetails.Text)
+                        : ClientEx.Format(Strings.Gift2AttributeOriginalDetails, senderText, receiverText, dateText);
                 }
-                else if (senderName.Length > 0)
+                else
                 {
-                    text = ClientEx.Format(Strings.Gift2AttributeOriginalDetailsSelf, senderText, dateText);
-                }
-                else if (receiverName.Length > 0)
-                {
-                    text = ClientEx.Format(Strings.Gift2AttributeOriginalDetailsNoSender, receiverText, dateText);
+                    text = comment
+                        ? ClientEx.Format(Strings.Gift2AttributeOriginalDetailsNoSenderComment, receiverText, dateText, gift.OriginalDetails.Text)
+                        : ClientEx.Format(Strings.Gift2AttributeOriginalDetailsNoSender, receiverText, dateText);
                 }
 
                 UpgradedCaption.SetText(clientService, text);
@@ -720,11 +714,19 @@ namespace Telegram.Views.Stars.Popups
             Subtitle.Text = Strings.Gift2SoldOutSheetSubtitle;
             Subtitle.Foreground = BootStrapper.Current.Resources["SystemFillColorCriticalBrush"] as Brush;
 
-            FirstSale.Visibility = Visibility.Visible;
-            LastSale.Visibility = Visibility.Visible;
+            if (gift.FirstSendDate != 0)
+            {
+                FirstSale.Visibility = Visibility.Visible;
+                FirstSale.Content = Formatter.DateAt(gift.FirstSendDate);
+            }
 
-            FirstSale.Content = Formatter.DateAt(gift.FirstSendDate);
-            LastSale.Content = Formatter.DateAt(gift.LastSendDate);
+            if (gift.LastSendDate != 0)
+            {
+                LastSale.Visibility = Visibility.Visible;
+                LastSale.Content = Formatter.DateAt(gift.LastSendDate);
+            }
+
+            StarCountRoot.Header = Strings.Gift2SoldOutSheetValue;
 
             Convert.Visibility = Visibility.Collapsed;
             Info.Visibility = Visibility.Collapsed;
@@ -1495,6 +1497,16 @@ namespace Telegram.Views.Stars.Popups
         // screen; everywhere else the footer's link still toggles the profile.
         private bool CanToggleSaved => _profile != null && _owned && _gift?.ReceivedGiftId.Length > 0;
 
+        /// <summary>
+        /// Whose gifts View in Profile opens; null when the popup was opened from that list already.
+        /// </summary>
+        private MessageSender ProfileOwner => _profile != null ? null : _gift?.Gift switch
+        {
+            SentGiftUpgraded upgraded => HolderOf(upgraded.Gift),
+            SentGiftRegular => _receiverId,
+            _ => null
+        };
+
         private void More_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
@@ -1542,6 +1554,11 @@ namespace Telegram.Views.Stars.Popups
                 flyout.CreateFlyoutItem(Transfer, Strings.Gift2TransferOption, Icons.Replace);
             }
 
+            if (ProfileOwner != null)
+            {
+                flyout.CreateFlyoutItem(ViewInProfile, Strings.Gift2ViewInProfile, Icons.PersonCircle);
+            }
+
             if (_gift.CanBeDeleted)
             {
                 flyout.CreateFlyoutItem(Delete, Strings.Gift2DeleteOption, Icons.Delete, destructive: true);
@@ -1579,6 +1596,15 @@ namespace Telegram.Views.Stars.Popups
             else if (response is Error error)
             {
                 ToastPopup.ShowError(XamlRoot, error);
+            }
+        }
+
+        private void ViewInProfile()
+        {
+            if (ProfileOwner is MessageSender owner)
+            {
+                Hide();
+                _navigationService.NavigateToSender(owner, new NavigationState { { "open_gifts", true } });
             }
         }
 
@@ -2138,6 +2164,11 @@ namespace Telegram.Views.Stars.Popups
                     UpgradedTableRoot.CornerRadius = new CornerRadius(4);
 
                     UpgradedCaptionRoot.Visibility = Visibility.Collapsed;
+
+                    if (_gift.Gift is SentGiftUpgraded removed)
+                    {
+                        ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(string.Format(Strings.GiftRemovedDescription, removed.Gift.ToName())), new DelayedFileSource(_clientService, removed.Gift.Model.Sticker));
+                    }
                 }
                 else if (response is Error error)
                 {

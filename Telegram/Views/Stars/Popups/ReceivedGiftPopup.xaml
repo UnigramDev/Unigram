@@ -387,7 +387,8 @@
                                 </controls:TableViewItem>
                                 <controls:TableViewItem x:Name="Date"
                                                         Header="{CustomResource StarsTransactionDate}" />
-                                <controls:TableViewItem Header="{CustomResource Gift2Value}"
+                                <controls:TableViewItem x:Name="StarCountRoot"
+                                                        Header="{CustomResource Gift2Value}"
                                                         Padding="0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>

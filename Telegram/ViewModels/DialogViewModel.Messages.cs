@@ -2567,6 +2567,10 @@ namespace Telegram.ViewModels
 
                 ShowPopup(new ReceivedGiftPopup(ClientService, NavigationService, receivedGift, gift.ReceiverId, null));
             }
+            else if (message.Content is MessageUpgradedGift { Gift.IsBurned: true })
+            {
+                ShowToast(Strings.UniqueGiftNotFoundBurned, ToastPopupIcon.Error);
+            }
             else if (message.Content is MessageUpgradedGift upgradedGift)
             {
                 ReceivedGift receivedGift = null;

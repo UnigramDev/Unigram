@@ -11933,6 +11933,8 @@
     <string name="Gift2AttributeOriginalDetailsSelfComment">Gifted by {0} on {1} with the comment: \"{2}\"</string>
     <string name="Gift2AttributeOriginalDetailsNoSender">Gifted to {0} on {1}.</string>
     <string name="Gift2AttributeOriginalDetailsNoSenderComment">Gifted to {0} on {1} with the comment: \"{2}\"</string>
+    <string name="Gift2ViewInProfile">View in Profile</string>
+    <string name="GiftRemovedDescription">Removed **{0}**\'s Description!</string>
     <string name="Gift2RarityHint">Only {0} of such collectibles have this attribute</string>
     <string name="Gift2Transfer">Transfer {0}</string>
     <string name="Gift2TransferText">Do you want to transfer ownership of **{0}** to **{1}**?</string>
@@ -11988,6 +11990,7 @@
     <string name="Gift2TabInStock">In Stock</string>
     <string name="Gift2TransferOption">Transfer</string>
     <string name="UniqueGiftNotFound">Gift not found.</string>
+    <string name="UniqueGiftNotFoundBurned">Gift has already been burned.</string>
     <string name="StoryViewGift">Show Gift &gt;</string>
     <string name="SimilarBotsTab">Similar Bots</string>
 
