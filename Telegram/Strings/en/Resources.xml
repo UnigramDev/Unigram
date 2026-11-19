@@ -11991,6 +11991,7 @@
     <string name="Gift2TransferOption">Transfer</string>
     <string name="UniqueGiftNotFound">Gift not found.</string>
     <string name="UniqueGiftNotFoundBurned">Gift has already been burned.</string>
+    <string name="UniqueGiftFrom">From **{0}**</string>
     <string name="StoryViewGift">Show Gift &gt;</string>
     <string name="SimilarBotsTab">Similar Bots</string>
 

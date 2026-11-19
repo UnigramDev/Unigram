@@ -51,6 +51,11 @@ namespace Telegram.Views.Stars.Popups
 
         private readonly MessageSender _sendGiftTo;
 
+        /// <summary>
+        /// Opened from the gift's message: the header names its sender and shows its text.
+        /// </summary>
+        private readonly bool _fromMessage;
+
         // The profile list the popup was opened from, if any: pinning edits that list's order.
         private readonly ProfileGiftsTabViewModel _profile;
 
@@ -87,11 +92,12 @@ namespace Telegram.Views.Stars.Popups
         // wear and share it, but nothing that would move it.
         private bool _hosted;
 
-        public ReceivedGiftPopup(IClientService clientService, INavigationService navigationService, ReceivedGift gift, MessageSender receiverId, MessageSender sendGiftTo, ProfileGiftsTabViewModel profile = null)
+        public ReceivedGiftPopup(IClientService clientService, INavigationService navigationService, ReceivedGift gift, MessageSender receiverId, MessageSender sendGiftTo, ProfileGiftsTabViewModel profile = null, bool fromMessage = false)
         {
             InitializeComponent();
 
             _profile = profile;
+            _fromMessage = fromMessage;
 
             _clientService = clientService;
             _navigationService = navigationService;
@@ -493,6 +499,36 @@ namespace Telegram.Views.Stars.Popups
                 UpgradedPublisher.Visibility = Visibility.Collapsed;
                 UpgradedSubtitle.Visibility = Visibility.Visible;
                 UpgradedSubtitle.Text = Locale.Declension(Strings.R.Gift2CollectionNumber, gift.Number);
+            }
+
+            // TDLib still names a private gift's sender to its receiver; the header leaves it out for everyone.
+            var from = _fromMessage && !receivedGift.IsPrivate ? receivedGift.SenderId : null;
+
+            if (from != null && UpgradedPublisher.Visibility == Visibility.Collapsed)
+            {
+                // The subtitle no longer carries the number, so the title does.
+                UpgradedTitle.Text = gift.ToName();
+                TextBlockHelper.SetMarkdown(UpgradedSubtitle, string.Format(Strings.UniqueGiftFrom, clientService.GetTitle(from, true)));
+            }
+
+            if (_fromMessage && receivedGift.Text?.Text.Length > 0)
+            {
+                UpgradedMessage.Visibility = Visibility.Visible;
+                UpgradedMessageText.SetText(clientService, receivedGift.Text);
+
+                if (from != null)
+                {
+                    UpgradedMessagePhoto.Visibility = Visibility.Visible;
+                    UpgradedMessagePhoto.Source = ProfilePictureSource.MessageSender(clientService, from);
+                }
+                else
+                {
+                    UpgradedMessagePhoto.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                UpgradedMessage.Visibility = Visibility.Collapsed;
             }
 
             var hosted = gift.HostId != null;

@@ -2579,9 +2579,9 @@ namespace Telegram.ViewModels
                     receivedGift = await ClientService.SendAsync(new GetReceivedGift(upgradedGift.ReceivedGiftId)) as ReceivedGift;
                 }
 
-                receivedGift ??= new ReceivedGift(upgradedGift.ReceivedGiftId, upgradedGift.SenderId, upgradedGift.Gift.OriginalDetails?.Text ?? string.Empty.AsFormattedText(), 0, true, upgradedGift.IsSaved, false, false, upgradedGift.CanBeTransferred, false, false, message.Date, new SentGiftUpgraded(upgradedGift.Gift), Array.Empty<int>(), 0, 0, false, upgradedGift.TransferStarCount, upgradedGift.DropOriginalDetailsStarCount, upgradedGift.NextTransferDate, upgradedGift.NextResaleDate, upgradedGift.ExportDate, string.Empty, upgradedGift.CraftDate);
+                receivedGift ??= new ReceivedGift(upgradedGift.ReceivedGiftId, upgradedGift.SenderId, upgradedGift.Text, 0, upgradedGift.IsPrivate, upgradedGift.IsSaved, false, false, upgradedGift.CanBeTransferred, false, false, message.Date, new SentGiftUpgraded(upgradedGift.Gift), Array.Empty<int>(), 0, 0, false, upgradedGift.TransferStarCount, upgradedGift.DropOriginalDetailsStarCount, upgradedGift.NextTransferDate, upgradedGift.NextResaleDate, upgradedGift.ExportDate, string.Empty, upgradedGift.CraftDate);
 
-                ShowPopup(new ReceivedGiftPopup(ClientService, NavigationService, receivedGift, upgradedGift.ReceiverId, null));
+                ShowPopup(new ReceivedGiftPopup(ClientService, NavigationService, receivedGift, upgradedGift.ReceiverId, null, fromMessage: true));
             }
             else if (message.Content is MessageGiftedStars giftedStars)
             {

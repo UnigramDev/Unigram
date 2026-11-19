@@ -74,6 +74,7 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <TextBlock x:Name="UpgradedTitle"
                                                Text="{CustomResource GiftTelegramPremiumTitle}"
@@ -105,11 +106,35 @@
                                                Margin="24,0,24,8"
                                                Grid.Row="1" />
 
+                                    <Grid x:Name="UpgradedMessage"
+                                          ColumnSpacing="4"
+                                          HorizontalAlignment="Center"
+                                          Margin="24,0,24,8"
+                                          Visibility="Collapsed"
+                                          Grid.Row="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <controls:ProfilePicture x:Name="UpgradedMessagePhoto"
+                                                                 VerticalAlignment="Bottom"
+                                                                 Size="24" />
+                                        <Border Background="#28FFFFFF"
+                                                CornerRadius="12,12,12,4"
+                                                Padding="8,4,8,4"
+                                                Grid.Column="1">
+                                            <controls:FormattedTextBlock x:Name="UpgradedMessageText"
+                                                                         Foreground="White"
+                                                                         HyperlinkForeground="White"
+                                                                         FontSize="12" />
+                                        </Border>
+                                    </Grid>
+
                                     <Grid x:Name="UpgradedButtons"
                                           ColumnSpacing="8"
                                           Margin="8,0,8,8"
                                           Visibility="Collapsed"
-                                          Grid.Row="2">
+                                          Grid.Row="3">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition />
