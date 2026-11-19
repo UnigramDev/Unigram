@@ -93,6 +93,10 @@ namespace Telegram.Collections
         private bool _armed;
         private bool _flushing;
 
+        // This is what the chat history is bound to, so a reset raised here is dispatched into the
+        // panel rather than into another collection.
+        protected override bool TracksResetReentrancy => true;
+
         /// <summary>
         /// Without one, or with <see cref="ISynchronizedListDelegate{T}.Capturing"/> refusing every
         /// row, this collection behaves exactly as it did before: applied on arrival, no delay.
