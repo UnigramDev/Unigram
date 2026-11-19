@@ -715,7 +715,9 @@ namespace Telegram.Views.Stars.Popups
         {
             // Opened from a link, the current user's own gift arrives without a received gift identifier.
             return gift.ResaleParameters != null && !_owned
-                ? Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium)
+                ? gift.ResaleParameters.GramOnly
+                    ? string.Format(Strings.ResellGiftBuyTON, TransferGiftPopup.FormatGram(gift.ResaleParameters.GramCentCount)).ReplaceStar(Icons.Ton)
+                    : Locale.Declension(Strings.R.ResellGiftBuy, gift.ResaleParameters.StarCount).ReplaceStar(Icons.Premium)
                 : _nextUpgrade != null
                 ? Strings.Gift2UpgradeNext
                 : Strings.OK;
@@ -1867,40 +1869,40 @@ namespace Telegram.Views.Stars.Popups
 
             var chat = await _clientService.GetChatFromMessageSenderAsync(_sendGiftTo);
 
-            var confirm = await _navigationService.ShowPopupAsync(new TransferGiftPopup(_clientService, _gift, chat, true));
-            if (confirm == ContentDialogResult.Primary)
+            // TODO: text, isPrivate
+            var response = await TransferGiftPopup.BuyAsync(_clientService, _navigationService, upgraded.Gift, chat, _sendGiftTo ?? _clientService.MyId, string.Empty.AsFormattedText(), false);
+            if (response is GiftResaleResultOk)
             {
-                // TODO: text, isPrivate
-                var response = await _clientService.SendPaymentAsync(upgraded.Gift.ResaleParameters.StarCount, new SendResoldGift(upgraded.Gift.Name, _sendGiftTo ?? _clientService.MyId, new GiftResalePriceStar(upgraded.Gift.ResaleParameters.StarCount), string.Empty.AsFormattedText(), false));
-                if (response is GiftResaleResultOk)
-                {
-                    _aggregator.Publish(new UpdateGiftIsSold(_gift.ReceivedGiftId));
-                    Hide(ContentDialogResult.Primary);
+                _aggregator.Publish(new UpdateGiftIsSold(_gift.ReceivedGiftId));
+                Hide(ContentDialogResult.Primary);
 
-                    if (chat != null)
-                    {
-                        _navigationService.NavigateToChat(chat.Id);
-                        ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.BoughtResoldGiftToTitle, string.Format(Strings.BoughtResoldGiftToText, chat.Title)), new DelayedFileSource(_clientService, upgraded.Gift.Model.Sticker));
-                    }
-                    else
-                    {
-                        ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.BoughtResoldGiftTitle, string.Format(Strings.BoughtResoldGiftText, upgraded.Gift.ToName())), new DelayedFileSource(_clientService, upgraded.Gift.Model.Sticker));
-                    }
-                }
-                else if (response is Error error)
+                if (chat != null)
                 {
-                    _submitted = false;
-                    ToastPopup.ShowError(XamlRoot, error);
+                    _navigationService.NavigateToChat(chat.Id);
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.BoughtResoldGiftToTitle, string.Format(Strings.BoughtResoldGiftToText, chat.Title)), new DelayedFileSource(_clientService, upgraded.Gift.Model.Sticker));
                 }
-                else if (response is ErrorStarsNeeded)
+                else
                 {
-                    Hide();
-                    await _navigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForChannel(upgraded.Gift.ResaleParameters.StarCount, 0));
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.BoughtResoldGiftTitle, string.Format(Strings.BoughtResoldGiftText, upgraded.Gift.ToName())), new DelayedFileSource(_clientService, upgraded.Gift.Model.Sticker));
                 }
+
+                return;
             }
-            else
+
+            _submitted = false;
+
+            // A raised price was confirmed or declined in the loop, and the sheet has to show it either way.
+            PrimaryButtonText = GetUpgradedPrimaryButtonText(upgraded.Gift);
+            UpdateResalePrice(upgraded.Gift.ResaleParameters);
+
+            if (response is Error error)
             {
-                _submitted = false;
+                ToastPopup.ShowError(XamlRoot, error);
+            }
+            else if (response is ErrorStarsNeeded)
+            {
+                Hide();
+                await _navigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForChannel(upgraded.Gift.ResaleParameters.StarCount, 0));
             }
         }
 

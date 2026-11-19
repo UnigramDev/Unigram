@@ -8,6 +8,81 @@
                         mc:Ignorable="d">
 
     <StackPanel>
+        <controls:TopNavView x:Name="Currency"
+                             HorizontalAlignment="Center"
+                             Height="40"
+                             Visibility="Collapsed">
+            <controls:TopNavView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel VerticalAlignment="Center"
+                                Orientation="Horizontal"
+                                Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                                Padding="4,0"
+                                CornerRadius="15" />
+                </ItemsPanelTemplate>
+            </controls:TopNavView.ItemsPanel>
+            <controls:TopNavView.ItemContainerStyle>
+                <Style TargetType="controls:TopNavViewItem">
+                    <Setter Property="HorizontalAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalAlignment"
+                            Value="Stretch" />
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Center" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Center" />
+                    <Setter Property="UseSystemFocusVisuals"
+                            Value="True" />
+                    <Setter Property="FocusVisualMargin"
+                            Value="-3,5" />
+                    <Setter Property="CornerRadius"
+                            Value="12" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="controls:TopNavViewItem">
+                                <Grid x:Name="ContentBorder"
+                                      Background="Transparent">
+                                    <ContentPresenter x:Name="ContentPresenter"
+                                                      Grid.Column="1"
+                                                      Margin="8,5,8,6"
+                                                      TextWrapping="NoWrap"
+                                                      Foreground="{TemplateBinding Foreground}"
+                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      Content="{TemplateBinding Content}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                      VerticalAlignment="Center"
+                                                      AutomationProperties.AccessibilityView="Raw"
+                                                      Canvas.ZIndex="1" />
+                                    <Grid x:Name="SelectionIndicatorGrid"
+                                          Margin="0,4,0,4"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch">
+                                        <Rectangle x:Name="SelectionIndicator"
+                                                   Fill="{ThemeResource ControlFillColorSecondaryBrush}"
+                                                   Opacity="0"
+                                                   RadiusX="10"
+                                                   RadiusY="10" />
+                                    </Grid>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </controls:TopNavView.ItemContainerStyle>
+            <controls:TopNavViewItem Content="{CustomResource Gift2BuyInStars}"
+                                     FontSize="12" />
+            <controls:TopNavViewItem Content="{CustomResource Gift2BuyInTON}"
+                                     FontSize="12" />
+        </controls:TopNavView>
+
+        <TextBlock x:Name="CurrencyInfo"
+                   TextAlignment="Center"
+                   Margin="0,4,0,12"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Visibility="Collapsed" />
+
         <Grid HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

@@ -296,7 +296,7 @@ namespace Telegram.Views.Premium.Popups
             }
             else if (e.ClickedItem is ReceivedGift receivedGift)
             {
-                confirm = await _navigationService.ShowPopupAsync(new TransferGiftPopup(_clientService, receivedGift, _chat, false));
+                confirm = await _navigationService.ShowPopupAsync(new TransferGiftPopup(_clientService, receivedGift, _chat));
 
                 if (confirm == ContentDialogResult.Primary)
                 {
