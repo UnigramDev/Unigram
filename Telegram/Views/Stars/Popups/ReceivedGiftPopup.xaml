@@ -283,7 +283,8 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <controls:PremiumStarCount Width="18"
+                        <controls:PremiumStarCount x:Name="ResaleStarIcon"
+                                                   Width="18"
                                                    VerticalAlignment="Top"
                                                    HorizontalAlignment="Left"
                                                    Margin="8,-1,4,0">
@@ -302,6 +303,14 @@
                             </controls:PremiumStarCount.Template>
                         </controls:PremiumStarCount>
 
+                        <TextBlock x:Name="ResaleGramIcon"
+                                   Text="&#xEA7E;"
+                                   Foreground="#FFFFFF"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="14"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,4,0"
+                                   Visibility="Collapsed" />
                         <TextBlock x:Name="ResaleStarCount"
                                    Foreground="#FFFFFF"
                                    Style="{StaticResource CaptionTextBlockStyle}"

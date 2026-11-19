@@ -691,7 +691,7 @@ namespace Telegram.Views.Stars.Popups
 
             if (gift.ResaleParameters != null)
             {
-                ResaleStarCount.Text = gift.ResaleParameters.StarCount.ToString("N0");
+                UpdateResalePrice(gift.ResaleParameters);
             }
 
             PrimaryButtonText = GetUpgradedPrimaryButtonText(gift);
@@ -1729,10 +1729,14 @@ namespace Telegram.Views.Stars.Popups
                     {
                         upgraded.Gift.ResaleParameters = null;
 
+                        _aggregator.Publish(new UpdateGiftUpgraded(_gift.ReceivedGiftId, _gift.ReceivedGiftId, _gift));
+
                         UpdateVisibility();
 
                         ResellButton.Glyph = Icons.TagFilled;
                         ResellButton.Content = Strings.Gift2ActionResell;
+
+                        ToastPopup.Show(XamlRoot, string.Format(Strings.Gift2ResaleDisable, upgraded.Gift.ToName()), ToastPopupIcon.Success);
                     }
                     else if (response is Error error)
                     {
@@ -1753,48 +1757,21 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            var resaleStarCount = upgraded.Gift.ResaleParameters?.StarCount ?? 0;
-            if (resaleStarCount == 0)
+            GiftResalePrice price;
+
+            if (upgraded.Gift.ResaleParameters is GiftResaleParameters listed)
             {
-                resaleStarCount = await _resaleStarCount.Task;
+                price = listed.GramOnly
+                    ? new GiftResalePriceGram(listed.GramCentCount)
+                    : new GiftResalePriceStar(listed.StarCount);
+            }
+            else
+            {
+                var floor = await _resaleStarCount.Task;
+                price = new GiftResalePriceStar(Math.Clamp(floor, _clientService.Options.GiftResaleStarCountMin, _clientService.Options.GiftResaleStarCountMax));
             }
 
-            var popup = new InputPopup(InputPopupType.Stars);
-            popup.Value = Math.Clamp(resaleStarCount, _clientService.Options.GiftResaleStarCountMin, _clientService.Options.GiftResaleStarCountMax);
-            //popup.Minimum = _clientService.Options.GiftResaleStarCountMin;
-            popup.Maximum = _clientService.Options.GiftResaleStarCountMax;
-
-            popup.Title = Strings.ResellGiftTitle;
-            popup.Header = Strings.ResellGiftPriceTitle;
-            popup.PrimaryButtonContent = Strings.ResellGiftButton;
-            popup.PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.SecondaryButtonContent = Strings.Cancel;
-            popup.IsLightDismissEnabled = false;
-
-            popup.ValueChanged += (s, args) =>
-            {
-                if (args.Value < _clientService.Options.GiftResaleStarCountMin)
-                {
-                    args.Footer = Locale.Declension(Strings.R.ResellGiftInfoMin, _clientService.Options.GiftResaleStarCountMin);
-                }
-                else
-                {
-                    var xtr = args.Value / 1000d;
-                    var usd = (long)(xtr * _clientService.Options.ThousandStarToUsdRate);
-                    var stars = (long)(xtr * _clientService.Options.GiftResaleStarEarningsPerMille);
-
-                    args.Footer = string.Format("{0} ~{1}", Locale.Declension(Strings.R.ResellGiftInfo, stars), Formatter.FormatAmount(usd, "USD"));
-                }
-            };
-
-            popup.Validating += (s, args) =>
-            {
-                if (args.Value < _clientService.Options.GiftResaleStarCountMin)
-                {
-                    _navigationService.ShowToast(Locale.Declension(Strings.R.ResellGiftInfoMin, _clientService.Options.GiftResaleStarCountMin), ToastPopupIcon.Info);
-                    args.Cancel = true;
-                }
-            };
+            var popup = new GiftResalePricePopup(_clientService, price);
 
             var confirm = await popup.ShowAsync(XamlRoot);
             if (confirm != ContentDialogResult.Primary)
@@ -1802,23 +1779,40 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            var response = await _clientService.SendAsync(new SetGiftResalePrice(_gift.ReceivedGiftId, new GiftResalePriceStar(popup.Value)));
+            var listing = upgraded.Gift.ResaleParameters == null;
+
+            var response = await _clientService.SendAsync(new SetGiftResalePrice(_gift.ReceivedGiftId, popup.Price));
             if (response is Ok)
             {
-                upgraded.Gift.ResaleParameters = new GiftResaleParameters(popup.Value, 0, false);
+                upgraded.Gift.ResaleParameters = popup.Parameters;
 
                 _aggregator.Publish(new UpdateGiftUpgraded(_gift.ReceivedGiftId, _gift.ReceivedGiftId, _gift));
 
                 UpdateVisibility();
-                ResaleStarCount.Text = upgraded.Gift.ResaleParameters.StarCount.ToString("N0");
+                UpdateResalePrice(upgraded.Gift.ResaleParameters);
 
                 ResellButton.Glyph = Icons.TagOffFilled;
                 ResellButton.Content = Strings.Gift2ActionUnlist;
+
+                if (listing)
+                {
+                    ToastPopup.Show(XamlRoot, string.Format(Strings.Gift2ResaleEnable, upgraded.Gift.ToName()), ToastPopupIcon.Success);
+                }
             }
             else if (response is Error error)
             {
                 ToastPopup.ShowError(XamlRoot, error);
             }
+        }
+
+        private void UpdateResalePrice(GiftResaleParameters parameters)
+        {
+            ResaleStarIcon.Visibility = parameters.GramOnly ? Visibility.Collapsed : Visibility.Visible;
+            ResaleGramIcon.Visibility = parameters.GramOnly ? Visibility.Visible : Visibility.Collapsed;
+
+            ResaleStarCount.Text = parameters.GramOnly
+                ? (parameters.GramCentCount / 100d).ToString("0.##")
+                : parameters.StarCount.ToString("N0");
         }
 
         private void Transfer()

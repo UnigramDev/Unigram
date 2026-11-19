@@ -1,0 +1,72 @@
+<controls:ModalPopup x:Class="Telegram.Views.Stars.Popups.GiftResalePricePopup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="using:Telegram.Controls"
+                     mc:Ignorable="d"
+                     PrimaryButtonStyle="{StaticResource AccentButtonStyle}"
+                     DefaultButton="Primary">
+
+    <StackPanel>
+        <Grid>
+            <TextBlock x:Name="HeaderText"
+                       Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock x:Name="ErrorText"
+                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       Visibility="Collapsed" />
+        </Grid>
+
+        <Grid x:Name="InputRoot"
+              Margin="0,4,0,0"
+              VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="36" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="Label"
+                     BeforeTextChanging="Label_BeforeTextChanging"
+                     KeyDown="Label_KeyDown"
+                     Style="{StaticResource NoDeleteTextBoxStyle}"
+                     Grid.ColumnSpan="2" />
+            <controls:PremiumStarCount x:Name="StarCount"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Width="24"
+                                       Height="24" />
+            <TextBlock x:Name="TonCount"
+                       Text="&#xEA7E;"
+                       Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Width="20"
+                       Height="20" />
+
+            <controls:AnimatedTextBlock x:Name="UsdEstimate"
+                                        TextStyle="{StaticResource InfoCaptionTextBlockStyle}"
+                                        TextAlignment="Right"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,8,0"
+                                        Grid.Column="1" />
+        </Grid>
+
+        <TextBlock x:Name="FooterText"
+                   Margin="0,8,0,0"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
+
+        <CheckBox x:Name="GramOnly"
+                  Click="GramOnly_Click"
+                  Margin="0,16,0,0">
+            <StackPanel>
+                <TextBlock Text="{CustomResource ResellGiftPriceOnlyTON}"
+                           Style="{StaticResource BodyTextBlockStyle}" />
+                <TextBlock Text="{CustomResource ResellGiftPriceHintOnlyTON}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}" />
+            </StackPanel>
+        </CheckBox>
+    </StackPanel>
+</controls:ModalPopup>

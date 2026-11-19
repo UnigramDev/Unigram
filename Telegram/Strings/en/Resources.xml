@@ -12379,7 +12379,16 @@
     <string name="Gift2BuyPriceSelfText_one">Do you want to buy **{1}** for **{0} Star**?</string>
     <string name="Gift2BuyPriceSelfText_other">Do you want to buy **{1}** for **{0} Stars**?</string>
     <string name="ResellGiftTitle">Price in Stars</string>
+    <string name="ResellGiftTitleTON">Price in TON</string>
     <string name="ResellGiftPriceTitle">Enter price in Stars</string>
+    <string name="ResellGiftPriceTitleTON">Enter price in TON</string>
+    <string name="ResellGiftInfoTON">You will receive **{0}** TON.</string>
+    <string name="ResellGiftPriceTooMuch">You can request maximum {0}</string>
+    <string name="ResellGiftPriceTooSmall">You must request minimum {0}</string>
+    <string name="ResellGiftPriceOnlyTON">Only Accept TON</string>
+    <string name="ResellGiftPriceHintOnlyTON">If the buyer pays you in TON, there\'s no risk of refunds, unlike Stars payments.</string>
+    <string name="Gift2ResaleEnable">{0} is now for sale!</string>
+    <string name="Gift2ResaleDisable">{0} is removed from sale!</string>
     <string name="ResellGiftButton">List for Sale</string>
     <string name="ResellGiftInfo_one">You will receive **{0}** Star.</string>
     <string name="ResellGiftInfo_other">You will receive **{0}** Stars.</string>
