@@ -17,12 +17,12 @@
             <ColumnDefinition x:Name="HideColumn"
                               Width="*" />
             <ColumnDefinition x:Name="PaddingLeftColumn"
-                              Width="12" />
+                              Width="8" />
             <ColumnDefinition x:Name="ShowColumn"
                               Width="322*"
                               MaxWidth="322" />
             <ColumnDefinition x:Name="PaddingRightColumn"
-                              Width="12" />
+                              Width="8" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="HideRow"
@@ -50,9 +50,9 @@
             <Border x:Name="ShadowElement" />
 
             <Grid x:Name="BackgroundElement"
-                  BackgroundSizing="OuterBorderEdge"
-                  Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
-                  BorderBrush="{ThemeResource SurfaceStrokeColorFlyoutBrush}"
+                  BackgroundSizing="InnerBorderEdge"
+                  Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
+                  BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
                   BorderThickness="1"
                   CornerRadius="8">
                 <Grid.RowDefinitions>
@@ -60,7 +60,8 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid x:Name="Tab0">
+                <Grid x:Name="Tab0"
+                      Grid.RowSpan="2">
                     <Border x:Name="EmojisPanel">
                         <drawers:EmojiDrawer x:Name="EmojisRoot"
                                              x:Load="False"
@@ -76,7 +77,8 @@
                                Style="{StaticResource BodyTextBlockStyle}" />
                 </Grid>
 
-                <Grid x:Name="Tab1">
+                <Grid x:Name="Tab1"
+                      Grid.RowSpan="2">
                     <Border x:Name="AnimationsPanel">
                         <drawers:AnimationDrawer x:Name="AnimationsRoot"
                                                  x:Load="False"
@@ -91,7 +93,8 @@
                                Style="{StaticResource BodyTextBlockStyle}" />
                 </Grid>
 
-                <Grid x:Name="Tab2">
+                <Grid x:Name="Tab2"
+                      Grid.RowSpan="2">
                     <Border x:Name="StickersPanel">
                         <drawers:StickerDrawer x:Name="StickersRoot"
                                                x:Load="False"
@@ -107,74 +110,100 @@
                 </Grid>
 
                 <Grid x:Name="Header"
+                      Margin="0,0,0,4"
                       Grid.Row="1">
-                    <Border x:Name="HeaderSeparator" />
-                    <controls:TopNavView x:Name="Navigation"
-                                         SelectionChanged="OnSelectionChanged"
-                                         HorizontalAlignment="Center"
-                                         Height="40">
-                        <controls:TopNavView.ItemContainerStyle>
-                            <Style TargetType="controls:TopNavViewItem">
-                                <Setter Property="HorizontalAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="VerticalAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Center" />
-                                <Setter Property="VerticalContentAlignment"
-                                        Value="Center" />
-                                <Setter Property="UseSystemFocusVisuals"
-                                        Value="True" />
-                                <Setter Property="FocusVisualMargin"
-                                        Value="-3,5" />
-                                <Setter Property="CornerRadius"
-                                        Value="12" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="controls:TopNavViewItem">
-                                            <Grid x:Name="ContentBorder"
-                                                  Background="Transparent">
-                                                <ContentPresenter x:Name="ContentPresenter"
-                                                                  Grid.Column="1"
-                                                                  Margin="12,5,12,6"
-                                                                  TextWrapping="NoWrap"
-                                                                  Foreground="{TemplateBinding Foreground}"
-                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                  Content="{TemplateBinding Content}"
-                                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                  ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                                                  VerticalAlignment="Center"
-                                                                  AutomationProperties.AccessibilityView="Raw"
-                                                                  Canvas.ZIndex="1" />
-                                                <Grid x:Name="SelectionIndicatorGrid"
-                                                      Margin="0,8,0,8"
-                                                      HorizontalAlignment="Stretch"
-                                                      VerticalAlignment="Stretch">
-                                                    <Rectangle x:Name="SelectionIndicator"
-                                                               Fill="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
-                                                               Opacity="0"
-                                                               RadiusX="12"
-                                                               RadiusY="12" />
+                    <Grid HorizontalAlignment="Center">
+                        <Border x:Name="NavigationShadow"
+                                CornerRadius="18" />
+                        <controls:TopNavView x:Name="Navigation"
+                                             SelectionChanged="OnSelectionChanged"
+                                             BackgroundSizing="InnerBorderEdge"
+                                             Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
+                                             BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+                                             BorderThickness="1"
+                                             CornerRadius="18"
+                                             HorizontalAlignment="Center"
+                                             Height="36">
+                            <controls:TopNavView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="6,0" />
+                                </ItemsPanelTemplate>
+                            </controls:TopNavView.ItemsPanel>
+                            <controls:TopNavView.ItemContainerStyle>
+                                <Style TargetType="controls:TopNavViewItem">
+                                    <Setter Property="HorizontalAlignment"
+                                            Value="Stretch" />
+                                    <Setter Property="VerticalAlignment"
+                                            Value="Stretch" />
+                                    <Setter Property="HorizontalContentAlignment"
+                                            Value="Center" />
+                                    <Setter Property="VerticalContentAlignment"
+                                            Value="Center" />
+                                    <Setter Property="UseSystemFocusVisuals"
+                                            Value="True" />
+                                    <Setter Property="FocusVisualMargin"
+                                            Value="-3,5" />
+                                    <Setter Property="CornerRadius"
+                                            Value="12" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="controls:TopNavViewItem">
+                                                <Grid x:Name="ContentBorder"
+                                                      Background="Transparent">
+                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                                      Grid.Column="1"
+                                                                      Margin="12,5,12,6"
+                                                                      TextWrapping="NoWrap"
+                                                                      Foreground="{TemplateBinding Foreground}"
+                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                                      VerticalAlignment="Center"
+                                                                      AutomationProperties.AccessibilityView="Raw"
+                                                                      Canvas.ZIndex="1" />
+                                                    <Grid x:Name="SelectionIndicatorGrid"
+                                                          Margin="0,8,0,8"
+                                                          HorizontalAlignment="Stretch"
+                                                          VerticalAlignment="Stretch">
+                                                        <Rectangle x:Name="SelectionIndicator"
+                                                                   Fill="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                                                                   Opacity="0"
+                                                                   RadiusX="12"
+                                                                   RadiusY="12" />
+                                                    </Grid>
                                                 </Grid>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </controls:TopNavView.ItemContainerStyle>
-                        <controls:TopNavViewItem Content="{CustomResource Emoji}" />
-                        <controls:TopNavViewItem Content="{CustomResource AccDescrGIFs}" />
-                        <controls:TopNavViewItem Content="{CustomResource AccDescrStickers}" />
-                    </controls:TopNavView>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </controls:TopNavView.ItemContainerStyle>
+                            <controls:TopNavViewItem Content="{CustomResource Emoji}" />
+                            <controls:TopNavViewItem Content="{CustomResource AccDescrGIFs}" />
+                            <controls:TopNavViewItem Content="{CustomResource AccDescrStickers}" />
+                        </controls:TopNavView>
+                    </Grid>
 
-                    <controls:GlyphButton x:Name="Settings"
-                                          AutomationProperties.Name="{CustomResource Settings}"
-                                          Click="Settings_Click"
-                                          HorizontalAlignment="Right"
-                                          Width="40"
-                                          Height="40"
-                                          Glyph="&#xE713;" />
+                    <Grid HorizontalAlignment="Right"
+                          Margin="0,0,8,0">
+                        <Border x:Name="SettingsShadow"
+                                BackgroundSizing="InnerBorderEdge"
+                                Background="{ThemeResource MenuFlyoutPresenterInAppBackground}"
+                                BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="18" />
+                        <controls:GlyphButton x:Name="Settings"
+                                              AutomationProperties.Name="{CustomResource Settings}"
+                                              Click="Settings_Click"
+                                              HorizontalAlignment="Right"
+                                              Width="36"
+                                              Height="36"
+                                              Glyph="&#xE713;"
+                                              CornerRadius="18"
+                                              Padding="0" />
+                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

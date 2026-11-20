@@ -106,9 +106,6 @@ namespace Telegram.Controls.Drawers
 
             this.CreateInsetClip();
 
-            var header = VisualUtilities.DropShadow(Separator);
-            header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
-
             _handler = new AnimatedListHandler(List, AnimatedListType.Emoji);
             _toolbarHandler = new AnimatedListHandler(Toolbar2, AnimatedListType.Emoji);
 
@@ -140,9 +137,9 @@ namespace Telegram.Controls.Drawers
 
                 if (mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.ShareTheme)
                 {
-                    List.Padding = new Thickness(8, 0, 0, 0);
-                    List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
-                    List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 8, 0)));
+                    //List.Padding = new Thickness(8, 0, 0, 0);
+                    //List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
+                    //List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 8, 0)));
 
                     var trigger = new FixedGridViewTrigger { ItemLength = 36 };
                     trigger.Activated += FluidGridViewTrigger_Activated;

@@ -73,6 +73,7 @@
         <GridView x:Name="List"
                   ItemsSource="{x:Bind EmojiCollection.View, Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
+                  common:FluidGridView.Padding="0,0,4,0"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ChoosingGroupHeaderContainer="OnChoosingGroupHeaderContainer"
                   ContainerContentChanging="OnContainerContentChanging"
@@ -80,6 +81,7 @@
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   Loaded="OnLoaded"
+                  Padding="8,0,0,44"
                   Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger Activated="FluidGridViewTrigger_Activated"
@@ -92,7 +94,7 @@
                                              PlaceholderText="{CustomResource Search}"
                                              TextChanged="SearchField_TextChanged"
                                              CategorySelected="SearchField_CategorySelected"
-                                             Margin="12,8,12,8" />
+                                             Margin="0,8,8,8" />
 
                     <Grid x:Name="DefaultIcon"
                           HorizontalAlignment="Left"
@@ -137,6 +139,8 @@
                             Value="0" />
                     <Setter Property="MinHeight"
                             Value="0" />
+                    <Setter Property="Margin"
+                            Value="0,0,4,4" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="GridViewItem">
@@ -187,7 +191,7 @@
                             <Setter Property="Margin"
                                     Value="0,0,0,0" />
                             <Setter Property="Padding"
-                                    Value="10,0,10,0" />
+                                    Value="2,0,8,0" />
                             <Setter Property="HorizontalContentAlignment"
                                     Value="Stretch" />
                             <Setter Property="VerticalContentAlignment"
@@ -230,7 +234,9 @@
         </GridView>
 
         <Grid x:Name="ToolbarContainer">
-            <Border x:Name="Separator" />
+            <Border x:Name="Separator"
+                    BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+                    BorderThickness="0,0,0,1" />
 
             <GridView x:Name="Toolbar2"
                       ItemsSource="{x:Bind ViewModel.InstalledSets}"

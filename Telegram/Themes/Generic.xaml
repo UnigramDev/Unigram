@@ -3527,7 +3527,8 @@
                                  Style="{StaticResource NoDeleteTextBoxStyle}"
                                  Background="{ThemeResource TextControlBackgroundPointerOver}"
                                  BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                 Padding="36,5,6,6" />
+                                 Padding="36,5,6,6"
+                                 CornerRadius="16" />
 
                         <local:AnimatedGlyphToggleButton x:Name="SearchButton"
                                                          Grid.Row="1"
@@ -3538,6 +3539,7 @@
                                                          IsTabStop="False"
                                                          Width="38"
                                                          Height="32"
+                                                         CornerRadius="12"
                                                          HorizontalAlignment="Left"
                                                          VerticalAlignment="Center"
                                                          AutomationProperties.AccessibilityView="Raw" />
@@ -4825,6 +4827,7 @@
                     <Grid CornerRadius="{TemplateBinding CornerRadius}">
                         <Border BorderBrush="{TemplateBinding BorderBrush}"
                                 Background="{TemplateBinding Background}"
+                                BackgroundSizing="{TemplateBinding BackgroundSizing}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}" />
                         <ScrollViewer x:Name="ScrollViewer"

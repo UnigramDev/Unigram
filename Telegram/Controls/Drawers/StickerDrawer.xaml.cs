@@ -64,9 +64,6 @@ namespace Telegram.Controls.Drawers
 
             this.CreateInsetClip();
 
-            var header = VisualUtilities.DropShadow(Separator);
-            header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
-
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
             _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);
 

@@ -21,13 +21,13 @@
         <GridView x:Name="List"
                   ItemsSource="{x:Bind ConvertItems(ViewModel.Items), Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
-                  common:FluidGridView.Padding="0,0,2,0"
+                  common:FluidGridView.Padding="0,0,6,0"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ItemClick="OnItemClick"
-                  Padding="2,0,0,0"
+                  Padding="8,0,0,42"
                   Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="3" />
@@ -38,7 +38,7 @@
                                          PlaceholderText="{CustomResource Search}"
                                          TextChanged="SearchField_TextChanged"
                                          CategorySelected="SearchField_CategorySelected"
-                                         Margin="10,8,12,8" />
+                                         Margin="0,8,8,6" />
             </GridView.Header>
             <GridView.ItemTemplate>
                 <DataTemplate>
@@ -55,14 +55,11 @@
                     </Border>
                 </DataTemplate>
             </GridView.ItemTemplate>
-            <GridView.Footer>
-                <Border Height="12" />
-            </GridView.Footer>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"
                        BasedOn="{StaticResource DefaultGridViewItemStyle}">
                     <Setter Property="Margin"
-                            Value="0,0,2,2" />
+                            Value="0,2,2,0" />
                     <Setter Property="Padding"
                             Value="0" />
                     <Setter Property="HorizontalContentAlignment"
@@ -84,7 +81,9 @@
         </GridView>
 
         <Grid x:Name="ToolbarContainer">
-            <Border x:Name="Separator" />
+            <Border x:Name="Separator"
+                    BorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}"
+                    BorderThickness="0,0,0,1" />
             <!--
                     Background="{ThemeResource PageSubHeaderBackgroundBrush}"-->
             <GridView x:Name="Toolbar"

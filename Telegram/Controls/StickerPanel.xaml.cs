@@ -68,9 +68,6 @@ namespace Telegram.Controls
         {
             InitializeComponent();
 
-            var header = VisualUtilities.DropShadow(HeaderSeparator);
-            header.Clip = header.Compositor.CreateInsetClip(0, -40, 0, 40);
-
             _deactivateTimer.Tick += Deactivate_Tick;
             _shadow = new ThemeShadowEx(ShadowElement, 32);
 
