@@ -27,6 +27,8 @@ using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -61,6 +63,7 @@ namespace Telegram.Views.Stars.Popups
         private readonly ProfileGiftsTabViewModel _profile;
 
         private TaskCompletionSource<long> _resaleStarCount;
+        private bool _resaleShown;
 
         private TaskCompletionSource<UpgradedGiftValueInfo> _valueInfo;
 
@@ -128,6 +131,9 @@ namespace Telegram.Views.Stars.Popups
             {
                 InitializeValue(upgraded.Gift);
                 InitializeUpgraded(clientService, gift, upgraded.Gift);
+
+                // The sale price depends on the subtitle InitializeUpgraded has just decided on.
+                UpdateVisibility();
             }
         }
 
@@ -144,7 +150,7 @@ namespace Telegram.Views.Stars.Popups
                 && IsOwned(_clientService, hosted.Gift.HostId);
         }
 
-        private void UpdateVisibility()
+        private void UpdateVisibility(bool animate = false)
         {
             var upgraded = (_gift?.Gift as SentGiftUpgraded)?.Gift;
             var details = _page == GiftPage.Details;
@@ -172,7 +178,8 @@ namespace Telegram.Views.Stars.Popups
             UpgradedRoot.Visibility = upgraded != null ? Visibility.Visible : Visibility.Collapsed;
 
             Ribbon.Visibility = details && upgraded?.IsCrafted is true ? Visibility.Visible : Visibility.Collapsed;
-            ResaleStarCountRoot.Visibility = details && upgraded?.ResaleParameters != null ? Visibility.Visible : Visibility.Collapsed;
+            // The price takes the subtitle's place, so a gift whose header has no subtitle shows none.
+            ShowResalePrice(details && upgraded?.ResaleParameters != null && UpgradedSubtitle.Visibility == Visibility.Visible, animate);
             MoreButton.Visibility = details && (upgraded != null || CanToggleSaved || _gift?.CanBeDeleted is true || ProfileOwner != null) ? Visibility.Visible : Visibility.Collapsed;
             MoreButton.RequestedTheme = upgradedHeader ? ElementTheme.Dark : ElementTheme.Default;
         }
@@ -483,9 +490,20 @@ namespace Telegram.Views.Stars.Popups
 
             UpgradedHeader.Update(clientService, gift);
             UpgradedAnimatedPhoto.Source = DelayedFileSource.FromSticker(clientService, gift.Model.Sticker);
-            UpgradedTitle.Text = gift.Title;
+            UpgradedTitle.Inlines.Clear();
+            UpgradedTitle.Inlines.Add(new Run { Text = gift.Title + " " });
+            UpgradedTitle.Inlines.Add(new Run
+            {
+                Text = "#" + gift.Number.ToString("N0"),
+                FontSize = UpgradedTitle.FontSize * 0.85,
+                Foreground = new SolidColorBrush(Color.FromArgb(0xBE, 0xFF, 0xFF, 0xFF))
+            });
 
             Ribbon.Text = Strings.GiftCrafted;
+            ResaleStarCountRoot.Background = new SolidColorBrush(QrShareColors.Mix(gift.Backdrop.Colors.EdgeColor.ToColor(), gift.Backdrop.Colors.SymbolColor.ToColor(), 0.25f));
+
+            // TDLib still names a private gift's sender to its receiver; the header leaves it out for everyone.
+            var from = _fromMessage && !receivedGift.IsPrivate ? receivedGift.SenderId : null;
 
             if (clientService.TryGetChat(gift.PublisherChatId, out Chat publisherChat)
                 && clientService.TryGetSupergroup(publisherChat, out Supergroup publisher)
@@ -498,18 +516,22 @@ namespace Telegram.Views.Stars.Popups
             else
             {
                 UpgradedPublisher.Visibility = Visibility.Collapsed;
-                UpgradedSubtitle.Visibility = Visibility.Visible;
-                UpgradedSubtitle.Text = Locale.Declension(Strings.R.Gift2CollectionNumber, gift.Number);
-            }
 
-            // TDLib still names a private gift's sender to its receiver; the header leaves it out for everyone.
-            var from = _fromMessage && !receivedGift.IsPrivate ? receivedGift.SenderId : null;
-
-            if (from != null && UpgradedPublisher.Visibility == Visibility.Collapsed)
-            {
-                // The subtitle no longer carries the number, so the title does.
-                UpgradedTitle.Text = gift.ToName();
-                TextBlockHelper.SetMarkdown(UpgradedSubtitle, string.Format(Strings.UniqueGiftFrom, clientService.GetTitle(from, true)));
+                if (from != null)
+                {
+                    UpgradedSubtitle.Visibility = Visibility.Visible;
+                    TextBlockHelper.SetMarkdown(UpgradedSubtitle, string.Format(Strings.UniqueGiftFrom, clientService.GetTitle(from, true)));
+                }
+                else if (gift.PublisherChatId == 0)
+                {
+                    UpgradedSubtitle.Visibility = Visibility.Visible;
+                    UpgradedSubtitle.Text = gift.Model.Name;
+                }
+                else
+                {
+                    // A publisher without a public username gets no line, and no subtitle either.
+                    UpgradedSubtitle.Visibility = Visibility.Collapsed;
+                }
             }
 
             if (_fromMessage && receivedGift.Text?.Text.Length > 0)
@@ -1739,7 +1761,7 @@ namespace Telegram.Views.Stars.Popups
 
                         _aggregator.Publish(new UpdateGiftUpgraded(_gift.ReceivedGiftId, _gift.ReceivedGiftId, _gift));
 
-                        UpdateVisibility();
+                        UpdateVisibility(true);
 
                         ResellButton.Glyph = Icons.TagFilled;
                         ResellButton.Content = Strings.Gift2ActionResell;
@@ -1796,8 +1818,8 @@ namespace Telegram.Views.Stars.Popups
 
                 _aggregator.Publish(new UpdateGiftUpgraded(_gift.ReceivedGiftId, _gift.ReceivedGiftId, _gift));
 
-                UpdateVisibility();
                 UpdateResalePrice(upgraded.Gift.ResaleParameters);
+                UpdateVisibility(true);
 
                 ResellButton.Glyph = Icons.TagOffFilled;
                 ResellButton.Content = Strings.Gift2ActionUnlist;
@@ -1824,9 +1846,92 @@ namespace Telegram.Views.Stars.Popups
         private void UpdateResalePrice(GiftResaleParameters parameters)
         {
             // The glyphs are drawn for Segoe UI's baseline, so they go inline rather than beside the text.
-            ResaleStarCount.Text = parameters.GramOnly
+            ResaleStarCount.Text = string.Format(Strings.GiftOnSale, parameters.GramOnly
                 ? Icons.Gram14 + " " + TransferGiftPopup.FormatGram(parameters.GramCentCount)
-                : Icons.Star14 + " " + parameters.StarCount.ToString("N0");
+                : Icons.Star14 + " " + parameters.StarCount.ToString("N0"));
+        }
+
+        private void ShowResalePrice(bool show, bool animate)
+        {
+            var price = ElementComposition.GetElementVisual(ResaleStarCountRoot);
+            var subtitle = ElementComposition.GetElementVisual(UpgradedSubtitle);
+
+            if (!animate)
+            {
+                _resaleShown = show;
+
+                price.StopAnimation("Scale");
+                price.StopAnimation("Opacity");
+                subtitle.StopAnimation("Opacity");
+
+                price.Scale = Vector3.One;
+                price.Opacity = 1;
+                subtitle.Opacity = show ? 0 : 1;
+
+                ResaleStarCountRoot.IsHitTestVisible = show;
+                ResaleStarCountRoot.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                return;
+            }
+            else if (show == _resaleShown)
+            {
+                return;
+            }
+
+            _resaleShown = show;
+
+            if (show && ResaleStarCountRoot.Visibility == Visibility.Collapsed)
+            {
+                price.Scale = new Vector3(0.4f, 0.4f, 1);
+                price.Opacity = 0;
+                ResaleStarCountRoot.Visibility = Visibility.Visible;
+            }
+
+            ResaleStarCountRoot.IsHitTestVisible = show;
+
+            var compositor = price.Compositor;
+            var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(.23f, 1), new Vector2(.32f, 1));
+            var duration = TimeSpan.FromMilliseconds(420);
+
+            // The pill is collapsed until now, so its size is only known once it is laid out.
+            price.StartAnimation("CenterPoint", compositor.CreateExpressionAnimation("Vector3(this.Target.Size.X * 0.5, this.Target.Size.Y * 0.5, 0)"));
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertExpressionKeyFrame(0, "this.StartingValue");
+            scale.InsertKeyFrame(1, show ? Vector3.One : new Vector3(0.4f, 0.4f, 1), easing);
+            scale.Duration = duration;
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertExpressionKeyFrame(0, "this.StartingValue");
+            opacity.InsertKeyFrame(1, show ? 1 : 0, easing);
+            opacity.Duration = duration;
+
+            var fade = compositor.CreateScalarKeyFrameAnimation();
+            fade.InsertExpressionKeyFrame(0, "this.StartingValue");
+            fade.InsertKeyFrame(1, show ? 0 : 1, easing);
+            fade.Duration = duration;
+
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += ResalePrice_Completed;
+
+            price.StartAnimation("Scale", scale);
+            price.StartAnimation("Opacity", opacity);
+            subtitle.StartAnimation("Opacity", fade);
+
+            batch.End();
+        }
+
+        private void ResalePrice_Completed(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (sender is CompositionScopedBatch batch)
+            {
+                batch.Completed -= ResalePrice_Completed;
+            }
+
+            // A show that started while this hide was running interrupts it, and keeps the pill.
+            if (!_resaleShown)
+            {
+                ResaleStarCountRoot.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Transfer()

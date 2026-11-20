@@ -106,6 +106,27 @@
                                                Margin="24,0,24,8"
                                                Grid.Row="1" />
 
+                                    <Grid x:Name="ResaleStarCountRoot"
+                                          Tapped="ResaleStarCountRoot_Tapped"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Height="20"
+                                          CornerRadius="10"
+                                          Margin="24,0,24,8"
+                                          Padding="8,0"
+                                          Visibility="Collapsed"
+                                          Grid.Row="1">
+                                        <TextBlock x:Name="ResaleStarCount"
+                                                   Foreground="#FFFFFF"
+                                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                   FontWeight="SemiBold"
+                                                   Typography.NumeralAlignment="Tabular"
+                                                   TextWrapping="NoWrap"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,0,1" />
+                                    </Grid>
+
                                     <Grid x:Name="UpgradedMessage"
                                           ColumnSpacing="4"
                                           HorizontalAlignment="Center"
@@ -270,26 +291,6 @@
                                                      Visibility="Collapsed" />
                         </Grid>
                     </controls:PatternBackground>
-
-                    <Grid x:Name="ResaleStarCountRoot"
-                          Tapped="ResaleStarCountRoot_Tapped"
-                          Background="{ThemeResource MessageServiceBackgroundBrush}"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
-                          Height="24"
-                          CornerRadius="12"
-                          Margin="8,8,0,0"
-                          Padding="8,0"
-                          Visibility="Collapsed">
-                        <TextBlock x:Name="ResaleStarCount"
-                                   Foreground="#FFFFFF"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                   FontWeight="SemiBold"
-                                   Typography.NumeralAlignment="Tabular"
-                                   VerticalAlignment="Center"
-                                   Margin="0,1,0,2" />
-                    </Grid>
 
                     <controls:Ribbon x:Name="Ribbon"
                                      Background="{StaticResource MessageServiceBackgroundBrush}"

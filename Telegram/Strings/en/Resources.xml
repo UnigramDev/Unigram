@@ -13088,6 +13088,7 @@
     <string name="GiftValueMinPriceInfo">**{0}** is the floor price for **{1}** gifts listed on Telegram and Fragment.</string>
     <string name="GiftValueOnSaleFragment">for sale on Fragment &gt;</string>
     <string name="GiftValueOnSaleTelegram">for sale on Telegram &gt;</string>
+    <string name="GiftOnSale">On sale for {0}</string>
 
     <string name="BotCantJoinGroups">This bot can\'t join groups.</string>
 
