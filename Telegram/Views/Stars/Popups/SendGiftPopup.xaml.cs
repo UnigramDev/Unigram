@@ -142,7 +142,9 @@ namespace Telegram.Views.Stars.Popups
             InitializeGiftsForResale();
         }
 
-        private long StarCount => _gift.StarCount + (Upgradeable.IsChecked is true ? _gift.UpgradeStarCount : 0);
+        private long StarCount => _gift != null
+            ? _gift.StarCount + (Upgradeable.IsChecked is true ? _gift.UpgradeStarCount : 0)
+            : _option.StarCount;
 
         private StackPanel _primaryContent;
         private TextBlock _primaryText;
@@ -268,7 +270,39 @@ namespace Telegram.Views.Stars.Popups
                 CaptionInfo.Text = string.Format(Strings.Gift2MessagePremiumInfo, user.FirstName);
             }
 
-            PrimaryButtonText = string.Format(Strings.Gift2SendPremium, Formatter.FormatAmount(option.Amount, option.Currency));
+            if (option.StarCount > 0)
+            {
+                PayWithStarsRoot.Visibility = Visibility.Visible;
+                PayWithStarsText.Text = string.Format(Strings.Gift2MessageStars.ReplaceStar(Icons.Premium), option.StarCount.ToString("N0"));
+                UpdateStarsBalance();
+            }
+
+            PrimaryButtonText = GetPremiumButtonText();
+        }
+
+        private bool PayInStars => _option.StarCount > 0 && PayWithStars.IsChecked is true;
+
+        private string GetPremiumButtonText()
+        {
+            return PayInStars
+                ? string.Format(Strings.Gift2SendPremiumStars.ReplaceStar(Icons.Premium), _option.StarCount.ToString("N0"))
+                : string.Format(Strings.Gift2SendPremium, Formatter.FormatAmount(_option.Amount, _option.Currency));
+        }
+
+        private void UpdateStarsBalance()
+        {
+            PayWithStarsInfo.Text = string.Format(Strings.Gift2MessageStarsInfo.ReplaceStar(Icons.Premium), _clientService.OwnedStarCount.ToValue()) + " " + Strings.Gift2MessageStarsInfoLink;
+        }
+
+        private async void PayWithStarsInfo_Click(object sender, TextUrlClickEventArgs e)
+        {
+            // BuyPopup is a ContentPopup, which does not open over this one.
+            Hide();
+
+            await _navigationService.ShowPopupAsync(new BuyPopup(), new BuyStarsArgs());
+            await this.ShowQueuedAsync(XamlRoot);
+
+            UpdateStarsBalance();
         }
 
         private void OnContentChanged(object sender, EventArgs e)
@@ -289,9 +323,11 @@ namespace Telegram.Views.Stars.Popups
             }
             else if (_option != null && _receiverId is MessageSenderUser user)
             {
-                content = new MessageGiftedPremium(_clientService.Options.MyId, user.UserId, text, _option.Currency, _option.Amount, string.Empty, 0, _option.MonthCount, 0, _option.Sticker);
+                content = PayInStars
+                    ? new MessageGiftedPremium(_clientService.Options.MyId, user.UserId, text, "XTR", _option.StarCount, string.Empty, 0, _option.MonthCount, 0, _option.Sticker)
+                    : new MessageGiftedPremium(_clientService.Options.MyId, user.UserId, text, _option.Currency, _option.Amount, string.Empty, 0, _option.MonthCount, 0, _option.Sticker);
 
-                PrimaryButtonText = string.Format(Strings.Gift2SendPremium, Formatter.FormatAmount(_option.Amount, _option.Currency));
+                PrimaryButtonText = GetPremiumButtonText();
             }
             else
             {
@@ -382,13 +418,44 @@ namespace Telegram.Views.Stars.Popups
             return Task.FromResult(PayResult.Failed);
         }
 
-        public Task<PayResult> SubmitGiftCodeAsync()
+        public async Task<PayResult> SubmitGiftCodeAsync()
         {
             var text = CaptionInput.GetFormattedText();
             var user = _receiverId as MessageSenderUser;
 
-            _navigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposePremiumGift(_option.Currency, _option.Amount, user.UserId, _option.MonthCount, text)));
-            return Task.FromResult(PayResult.Succeeded);
+            if (PayInStars is false)
+            {
+                _navigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposePremiumGift(_option.Currency, _option.Amount, user.UserId, _option.MonthCount, text)));
+                return PayResult.Succeeded;
+            }
+
+            // The same purpose in XTR is paid from the balance, without the checkout window.
+            var invoice = new InputInvoiceTelegram(new TelegramPaymentPurposePremiumGift("XTR", _option.StarCount, user.UserId, _option.MonthCount, text));
+
+            var form = await _clientService.SendAsync(new GetPaymentForm(invoice, null));
+            if (form is PaymentForm paymentForm && paymentForm.Type is PaymentFormTypeStars stars)
+            {
+                var response = await _clientService.SendPaymentAsync(stars.StarCount, new SendPaymentForm(invoice, paymentForm.Id, string.Empty, string.Empty, null, 0));
+                if (response is PaymentResult { Success: true })
+                {
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.StarsGiftCompleted, Locale.Declension(Strings.R.StarsGiftCompletedText, stars.StarCount)), DelayedFileSource.FromSticker(_clientService, _option.Sticker));
+                    return PayResult.Succeeded;
+                }
+                else if (response is ErrorStarsNeeded)
+                {
+                    return PayResult.StarsNeeded;
+                }
+                else if (response is Error error)
+                {
+                    ToastPopup.ShowError(XamlRoot, error);
+                }
+            }
+            else if (form is Error error)
+            {
+                ToastPopup.ShowError(XamlRoot, error);
+            }
+
+            return PayResult.Failed;
         }
 
         public async Task<PayResult> SubmitGiftAsync()

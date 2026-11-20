@@ -21,12 +21,13 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Border Background="{ThemeResource SettingsItemBackground}"
                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"
                 BorderThickness="1"
                 CornerRadius="4"
-                Grid.RowSpan="4" />
+                Grid.RowSpan="5" />
 
         <controls:AnimatedImage x:Name="Animated"
                                 Width="96"
@@ -64,6 +65,16 @@
                        Margin="8,1,8,2"
                        Grid.Column="1" />
         </Grid>
+
+        <TextBlock x:Name="StarPrice"
+                   Foreground="{StaticResource MessageReactionPaidForegroundBrush}"
+                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                   FontSize="11"
+                   TextAlignment="Center"
+                   Visibility="Collapsed"
+                   Margin="0,-8,0,8"
+                   Grid.Row="4"><Run x:Name="StarPricePrefix" /><Run x:Name="StarPriceValue"
+                                                                 FontWeight="SemiBold" /><Run x:Name="StarPriceSuffix" /></TextBlock>
 
         <controls:Ribbon x:Name="Ribbon"
                          Background="{StaticResource PremiumLinearGradientBrush}"

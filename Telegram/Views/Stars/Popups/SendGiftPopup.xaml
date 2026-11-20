@@ -149,6 +149,22 @@
                                              Margin="24,0,24,8" />
                 </StackPanel>
 
+                <StackPanel x:Name="PayWithStarsRoot"
+                            Visibility="Collapsed">
+                    <CheckBox x:Name="PayWithStars"
+                              Checked="OnTextChanged"
+                              Unchecked="OnTextChanged"
+                              Margin="24,0,24,0">
+                        <TextBlock x:Name="PayWithStarsText"
+                                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                   TextWrapping="Wrap" />
+                    </CheckBox>
+                    <controls:SettingsFooter x:Name="PayWithStarsInfo"
+                                             Click="PayWithStarsInfo_Click"
+                                             IsLink="True"
+                                             Margin="24,0,24,24" />
+                </StackPanel>
+
                 <StackPanel x:Name="HideMyNameRoot">
                     <CheckBox x:Name="HideMyName"
                               Content="{CustomResource Gift2Hide}"

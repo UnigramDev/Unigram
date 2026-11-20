@@ -391,7 +391,13 @@ namespace Telegram.Views.Premium.Popups
                     var response = await _clientService.SendAsync(new CanSendGift(availableGift.Gift.Id));
                     if (response is CanSendGiftResultFail fail)
                     {
-                        _navigationService.ShowPopup(fail.Reason, Strings.GiftLocked, Strings.OK);
+                        var popup = MessagePopup.Create(Strings.GiftLocked, Strings.OK);
+                        popup.FormattedMessage = fail.Reason;
+                        popup.LinkClick += OnLockedLinkClick;
+
+                        await _navigationService.ShowPopupAsync(popup);
+
+                        popup.LinkClick -= OnLockedLinkClick;
                         return;
                     }
                     else if (response is Error error)
@@ -417,6 +423,18 @@ namespace Telegram.Views.Premium.Popups
             {
                 Hide();
             }
+        }
+
+        private void OnLockedLinkClick(object sender, TextUrlClickEventArgs e)
+        {
+            // Wherever the reason links to opens under the popups, so both close first.
+            if (sender is MessagePopup popup)
+            {
+                popup.Hide();
+            }
+
+            Hide();
+            MessageHelper.OpenUrl(_clientService, _navigationService, e.Url);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

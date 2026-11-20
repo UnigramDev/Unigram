@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -44,6 +45,24 @@ namespace Telegram.Controls
         {
             get => TextBlockHelper.GetFormattedText(MessageLabel);
             set => TextBlockHelper.SetFormattedText(MessageLabel, value);
+        }
+
+        /// <summary>
+        /// Raised in place of opening a link in the message, when anything subscribes.
+        /// </summary>
+        public event EventHandler<TextUrlClickEventArgs> LinkClick;
+
+        // Used by TextBlockHelper
+        public bool OnLinkClick(string url)
+        {
+            var handler = LinkClick;
+            if (handler != null)
+            {
+                handler(this, new TextUrlClickEventArgs(url));
+                return true;
+            }
+
+            return false;
         }
 
         public object CheckBoxLabel

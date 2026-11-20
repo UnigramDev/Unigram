@@ -5292,6 +5292,7 @@
 
 
     <string name="GiftPremiumOptionDiscount">-{0}%</string>
+    <string name="PremiumOrStarsPrice">or &#11088;&#65039; {0}</string>
     <string name="PricePerMonth">{0} / month</string>
     <string name="PricePerMonthMe">{0}/month</string>
     <string name="PricePerYear">{0}/year</string>
@@ -11467,6 +11468,8 @@
 
     <string name="Gift2MessageOptional">Enter Message (Optional)</string>
     <string name="Gift2MessagePremiumInfo">Only {0} will see your message.</string>
+    <string name="Gift2MessageStars">Pay with &#11088;&#65039;{0}</string>
+    <string name="Gift2SendPremiumStars">Send a Gift for &#11088;&#65039;{0}</string>
     <string name="Gift2SendPremium">Send a Gift for {0}</string>
 
     <string name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural">**{0}** has gifted you a {1} subscription to Telegram Premium.</string>

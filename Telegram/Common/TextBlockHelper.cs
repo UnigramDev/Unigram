@@ -458,7 +458,11 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    MessageHelper.OpenUrl(clientService, navigationService, data);
+                    var popup = sender.GetParent<MessagePopup>();
+                    if (popup == null || !popup.OnLinkClick(data))
+                    {
+                        MessageHelper.OpenUrl(clientService, navigationService, data);
+                    }
                 }
             }
             else if (type is TextEntityTypeMention)
@@ -491,6 +495,12 @@ namespace Telegram.Common
 
                 var info = sender.GetParent<PopupInfo>();
                 if (info != null && info.OnClick(data))
+                {
+                    return;
+                }
+
+                var popup = sender.GetParent<MessagePopup>();
+                if (popup != null && popup.OnLinkClick(data))
                 {
                     return;
                 }

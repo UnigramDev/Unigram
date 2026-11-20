@@ -6,6 +6,7 @@
 //
 
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -32,6 +33,22 @@ namespace Telegram.Controls.Cells
                 Price.Text = Locale.FormatCurrency(option.Amount, option.Currency);
                 PriceRoot.Opacity = 1;
 
+                if (option.StarCount > 0)
+                {
+                    // Split around the number, which is bold, wherever the language puts it.
+                    var format = Strings.PremiumOrStarsPrice.ReplaceStar(Icons.Premium);
+                    var index = format.IndexOf("{0}");
+
+                    StarPricePrefix.Text = index < 0 ? format : format.Substring(0, index);
+                    StarPriceValue.Text = option.StarCount.ToString("N0");
+                    StarPriceSuffix.Text = index < 0 ? string.Empty : format.Substring(index + 3);
+                    StarPrice.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    StarPrice.Visibility = Visibility.Collapsed;
+                }
+
                 if (option.DiscountPercentage > 0)
                 {
                     Ribbon.Visibility = Visibility.Visible;
@@ -45,6 +62,7 @@ namespace Telegram.Controls.Cells
             else
             {
                 PriceRoot.Opacity = 0;
+                StarPrice.Visibility = Visibility.Collapsed;
                 Ribbon.Visibility = Visibility.Collapsed;
             }
         }
