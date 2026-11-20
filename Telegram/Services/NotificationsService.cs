@@ -892,7 +892,7 @@ namespace Telegram.Services
             }
 
             var brief = ChatCell.UpdateBriefLabel(message.Content, message.IsOutgoing, true, out _);
-            var clean = brief.ReplaceSpoilers(false);
+            var clean = ChatCell.RemoveCodes(_clientService, chat, brief).ReplaceSpoilers(false);
 
             var content = ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;
 

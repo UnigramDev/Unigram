@@ -1616,13 +1616,13 @@ namespace Telegram.Controls.Cells
         private static readonly Regex _verificationCodes = new("\\b\\d{5,8}\\b", RegexOptions.Compiled);
         private static readonly Regex _gatewayCodes = new("\\b\\d{4,8}\\b", RegexOptions.Compiled);
 
-        private void UpdateBriefLabel(Chat chat, FormattedText message)
+        public static FormattedText RemoveCodes(IClientService clientService, Chat chat, FormattedText message)
         {
             // Parenthesised: && binds tighter than ||, so the null check only covered the
             // first of the two chats and Match below would have run on a null message.
-            if (message != null && (chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId || chat?.Id == _clientService.Options.VerificationCodesBotChatId))
+            if (message != null && (chat?.Id == clientService.Options.TelegramServiceNotificationsChatId || chat?.Id == clientService.Options.VerificationCodesBotChatId))
             {
-                var pattern = chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId
+                var pattern = chat?.Id == clientService.Options.TelegramServiceNotificationsChatId
                     ? _verificationCodes
                     : _gatewayCodes;
 
@@ -1635,6 +1635,13 @@ namespace Telegram.Controls.Cells
                     message = builder.ToFormattedText();
                 }
             }
+
+            return message;
+        }
+
+        private void UpdateBriefLabel(Chat chat, FormattedText message)
+        {
+            message = RemoveCodes(_clientService, chat, message);
 
             BriefText.SetText(_clientService, message);
             BriefText.SetQuery(string.Empty);
