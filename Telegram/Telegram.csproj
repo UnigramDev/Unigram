@@ -562,6 +562,7 @@
     <Compile Include="Services\Calls\VoipGroupCallEventArgs.cs" />
     <Compile Include="Services\ProxyService.cs" />
     <Compile Include="Services\Updates\UpdateNavigationBar.cs" />
+    <Compile Include="Services\Updates\UpdateWindowTitleDetails.cs" />
     <Compile Include="Services\WebProxyCarrierService.cs" />
     <Compile Include="Services\Settings\ToolTipSettings.cs" />
     <Compile Include="Services\StoreUpdateService.cs" />

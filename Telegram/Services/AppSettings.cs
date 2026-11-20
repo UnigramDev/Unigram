@@ -166,6 +166,13 @@ namespace Telegram.Services
             set => _local.AddOrUpdateValue(ref _isLaunchMinimized, "IsLaunchMinimized", value);
         }
 
+        private static bool? _showWindowTitleDetails;
+        public static bool ShowWindowTitleDetails
+        {
+            get => _showWindowTitleDetails ??= _local.GetValueOrDefault("ShowWindowTitleDetails", true);
+            set => _local.AddOrUpdateValue(ref _showWindowTitleDetails, "ShowWindowTitleDetails", value);
+        }
+
         private static bool? _isAccountsSelectorExpanded;
         public static bool IsAccountsSelectorExpanded
         {

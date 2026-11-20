@@ -531,6 +531,25 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
+        public bool ShowWindowTitleDetails
+        {
+            get => AppSettings.ShowWindowTitleDetails;
+            set
+            {
+                if (AppSettings.ShowWindowTitleDetails != value)
+                {
+                    AppSettings.ShowWindowTitleDetails = value;
+                    RaisePropertyChanged();
+
+                    // Every account's windows show it, and each listens on its own session.
+                    foreach (var session in LifetimeService.Current.Items)
+                    {
+                        session.Aggregator.Publish(new UpdateWindowTitleDetails());
+                    }
+                }
+            }
+        }
+
         public int FontFamily
         {
             get => FontFamilyOptions.FindIndex(x => x.Value == AppSettings.Appearance.FontFamily);

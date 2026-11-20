@@ -287,6 +287,10 @@
                               Content="{CustomResource DockedLayout}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox common:ToggleHelper.IsChecked="{x:Bind ViewModel.ShowWindowTitleDetails, Mode=TwoWay}"
+                              Content="{CustomResource ShowWindowTitleDetails}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <controls:SettingsButton Content="{CustomResource SendByEnter2}"
                                              Glyph="&#xE919;">
                         <controls:SettingsButton.Badge>

@@ -11329,6 +11329,7 @@
     <string name="ShowInChat2">Show in Chat</string>
     <string name="ShowInFolder">Show in Folder</string>
     <string name="ShowTrayIcon">Show Tray Icon</string>
+    <string name="ShowWindowTitleDetails">Show Chat and Unread Count in Window Title</string>
     <string name="Spelling">Spelling</string>
     <string name="SpellingAddToDictionary">Add to Dictionary</string>
     <string name="SpellingIgnoreWord">Ignore word</string>
