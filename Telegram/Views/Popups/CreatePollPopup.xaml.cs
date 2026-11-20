@@ -10,10 +10,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Messages;
+using Telegram.Entities;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -53,7 +55,14 @@ namespace Telegram.Views.Popups
 
             QuestionText.DataContext = _viewModel;
             DescriptionText.DataContext = _viewModel;
+            QuizExplanation.DataContext = _viewModel;
+            DescriptionMedia.ClientService = clientService;
+            DescriptionMedia.NavigationService = navigationService;
+            ExplanationMedia.ClientService = clientService;
+            ExplanationMedia.NavigationService = navigationService;
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(clientService.Session);
+
+            PrimaryButtonClick += OnPrimaryButtonClick;
 
             Title = Strings.NewPoll;
             PrimaryButtonText = Strings.OK;
@@ -61,7 +70,7 @@ namespace Telegram.Views.Popups
 
             Items = new ObservableCollection<PollOptionViewModel>();
             Items.CollectionChanged += Items_CollectionChanged;
-            Items.Add(new PollOptionViewModel(string.Empty, forceQuiz, false, Remove_Click));
+            Items.Add(new PollOptionViewModel(string.Empty, forceQuiz, false));
 
             // After Items: SetText raises ContentChanged at once, and its handler reads them.
             if (question != null)
@@ -119,11 +128,11 @@ namespace Telegram.Views.Popups
                         correct.Add(options.Count);
                     }
 
-                    options.Add(new InputPollOption(item.Text, null));
+                    options.Add(new InputPollOption(item.Text, item.Media?.Input));
                 }
 
                 var description = DescriptionText.GetFormattedText();
-                var media = default(InputPollMedia);
+                var media = DescriptionMedia.Media?.Input;
                 var isAnonymous = IsAnonymous.IsChecked == false;
                 var allowsMultipleAnswers = AllowsMultipleAnswers.IsChecked == true;
                 var allowsRevoting = AllowsRevoting.IsChecked == true;
@@ -147,7 +156,7 @@ namespace Telegram.Views.Popups
                 InputPollType type;
                 if (Quiz.IsChecked == true)
                 {
-                    type = new InputPollTypeQuiz(correct, QuizExplanation.GetFormattedText(), null);
+                    type = new InputPollTypeQuiz(correct, QuizExplanation.GetFormattedText(), ExplanationMedia.Media?.Input);
                 }
                 else
                 {
@@ -195,17 +204,49 @@ namespace Telegram.Views.Popups
         {
             if (Items.Count < _viewModel.ClientService.Options.PollAnswerCountMax && !string.IsNullOrEmpty(AddAnOption.Text))
             {
-                Items.Add(new PollOptionViewModel(AddAnOption.Text, Quiz.IsChecked == true, true, option => Remove_Click(option)));
+                Items.Add(new PollOptionViewModel(AddAnOption.Text, Quiz.IsChecked == true, true));
             }
 
             AddAnOption.IsReadOnly = true;
             AddAnOption.Text = string.Empty;
         }
 
-        private void Remove_Click(PollOptionViewModel option)
+        private async Task<bool> ConfirmRemoveAsync()
         {
-            Items.Remove(option);
-            Focus(Items.Count - 1);
+            var quiz = Quiz.IsChecked == true;
+            var confirm = await _viewModel.ShowPopupNestedAsync(
+                quiz ? Strings.DiscardQuizOptionWithMediaMessage : Strings.DiscardPollOptionWithMediaMessage,
+                quiz ? Strings.DiscardQuizOptionWithMediaAlertTitle : Strings.DiscardPollOptionWithMediaAlertTitle,
+                Strings.Delete,
+                Strings.Cancel,
+                destructive: true);
+
+            return confirm == ContentDialogResult.Primary;
+        }
+
+        private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
+        {
+            // Blank options are left out of the poll, and one with media would take its media
+            // with it without a word.
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].Media != null && string.IsNullOrWhiteSpace(Items[i].Text.Text))
+                {
+                    args.Cancel = true;
+
+                    ToastPopup.Show(XamlRoot, Strings.PollAddTextOrRemoveMedia, ToastPopupIcon.Info);
+                    Focus(i);
+                    return;
+                }
+            }
+        }
+
+        private void OptionMedia_MediaChanged(object sender, EventArgs e)
+        {
+            if (sender is PollMediaButton button && button.Tag is PollOptionViewModel option)
+            {
+                option.Media = button.Media;
+            }
         }
 
         private void Question_ContentChanged(object sender, EventArgs e)
@@ -260,6 +301,13 @@ namespace Telegram.Views.Popups
 
                 text.SetText(option.Text);
 
+                if (text.Parent.GetChild<PollMediaButton>() is PollMediaButton media)
+                {
+                    media.Tag = option;
+                    media.ClientService = _viewModel.ClientService;
+                    media.Media = option.Media;
+                }
+
                 if (option.FocusOnLoaded)
                 {
                     text.MoveCaretToEnd();
@@ -281,21 +329,13 @@ namespace Telegram.Views.Popups
             {
                 e.Handled = true;
 
-                var index = Items.IndexOf(option);
-                if (index > 0)
+                if (option.Media != null)
                 {
-                    Focus(index - 1);
-                }
-                else if (index < Items.Count - 1)
-                {
-                    Focus(1);
-                }
-                else
-                {
-                    AddAnOption.Focus(FocusState.Keyboard);
+                    RemoveWithMedia(option);
+                    return;
                 }
 
-                Items.Remove(option);
+                RemoveFromKeyboard(option);
             }
             else if (e.Key == Windows.System.VirtualKey.Enter)
             {
@@ -311,6 +351,38 @@ namespace Telegram.Views.Popups
                     AddAnOption.Focus(FocusState.Keyboard);
                 }
             }
+        }
+
+        private async void RemoveWithMedia(PollOptionViewModel option)
+        {
+            if (await ConfirmRemoveAsync())
+            {
+                RemoveFromKeyboard(option);
+            }
+        }
+
+        private void RemoveFromKeyboard(PollOptionViewModel option)
+        {
+            var index = Items.IndexOf(option);
+            if (index < 0)
+            {
+                return;
+            }
+
+            if (index > 0)
+            {
+                Focus(index - 1);
+            }
+            else if (index < Items.Count - 1)
+            {
+                Focus(1);
+            }
+            else
+            {
+                AddAnOption.Focus(FocusState.Keyboard);
+            }
+
+            Items.Remove(option);
         }
 
         private void QuestionText_GotFocus(object sender, RoutedEventArgs e)
@@ -331,6 +403,16 @@ namespace Telegram.Views.Popups
         private void DescriptionText_LostFocus(object sender, RoutedEventArgs e)
         {
             OnVisibleChanged(DescriptionEmoji, false);
+        }
+
+        private void QuizExplanation_GotFocus(object sender, RoutedEventArgs e)
+        {
+            OnVisibleChanged(ExplanationEmoji, true);
+        }
+
+        private void QuizExplanation_LostFocus(object sender, RoutedEventArgs e)
+        {
+            OnVisibleChanged(ExplanationEmoji, false);
         }
 
         private void Option_GotFocus(object sender, RoutedEventArgs e)
@@ -565,14 +647,11 @@ namespace Telegram.Views.Popups
 
     public partial class PollOptionViewModel : BindableBase
     {
-        private readonly Action<PollOptionViewModel> _remove;
-
-        public PollOptionViewModel(string text, bool quiz, bool focus, Action<PollOptionViewModel> remove)
+        public PollOptionViewModel(string text, bool quiz, bool focus)
         {
             _text = text.AsFormattedText();
             _isQuiz = quiz;
             _focusOnLoaded = focus;
-            _remove = remove;
         }
 
         private FormattedText _text;
@@ -596,16 +675,18 @@ namespace Telegram.Views.Popups
             set => Set(ref _isQuiz, value);
         }
 
+        private PollMediaDraft _media;
+        public PollMediaDraft Media
+        {
+            get => _media;
+            set => Set(ref _media, value);
+        }
+
         private bool _focusOnLoaded;
         public bool FocusOnLoaded
         {
             get => _focusOnLoaded;
             set => Set(ref _focusOnLoaded, value);
-        }
-
-        public void Remove()
-        {
-            _remove(this);
         }
     }
 }

@@ -241,6 +241,9 @@
     <Compile Include="Controls\PlaybackMasterHeader.xaml.cs">
       <DependentUpon>PlaybackMasterHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PollMediaButton.xaml.cs">
+      <DependentUpon>PollMediaButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TrimToolbar.xaml.cs">
       <DependentUpon>TrimToolbar.xaml</DependentUpon>
     </Compile>
@@ -1999,6 +2002,7 @@
     <Compile Include="Td\Api\ErrorType.cs" />
     <Compile Include="Entities\StorageDocument.cs" />
     <Compile Include="Entities\StorageMedia.cs" />
+    <Compile Include="Entities\PollMediaDraft.cs" />
     <Compile Include="Entities\ImageGeneration.cs" />
     <Compile Include="Entities\StoragePhoto.cs" />
     <Compile Include="Entities\StorageVideo.cs" />
@@ -3186,6 +3190,10 @@
     <Page Include="Controls\PlaybackMasterHeader.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PollMediaButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\TrimToolbar.xaml">
       <SubType>Designer</SubType>

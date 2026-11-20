@@ -1,0 +1,39 @@
+﻿<Grid x:Class="Telegram.Controls.PollMediaButton"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Telegram.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Width="36"
+      Height="32">
+
+    <local:GlyphButton x:Name="AttachButton"
+                       Click="AttachButton_Click"
+                       Glyph="&#xE917;"
+                       AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
+                       IsTabStop="False"
+                       AllowFocusOnInteraction="False"
+                       Width="36"
+                       Height="32" />
+
+    <!--  Over the button rather than in it: GlyphButton draws only its glyph.  -->
+    <Border x:Name="Thumbnail"
+            IsHitTestVisible="False"
+            Visibility="Collapsed"
+            CornerRadius="4"
+            Width="24"
+            Height="24">
+        <Grid x:Name="ThumbnailRoot">
+            <!--  What has no picture of its own: a link, a file, music.  -->
+            <Border x:Name="ThumbnailTile"
+                    Background="{ThemeResource MessageAccentBrush}" />
+            <TextBlock x:Name="ThumbnailGlyph"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="16"
+                       Foreground="#FFFFFF"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+        </Grid>
+    </Border>
+</Grid>

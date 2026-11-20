@@ -674,7 +674,8 @@
                                                      GotFocus="DescriptionText_GotFocus"
                                                      LostFocus="DescriptionText_LostFocus"
                                                      AllowedEntities="CustomEmoji"
-                                                     MaxLength="255" />
+                                                     MaxLength="255"
+                                                     Padding="10,5,64,6" />
 
                     <messages:CustomEmojiCanvas x:Name="DescriptionCustomEmoji"
                                                 IsHitTestVisible="False"
@@ -690,8 +691,15 @@
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom"
                                           Visibility="Collapsed"
+                                          Margin="0,0,28,0"
                                           Width="36"
                                           Height="32" />
+
+                    <!--  The poll's own media, shown above the question.  -->
+                    <controls:PollMediaButton x:Name="DescriptionMedia"
+                                              Slot="Poll"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Bottom" />
                 </Grid>
 
                 <TextBlock Text="{CustomResource PollOptions}"
@@ -732,6 +740,7 @@
                                                                      ContentChanged="Option_ContentChanged"
                                                                      GotFocus="Option_GotFocus"
                                                                      LostFocus="Option_LostFocus"
+                                                                     Padding="10,5,36,6"
                                                                      Grid.ColumnSpan="3" />
 
                                     <messages:CustomEmojiCanvas x:Name="CustomEmoji"
@@ -753,16 +762,10 @@
                                                           Height="32"
                                                           Grid.Column="1" />
 
-                                    <controls:GlyphButton Click="{x:Bind Remove}"
-                                                          Glyph="&#xE711;"
-                                                          IsTabStop="False"
-                                                          AutomationProperties.AccessibilityView="Raw"
-                                                          FontSize="16"
-                                                          VerticalAlignment="Center"
-                                                          HorizontalAlignment="Right"
-                                                          Width="36"
-                                                          Height="32"
-                                                          Grid.Column="2" />
+                                    <controls:PollMediaButton Slot="Option"
+                                                              MediaChanged="OptionMedia_MediaChanged"
+                                                              VerticalAlignment="Bottom"
+                                                              Grid.Column="2" />
                                 </Grid>
                             </Grid>
                         </DataTemplate>
@@ -1186,11 +1189,39 @@
                                           BorderThickness="0"
                                           Visibility="Collapsed"
                                           Margin="0,8,0,0">
-                    <Border>
+                    <Grid>
                         <controls:FormattedTextInputHost x:Name="QuizExplanation"
                                                          Tier="Popups"
-                                                         PlaceholderText="{CustomResource AddAnExplanation}" />
-                    </Border>
+                                                         CustomEmoji="{x:Bind ExplanationCustomEmoji}"
+                                                         PlaceholderText="{CustomResource AddAnExplanation}"
+                                                         FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                         GotFocus="QuizExplanation_GotFocus"
+                                                         LostFocus="QuizExplanation_LostFocus"
+                                                         Padding="10,5,64,6" />
+
+                        <messages:CustomEmojiCanvas x:Name="ExplanationCustomEmoji"
+                                                    IsHitTestVisible="False"
+                                                    Margin="10,4,-2,-2" />
+
+                        <controls:GlyphButton x:Name="ExplanationEmoji"
+                                              Click="Emoji_Click"
+                                              Tag="{x:Bind QuizExplanation}"
+                                              Glyph="&#xE76E;"
+                                              AutomationProperties.Name="{CustomResource Emoji}"
+                                              IsTabStop="False"
+                                              AllowFocusOnInteraction="False"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Bottom"
+                                              Visibility="Collapsed"
+                                              Margin="0,0,28,0"
+                                              Width="36"
+                                              Height="32" />
+
+                        <controls:PollMediaButton x:Name="ExplanationMedia"
+                                                  Slot="Explanation"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Bottom" />
+                    </Grid>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
