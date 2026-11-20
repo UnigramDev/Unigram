@@ -20,6 +20,8 @@
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
+                                IsItemClickEnabled="True"
+                                ItemClick="OnItemClick"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 CornerRadius="0,0,4,4"
@@ -48,9 +50,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          Background="{ThemeResource SettingsItemBackground}"
-                          Padding="12,0">
+                    <Grid Padding="12,0">
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition />

@@ -78,5 +78,10 @@ namespace Telegram.Views.Settings
         {
             ViewModel.Info();
         }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.Delete(e.ClickedItem as Passkey);
+        }
     }
 }
