@@ -140,9 +140,8 @@
                                              AutoFontSize="False">
                     <Paragraph>
                         <Run x:Name="ServiceLabel1"
-                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" />
-                        <Span x:Name="MessageLabel1"
-                              Foreground="{ThemeResource MessageForegroundBrush}" />
+                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel1"
+                                                                                               Foreground="{ThemeResource MessageForegroundBrush}" />
                     </Paragraph>
                 </controls:FormattedTextBlock>
                 <controls:FormattedTextBlock x:Name="TextLabel2"
@@ -157,9 +156,8 @@
                                              AutoFontSize="False">
                     <Paragraph>
                         <Run x:Name="ServiceLabel2"
-                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" />
-                        <Span x:Name="MessageLabel2"
-                              Foreground="{ThemeResource MessageForegroundBrush}" />
+                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel2"
+                                                                                               Foreground="{ThemeResource MessageForegroundBrush}" />
                     </Paragraph>
                 </controls:FormattedTextBlock>
             </Grid>
