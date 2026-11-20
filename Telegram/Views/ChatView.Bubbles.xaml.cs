@@ -1450,6 +1450,13 @@ namespace Telegram.Views
             }
             else
             {
+                // A reset only recycles; a container prepared inside one means a layout ran nested
+                // in it, from whatever opened the way - our own call, or a wait that pumped messages.
+                if (CollectionResetScope.InProgress)
+                {
+                    Logger.Error("Container prepared during a reset");
+                }
+
                 if (message.Content is MessageHeaderUnread)
                 {
                     args.ItemContainer.EffectiveViewportChanged += HeaderUnread_EffectiveViewportChanged;
