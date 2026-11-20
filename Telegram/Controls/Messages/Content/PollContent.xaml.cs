@@ -78,8 +78,10 @@ namespace Telegram.Controls.Messages.Content
         private TextBlock TimeoutGlyph;
         private GlyphButton Explanation;
         private StackPanel Options;
+        private PollAddContent AddOption;
         private TextBlock Votes;
         private Button Submit;
+        private Button Save;
         private Button View;
         private TextBlock ViewText;
         private TextBlock EndsIn;
@@ -252,6 +254,8 @@ namespace Telegram.Controls.Messages.Content
                 Options.Children.RemoveAt(i);
             }
 
+            UpdateAddOption(message, poll);
+
             // Reads the options' checked state, so it has to follow them.
             UpdateFooter(poll.Poll);
 
@@ -268,6 +272,26 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        private void UpdateAddOption(MessageViewModel message, MessagePoll poll)
+        {
+            // Polls outside a chat (previews, instant view) have no delegate to add the option through.
+            if (poll.CanAddOption && message.Delegate.IsDialog)
+            {
+                if (AddOption == null)
+                {
+                    AddOption = GetTemplateChild(nameof(AddOption)) as PollAddContent;
+                    AddOption.IsEditingChanged += AddOption_IsEditingChanged;
+                }
+
+                AddOption.UpdateMessage(message);
+                AddOption.Visibility = Visibility.Visible;
+            }
+            else if (AddOption != null)
+            {
+                AddOption.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void DetachOption(PollOptionContent button)
         {
             button.Click -= Option_Click;
@@ -277,6 +301,25 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFooter(Poll poll)
         {
+            if (AddOption is { Visibility: Visibility.Visible, IsEditing: true })
+            {
+                if (Save == null)
+                {
+                    Save = GetTemplateChild(nameof(Save)) as Button;
+                    Save.Click += Save_Click;
+                }
+
+                Save.Visibility = Visibility.Visible;
+                Submit.Visibility = Visibility.Collapsed;
+                View.Visibility = Visibility.Collapsed;
+                Votes.Visibility = Visibility.Collapsed;
+                return;
+            }
+            else if (Save != null)
+            {
+                Save.Visibility = Visibility.Collapsed;
+            }
+
             var total = poll.TotalVoterCount;
             var submit = poll.AllowsMultipleAnswers && _canVote && !_showPreview;
             var hasChecked = false;
@@ -491,6 +534,7 @@ namespace Telegram.Controls.Messages.Content
             _message = null;
 
             StopTimeoutTimer();
+            AddOption?.Recycle();
 
             if (Media?.Child is IContent media)
             {
@@ -621,6 +665,19 @@ namespace Telegram.Controls.Messages.Content
             }
 
             _message.Delegate.VotePoll(_message, options);
+        }
+
+        private void AddOption_IsEditingChanged(object sender, EventArgs e)
+        {
+            if (_message?.Content is MessagePoll poll)
+            {
+                UpdateFooter(poll.Poll);
+            }
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            AddOption?.Submit();
         }
 
         private void View_Click(object sender, RoutedEventArgs e)

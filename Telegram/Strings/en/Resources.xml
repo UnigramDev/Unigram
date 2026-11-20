@@ -13832,6 +13832,9 @@
     <string name="PollAddingActionOther">un1 added \"{0}\" to the poll</string>
     <string name="PollRemovedActionYou">You removed \"{0}\" from the poll</string>
     <string name="PollRemovedActionOther">un1 removed \"{0}\" from the poll</string>
+    <string name="PollAddAnOption">Add an Option</string>
+    <string name="PollAddAnOptionHint">Option...</string>
+    <string name="PollButtonSave">Save</string>
     <string name="PollItemQuote">Reply to Option</string>
     <string name="PollMenuTabOption">Option</string>
     <string name="Unvote">Retract Vote</string>

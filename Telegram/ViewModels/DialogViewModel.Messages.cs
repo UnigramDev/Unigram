@@ -2712,6 +2712,15 @@ namespace Telegram.ViewModels
             }
         }
 
+        public async void AddPollOption(MessageViewModel message, FormattedText text)
+        {
+            var response = await ClientService.SendAsync(new AddPollOption(message.ChatId, message.Id, new InputPollOption(text, null)));
+            if (response is Error error)
+            {
+                ShowToast(error);
+            }
+        }
+
         public void DeletePollOption(MessagePollOption option)
         {
             ClientService.SendAsync(new DeletePollOption(option.Message.ChatId, option.Message.Id, option.Option.Id));

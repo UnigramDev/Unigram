@@ -1,0 +1,106 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Telegram.Controls.Messages.Content"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:richeditor="using:Telegram.Controls.RichEditor"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d">
+
+    <!--  No frame and no states, and the text inset as an option's: the field reads as the next
+          option in the bubble.  -->
+    <Style x:Key="PollAddTextBoxStyle"
+           TargetType="richeditor:MessageTextBox">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Padding"
+                Value="0,8,0,8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="richeditor:MessageTextBox">
+                    <Grid Background="{TemplateBinding Background}">
+                        <richeditor:RichEditorView x:Name="Editor"
+                                                   Padding="{TemplateBinding Padding}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:PollAddContent">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PollAddContent">
+                    <Grid>
+                        <Button x:Name="Placeholder"
+                                Style="{StaticResource ListEmptyButtonStyle}"
+                                AutomationProperties.Name="{CustomResource PollAddAnOption}">
+                            <Grid Padding="10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="&#xF7B9;"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="20"
+                                           Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                                           VerticalAlignment="Top"
+                                           Margin="0,8,8,8" />
+                                <TextBlock Text="{CustomResource PollAddAnOption}"
+                                           Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,8,0,8"
+                                           Grid.Column="1" />
+                            </Grid>
+                        </Button>
+
+                        <!--  Made on first use: the editor opens an input context every time it
+                              loads, which every poll scrolling past would pay for.  -->
+                        <Grid x:Name="FieldRoot"
+                              x:Load="False"
+                              Padding="10,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <!--  Centred where the + is.  -->
+                            <controls:GlyphButton x:Name="Emoji"
+                                                  Glyph="&#xE76E;"
+                                                  FontSize="24"
+                                                  Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                                                  AutomationProperties.Name="{CustomResource Emoji}"
+                                                  IsTabStop="False"
+                                                  AllowFocusOnInteraction="False"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Top"
+                                                  Width="36"
+                                                  Height="36"
+                                                  Margin="-8,0,0,0" />
+
+                            <richeditor:MessageTextBox x:Name="Field"
+                                                       Style="{StaticResource PollAddTextBoxStyle}"
+                                                       PlaceholderText="{CustomResource PollAddAnOptionHint}"
+                                                       AllowedEntities="CustomEmoji"
+                                                       MaxLength="100"
+                                                       AcceptsReturn="False"
+                                                       Grid.Column="1" />
+                        </Grid>
+
+                        <Border BorderBrush="{ThemeResource MessageSubtleForegroundBrush}"
+                                BorderThickness="0,0,0,0.5"
+                                VerticalAlignment="Bottom"
+                                IsHitTestVisible="False"
+                                Opacity="0.3"
+                                Margin="38,0,0,0" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -95,6 +95,9 @@
 
                         <StackPanel x:Name="Options" />
 
+                        <local:PollAddContent x:Name="AddOption"
+                                              x:Load="False" />
+
                         <TextBlock x:Name="Votes"
                                    Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                                    TextAlignment="Center"
@@ -107,6 +110,22 @@
                                 Margin="0,4,0,0">
                             <TextBlock Text="{CustomResource PollSubmitVotesNoCaps}"
                                        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                                       FontWeight="SemiBold"
+                                       TextAlignment="Center"
+                                       Margin="8,4,8,4" />
+                        </Button>
+
+                        <!--  Leaves the focus in the option's field, which would otherwise lose
+                              it on the press and take this button away before the click.  -->
+                        <Button x:Name="Save"
+                                x:Load="False"
+                                Style="{StaticResource ListEmptyButtonStyle}"
+                                AllowFocusOnInteraction="False"
+                                HorizontalAlignment="Center"
+                                CornerRadius="4"
+                                Margin="0,4,0,0">
+                            <TextBlock Text="{CustomResource PollButtonSave}"
+                                       Foreground="{ThemeResource MessageHeaderBorderBrush}"
                                        FontWeight="SemiBold"
                                        TextAlignment="Center"
                                        Margin="8,4,8,4" />

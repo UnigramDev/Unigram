@@ -1257,6 +1257,9 @@
     <Compile Include="Controls\Messages\Content\PollOptionContent.xaml.cs">
       <DependentUpon>PollOptionContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Content\PollAddContent.xaml.cs">
+      <DependentUpon>PollAddContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PrefixTextBox.cs" />
     <Compile Include="Controls\PremiumLock.cs" />
     <Compile Include="Controls\Primitives\ScrollBarManager.cs" />
@@ -3769,6 +3772,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Messages\Content\PollOptionContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\PollAddContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -421,6 +421,7 @@ namespace Telegram.Controls.Media
         public const string DataUsage = "\uE9D9";
         public const string Add = "\uE710";
         public const string AddFilled12 = "\uF7AA";
+        public const string AddFilled = "\uF7B9";
         public const string ChatStarsFilled = "\uE97C";
 
         public const string LastSeenFilled = "\uEA6D";
