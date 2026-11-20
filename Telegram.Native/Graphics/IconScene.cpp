@@ -28,6 +28,8 @@ namespace Graphics3D
         constexpr const wchar_t* StarModels[] = { L"star.binobj" };
         constexpr const wchar_t* CoinModels[] = { L"coin_outer.binobj", L"coin_inner.binobj",
             L"coin_logo.binobj", L"coin_stars.binobj" };
+        constexpr const wchar_t* DealModels[] = { L"coin_outer.binobj", L"coin_inner.binobj",
+            L"deal_logo.binobj", L"coin_stars.binobj" };
 
         // Position, normal and texture coordinate, as floats.
         constexpr UINT VertexStride = 32;
@@ -36,6 +38,7 @@ namespace Graphics3D
         constexpr std::int32_t TypeStar = 0;
         constexpr std::int32_t TypeCoin = 1;
         constexpr std::int32_t TypeGoldenStar = 2;
+        constexpr std::int32_t TypeDeal = 3;
 
         // The theme colours, at their defaults. The Premium star takes the two Premium gradient
         // colours, second first, and the Stars one the two Stars colours; the background is the
@@ -335,7 +338,7 @@ namespace Graphics3D
     /// </summary>
     struct IconResources
     {
-        bool Load(ID3D11Device* device, bool coin, std::wstring& error);
+        bool Load(ID3D11Device* device, IconModel model, std::wstring& error);
 
         winrt::com_ptr<ID3D11VertexShader> vertexShader;
         winrt::com_ptr<ID3D11PixelShader> pixelShader;
@@ -360,8 +363,14 @@ namespace Graphics3D
     {
     };
 
-    bool IconResources::Load(ID3D11Device* device, bool coin, std::wstring& error)
+    struct DealResources : IconResources
     {
+    };
+
+    bool IconResources::Load(ID3D11Device* device, IconModel model, std::wstring& error)
+    {
+        const bool coin = model != IconModel::Star;
+
         error = L"Icon: shader creation failed";
 
         const D3D11_INPUT_ELEMENT_DESC elements[] =
@@ -387,8 +396,9 @@ namespace Graphics3D
             return false;
         }
 
-        const wchar_t* const* names = coin ? CoinModels : StarModels;
+        const wchar_t* const* names = model == IconModel::Deal ? DealModels : coin ? CoinModels : StarModels;
         const size_t count = coin ? std::size(CoinModels) : std::size(StarModels);
+        static_assert(std::size(DealModels) == std::size(CoinModels));
 
         std::vector<std::uint8_t> data;
         std::vector<float> vertices;
@@ -448,7 +458,10 @@ namespace Graphics3D
                 return false;
             }
 
-            if (!LoadTexture(device, factory.get(), coin ? L"coin_border.png" : L"start_texture.png", texture, error)
+            const wchar_t* border = model == IconModel::Deal ? L"deal_border.png"
+                : coin ? L"coin_border.png" : L"start_texture.png";
+
+            if (!LoadTexture(device, factory.get(), border, texture, error)
                 || !LoadTexture(device, factory.get(), L"flecks.png", normalMap, error))
             {
                 return false;
@@ -487,9 +500,9 @@ namespace Graphics3D
         return true;
     }
 
-    IconScene::IconScene(bool coin)
-        : m_coin(coin)
-        , m_motion(coin)
+    IconScene::IconScene(IconModel model)
+        : m_model(model)
+        , m_motion(model != IconModel::Star)
     {
         UpdateColors();
     }
@@ -503,21 +516,29 @@ namespace Graphics3D
 
     bool IconScene::Load(ID3D11Device* device, SceneCache& cache, std::wstring& error)
     {
-        if (m_coin)
+        switch (m_model)
         {
+        case IconModel::Coin:
             m_resources = cache.GetOrCreate<CoinResources>([&]() -> std::shared_ptr<CoinResources>
             {
                 auto resources = std::make_shared<CoinResources>();
-                return resources->Load(device, true, error) ? resources : nullptr;
+                return resources->Load(device, IconModel::Coin, error) ? resources : nullptr;
             });
-        }
-        else
-        {
+            break;
+        case IconModel::Deal:
+            m_resources = cache.GetOrCreate<DealResources>([&]() -> std::shared_ptr<DealResources>
+            {
+                auto resources = std::make_shared<DealResources>();
+                return resources->Load(device, IconModel::Deal, error) ? resources : nullptr;
+            });
+            break;
+        default:
             m_resources = cache.GetOrCreate<StarResources>([&]() -> std::shared_ptr<StarResources>
             {
                 auto resources = std::make_shared<StarResources>();
-                return resources->Load(device, false, error) ? resources : nullptr;
+                return resources->Load(device, IconModel::Star, error) ? resources : nullptr;
             });
+            break;
         }
 
         if (m_resources == nullptr)
@@ -614,7 +635,9 @@ namespace Graphics3D
 
         m_uniforms.golden = m_golden ? 1.0f : 0.0f;
         m_uniforms.night = m_dark ? 1 : 0;
-        m_uniforms.type = m_coin ? TypeCoin : m_golden ? TypeGoldenStar : TypeStar;
+        m_uniforms.type = m_model == IconModel::Deal ? TypeDeal
+            : m_model == IconModel::Coin ? TypeCoin
+            : m_golden ? TypeGoldenStar : TypeStar;
     }
 
     void IconScene::Choreograph(const SceneGesture& gesture, float step)
@@ -625,10 +648,14 @@ namespace Graphics3D
 
             // The hosts of the purple star and of the coin play the entrance - the Premium sheet
             // with a 100 ms delay, the Business screen with 200 - and the Stars screens showing
-            // the golden star do not.
-            if (!m_golden)
+            // the golden star and the affiliate program screens showing the deal do not.
+            if (m_model == IconModel::Coin)
             {
-                m_motion.Enter(m_coin ? 0.2f : 0.1f);
+                m_motion.Enter(0.2f);
+            }
+            else if (m_model == IconModel::Star && !m_golden)
+            {
+                m_motion.Enter(0.1f);
             }
         }
 

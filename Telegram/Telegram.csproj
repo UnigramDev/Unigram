@@ -2863,6 +2863,8 @@
     <Content Include="Assets\Models\Icon\coin_logo.binobj" />
     <Content Include="Assets\Models\Icon\coin_outer.binobj" />
     <Content Include="Assets\Models\Icon\coin_stars.binobj" />
+    <Content Include="Assets\Models\Icon\deal_border.png" />
+    <Content Include="Assets\Models\Icon\deal_logo.binobj" />
     <Content Include="Assets\Models\Icon\flecks.png" />
     <Content Include="Assets\Models\Icon\star.binobj" />
     <Content Include="Assets\Models\Icon\start_texture.png" />

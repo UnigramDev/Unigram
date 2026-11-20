@@ -28,7 +28,7 @@ namespace Telegram.Views.Chats
             InitializeComponent();
             Title = Strings.ChannelAffiliateProgramTitle;
 
-            Headline.Text = Strings.ChannelAffiliateProgramText;
+            TextBlockHelper.SetMarkdown(Headline, Strings.ChannelAffiliateProgramText);
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

@@ -32,9 +32,11 @@ namespace winrt::Telegram::Native::Graphics::implementation
             switch (model)
             {
             case Graphics::Scene3DModel::Star:
-                return std::make_unique<::Graphics3D::IconScene>(false);
+                return std::make_unique<::Graphics3D::IconScene>(::Graphics3D::IconModel::Star);
             case Graphics::Scene3DModel::Coin:
-                return std::make_unique<::Graphics3D::IconScene>(true);
+                return std::make_unique<::Graphics3D::IconScene>(::Graphics3D::IconModel::Coin);
+            case Graphics::Scene3DModel::Deal:
+                return std::make_unique<::Graphics3D::IconScene>(::Graphics3D::IconModel::Deal);
             case Graphics::Scene3DModel::Diamond:
             default:
                 return std::make_unique<::Graphics3D::DiamondScene>();

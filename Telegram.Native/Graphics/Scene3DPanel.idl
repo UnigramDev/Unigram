@@ -1,11 +1,12 @@
 namespace Telegram.Native.Graphics
 {
-    // Diamond is the TON stone; Star and Coin are the Premium/Stars star and the Business coin, which move themselves and take a tap as well as a drag.
+    // Diamond is the TON stone; Star, Coin and Deal are the Premium/Stars star, the Business coin and the affiliate programs coin, which move themselves and take a tap as well as a drag.
     enum Scene3DModel
     {
         Diamond,
         Star,
-        Coin
+        Coin,
+        Deal
     };
 
     // The looks a scene is authored in. Ice and Cool are the diamond's: palette 2 is the "Cool

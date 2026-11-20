@@ -37,12 +37,21 @@ namespace Graphics3D
 
     static_assert(sizeof(IconUniforms) == 224, "IconUniforms must match the cbuffer in Icon.hlsl");
 
+    // The deal is the coin with another logo and border, shaded by the coin's shader under its
+    // own type.
+    enum class IconModel
+    {
+        Star,
+        Coin,
+        Deal
+    };
+
     /// <summary>
-    /// The star and the coin of the Premium, Stars and Business screens.
+    /// The star and the coins of the Premium, Stars, Business and affiliate program screens.
     /// </summary>
     /// <remarks>
     /// The star wears two looks through the same shader, which blends between them on `golden`: the
-    /// purple Premium star and the golden Stars one. The coin is four meshes - rim, face, logo and
+    /// purple Premium star and the golden Stars one. A coin is four meshes - rim, face, logo and
     /// the ring of stars - told apart in the shader by their index.
     ///
     /// One pass, multisampled and resolved into the back buffer, because an aliased silhouette at
@@ -54,7 +63,7 @@ namespace Graphics3D
         // Scene3DPalette.Golden, which is the variant the panel hands over.
         static constexpr int GoldenVariant = 3;
 
-        explicit IconScene(bool coin);
+        explicit IconScene(IconModel model);
 
         SceneMotion Motion() const override;
 
@@ -70,7 +79,7 @@ namespace Graphics3D
     private:
         void UpdateColors();
 
-        const bool m_coin;
+        const IconModel m_model;
 
         std::shared_ptr<const IconResources> m_resources;
 

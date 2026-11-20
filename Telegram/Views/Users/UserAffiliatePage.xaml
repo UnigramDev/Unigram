@@ -4,8 +4,10 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:controls="using:Telegram.Controls"
+                  xmlns:graphics="using:Telegram.Native.Graphics"
                   xmlns:local="using:Telegram.Views"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  ShowHeader="False">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -14,11 +16,23 @@
         </Grid.RowDefinitions>
         <ScrollViewer x:Name="ScrollingHost"
                       CanContentRenderOutsideBounds="True">
-            <controls:SettingsPanel>
-                <controls:SettingsHeadline x:Name="Headline"
-                                           Source="ms-appx:///Assets/Animations/Affiliate.tgs"
-                                           LoopCount="1"
-                                           Text="{CustomResource BotAffiliateProgramText}" />
+            <controls:SettingsPanel HasTopPadding="False">
+                <graphics:Scene3DPanel Model="Deal"
+                                       FallbackText="&#xE9B5;"
+                                       FallbackFontSize="96"
+                                       FallbackFontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FallbackForeground="#FFA767FF"
+                                       Width="156"
+                                       Height="156" />
+                <controls:StickyHeader x:Name="Header"
+                                       Text="{CustomResource BotAffiliateProgramTitle}"
+                                       HorizontalContentAlignment="Center"
+                                       Margin="0,-36,0,0" />
+                <TextBlock Text="{CustomResource BotAffiliateProgramText}"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="12,-16,12,0"
+                           MaxWidth="480" />
 
                 <controls:HeaderedControl>
                     <controls:SettingsButton Content="{CustomResource BotAffiliateProgramFeature1Title}"
