@@ -102,7 +102,14 @@ namespace Telegram.Common
             var key = ((long)clientService.SessionId << 32) | (uint)rendition.File.Id;
             Request shared;
 
-            lock (_lock)
+            // Never waited for: see Cancel. Contended, the video goes without, holding _nothing
+            // until its container is recycled.
+            if (!Monitor.TryEnter(_lock))
+            {
+                return;
+            }
+
+            try
             {
                 if (_completed.Contains(key))
                 {
@@ -126,37 +133,84 @@ namespace Telegram.Common
 
                 request = shared;
             }
+            finally
+            {
+                Monitor.Exit(_lock);
+            }
 
             Settle(shared);
         }
 
+        /// <remarks>
+        /// Called from recycling, which can run inside XAML's handling of a collection reset. A
+        /// contended Monitor.Enter on the UI thread waits in CoWaitForMultipleHandles, which
+        /// dispatches window messages, XAML's render tick among them, and the layout it runs
+        /// re-enters the list halfway through the reset. So the UI thread only tries the lock, and
+        /// what it cannot do at once runs on the thread pool. Owners only goes up and down, so the
+        /// order it lands in against a Load does not matter.
+        /// </remarks>
         public static void Cancel(ref Request request)
         {
-            if (request == null)
+            var canceled = request;
+            request = null;
+
+            if (canceled == null || canceled == _nothing)
             {
                 return;
             }
 
-            MediaPreloader preloader = null;
-
-            lock (_lock)
+            if (Monitor.TryEnter(_lock))
             {
-                if (request != _nothing && --request.Owners == 0)
+                MediaPreloader preloader;
+
+                try
                 {
-                    request.IsCanceled = true;
-                    preloader = request.Preloader;
+                    preloader = Release(canceled);
+                }
+                finally
+                {
+                    Monitor.Exit(_lock);
+                }
 
-                    _pending.Remove(request);
-
-                    if (_keys.TryGetValue(request.Key, out var current) && current == request)
-                    {
-                        _keys.Remove(request.Key);
-                    }
+                // Takes a native mutex and closes the managed source, which locks in turn.
+                if (preloader != null)
+                {
+                    ThreadPool.UnsafeQueueUserWorkItem(static state => ((MediaPreloader)state).Cancel(), preloader);
                 }
             }
+            else
+            {
+                ThreadPool.UnsafeQueueUserWorkItem(static state =>
+                {
+                    MediaPreloader preloader;
 
-            request = null;
-            preloader?.Cancel();
+                    lock (_lock)
+                    {
+                        preloader = Release((Request)state);
+                    }
+
+                    preloader?.Cancel();
+                }, canceled);
+            }
+        }
+
+        // Under _lock. The preloader to cancel, once the last owner has gone.
+        private static MediaPreloader Release(Request request)
+        {
+            if (--request.Owners != 0)
+            {
+                return null;
+            }
+
+            request.IsCanceled = true;
+            _pending.Remove(request);
+
+            if (_keys.TryGetValue(request.Key, out var current) && current == request)
+            {
+                _keys.Remove(request.Key);
+            }
+
+            return request.Preloader;
         }
 
         private static async void Settle(Request request)
@@ -173,28 +227,37 @@ namespace Telegram.Common
 
         private static void Next()
         {
-            lock (_lock)
+            while (true)
             {
-                while (_running < Concurrency)
+                Request request = null;
+
+                lock (_lock)
                 {
-                    var index = _pending.Count - 1;
-
-                    while (index >= 0 && !_pending[index].IsSettled)
+                    if (_running < Concurrency)
                     {
-                        index--;
+                        var index = _pending.Count - 1;
+
+                        while (index >= 0 && !_pending[index].IsSettled)
+                        {
+                            index--;
+                        }
+
+                        if (index >= 0)
+                        {
+                            request = _pending[index];
+                            _pending.RemoveAt(index);
+                            _running++;
+                        }
                     }
-
-                    if (index < 0)
-                    {
-                        break;
-                    }
-
-                    var request = _pending[index];
-                    _pending.RemoveAt(index);
-                    _running++;
-
-                    Task.Factory.StartNew(Run, request, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 }
+
+                if (request == null)
+                {
+                    return;
+                }
+
+                // Outside the lock: LongRunning creates a thread, the longest the lock was ever held.
+                Task.Factory.StartNew(Run, request, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
         }
 
