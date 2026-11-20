@@ -46,6 +46,7 @@ using Telegram.Views.Settings;
 using Telegram.Views.Stars.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -301,7 +302,7 @@ namespace Telegram.Views
                 //ShadowCaster.Translation = new Vector3(0, 0, Constants.BubbleElevation);
             }
 
-            _footerShadow = new ThemeShadowEx(ShadowCaster, Constants.BubbleElevation);
+            _footerShadow = new ThemeShadowEx(FooterShadow, Constants.BubbleElevation);
             _headerShadow = new ThemeShadowEx(HeaderShadow, Constants.BubbleElevation);
 
             UpdateIslands(AppSettings.Appearance.CornerRadius, AppSettings.IsAdaptiveWideEnabled);
@@ -364,7 +365,7 @@ namespace Telegram.Views
             ConnectedBot.InitializeParent(this);
             PinnedMessage.InitializeParent(this);
             AccountInfoHeader.InitializeParent(this);
-            Sponsored.InitializeParent(this, Clipper);
+            Sponsored.InitializeParent(this);
         }
 
         public string GetAutomationName()
@@ -472,6 +473,24 @@ namespace Telegram.Views
 
         private ChatBackgroundControl FindBackgroundControl()
         {
+            // A preview is shown in a flyout next to a background of its own, while the window's
+            // MasterDetailPanel holds the one behind the chat that is open.
+            if (FromPreview)
+            {
+                if (Parent is Panel panel)
+                {
+                    for (int i = 0; i < panel.Children.Count; i++)
+                    {
+                        if (panel.Children[i] is ChatBackgroundControl background)
+                        {
+                            return background;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
             var masterDetailPanel = XamlRoot?.GetChild<MasterDetailPanel>();
             if (masterDetailPanel != null)
             {
@@ -875,14 +894,15 @@ namespace Telegram.Views
                 Options.Visibility = Visibility.Collapsed;
 
                 ClipperOuter.Visibility = Visibility.Collapsed;
+                UpdateHeaderScrim();
 
                 HeaderLeft.SizeChanged += Options_SizeChanged;
                 HeaderLeft.Padding = new Thickness(12, 0, 0, 0);
 
                 Messages.Margin = new Thickness(0);
 
-                ShadowCaster.Visibility = Visibility.Collapsed;
-                LinearCaster.Visibility = Visibility.Collapsed;
+                FooterShadow.Visibility = Visibility.Collapsed;
+                FooterScrim.Visibility = Visibility.Collapsed;
 
                 var background = new Border
                 {
@@ -900,8 +920,9 @@ namespace Telegram.Views
 
                 Messages.Template = SavedMessagesTabTemplate;
 
-                ShadowCaster.Visibility = Visibility.Collapsed;
-                LinearCaster.Visibility = Visibility.Collapsed;
+                FooterShadow.Visibility = Visibility.Collapsed;
+                FooterScrim.Visibility = Visibility.Collapsed;
+                HeaderScrim.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -1033,7 +1054,6 @@ namespace Telegram.Views
                             return;
                         }
 
-                        Canvas.SetZIndex(LinearCaster, 0);
                         Canvas.SetZIndex(Footer, 0);
                         Canvas.SetZIndex(InlinePanel, 0);
                         Canvas.SetZIndex(Separator, 0);
@@ -1045,7 +1065,6 @@ namespace Telegram.Views
                     };
 
                     _collectionChanging++;
-                    Canvas.SetZIndex(LinearCaster, -1);
                     Canvas.SetZIndex(Footer, -1);
                     Canvas.SetZIndex(InlinePanel, -2);
                     Canvas.SetZIndex(Separator, -3);
@@ -1354,15 +1373,111 @@ namespace Telegram.Views
 
             TrySetFocusState(FocusState.Programmatic, true);
 
-            //var control = FindBackgroundControl();
-            //if (control == null)
-            //{
-            //    return;
-            //}
+            var control = FindBackgroundControl();
+            if (control == null)
+            {
+                return;
+            }
 
-            //var visual = ElementComposition.GetElementVisual(control);
-            //var top = visual.Compositor.CreateRedirectVisual(control, Vector2.Zero, Vector2.Zero);
-            //top.sourc
+            var visual = ElementComposition.GetElementVisual(control);
+
+            var compositor = visual.Compositor;
+
+            var top = CreateScrim(visual, out _headerScrim, out CompositionLinearGradientBrush topMask);
+            var bottom = CreateScrim(visual, out _footerScrim, out CompositionLinearGradientBrush bottomMask);
+
+            // The islands under the header are stacked by the panel through the Clipper's Offset.Y and
+            // moved together by ClipperOuter's Translation, both in composition, where layout never
+            // sees them: the bottom edge follows them live, as they slide, rather than after a pass.
+            _headerScrimLayout = compositor.CreatePropertySet();
+            _headerScrimLayout.InsertScalar("Top", 0);
+            _headerScrimLayout.InsertScalar("Width", 0);
+            _headerScrimLayout.InsertScalar("Stacked", 0);
+            _headerScrimLayout.InsertScalar("Edge", 0);
+
+            var edge = compositor.CreateExpressionAnimation("p.Top + (p.Stacked > 0 ? outer.Translation.Y + clipper.Offset.Y : 0) + outset");
+            edge.SetReferenceParameter("p", _headerScrimLayout);
+            edge.SetReferenceParameter("outer", ElementComposition.GetElementVisual(ClipperOuter));
+            edge.SetReferenceParameter("clipper", ElementComposition.GetElementVisual(Clipper));
+            edge.SetScalarParameter("outset", ScrimOutset);
+
+            _headerScrimLayout.StartAnimation("Edge", edge);
+
+            // The host sits where ClipperOuter starts, under the header: the sprite reaches up from
+            // there to the top of the chat, and down to the edge.
+            top.RelativeSizeAdjustment = new Vector2(1, 0);
+            top.StartAnimation("Offset", CreateScrimAnimation(_headerScrimLayout, "Vector3(0, -p.Top, 0)"));
+            top.StartAnimation("Size", CreateScrimAnimation(_headerScrimLayout, "Vector2(0, p.Edge)"));
+
+            _headerScrim.StartAnimation("SourceSize", CreateScrimAnimation(_headerScrimLayout, "Vector2(p.Width, p.Edge)"));
+
+            topMask.StartAnimation("StartPoint", CreateScrimAnimation(_headerScrimLayout, "Vector2(0, p.Edge)"));
+            topMask.StartAnimation("EndPoint", CreateScrimAnimation(_headerScrimLayout, "Vector2(0, p.Edge - fade)"));
+
+            // The composer header takes its full height in layout as soon as it shows, and keeps it
+            // until it has finished hiding, while the composer's visible top slides between the two.
+            // Inset is how far that top is below the laid out one, animated alongside it.
+            _footerScrimLayout = compositor.CreatePropertySet();
+            _footerScrimLayout.InsertScalar("Inset", 0);
+
+            bottomMask.StartAnimation("StartPoint", CreateScrimAnimation(_footerScrimLayout, "Vector2(0, p.Inset)"));
+            bottomMask.StartAnimation("EndPoint", CreateScrimAnimation(_footerScrimLayout, "Vector2(0, p.Inset + fade)"));
+
+            UpdateHeaderScrim();
+            UpdateFooterScrim();
+
+            ElementCompositionPreview.SetElementChildVisual(HeaderScrim, top);
+            ElementCompositionPreview.SetElementChildVisual(FooterScrim, bottom);
+        }
+
+        private static ExpressionAnimation CreateScrimAnimation(CompositionPropertySet layout, string expression)
+        {
+            var animation = layout.Compositor.CreateExpressionAnimation(expression);
+            animation.SetReferenceParameter("p", layout);
+            animation.SetScalarParameter("fade", ScrimFadeHeight);
+            return animation;
+        }
+
+        private const float ScrimFadeHeight = 48;
+
+        // How far each scrim reaches past its island towards the messages, where its fade begins.
+        private const float ScrimOutset = 8;
+
+        private CompositionVisualSurface _headerScrim;
+        private CompositionPropertySet _headerScrimLayout;
+        private CompositionVisualSurface _footerScrim;
+        private CompositionPropertySet _footerScrimLayout;
+
+        // A live mirror of the chat background rather than a copy of its fill, so the gradient
+        // animation and the crossfade between wallpapers reach the scrim without being synced.
+        private static SpriteVisual CreateScrim(Visual background, out CompositionVisualSurface surface, out CompositionLinearGradientBrush mask)
+        {
+            var compositor = background.Compositor;
+
+            surface = compositor.CreateVisualSurface();
+            surface.SourceVisual = background;
+
+            var source = compositor.CreateSurfaceBrush(surface);
+            source.Stretch = CompositionStretch.Fill;
+
+            // Transparent where the messages are, rising over ScrimFadeHeight and then held. It
+            // stops at 81% so the messages never vanish entirely behind the chrome.
+            mask = compositor.CreateLinearGradientBrush();
+            mask.MappingMode = CompositionMappingMode.Absolute;
+            mask.ColorStops.Add(compositor.CreateColorGradientStop(0, Color.FromArgb(0, 255, 255, 255)));
+            mask.ColorStops.Add(compositor.CreateColorGradientStop(1 / 3f, Color.FromArgb(85, 255, 255, 255)));
+            mask.ColorStops.Add(compositor.CreateColorGradientStop(2 / 3f, Color.FromArgb(157, 255, 255, 255)));
+            mask.ColorStops.Add(compositor.CreateColorGradientStop(1, Color.FromArgb(207, 255, 255, 255)));
+
+            var brush = compositor.CreateMaskBrush();
+            brush.Source = source;
+            brush.Mask = mask;
+
+            var sprite = compositor.CreateSpriteVisual();
+            sprite.Brush = brush;
+            sprite.RelativeSizeAdjustment = Vector2.One;
+
+            return sprite;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -6777,6 +6892,11 @@ namespace Telegram.Views
 
                 ContentPanel.Margin = new Thickness();
 
+                // Lands with the collapse below, so the layout pass that shrinks the footer and the
+                // scrim's return to its top reach the same frame.
+                _footerScrimLayout?.StopAnimation("Inset");
+                _footerScrimLayout?.InsertScalar("Inset", 0);
+
                 if (_composerHeaderCollapsed)
                 {
                     if (_replyEnabled.HasValue)
@@ -6810,6 +6930,8 @@ namespace Telegram.Views
 
             composer.Clip.StartAnimation("BottomInset", animClip);
             composer.StartAnimation("Offset.Y", animClip);
+
+            _footerScrimLayout?.StartAnimation("Inset", animClip);
 
             batch.End();
         }
@@ -7009,8 +7131,8 @@ namespace Telegram.Views
             _textAreaRadius = surface;
             _textAreaButtonRadius = radius;
 
-            ShadowCaster.RadiusX = InlineShadow.RadiusX = surface;
-            ShadowCaster.RadiusY = InlineShadow.RadiusY = surface;
+            FooterShadow.RadiusX = InlineShadow.RadiusX = surface;
+            FooterShadow.RadiusY = InlineShadow.RadiusY = surface;
             _footerShadow.Invalidate();
 
             InlineShadow.Height = surface * 2;
@@ -7137,7 +7259,9 @@ namespace Telegram.Views
             ClipperOuter.CardCornerRadius = card;
             ClipperOuter.IsCardShadowVisible = !merged;
             UpdateForumLeftInset(_forumPlacement == ForumPlacement.Left);
-            UpdateClipperScrim();
+
+            HeaderScrim.MaxWidth = width + 2 * margin;
+            UpdateHeaderScrim();
 
             // The tabs are 32 tall, like the cards: their button takes the card's radius less the inset,
             // docked or not, where the header's 48 tall buttons would take 20 and turn it into an ellipse.
@@ -7157,11 +7281,9 @@ namespace Telegram.Views
 
             Footer.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth = width;
             Footer.Margin = Separator.Margin = new Thickness(margin, 0, margin, margin);
+            FooterScrim.Margin = new Thickness(-margin, -ScrimOutset, -margin, -margin);
+            UpdateFooterScrim();
             _footerShadow.IsVisible = !merged;
-
-            // It spans the composer's rows, and asking them for more than the composer takes would
-            // grow them: 64 from the bottom, so it reaches up past the 48 and the margin under it.
-            LinearCaster.Margin = new Thickness(0, margin - 16, 0, 0);
 
             InlinePanel.Margin = new Thickness(margin, 0, margin, -surface);
             InlineShadow.Margin = new Thickness(0, 0, 0, -surface);
@@ -8073,18 +8195,40 @@ namespace Telegram.Views
             ViewModel.NavigationService.Navigate(typeof(BusinessPage));
         }
 
-        private void ClipperOuter_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void HeaderScrim_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateClipperScrim();
+            UpdateHeaderScrim();
         }
 
-        // Up behind the headers and the header, to the top of the chat.
-        private void UpdateClipperScrim()
+        // From the top of the chat to past the last island under it: the bottom of the stacked cards
+        // when ClipperOuter is shown, or the header's own when it is not.
+        private void UpdateHeaderScrim()
         {
-            var height = ClipperOuter.ActualSize.Y - DateHeaderRelative.ActualSize.Y;
-            var top = height + Header.ActualSize.Y + _islandMargin + _islandSpacing;
+            var background = FindBackgroundControl();
+            if (_headerScrim == null || background == null)
+            {
+                return;
+            }
 
-            ClipperScrim.Margin = new Thickness(-_islandMargin, -top, -_islandMargin, -8);
+            // The header's row ends where ClipperOuter's begins, which is where the host is.
+            var top = Header.ActualSize.Y + _islandMargin;
+
+            _headerScrimLayout.InsertScalar("Top", top);
+            _headerScrimLayout.InsertScalar("Width", HeaderScrim.ActualSize.X);
+            _headerScrimLayout.InsertScalar("Stacked", ClipperOuter.Visibility == Visibility.Visible ? 1 : 0);
+
+            _headerScrim.SourceOffset = HeaderScrim.TransformToVector2(background) - new Vector2(0, top);
+        }
+
+        private void FooterScrim_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateFooterScrim();
+        }
+
+        private void UpdateFooterScrim()
+        {
+            _footerScrim?.SourceSize = FooterScrim.ActualSize;
+            _footerScrim?.SourceOffset = FooterScrim.TransformToVector2(FindBackgroundControl());
         }
 
         private readonly Visual _messagesVisual;

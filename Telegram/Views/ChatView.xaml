@@ -807,7 +807,6 @@
             </Grid>
 
             <controls:SlidePanel x:Name="ClipperOuter"
-                                 SizeChanged="ClipperOuter_SizeChanged"
                                  CardBackground="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                  CardCornerRadius="16"
                                  VerticalAlignment="Top"
@@ -857,12 +856,6 @@
                             40: join request
                             32: translate
                             -->
-                    <Border x:Name="ClipperScrim">
-                        <Border.Background>
-                            <media:LinearGaussianBrush StartPoint="0,1"
-                                                       EndPoint="0,0" />
-                        </Border.Background>
-                    </Border>
                 </Grid>
 
                 <StackPanel x:Name="DateHeaderRelative"
@@ -946,6 +939,13 @@
                     </Border>
                 </StackPanel>
             </controls:SlidePanel>
+
+            <Border x:Name="HeaderScrim"
+                    SizeChanged="HeaderScrim_SizeChanged"
+                    IsHitTestVisible="False"
+                    VerticalAlignment="Top"
+                    Canvas.ZIndex="1"
+                    Grid.Row="2" />
 
             <Grid x:Name="ContentPanel"
                   SizeChanged="ContentPanel_SizeChanged"
@@ -1218,18 +1218,6 @@
                 </Grid>
             </Grid>
 
-            <Border x:Name="LinearCaster"
-                    IsHitTestVisible="False"
-                    Height="64"
-                    Margin="0,-8,0,0"
-                    VerticalAlignment="Bottom"
-                    Grid.Row="4"
-                    Grid.RowSpan="2">
-                <Border.Background>
-                    <media:LinearGaussianBrush />
-                </Border.Background>
-            </Border>
-
             <ScrollViewer x:Name="ReplyMarkupPanel"
                           MaxHeight="260"
                           VerticalScrollBarVisibility="Auto"
@@ -1260,7 +1248,16 @@
 
             <Grid x:Name="Footer"
                   Grid.Row="4">
-                <Rectangle x:Name="ShadowCaster"
+                <Border x:Name="FooterScrim"
+                        SizeChanged="FooterScrim_SizeChanged"
+                        IsHitTestVisible="False"
+                        Grid.Row="4"
+                        Grid.RowSpan="2">
+                    <!--<Border.Background>
+                    <media:LinearGaussianBrush />
+                </Border.Background>-->
+                </Border>
+                <Rectangle x:Name="FooterShadow"
                            RadiusX="24"
                            RadiusY="24" />
 

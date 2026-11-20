@@ -24,7 +24,6 @@ namespace Telegram.Controls.Chats
         private IClientService _clientService;
 
         private ChatView _chatView;
-        private UIElement _parent;
 
         private long _thumbnailToken;
 
@@ -37,7 +36,7 @@ namespace Telegram.Controls.Chats
 
         public float AnimatedHeight => _collapsed ? 0 : ActualSize.Y;
 
-        public void InitializeParent(ChatView chatView, UIElement parent)
+        public void InitializeParent(ChatView chatView)
         {
             _chatView = chatView;
             //_collapsed = new SlidePanel.SlideState(_parent = parent, false, 0);
