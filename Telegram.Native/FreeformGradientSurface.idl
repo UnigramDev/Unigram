@@ -7,5 +7,6 @@ namespace Telegram.Native
 
         UIComposition.CompositionSurfaceBrush Brush{ get; };
         void Next();
+        void Previous();
     }
 }

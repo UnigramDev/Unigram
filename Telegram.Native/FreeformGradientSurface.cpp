@@ -32,7 +32,7 @@ namespace winrt::Telegram::Native::implementation
         m_timer.Interval(std::chrono::milliseconds(500 / 30));
         m_tick = m_timer.Tick({ get_weak(), &FreeformGradientSurface::OnTick });
 
-        m_easing = GetKeyFrames();
+        m_easing = GetKeyFrames(1);
         m_pixels.resize(s_width * s_height * 4);
 
         SetColors(colors);
@@ -105,6 +105,14 @@ namespace winrt::Telegram::Native::implementation
         {
             m_index--;
             m_timer.Stop();
+
+            auto queued = m_queued;
+            m_queued = 0;
+
+            if (SUCCEEDED(result) && queued != 0)
+            {
+                Start(queued);
+            }
         }
     }
 
@@ -288,8 +296,26 @@ namespace winrt::Telegram::Native::implementation
             return;
         }
 
+        Start(1);
+    }
+
+    // Unlike Next, waits for a running step rather than being dropped: a wrong passcode turns
+    // the gradient back while the step its last digit started is still running. Only one waits.
+    void FreeformGradientSurface::Previous()
+    {
+        if (m_timer.IsEnabled())
+        {
+            m_queued = -1;
+            return;
+        }
+
+        Start(-1);
+    }
+
+    void FreeformGradientSurface::Start(int step)
+    {
         m_timer.Stop();
-        m_easing = GetKeyFrames();
+        m_easing = GetKeyFrames(step);
         m_index = 0;
         m_timer.Start();
     }

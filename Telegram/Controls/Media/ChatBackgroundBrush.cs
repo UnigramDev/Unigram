@@ -616,6 +616,11 @@ namespace Telegram.Controls.Media
             _freeform?.Next();
         }
 
+        public void Previous()
+        {
+            _freeform?.Previous();
+        }
+
         private void FadeInPattern()
         {
             if (_effect is CompositionEffectBrush effectBrush)

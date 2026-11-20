@@ -207,6 +207,14 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        public void Previous()
+        {
+            if (_tiledBrush is ChatBackgroundBrush tiledBrush)
+            {
+                tiledBrush.Previous();
+            }
+        }
+
         public void UpdateSource(IClientService clientService, Background background, bool thumbnail, ChatTheme theme = null)
         {
             UpdateManager.Unsubscribe(this, ref _fileToken);

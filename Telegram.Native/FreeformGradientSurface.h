@@ -45,6 +45,7 @@ namespace winrt::Telegram::Native::implementation
 
         CompositionSurfaceBrush Brush();
         void Next();
+        void Previous();
 
         // Deterministic teardown. MUST be called on the UI thread (composition/timer are UI-affinitized).
         // After Close() all UI resources are released, so finalization on the GC thread is a no-op.
@@ -79,6 +80,9 @@ namespace winrt::Telegram::Native::implementation
         void OnTick(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&);
 
         HRESULT Invalidate();
+
+        void Start(int step);
+        int m_queued = 0;
 
         static constexpr float s_curve[] =
         {
@@ -119,12 +123,13 @@ namespace winrt::Telegram::Native::implementation
             return result;
         }
 
-        AnimationStops GetKeyFrames()
+        AnimationStops GetKeyFrames(int step)
         {
-            m_phase++;
+            auto prevPoints = Gather(m_phase % 8);
+
+            m_phase += step;
 
             auto nextPoints = Gather(m_phase % 8);
-            auto prevPoints = Gather((m_phase - 1) % 8);
 
             const float h = 27.0f;
 
