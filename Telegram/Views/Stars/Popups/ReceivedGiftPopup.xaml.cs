@@ -1941,27 +1941,7 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            var now = DateTime.Now.ToUnixTimeSeconds();
-            if (now < _gift.NextTransferDate)
-            {
-                var date = Formatter.ToLocalTime(_gift.NextTransferDate);
-                var diff = date - DateTime.Now;
-
-                string message;
-                if (diff.TotalDays >= 1)
-                {
-                    message = Formatter.DateAt(_gift.NextTransferDate);
-                    message = string.Format(Strings.Gift2TransferTimeoutDate, message);
-                }
-                else
-                {
-                    message = Locale.FormatTtl(_gift.NextTransferDate - now);
-                    message = string.Format(Strings.Gift2TransferTimeout, message);
-                }
-
-                _navigationService.ShowPopup(message, Strings.Gift2TransferTimeoutTitle, Strings.OK);
-            }
-            else
+            if (TransferGiftPopup.CheckTransferDate(_navigationService, _gift))
             {
                 Hide();
                 _navigationService.ShowPopup(new ChooseChatsPopup(), new ChooseChatsConfigurationTransferGift(_gift));
@@ -2080,7 +2060,7 @@ namespace Telegram.Views.Stars.Popups
                 fullInfo = await _clientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
             }
 
-            if (fullInfo != null)
+            if (fullInfo != null && GiftPopup.CanReceiveGifts(_clientService, _navigationService, user, fullInfo))
             {
                 Hide();
                 _navigationService.ShowPopup(new GiftPopup(_clientService, _navigationService, user, fullInfo));

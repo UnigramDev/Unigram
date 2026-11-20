@@ -305,7 +305,8 @@ namespace Telegram.Controls.Cells
         private readonly Color _ribbonPremiumTop = Color.FromArgb(0xFF, 0xD7, 0x90, 0x23);
         private readonly Color _ribbonPremiumBottom = Color.FromArgb(0xFF, 0xBF, 0x7D, 0x16);
 
-        public void UpdateGift(IClientService clientService, AvailableGift gift)
+        /// <param name="resale">The cell that opens the gift's resale listings, beside or instead of the one that buys it.</param>
+        public void UpdateGift(IClientService clientService, AvailableGift gift, bool resale)
         {
             Photo.Visibility = Visibility.Collapsed;
             Pinned.Visibility = Visibility.Collapsed;
@@ -313,7 +314,22 @@ namespace Telegram.Controls.Cells
             StarCountParticles.Source = new ParticlesImageSource(Color.FromArgb(0x80, 0xE8, 0xAB, 0x02), Native.ParticlesType.Premium);
             Animated.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
 
-            if (gift.Gift.OverallLimits != null && (gift.Gift.OverallLimits.RemainingCount > 0 || gift.MinResaleStarCount == 0))
+            if (resale && gift.ResaleCount > 0)
+            {
+                PremiumRoot?.Visibility = Visibility.Collapsed;
+
+                // "+" says there are dearer listings too, unless the cheapest is already at the cap.
+                StarCount.Text = gift.ResaleCount > 1 && gift.MinResaleStarCount < clientService.Options.GiftResaleStarCountMax
+                    ? Icons.PremiumStar + " " + gift.MinResaleStarCount.ToString("N0") + "+"
+                    : Icons.PremiumStar + " " + gift.MinResaleStarCount.ToString("N0");
+
+                Ribbon.Visibility = Visibility.Visible;
+                Ribbon.Text = Strings.Gift2Resale;
+
+                RibbonTop.Color = _ribbonResaleTop;
+                RibbonBottom.Color = _ribbonResaleBottom;
+            }
+            else if (gift.Gift.OverallLimits != null)
             {
                 StarCount.Text = Icons.PremiumStar + " " + gift.Gift.StarCount.ToString("N0");
 
@@ -353,18 +369,6 @@ namespace Telegram.Controls.Cells
                     RibbonTop.Color = _ribbonSoldOutTop;
                     RibbonBottom.Color = _ribbonSoldOutBottom;
                 }
-            }
-            else if (gift.MinResaleStarCount > 0)
-            {
-                PremiumRoot?.Visibility = Visibility.Collapsed;
-
-                StarCount.Text = Icons.PremiumStar + " " + gift.MinResaleStarCount.ToString("N0");
-
-                Ribbon.Visibility = Visibility.Visible;
-                Ribbon.Text = Strings.Gift2Resale;
-
-                RibbonTop.Color = _ribbonResaleTop;
-                RibbonBottom.Color = _ribbonResaleBottom;
             }
             else
             {

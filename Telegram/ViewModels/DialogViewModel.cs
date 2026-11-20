@@ -3909,7 +3909,10 @@ namespace Telegram.ViewModels
             if (ClientService.TryGetUser(chat, out User user) &&
                 ClientService.TryGetUserFull(chat, out UserFullInfo fullInfo))
             {
-                ShowPopup(new GiftPopup(ClientService, NavigationService, user, fullInfo));
+                if (GiftPopup.CanReceiveGifts(ClientService, NavigationService, user, fullInfo))
+                {
+                    ShowPopup(new GiftPopup(ClientService, NavigationService, user, fullInfo));
+                }
             }
             else
             {

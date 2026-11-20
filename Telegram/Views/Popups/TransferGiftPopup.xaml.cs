@@ -5,10 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -233,10 +235,37 @@ namespace Telegram.Views.Popups
         }
 
         /// <summary>
-        /// False, after saying why, when the chat takes no upgraded gifts; otherwise asks to confirm the transfer.
+        /// False, after saying when it can, while the gift can't be transferred yet.
+        /// </summary>
+        public static bool CheckTransferDate(INavigationService navigationService, ReceivedGift gift)
+        {
+            var now = DateTime.Now.ToUnixTimeSeconds();
+            if (now >= gift.NextTransferDate)
+            {
+                return true;
+            }
+
+            var diff = Formatter.ToLocalTime(gift.NextTransferDate) - DateTime.Now;
+
+            var message = diff.TotalDays >= 1
+                ? string.Format(Strings.Gift2TransferTimeoutDate, Formatter.DateAt(gift.NextTransferDate))
+                : string.Format(Strings.Gift2TransferTimeout, Locale.FormatTtl(gift.NextTransferDate - now));
+
+            navigationService.ShowPopup(message, Strings.Gift2TransferTimeoutTitle, Strings.OK);
+            return false;
+        }
+
+        /// <summary>
+        /// False, after saying why, when the gift can't be transferred yet or the chat takes no
+        /// upgraded gifts; otherwise asks to confirm the transfer.
         /// </summary>
         public static async Task<bool> ConfirmTransferAsync(IClientService clientService, INavigationService navigationService, ReceivedGift gift, Chat chat)
         {
+            if (!CheckTransferDate(navigationService, gift))
+            {
+                return false;
+            }
+
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 if (!clientService.TryGetSupergroupFull(supergroup.SupergroupId, out SupergroupFullInfo fullInfo))

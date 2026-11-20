@@ -35,10 +35,10 @@ namespace Telegram.Views.Premium.Popups
 
     public partial class GiftGroup
     {
-        public GiftGroup(GiftGroupType key, IEnumerable<AvailableGift> source)
+        public GiftGroup(GiftGroupType key, List<object> source)
         {
             Type = key;
-            ItemsSource = source.ToList();
+            ItemsSource = source;
         }
 
         public GiftGroup(GiftGroupType key, ObservableCollection<ReceivedGift> source)
@@ -52,6 +52,20 @@ namespace Telegram.Views.Premium.Popups
         public object ItemsSource { get; }
     }
 
+    /// <summary>
+    /// The cell that opens a gift's resale listings. A gift still in stock has it next to the
+    /// cell that buys it new; a sold out one has only this.
+    /// </summary>
+    public partial class AvailableGiftResale
+    {
+        public AvailableGiftResale(AvailableGift gift)
+        {
+            Gift = gift;
+        }
+
+        public AvailableGift Gift { get; }
+    }
+
     public sealed partial class GiftPopup : ModalPopup
     {
         private readonly IClientService _clientService;
@@ -60,9 +74,14 @@ namespace Telegram.Views.Premium.Popups
         private readonly MessageSender _receiverId;
         private readonly Chat _chat;
 
-        private readonly DiffObservableCollection<AvailableGift> _gifts = new();
+        private readonly DiffObservableCollection<object> _gifts = new();
 
         private readonly GiftGroupType _initialGroup;
+
+        /// <summary>
+        /// What the receiving user accepts; null for the current user and for channels.
+        /// </summary>
+        private readonly AcceptedGiftTypes _accepted;
 
         public GiftPopup(IClientService clientService, INavigationService navigationService, User user, UserFullInfo fullInfo, GiftGroupType initialGroup = GiftGroupType.All)
         {
@@ -79,15 +98,25 @@ namespace Telegram.Views.Premium.Popups
 
             if (user.Id != clientService.Options.MyId)
             {
-                TextBlockHelper.SetMarkdown(PremiumInfo, string.Format(Strings.Gift2PremiumInfo, user.FirstName));
+                _accepted = fullInfo.GiftSettings.AcceptedGiftTypes;
+
+                if (_accepted.PremiumSubscription)
+                {
+                    TextBlockHelper.SetMarkdown(PremiumInfo, string.Format(Strings.Gift2PremiumInfo, user.FirstName));
+                    AddLink(PremiumInfo, Strings.Gift2PremiumInfoLink, PremiumInfoLink_Click);
+
+                    InitializeOptions(clientService);
+                }
+                else
+                {
+                    PremiumTitle.Visibility = Visibility.Collapsed;
+                    PremiumInfo.Visibility = Visibility.Collapsed;
+                }
 
                 StarsTitle.Text = Strings.Gift2Stars;
                 TextBlockHelper.SetMarkdown(StarsInfo, string.Format(Strings.Gift2StarsInfo, user.FirstName));
 
-                AddLink(PremiumInfo, Strings.Gift2PremiumInfoLink, PremiumInfoLink_Click);
                 AddLink(StarsInfo, Strings.Gift2StarsInfoLink, StarsInfoLink_Click);
-
-                InitializeOptions(clientService);
             }
             else
             {
@@ -169,6 +198,39 @@ namespace Telegram.Views.Premium.Popups
             }
         }
 
+        /// <summary>
+        /// False, after saying so, when the user takes no gift of any kind and the picker would be empty.
+        /// </summary>
+        public static bool CanReceiveGifts(IClientService clientService, INavigationService navigationService, User user, UserFullInfo fullInfo)
+        {
+            var accepted = fullInfo.GiftSettings.AcceptedGiftTypes;
+            if (user.Id == clientService.Options.MyId || accepted.PremiumSubscription || accepted.UnlimitedGifts || accepted.LimitedGifts || accepted.UpgradedGifts)
+            {
+                return true;
+            }
+
+            navigationService.ShowToast(string.Format(Strings.UserDisallowedGifts, user.FirstName), ToastPopupIcon.Error);
+            return false;
+        }
+
+        private bool IsAccepted(Gift gift)
+        {
+            // Channels can't take part in auctions.
+            if (_receiverId is MessageSenderChat && gift.AuctionInfo != null)
+            {
+                return false;
+            }
+            else if (_accepted == null)
+            {
+                return true;
+            }
+
+            // A limited gift the user refuses can still arrive upgraded, the upgrade paid with it.
+            return gift.OverallLimits != null
+                ? _accepted.LimitedGifts || gift.UpgradeStarCount > 0 && _accepted.UpgradedGifts
+                : _accepted.UnlimitedGifts;
+        }
+
         private async void InitializeGifts(IClientService clientService, bool birthday, bool self)
         {
             var navigation = new ObservableCollection<GiftGroup>();
@@ -176,58 +238,84 @@ namespace Telegram.Views.Premium.Popups
             var response = await clientService.SendAsync(new GetAvailableGifts());
             if (response is AvailableGifts gifts)
             {
-                var all = new List<AvailableGift>();
-                var remaining = new List<AvailableGift>();
+                // Sold out gifts go last; on the user's birthday, birthday gifts lead the rest.
+                var sorted = gifts.Gifts
+                    .Where(x => IsAccepted(x.Gift))
+                    .OrderBy(x => x.Gift.OverallLimits?.RemainingCount == 0 ? 1 : 0)
+                    .ThenBy(x => birthday && x.Gift.IsForBirthday ? 0 : 1);
 
-                foreach (var gift in gifts.Gifts)
+                // Resales are upgraded gifts, so a user who refuses those gets none.
+                var resales = _accepted?.UpgradedGifts is not false;
+
+                var all = new List<object>();
+                var collectibles = new List<object>();
+
+                foreach (var gift in sorted)
                 {
-                    if (gift.Gift.IsForBirthday && birthday)
+                    if (resales && gift.ResaleCount > 0)
                     {
-                        all.Add(gift);
+                        var resale = new AvailableGiftResale(gift);
+
+                        if (gift.Gift.OverallLimits?.RemainingCount != 0)
+                        {
+                            all.Add(gift);
+                        }
+
+                        all.Add(resale);
+                        collectibles.Add(resale);
                     }
                     else
                     {
-                        remaining.Add(gift);
+                        all.Add(gift);
+
+                        if (gift.Gift.IsPremium || gift.Gift.NextSendDate != 0)
+                        {
+                            collectibles.Add(gift);
+                        }
                     }
                 }
 
-                all.AddRange(remaining);
-
-                navigation.Add(new GiftGroup(GiftGroupType.All, all));
-
-                if (all.Any(x => x.MinResaleStarCount > 0))
+                if (all.Count > 0)
                 {
-                    navigation.Add(new GiftGroup(GiftGroupType.Collectibles, all.Where(x => x.MinResaleStarCount > 0)));
+                    navigation.Add(new GiftGroup(GiftGroupType.All, all));
+                    navigation.Add(new GiftGroup(GiftGroupType.Collectibles, collectibles));
                 }
 
                 Navigation.ItemsSource = navigation;
-                Navigation.SelectedIndex = Math.Max(0, navigation.IndexOf(navigation.FirstOrDefault(x => x.Type == _initialGroup)));
+
+                if (navigation.Count > 0)
+                {
+                    Navigation.SelectedIndex = Math.Max(0, navigation.IndexOf(navigation.FirstOrDefault(x => x.Type == _initialGroup)));
+                }
             }
 
-            if (self)
+            if (self || _accepted?.UpgradedGifts is false)
             {
+                UpdateStarsVisibility(navigation);
                 return;
             }
 
             response = await _clientService.SendAsync(new GetReceivedGifts(_clientService.MyId, 0, false, false, true, true, true, false, false, true, false, string.Empty, 50));
             if (response is ReceivedGifts receivedGifts && receivedGifts.Gifts.Count > 0)
             {
-                var transferable = new List<ReceivedGift>();
-                var now = DateTime.Now.ToUnixTimeSeconds();
+                navigation.Insert(Math.Min(navigation.Count, 1), new GiftGroup(GiftGroupType.Mine, new ReceivedGiftsCollection(_clientService, receivedGifts.Gifts, receivedGifts.NextOffset)));
 
-                foreach (var gift in receivedGifts.Gifts)
+                if (navigation.Count == 1)
                 {
-                    if (gift.Gift is SentGiftUpgraded upgraded && gift.CanBeTransferred && gift.NextTransferDate < now)
-                    {
-                        transferable.Add(gift);
-                    }
-                }
-
-                if (transferable.Count > 0)
-                {
-                    navigation.Insert(Math.Min(navigation.Count, 1), new GiftGroup(GiftGroupType.Mine, new ReceivedGiftsCollection(_clientService, transferable, receivedGifts.NextOffset)));
+                    Navigation.SelectedIndex = 0;
                 }
             }
+
+            UpdateStarsVisibility(navigation);
+        }
+
+        private void UpdateStarsVisibility(ObservableCollection<GiftGroup> navigation)
+        {
+            var visibility = navigation.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            StarsTitle.Visibility = visibility;
+            StarsInfo.Visibility = visibility;
+            Navigation.Visibility = visibility;
         }
 
         public partial class ReceivedGiftsCollection : IncrementalCollection<ReceivedGift>
@@ -236,7 +324,7 @@ namespace Telegram.Views.Premium.Popups
 
             private string _nextOffset;
 
-            public ReceivedGiftsCollection(IClientService clientService, IList<ReceivedGift> gifts, string nextOffset)
+            public ReceivedGiftsCollection(IClientService clientService, IEnumerable<ReceivedGift> gifts, string nextOffset)
                 : base(gifts)
             {
                 _clientService = clientService;
@@ -250,18 +338,12 @@ namespace Telegram.Views.Premium.Popups
                 var totalCount = 0u;
                 var hasMoreItems = false;
 
-                var now = DateTime.Now.ToUnixTimeSeconds();
-
                 var response = await _clientService.SendAsync(new GetReceivedGifts(_clientService.MyId, 0, false, false, true, true, true, false, false, true, false, _nextOffset, 50));
                 if (response is ReceivedGifts gifts)
                 {
                     foreach (var gift in gifts.Gifts)
                     {
-                        if (gift.Gift is SentGiftUpgraded && gift.CanBeTransferred && gift.NextTransferDate < now)
-                        {
-                            Add(gift);
-                        }
-
+                        Add(gift);
                         totalCount++;
                     }
 
@@ -275,26 +357,9 @@ namespace Telegram.Views.Premium.Popups
 
         private async void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            ContentDialogResult confirm = ContentDialogResult.Primary;
+            ContentDialogResult confirm = ContentDialogResult.None;
 
-            if (e.ClickedItem is AvailableGift available)
-            {
-                if (available is AvailableGift { Gift.UserLimits.RemainingCount: 0, MinResaleStarCount: 0 })
-                {
-                    ToastPopup.Show(XamlRoot, Locale.Declension(Strings.R.Gift2PerUserLimit, available.Gift.UserLimits.TotalCount), new DelayedFileSource(_clientService, available.Gift.Sticker));
-                    return;
-                }
-                else if (available.Gift.NextSendDate > _clientService.UnixTime)
-                {
-                    var response = await _clientService.SendAsync(new CanSendGift(available.Gift.Id));
-                    if (response is CanSendGiftResultFail fail)
-                    {
-                        _navigationService.ShowPopup(fail.Reason, Strings.GiftLocked, Strings.OK);
-                        return;
-                    }
-                }
-            }
-            else if (e.ClickedItem is ReceivedGift receivedGift)
+            if (e.ClickedItem is ReceivedGift receivedGift)
             {
                 if (await TransferGiftPopup.ConfirmTransferAsync(_clientService, _navigationService, receivedGift, _chat))
                 {
@@ -304,31 +369,44 @@ namespace Telegram.Views.Premium.Popups
 
                 return;
             }
-
-            if (e.ClickedItem is AvailableGift availableGift)
+            else if (e.ClickedItem is AvailableGiftResale resale)
             {
-                if (availableGift.Gift.UserLimits != null && availableGift.Gift.UserLimits.RemainingCount == 0 && availableGift.MinResaleStarCount == 0)
+                confirm = await _navigationService.ShowPopupAsync(new ResoldGiftsPopup(_clientService, _navigationService, resale.Gift, _receiverId));
+            }
+            else if (e.ClickedItem is AvailableGift availableGift)
+            {
+                if (availableGift.Gift.OverallLimits?.RemainingCount == 0)
+                {
+                    await _navigationService.ShowPopupAsync(new ReceivedGiftPopup(_clientService, _navigationService, availableGift.Gift));
+                    return;
+                }
+                else if (availableGift.Gift.UserLimits?.RemainingCount == 0)
                 {
                     ToastPopup.Show(XamlRoot, Locale.Declension(Strings.R.Gift2PerUserLimit, availableGift.Gift.UserLimits.TotalCount), new DelayedFileSource(_clientService, availableGift.Gift.Sticker));
+                    return;
+                }
+                else if (availableGift.Gift.NextSendDate > _clientService.UnixTime)
+                {
+                    // Once the server allows a locked gift, it goes straight to the send sheet, Premium or not.
+                    var response = await _clientService.SendAsync(new CanSendGift(availableGift.Gift.Id));
+                    if (response is CanSendGiftResultFail fail)
+                    {
+                        _navigationService.ShowPopup(fail.Reason, Strings.GiftLocked, Strings.OK);
+                        return;
+                    }
+                    else if (response is Error error)
+                    {
+                        ToastPopup.ShowError(XamlRoot, error);
+                        return;
+                    }
                 }
                 else if (availableGift.Gift.IsPremium && !_clientService.IsPremium)
                 {
-                    await _navigationService.ShowPopupAsync(new Views.Premium.Popups.PromoPopup(_clientService, availableGift));
-                    confirm = ContentDialogResult.None;
+                    await _navigationService.ShowPopupAsync(new PromoPopup(_clientService, availableGift));
+                    return;
                 }
-                else if (availableGift.Gift.OverallLimits == null || availableGift.Gift.OverallLimits.RemainingCount > 0)
-                {
-                    confirm = await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, availableGift.Gift, _receiverId));
-                }
-                else if (availableGift.MinResaleStarCount > 0)
-                {
-                    confirm = await _navigationService.ShowPopupAsync(new ResoldGiftsPopup(_clientService, _navigationService, availableGift, _receiverId));
-                }
-                else
-                {
-                    await _navigationService.ShowPopupAsync(new ReceivedGiftPopup(_clientService, _navigationService, availableGift.Gift));
-                    confirm = ContentDialogResult.None;
-                }
+
+                confirm = await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, availableGift.Gift, _receiverId));
             }
             else if (e.ClickedItem is PremiumGiftPaymentOption option && _receiverId is MessageSenderUser user)
             {
@@ -351,7 +429,11 @@ namespace Telegram.Views.Premium.Popups
             {
                 if (args.Item is AvailableGift availableGift)
                 {
-                    receivedGiftCell.UpdateGift(_clientService, availableGift);
+                    receivedGiftCell.UpdateGift(_clientService, availableGift, false);
+                }
+                else if (args.Item is AvailableGiftResale resale)
+                {
+                    receivedGiftCell.UpdateGift(_clientService, resale.Gift, true);
                 }
                 else if (args.Item is ReceivedGift receivedGift)
                 {
@@ -370,9 +452,9 @@ namespace Telegram.Views.Premium.Popups
         {
             if (Navigation.SelectedItem is GiftGroup group)
             {
-                if (group.ItemsSource is List<AvailableGift> groupSource)
+                if (group.ItemsSource is List<object> groupSource)
                 {
-                    if (ScrollingHost.ItemsSource is DiffObservableCollection<AvailableGift>)
+                    if (ScrollingHost.ItemsSource is DiffObservableCollection<object>)
                     {
                         _gifts.ReplaceDiff(groupSource);
                     }
