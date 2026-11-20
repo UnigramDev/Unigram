@@ -805,6 +805,39 @@ namespace Telegram.Views.Stars.Popups
             PrimaryButtonText = Strings.OK;
         }
 
+        /// <summary>
+        /// The upgrade page on its own, telling the sender what an upgrade would give the recipient.
+        /// </summary>
+        public ReceivedGiftPopup(IClientService clientService, INavigationService navigationService, GiftUpgradePreview preview, string receiverName)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            _preview = preview;
+            _page = GiftPage.Upgrade;
+
+            UpdateVisibility();
+
+            UpgradedTitle.Text = Strings.Gift2LearnMoreTitle;
+            UpgradedSubtitle.Text = string.Format(Strings.Gift2LearnMoreText, receiverName);
+
+            UpgradeText1.Content = Strings.Gift2UpgradeFeature1Title;
+            UpgradeText1.Badge = Strings.Gift2UpgradeFeature1TextLearn;
+            UpgradeText2.Content = Strings.Gift2UpgradeFeature2Title;
+            UpgradeText2.Badge = Strings.Gift2UpgradeFeature2TextLearn;
+            UpgradeText3.Content = Strings.Gift2UpgradeFeature3Title;
+            UpgradeText3.Badge = Strings.Gift2UpgradeFeature3TextLearn;
+
+            KeepOriginalDetails.Visibility = Visibility.Collapsed;
+
+            UpgradedAnimatedPhoto.LoopCompleted += OnLoopCompleted;
+            UpdateGift();
+
+            PrimaryButtonText = Strings.OK;
+        }
+
         private void OnPrimaryButtonClick(ModalPopup sender, ModalPopupButtonClickEventArgs args)
         {
             if (_rolling)
@@ -1543,8 +1576,8 @@ namespace Telegram.Views.Stars.Popups
 
         protected override void OnDismissButtonClick()
         {
-            // The dismiss button goes back from a page to the details.
-            if (_page == GiftPage.Details)
+            // The dismiss button goes back from a page to the details, if there are any.
+            if (_page == GiftPage.Details || _gift == null)
             {
                 base.OnDismissButtonClick();
             }

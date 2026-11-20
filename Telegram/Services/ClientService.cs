@@ -97,6 +97,11 @@ namespace Telegram.Services
         PaidReactionType DefaultPaidReactionType { get; }
 
         StarAmount OwnedStarCount { get; }
+
+        /// <summary>
+        /// False until the balance has loaded, while <see cref="OwnedStarCount"/> reads as zero.
+        /// </summary>
+        bool IsOwnedStarCountAvailable { get; }
         long OwnedGramCount { get; }
 
         TonWalletState TonWalletState { get; }
@@ -1544,6 +1549,8 @@ namespace Telegram.Services
                 return _ownedStarCount;
             }
         }
+
+        public bool IsOwnedStarCountAvailable => _ownedStarCount != null;
 
         public long OwnedGramCount
         {

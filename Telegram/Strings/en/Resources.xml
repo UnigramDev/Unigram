@@ -8238,6 +8238,8 @@
     <string name="Gift2HideInfo">You can hide your name and message from visitors to {0}\'s profile. {0} will still see your name and message.</string>
     <string name="Gift2Send_one">Send a Gift for &#11088;&#65039; {0}</string>
     <string name="Gift2Send_other">Send a Gift for &#11088;&#65039; {0}</string>
+    <string name="Gift2SendYourBalance_one">Your balance is {0} Star</string>
+    <string name="Gift2SendYourBalance_other">Your balance is {0} Stars</string>
 
     <string name="Gift2ActionTitle">Gift from {0}</string>
     <string name="Gift2ActionTitleInAnonymous">{0} received a gift!</string>
@@ -11895,10 +11897,15 @@
 
     <string name="Gift2HideSelf">Hide My Name</string>
     <string name="Gift2HideSelfInfo">Hide my name and message from visitors to my profile</string>
+    <string name="Gift2TitleSelf2">Gift to Myself</string>
+    <string name="Gift2SendSelf_one">Buy a Gift for &#11088;&#65039; {0}</string>
+    <string name="Gift2SendSelf_other">Buy a Gift for &#11088;&#65039; {0}</string>
+    <string name="Gift2HideChannelInfo">You can hide your name and message from all visitors of this channel except its admins.</string>
     <string name="Gift2Upgrade">Make Unique for &#11088;&#65039;{0}</string>
     <string name="Gift2UpgradeInfo">Enable this to let {0} turn your gift into a unique collectible. **Learn More &gt;**</string>
     <string name="Gift2UpgradeForcedInfo">{0} only accepts unique gifts.</string>
     <string name="Gift2NoUpgradeForcedInfo">{0} only accepts limited gifts.</string>
+    <string name="Gift2UpgradeChannelInfo">Enable this to let the admins of {0} to turn your gift into a unique collectible. **Learn More &gt;**</string>
 
     <string name="FilterNameAnimationsEnable">Enable Animations</string>
     <string name="FilterNameAnimationsDisable">Disable Animations</string>
@@ -11980,6 +11987,8 @@
     <string name="Gift2UpgradeFeature3Title">Tradable</string>
     <string name="Gift2UpgradeFeatureSoon">SOON</string>
     <string name="Gift2UpgradeFeature3TextLearn">The recipient will be able to auction the gift on third-party NFT marketplaces.</string>
+    <string name="Gift2LearnMoreTitle">Make Unique</string>
+    <string name="Gift2LearnMoreText">Let {0} turn your gift into a unique collectible.</string>
     <string name="Gift2AddSenderName">Add sender\'s name to the gift</string>
     <string name="Gift2AddSenderNameComment">Add sender\'s name and comment</string>
     <string name="Gift2AddMyNameName">Add my name to the gift</string>
