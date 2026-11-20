@@ -905,7 +905,10 @@ namespace Telegram.Views
             });
         }
 
-        private bool _activeCallCollapsed;
+        // No banner until UpdateActiveCall says otherwise. The one sent on load comes through the
+        // dispatcher, after a PopupClosed that colours the title bar from this, when the page is
+        // first shown by the passcode lock going away.
+        private bool _activeCallCollapsed = true;
 
         private void ShowHideActiveCall(bool show)
         {
