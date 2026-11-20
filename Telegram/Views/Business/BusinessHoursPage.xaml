@@ -73,7 +73,8 @@
         <controls:StickyHeaderChrome Header="{x:Bind Header}">
             <Button Content="{CustomResource Done}"
                     Click="{x:Bind ViewModel.Continue}"
-                    Style="{StaticResource AccentButtonStyle}" />
+                    Style="{StaticResource AccentButtonStyle}"
+                    Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
         </controls:StickyHeaderChrome>
     </Grid>
 </local:HostedPage>

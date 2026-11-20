@@ -10,50 +10,141 @@
                        Padding="0,24,0,0">
 
     <Grid>
-        <ListView x:Name="ScrollingHost"
-                  SelectionMode="None"
-                  Padding="12,0">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None">
             <ListView.Header>
-                <CheckBox x:Name="Open"
-                          Click="Open_Click"
-                          Content="{CustomResource BusinessHoursDayOpen}"
-                          Margin="12,0,12,16" />
+                <StackPanel>
+                    <controls:HeaderedControl Padding="0">
+                        <CheckBox x:Name="Open"
+                                  Click="Open_Click"
+                                  Content="{CustomResource BusinessHoursDayOpen}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+
+                    <StackPanel x:Name="Day"
+                                MaxWidth="1000"
+                                Margin="24,16,24,10">
+                        <Grid Background="{ThemeResource SliderTrackFill}"
+                              CornerRadius="4"
+                              Height="8">
+                            <ItemsControl x:Name="Strip"
+                                          IsTabStop="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="business:BusinessHoursRange">
+                                        <Grid Height="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{x:Bind local:ChooseHoursPopup.StripBefore(StartMinute)}" />
+                                                <ColumnDefinition Width="{x:Bind local:ChooseHoursPopup.StripLength(StartMinute, EndMinute)}" />
+                                                <ColumnDefinition Width="{x:Bind local:ChooseHoursPopup.StripAfter(EndMinute)}" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                                    CornerRadius="4"
+                                                    Grid.Column="1" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="0"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                            <TextBlock Text="6"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.ColumnSpan="2" />
+                            <TextBlock Text="12"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="3"
+                                       Grid.ColumnSpan="2" />
+                            <TextBlock Text="18"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="5"
+                                       Grid.ColumnSpan="2" />
+                            <TextBlock Text="24"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                       HorizontalAlignment="Right"
+                                       Grid.Column="7" />
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="business:BusinessHoursRange">
-                    <StackPanel Background="{ThemeResource SettingsItemBackground}"
-                                BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                                BorderThickness="1"
-                                CornerRadius="4"
-                                Padding="12,8,12,0"
-                                Margin="0,0,0,12">
-                        <TimePicker Header="{CustomResource BusinessHoursDayOpenHour}"
-                                    Time="{x:Bind Start, Mode=TwoWay}"
-                                    HorizontalAlignment="Stretch"
-                                    Margin="0,0,0,8" />
-                        <TimePicker Header="{CustomResource BusinessHoursDayCloseHour}"
-                                    Time="{x:Bind End, Mode=TwoWay}"
-                                    HorizontalAlignment="Stretch" />
-
-                        <Button Content="{CustomResource Remove}"
-                                Style="{StaticResource DangerTextButtonStyle}"
-                                HorizontalAlignment="Center"
-                                Margin="0,8,0,4"/>
-                    </StackPanel>
+                <DataTemplate>
+                    <Grid Padding="12,8,4,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ComboBox SelectionChanged="Start_SelectionChanged"
+                                  TextSubmitted="Start_TextSubmitted"
+                                  IsEditable="True"
+                                  AutomationProperties.Name="{CustomResource BusinessHoursDayOpenHour}"
+                                  HorizontalAlignment="Stretch" />
+                        <TextBlock Text="&#x2013;"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0"
+                                   Grid.Column="1" />
+                        <ComboBox SelectionChanged="End_SelectionChanged"
+                                  TextSubmitted="End_TextSubmitted"
+                                  IsEditable="True"
+                                  AutomationProperties.Name="{CustomResource BusinessHoursDayCloseHour}"
+                                  HorizontalAlignment="Stretch"
+                                  Grid.Column="2" />
+                        <controls:GlyphButton Click="Remove_Click"
+                                              Glyph="&#xE74D;"
+                                              Foreground="{ThemeResource DangerButtonForeground}"
+                                              AutomationProperties.Name="{CustomResource Remove}"
+                                              Margin="4,-8,-4,-8"
+                                              Grid.Column="3" />
+                        <TextBlock Text="{CustomResource BusinessHoursNextDayBadge}"
+                                   Visibility="Collapsed"
+                                   Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Margin="0,4,0,0"
+                                   Grid.Column="2"
+                                   Grid.Row="1" />
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <StackPanel x:Name="Footer"
-                            Margin="12,0"
-                            Visibility="Collapsed">
-                    <Button Click="Add_Click"
-                            Content="{CustomResource BusinessHoursDayAdd}" />
-                    <TextBlock Text="{CustomResource BusinessHoursDayInfo}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="0,4,0,24" />
+                <StackPanel x:Name="Footer">
+                    <controls:HeaderedControl Padding="0,2,0,0">
+                        <controls:SettingsButton x:Name="AddButton"
+                                                 Click="Add_Click"
+                                                 Content="{CustomResource BusinessHoursDayAdd}"
+                                                 Glyph="&#xE710;" />
+                    </controls:HeaderedControl>
+                    <controls:SettingsFooter Text="{CustomResource BusinessHoursDayInfo}"
+                                             Margin="24,8,24,24" />
                 </StackPanel>
             </ListView.Footer>
-        </ListView>
+        </controls:TableListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />

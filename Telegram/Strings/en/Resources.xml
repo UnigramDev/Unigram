@@ -7364,6 +7364,7 @@
     <string name="BusinessHoursDayCloseHourPicker">Choose closing time</string>
     <string name="BusinessHoursNextDayPicker">Next day, {0}</string>
     <string name="BusinessHoursNextDay">{0} (Next day)</string>
+    <string name="BusinessHoursNextDayBadge">Next day</string>
     <string name="BusinessHoursProfile">Business hours</string>
     <string name="BusinessHoursProfileOpen">open 24 hours</string>
     <string name="BusinessHoursProfileFullOpen">open 24/7</string>
