@@ -324,6 +324,40 @@ namespace Telegram.Controls
         // instance methods, so the call sites are unchanged.
         protected void UseDarkCaptionButtons()
         {
+            _captionButtons ??= SwapCaptionButtons(s_darkCaptionButtons);
+        }
+
+        /// <summary>
+        /// Puts back the colours <see cref="UseDarkCaptionButtons"/> replaced, for a root that
+        /// covers the window for a while and then hands it back.
+        /// </summary>
+        public void RestoreCaptionButtons()
+        {
+            if (_captionButtons != null)
+            {
+                SwapCaptionButtons(_captionButtons);
+                _captionButtons = null;
+            }
+        }
+
+        private Color?[] _captionButtons;
+
+        private static readonly Color?[] s_darkCaptionButtons =
+        {
+            Colors.Transparent,
+            Colors.White,
+            Colors.Transparent,
+            Colors.White,
+            ColorEx.FromHex(0x19FFFFFF),
+            ColorEx.FromHex(0xCCFFFFFF),
+            ColorEx.FromHex(0x33FFFFFF),
+            ColorEx.FromHex(0x99FFFFFF)
+        };
+
+        // Background, foreground, then the inactive, hover and pressed pairs. Returns the colours
+        // it replaced.
+        private Color?[] SwapCaptionButtons(Color?[] colors)
+        {
 #if WINUI3
             // Through this content's own window - never WindowContext.Current, which is
             // thread-static and answers for whichever window was created last.
@@ -331,19 +365,33 @@ namespace Telegram.Controls
             var titleBar = Window?.AppWindowTitleBar;
             if (titleBar == null)
             {
-                return;
+                return null;
             }
 #else
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
 #endif
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonForegroundColor = Colors.White;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveForegroundColor = Colors.White;
-            titleBar.ButtonHoverBackgroundColor = ColorEx.FromHex(0x19FFFFFF);
-            titleBar.ButtonHoverForegroundColor = ColorEx.FromHex(0xCCFFFFFF);
-            titleBar.ButtonPressedBackgroundColor = ColorEx.FromHex(0x33FFFFFF);
-            titleBar.ButtonPressedForegroundColor = ColorEx.FromHex(0x99FFFFFF);
+            var previous = new Color?[]
+            {
+                titleBar.ButtonBackgroundColor,
+                titleBar.ButtonForegroundColor,
+                titleBar.ButtonInactiveBackgroundColor,
+                titleBar.ButtonInactiveForegroundColor,
+                titleBar.ButtonHoverBackgroundColor,
+                titleBar.ButtonHoverForegroundColor,
+                titleBar.ButtonPressedBackgroundColor,
+                titleBar.ButtonPressedForegroundColor
+            };
+
+            titleBar.ButtonBackgroundColor = colors[0];
+            titleBar.ButtonForegroundColor = colors[1];
+            titleBar.ButtonInactiveBackgroundColor = colors[2];
+            titleBar.ButtonInactiveForegroundColor = colors[3];
+            titleBar.ButtonHoverBackgroundColor = colors[4];
+            titleBar.ButtonHoverForegroundColor = colors[5];
+            titleBar.ButtonPressedBackgroundColor = colors[6];
+            titleBar.ButtonPressedForegroundColor = colors[7];
+
+            return previous;
         }
     }
 }

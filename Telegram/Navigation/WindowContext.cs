@@ -1473,6 +1473,8 @@ namespace Telegram.Navigation
 
             Logger.Info("Hiding passcode lock");
 
+            // Before the content's PopupClosed below, which may colour the buttons itself.
+            _locked.RestoreCaptionButtons();
             SetContent(_lockedContent);
 
             _locked = null;

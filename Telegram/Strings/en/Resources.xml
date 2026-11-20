@@ -2898,6 +2898,8 @@
 
 
     <string name="EnterYourPasscode">Enter your passcode</string>
+    <string name="UnlockToUse">Unlock to use Telegram</string>
+    <string name="EnterPIN">Enter your PIN</string>
 
 
 

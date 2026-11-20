@@ -4,125 +4,257 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:controls="using:Telegram.Controls"
+                        xmlns:chats="using:Telegram.Controls.Chats"
                         mc:Ignorable="d"
                         Loaded="OnLoaded"
                         Unloaded="OnUnloaded">
 
+    <!-- Black, because the wallpaper is dimmed by fading it over what is behind it. -->
     <Grid x:Name="LayoutRoot"
-          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <StackPanel VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Margin="0,-120,0,0"
-                    Grid.Row="1">
+          Background="#000000">
+        <chats:ChatBackgroundControl x:Name="Wallpaper"
+                                     IsLockScreen="True" />
 
-            <Border x:Name="Photo"
-                    Width="120"
-                    Height="120"
-                    Margin="0,0,0,12"
-                    HorizontalAlignment="Center">
-                <Border Background="#2AABEE"
-                        Width="120"
-                        Height="120"
-                        CornerRadius="60">
-                    <Path Fill="White"
-                          StrokeThickness="0"
-                          Data="M27.2,59.4c17.5-7.6,29.2-12.6,35-15.1c16.7-6.9,20.1-8.1,22.4-8.2c0.5,0,1.6,0.1,2.3,0.7
-		                        c0.6,0.5,0.8,1.2,0.9,1.6c0.1,0.5,0.2,1.5,0.1,2.4C86.9,50.3,83,73.3,81,83.9c-0.8,4.5-2.5,6-4.1,6.2c-3.5,0.3-6.1-2.3-9.5-4.5
-		                        c-5.3-3.5-8.3-5.6-13.4-9c-5.9-3.9-2.1-6,1.3-9.6c0.9-0.9,16.2-14.9,16.5-16.2c0-0.2,0.1-0.7-0.3-1.1s-0.9-0.2-1.2-0.1
-		                        c-0.5,0.1-9,5.7-25.3,16.7c-2.4,1.6-4.6,2.4-6.5,2.4c-2.1,0-6.3-1.2-9.3-2.2c-3.8-1.2-6.7-1.9-6.5-3.9
-		                        C22.8,61.6,24.3,60.5,27.2,59.4z" />
-                </Border>
-            </Border>
+        <!-- Not on the root: the wallpaper follows the app's theme to pick the light or the dark
+             one, while what sits on it is white in either. -->
+        <Grid RequestedTheme="Dark">
+            <Grid.Resources>
+                <SolidColorBrush x:Key="TextControlBackground"
+                                 Color="#29FFFFFF" />
+                <SolidColorBrush x:Key="TextControlBackgroundPointerOver"
+                                 Color="#3DFFFFFF" />
+                <SolidColorBrush x:Key="TextControlBackgroundFocused"
+                                 Color="#3DFFFFFF" />
+                <!-- 1,1,1,2 by default, and the field is always focused here. -->
+                <Thickness x:Key="TextControlBorderThemeThicknessFocused">1</Thickness>
+                <SolidColorBrush x:Key="TextControlBorderBrush"
+                                 Color="#3DFFFFFF" />
+                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver"
+                                 Color="#52FFFFFF" />
+                <SolidColorBrush x:Key="TextControlBorderBrushFocused"
+                                 Color="#B3FFFFFF" />
+                <SolidColorBrush x:Key="TextControlElevationBorderBrush"
+                                 Color="#3DFFFFFF" />
+                <SolidColorBrush x:Key="TextControlElevationBorderFocusedBrush"
+                                 Color="#B3FFFFFF" />
+                <SolidColorBrush x:Key="TextControlForeground"
+                                 Color="#FFFFFF" />
+                <SolidColorBrush x:Key="TextControlForegroundPointerOver"
+                                 Color="#FFFFFF" />
+                <SolidColorBrush x:Key="TextControlForegroundFocused"
+                                 Color="#FFFFFF" />
+                <SolidColorBrush x:Key="TextControlPlaceholderForeground"
+                                 Color="#C7FFFFFF" />
+                <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver"
+                                 Color="#C7FFFFFF" />
+                <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused"
+                                 Color="#C7FFFFFF" />
+                <SolidColorBrush x:Key="TextControlButtonForeground"
+                                 Color="#FFFFFF" />
+                <SolidColorBrush x:Key="TextControlButtonForegroundPointerOver"
+                                 Color="#FFFFFF" />
+                <SolidColorBrush x:Key="TextControlButtonForegroundPressed"
+                                 Color="#FFFFFF" />
+                <SolidColorBrush x:Key="TextControlButtonBackgroundPointerOver"
+                                 Color="#29FFFFFF" />
+                <SolidColorBrush x:Key="TextControlButtonBackgroundPressed"
+                                 Color="#1FFFFFFF" />
 
-            <TextBlock x:Name="FullName"
-                       Text="{CustomResource AppName}"
-                       TextAlignment="Center"
-                       Margin="0,0,0,24"
-                       Style="{StaticResource TitleTextBlockStyle}" />
+                <SolidColorBrush x:Key="ButtonBackground"
+                                 Color="#29FFFFFF" />
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver"
+                                 Color="#3DFFFFFF" />
+                <SolidColorBrush x:Key="ButtonBackgroundPressed"
+                                 Color="#1FFFFFFF" />
+                <SolidColorBrush x:Key="ButtonBorderBrush"
+                                 Color="#3DFFFFFF" />
+                <SolidColorBrush x:Key="ButtonBorderBrushPointerOver"
+                                 Color="#3DFFFFFF" />
+                <SolidColorBrush x:Key="ButtonBorderBrushPressed"
+                                 Color="#3DFFFFFF" />
+                <SolidColorBrush x:Key="ButtonForeground"
+                                 Color="#FFFFFF" />
+                <SolidColorBrush x:Key="ButtonForegroundPointerOver"
+                                 Color="#FFFFFF" />
+                <SolidColorBrush x:Key="ButtonForegroundPressed"
+                                 Color="#D9FFFFFF" />
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-            <Grid x:Name="FieldPanel"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"
-                  Width="296">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Border x:Name="Biometrics"
-                        Background="{ThemeResource TinyButtonBackgroundBrush}"
+            <StackPanel Width="320"
+                        Margin="0,-80,0,0"
+                        Grid.Row="1">
+                <TextBlock Text="&#xEA1E;"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="48"
+                           Foreground="#FFFFFF"
+                           HorizontalAlignment="Center"
+                           AutomationProperties.AccessibilityView="Raw" />
+
+                <TextBlock Text="{CustomResource UnlockToUse}"
+                           TextAlignment="Center"
+                           Margin="0,24,0,0"
+                           Style="{StaticResource SubtitleTextBlockStyle}" />
+
+                <TextBlock x:Name="Subtitle"
+                           Text="{CustomResource EnterPIN}"
+                           TextAlignment="Center"
+                           Margin="0,4,0,0"
+                           Style="{StaticResource BodyTextBlockStyle}" />
+
+                <Border x:Name="RetryPanel"
                         Visibility="Collapsed"
-                        Width="32"
-                        Height="32"
-                        CornerRadius="16"
-                        Margin="0,0,8,0">
-                    <controls:GlyphButton Glyph="&#xE904;"
-                                          Click="Biometrics_Click"
-                                          AutomationProperties.Name="{CustomResource UnlockWindowsHello}"
-                                          ToolTipService.ToolTip="{CustomResource UnlockWindowsHello}"
-                                          AllowFocusOnInteraction="False"
-                                          Foreground="#FFFFFF"
-                                          Width="32"
-                                          Height="32"
-                                          CornerRadius="16"
-                                          Padding="0" />
+                        Background="#52000000"
+                        CornerRadius="14"
+                        Padding="14,6"
+                        HorizontalAlignment="Center"
+                        Margin="0,8,0,0">
+                    <TextBlock x:Name="RetryIn"
+                               TextAlignment="Center"
+                               Style="{StaticResource BodyTextBlockStyle}" />
                 </Border>
 
-                <PasswordBox x:Name="Field"
-                             PlaceholderText="{CustomResource EnterYourPasscode}"
-                             InputScope="NumericPin"
-                             PasswordChanged="Field_TextChanged"
-                             KeyDown="Field_KeyDown"
-                             Grid.Column="1" />
+                <Grid x:Name="FieldPanel"
+                      Margin="0,28,0,0">
+                    <!-- The reveal button would sit under Enter, which takes the end of the field. -->
+                    <PasswordBox x:Name="Field"
+                                 PlaceholderText="{CustomResource EnterYourPasscode}"
+                                 InputScope="NumericPin"
+                                 PasswordRevealMode="Hidden"
+                                 Height="44"
+                                 CornerRadius="22"
+                                 Padding="20,11,52,11"
+                                 PasswordChanged="Field_TextChanged"
+                                 KeyDown="Field_KeyDown" />
 
-                <Border Background="{ThemeResource TinyButtonBackgroundBrush}"
-                        Width="32"
-                        Height="32"
-                        CornerRadius="16"
-                        Margin="8,0,0,0"
-                        Grid.Column="2">
-                    <controls:GlyphButton Glyph="&#xE72A;"
-                                          Click="Enter_Click"
-                                          AutomationProperties.Name="{CustomResource AccDescrPasscodeUnlock}"
-                                          ToolTipService.ToolTip="{CustomResource AccDescrPasscodeUnlock}"
-                                          AllowFocusOnInteraction="False"
-                                          Foreground="#FFFFFF"
-                                          Width="32"
-                                          Height="32"
-                                          CornerRadius="16"
-                                          Padding="0" />
-                </Border>
-            </Grid>
+                    <!-- A PIN is typed into the field, which stays focused and stays under the
+                         dots, invisible: they only show how many digits it holds. -->
+                    <StackPanel x:Name="Dots"
+                                Orientation="Horizontal"
+                                Spacing="20"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed"
+                                AutomationProperties.AccessibilityView="Raw">
+                        <Border Width="16"
+                                Height="16"
+                                CornerRadius="8"
+                                BackgroundSizing="OuterBorderEdge"
+                                BorderThickness="2"
+                                BorderBrush="#FFFFFF">
+                            <Border.BackgroundTransition>
+                                <BrushTransition Duration="0:0:0.083" />
+                            </Border.BackgroundTransition>
+                        </Border>
+                        <Border Width="16"
+                                Height="16"
+                                CornerRadius="8"
+                                BackgroundSizing="OuterBorderEdge"
+                                BorderThickness="2"
+                                BorderBrush="#FFFFFF">
+                            <Border.BackgroundTransition>
+                                <BrushTransition Duration="0:0:0.083" />
+                            </Border.BackgroundTransition>
+                        </Border>
+                        <Border Width="16"
+                                Height="16"
+                                CornerRadius="8"
+                                BackgroundSizing="OuterBorderEdge"
+                                BorderThickness="2"
+                                BorderBrush="#FFFFFF">
+                            <Border.BackgroundTransition>
+                                <BrushTransition Duration="0:0:0.083" />
+                            </Border.BackgroundTransition>
+                        </Border>
+                        <Border Width="16"
+                                Height="16"
+                                CornerRadius="8"
+                                BackgroundSizing="OuterBorderEdge"
+                                BorderThickness="2"
+                                BorderBrush="#FFFFFF">
+                            <Border.BackgroundTransition>
+                                <BrushTransition Duration="0:0:0.083" />
+                            </Border.BackgroundTransition>
+                        </Border>
+                    </StackPanel>
+
+                    <Button x:Name="Enter"
+                            Click="Enter_Click"
+                            AutomationProperties.Name="{CustomResource AccDescrPasscodeUnlock}"
+                            ToolTipService.ToolTip="{CustomResource AccDescrPasscodeUnlock}"
+                            AllowFocusOnInteraction="False"
+                            Background="#FFFFFF"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            Width="32"
+                            Height="32"
+                            Padding="0"
+                            CornerRadius="16"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,6,0">
+                        <Button.Resources>
+                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver"
+                                             Color="#F0F0F0" />
+                            <SolidColorBrush x:Key="ButtonBackgroundPressed"
+                                             Color="#E0E0E0" />
+                            <SolidColorBrush x:Key="ButtonBorderBrushPointerOver"
+                                             Color="Transparent" />
+                            <SolidColorBrush x:Key="ButtonBorderBrushPressed"
+                                             Color="Transparent" />
+                        </Button.Resources>
+                        <TextBlock Text="&#xEA4D;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Foreground="#B3000000" />
+                    </Button>
+                </Grid>
+
+                <Button x:Name="Biometrics"
+                        Click="Biometrics_Click"
+                        AutomationProperties.Name="{CustomResource UnlockWindowsHello}"
+                        AllowFocusOnInteraction="False"
+                        Visibility="Collapsed"
+                        HorizontalAlignment="Center"
+                        CornerRadius="20"
+                        Padding="14,8,18,8"
+                        Margin="0,32,0,0">
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="10">
+                        <TextBlock Text="&#xE904;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20" />
+                        <TextBlock Text="{CustomResource UnlockWindowsHello}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
 
             <Button Click="LogOut_Click"
                     Content="{CustomResource LogOut}"
-                    Style="{StaticResource AccentTextButtonStyle}"
-                    HorizontalAlignment="Stretch"
-                    Margin="0,8,0,-40" />
-        </StackPanel>
-
-        <Border Width="296"
-                Grid.Row="2">
-            <TextBlock x:Name="RetryIn"
-                       Visibility="Collapsed"
-                       Style="{StaticResource CaptionTextBlockStyle}"
-                       Foreground="{ThemeResource DangerButtonForeground}"
-                       Margin="0,4,0,0" />
-        </Border>
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,24"
+                    Grid.Row="2">
+                <Button.Resources>
+                    <SolidColorBrush x:Key="ButtonBorderBrushPointerOver"
+                                     Color="Transparent" />
+                    <SolidColorBrush x:Key="ButtonBorderBrushPressed"
+                                     Color="Transparent" />
+                </Button.Resources>
+            </Button>
+        </Grid>
 
         <Border x:Name="TitleBar"
                 Background="Transparent"
                 Height="32"
-                VerticalAlignment="Top"
-                Grid.RowSpan="3" />
+                VerticalAlignment="Top" />
     </Grid>
 </controls:WindowContent>

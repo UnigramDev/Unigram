@@ -13,6 +13,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Security.Credentials.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -25,6 +26,8 @@ namespace Telegram.Views.Host
 
         private readonly DispatcherTimer _retryTimer;
 
+        private int _length;
+
         public PasscodeWindow(WindowContext window, bool biometrics)
             : base(window, false)
         {
@@ -32,6 +35,9 @@ namespace Telegram.Views.Host
 
             _passcodeService = LifetimeService.Current.Passcode;
             _biometrics = biometrics;
+
+            // White over the wallpaper; WindowContext.Unlock puts the previous ones back.
+            UseDarkCaptionButtons();
 
             _retryTimer = new DispatcherTimer();
             _retryTimer.Interval = TimeSpan.FromMilliseconds(100);
@@ -42,18 +48,35 @@ namespace Telegram.Views.Host
                 _retryTimer.Start();
             }
 
-            //var user = InMemoryCacheService.Current.GetUser(SettingsHelper.UserId);
-            //if (user != null)
-            //{
-            //    Photo.Source = DefaultPhotoConverter.Convert(user, false) as ImageSource;
-            //    FullName.Text = user.FullName;
-            //}
+            var clientService = LifetimeService.Current.ActiveItem?.Resolve<IClientService>();
+            if (clientService != null)
+            {
+                Wallpaper.Update(clientService);
+            }
+            else
+            {
+                Wallpaper.Update(light: null, dark: null);
+            }
 
             var confirmScope = new InputScope();
             confirmScope.Names.Add(new InputScopeName(_passcodeService.IsSimple ? InputScopeNameValue.NumericPin : InputScopeNameValue.Password));
 
             Field.InputScope = confirmScope;
             Field.MaxLength = _passcodeService.IsSimple ? 4 : int.MaxValue;
+
+            if (_passcodeService.IsSimple)
+            {
+                Field.Opacity = 0;
+                AutomationProperties.SetName(Field, Strings.EnterPIN);
+
+                Dots.Visibility = Visibility.Visible;
+                Enter.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Subtitle.Visibility = Visibility.Collapsed;
+                Biometrics.Margin = new Thickness(0, 20, 0, 0);
+            }
         }
 
         protected override UIElement TitleBarElement => TitleBar;
@@ -62,13 +85,20 @@ namespace Telegram.Views.Host
         {
             if (_passcodeService.RetryIn > 0)
             {
-                RetryIn.Visibility = Visibility.Visible;
+                RetryPanel.Visibility = Visibility.Visible;
                 RetryIn.Text = string.Format(Strings.TooManyTries, Locale.Declension(Strings.R.Seconds, _passcodeService.RetryIn));
             }
             else
             {
                 _retryTimer.Stop();
-                RetryIn.Visibility = Visibility.Collapsed;
+                RetryPanel.Visibility = Visibility.Collapsed;
+            }
+
+            if (_passcodeService.IsSimple)
+            {
+                Subtitle.Visibility = RetryPanel.Visibility == Visibility.Visible
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             }
         }
 
@@ -88,9 +118,34 @@ namespace Telegram.Views.Host
 
         private void Field_TextChanged(object sender, RoutedEventArgs e)
         {
-            if (_passcodeService.IsSimple && Field.Password.Length == 4)
+            // One step per character typed or erased, none for a paste. A wrong code turns it back
+            // once, in Lock, which clears the field without it counting as erasing.
+            var length = Field.Password.Length;
+            if (length == _length + 1)
             {
-                TryUnlock();
+                Wallpaper.UpdateBackground();
+            }
+            else if (length == _length - 1)
+            {
+                Wallpaper.RevertBackground();
+            }
+
+            _length = length;
+
+            if (_passcodeService.IsSimple)
+            {
+                for (int i = 0; i < Dots.Children.Count; i++)
+                {
+                    if (Dots.Children[i] is Border dot)
+                    {
+                        dot.Background = i < length ? dot.BorderBrush : null;
+                    }
+                }
+
+                if (length == 4)
+                {
+                    TryUnlock();
+                }
             }
         }
 
@@ -177,7 +232,10 @@ namespace Telegram.Views.Host
                 _retryTimer.Start();
             }
 
-            VisualUtilities.ShakeView(Field);
+            VisualUtilities.ShakeView(FieldPanel);
+            Wallpaper.RevertBackground();
+
+            _length = 0;
             Field.Password = string.Empty;
         }
 

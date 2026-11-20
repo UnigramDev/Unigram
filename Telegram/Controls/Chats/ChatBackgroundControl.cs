@@ -176,8 +176,19 @@ namespace Telegram.Controls.Chats
             Update(_light.Background, _dark.Background);
         }
 
+        /// <summary>
+        /// Shows the default wallpaper the way the passcode lock does: never a chat's own, and
+        /// recoloured by <see cref="ResolveLockScreen"/>. Set before the control is loaded.
+        /// </summary>
+        public bool IsLockScreen { get; set; }
+
         private Variant Resolve(Background background, bool forDarkTheme, WindowContext window)
         {
+            if (IsLockScreen)
+            {
+                window = null;
+            }
+
             var chatBackground = _localFields ? _chatBackground : window?.ChatBackground;
             var (lightSettings, darkSettings) = _localFields ? (_lightSettings, _darkSettings) : (window?.LightSettings, window?.DarkSettings);
             var chatTheme = _localFields ? _chatTheme : window?.ChatTheme;
@@ -208,7 +219,14 @@ namespace Telegram.Controls.Chats
                 dimming = 0;
             }
 
-            return new Variant(theme, background ?? CreateDefaultBackground(forDarkTheme), dimming);
+            background ??= CreateDefaultBackground(forDarkTheme);
+
+            if (IsLockScreen)
+            {
+                return ResolveLockScreen(background, forDarkTheme);
+            }
+
+            return new Variant(theme, background, dimming);
         }
 
         private static Background CreateDefaultBackground(bool dark)
@@ -219,17 +237,75 @@ namespace Telegram.Controls.Chats
                 new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
         }
 
+        // White text has to read on whatever the user picked, so every wallpaper is dimmed, and
+        // the darker the wallpaper may be, the more. A pattern would compete with the text, so a
+        // freeform gradient is shown without it, and one with a pattern that is not freeform gives
+        // way to a flat colour.
+        private static Variant ResolveLockScreen(Background background, bool forDarkTheme)
+        {
+            switch (background.Type)
+            {
+                case BackgroundTypeFill { Fill: BackgroundFillFreeformGradient freeform }:
+                    return new Variant(null, CreateLockScreenGradient(freeform, forDarkTheme), 13);
+                case BackgroundTypePattern { Fill: BackgroundFillFreeformGradient freeform } pattern:
+                    return new Variant(null, CreateLockScreenGradient(freeform, forDarkTheme), pattern.IsInverted ? 50 : 13);
+                case BackgroundTypeFill { Fill: BackgroundFillGradient }:
+                    return new Variant(null, background, 13);
+                case BackgroundTypeFill or BackgroundTypeWallpaper:
+                    return new Variant(null, background, 75);
+                default:
+                    return new Variant(null, new Background(0, false, forDarkTheme, string.Empty, null, new BackgroundTypeFill(new BackgroundFillSolid(0x517C9E))), 0);
+            }
+        }
+
+        // Lifted saturation in the light theme, where the default gradients are pale. Colours
+        // already near grey or near full saturation are left alone, or a hue would appear that
+        // the wallpaper never had.
+        private static Background CreateLockScreenGradient(BackgroundFillFreeformGradient freeform, bool forDarkTheme)
+        {
+            var colors = new int[freeform.Colors.Count];
+
+            for (int i = 0; i < colors.Length; i++)
+            {
+                var color = freeform.Colors[i];
+
+                if (forDarkTheme)
+                {
+                    colors[i] = color;
+                    continue;
+                }
+
+                var hsv = ColorsHelper.RgbToHsv((byte)(color >> 16), (byte)(color >> 8), (byte)color);
+                if (hsv[1] > 0.1 && hsv[1] < 0.9)
+                {
+                    hsv[1] = Math.Min(hsv[1] + 0.14, 1);
+                }
+
+                var rgb = ColorsHelper.HsvToRgb(hsv[0], hsv[1], hsv[2]);
+                colors[i] = rgb[0] << 16 | rgb[1] << 8 | rgb[2];
+            }
+
+            return new Background(0, false, forDarkTheme, string.Empty, null, new BackgroundTypeFill(new BackgroundFillFreeformGradient(colors)));
+        }
+
         public void UpdateBackground()
         {
-            if (_applied.Background?.Type is BackgroundTypeFill updateFill && updateFill.Fill is BackgroundFillFreeformGradient)
-            {
-                Presenter.Next();
-            }
-            else if (_applied.Background?.Type is BackgroundTypePattern updatePattern && updatePattern.Fill is BackgroundFillFreeformGradient)
+            if (IsFreeform)
             {
                 Presenter.Next();
             }
         }
+
+        public void RevertBackground()
+        {
+            if (IsFreeform)
+            {
+                Presenter.Previous();
+            }
+        }
+
+        private bool IsFreeform => _applied.Background?.Type is BackgroundTypeFill { Fill: BackgroundFillFreeformGradient }
+            or BackgroundTypePattern { Fill: BackgroundFillFreeformGradient };
 
         private void Apply()
         {
@@ -256,7 +332,7 @@ namespace Telegram.Controls.Chats
 
             Presenter.UpdateSource(_clientService, variant.Background, false, variant.Theme);
 
-            if (dark && variant.Dimming != 0)
+            if (variant.Dimming != 0)
             {
                 Presenter.Opacity = 1 - (variant.Dimming / 100d);
                 Background = new SolidColorBrush(Colors.Black);
