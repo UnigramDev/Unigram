@@ -66,6 +66,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="28" />
                                 <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
                             <!--  Centred where the + is.  -->
@@ -89,6 +90,13 @@
                                                        MaxLength="100"
                                                        AcceptsReturn="False"
                                                        Grid.Column="1" />
+
+                            <controls:PollMediaButton x:Name="Attach"
+                                                      Slot="Option"
+                                                      Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                                                      VerticalAlignment="Top"
+                                                      Margin="0,2,-8,0"
+                                                      Grid.Column="2" />
                         </Grid>
 
                         <Border BorderBrush="{ThemeResource MessageSubtleForegroundBrush}"

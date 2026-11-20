@@ -516,7 +516,7 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void AddPollOption(MessageViewModel message, FormattedText text) { }
+        public virtual void AddPollOption(MessageViewModel message, FormattedText text, InputPollMedia media) { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -778,7 +778,7 @@ namespace Telegram.ViewModels
 
         public override void VotePoll(MessageViewModel message, Vector<int> options) => _viewModel.VotePoll(message, options);
 
-        public override void AddPollOption(MessageViewModel message, FormattedText text) => _viewModel.AddPollOption(message, text);
+        public override void AddPollOption(MessageViewModel message, FormattedText text, InputPollMedia media) => _viewModel.AddPollOption(message, text, media);
 
         public override void OpenViaBot(long viaBotUserId) => _viewModel.OpenViaBot(viaBotUserId);
 

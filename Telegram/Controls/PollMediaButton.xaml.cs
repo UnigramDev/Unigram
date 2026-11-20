@@ -61,6 +61,57 @@ namespace Telegram.Controls
 
         public event EventHandler MediaChanged;
 
+        private int _busy;
+
+        /// <summary>
+        /// While its menu, or a picker or popup it opened, is up. They take the focus from the
+        /// field the button belongs to, which has to stay up under them.
+        /// </summary>
+        public bool IsBusy => _busy > 0;
+
+        public event EventHandler IsBusyChanged;
+
+        private void BeginBusy()
+        {
+            if (_busy++ == 0)
+            {
+                IsBusyChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void EndBusy()
+        {
+            if (--_busy == 0)
+            {
+                IsBusyChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #region Foreground
+
+        public Brush Foreground
+        {
+            get => (Brush)GetValue(ForegroundProperty);
+            set => SetValue(ForegroundProperty, value);
+        }
+
+        public static readonly DependencyProperty ForegroundProperty =
+            DependencyProperty.Register("Foreground", typeof(Brush), typeof(PollMediaButton), new PropertyMetadata(null, OnForegroundChanged));
+
+        private static void OnForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is Brush brush)
+            {
+                ((PollMediaButton)d).AttachButton.Foreground = brush;
+            }
+            else
+            {
+                ((PollMediaButton)d).AttachButton.ClearValue(Control.ForegroundProperty);
+            }
+        }
+
+        #endregion
+
         private void SetMedia(PollMediaDraft media, bool notify)
         {
             if (_media == media)
@@ -176,7 +227,16 @@ namespace Telegram.Controls
                 flyout.CreateFlyoutItem(Remove, Strings.Delete, Icons.Delete, destructive: true);
             }
 
+            // Counted rather than flagged: the menu closes while what its item opened is still up.
+            BeginBusy();
+            flyout.Closed += Menu_Closed;
             flyout.ShowAt(this, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void Menu_Closed(object sender, object e)
+        {
+            ((MenuFlyout)sender).Closed -= Menu_Closed;
+            EndBusy();
         }
 
         private void PickMedia()
@@ -196,29 +256,64 @@ namespace Telegram.Controls
                 return;
             }
 
-            var popup = new SendAudiosPopup(ClientService, NavigationService);
+            BeginBusy();
 
-            var confirm = await popup.ShowAsync(XamlRoot);
-            if (confirm != ContentDialogResult.Primary)
+            try
             {
-                return;
-            }
+                var popup = new SendAudiosPopup(ClientService, NavigationService);
 
-            // None picked is the picker's way of asking for a file from this device.
-            if (popup.SelectedItems is not { Count: > 0 } selected)
-            {
-                await PickFileAsync(AudioTypes, PickerLocationId.MusicLibrary, false);
+                var confirm = await popup.ShowAsync(XamlRoot);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                // None picked is the picker's way of asking for a file from this device.
+                if (popup.SelectedItems is not { Count: > 0 } selected)
+                {
+                    await PickFileAsync(AudioTypes, PickerLocationId.MusicLibrary, false);
+                }
+                else if (selected[0].ToInputMessage() is InputMessageAudio audio)
+                {
+                    SetMedia(PollMediaDraft.FromAudio(audio.Audio), true);
+                }
             }
-            else if (selected[0].ToInputMessage() is InputMessageAudio audio)
+            finally
             {
-                SetMedia(PollMediaDraft.FromAudio(audio.Audio), true);
+                EndBusy();
             }
         }
 
         private async Task PickFileAsync(string[] types, PickerLocationId location, bool asDocument)
         {
-            StorageMedia media;
+            BeginBusy();
 
+            try
+            {
+                var media = await PickSingleMediaAsync(types, location);
+                if (media == null)
+                {
+                    return;
+                }
+
+                var draft = await PollMediaDraft.CreateAsync(media, Slot, asDocument);
+                if (draft != null)
+                {
+                    SetMedia(draft, true);
+                }
+                else
+                {
+                    ToastPopup.Show(XamlRoot, Strings.UnsupportedAttachment, ToastPopupIcon.Info);
+                }
+            }
+            finally
+            {
+                EndBusy();
+            }
+        }
+
+        private async Task<StorageMedia> PickSingleMediaAsync(string[] types, PickerLocationId location)
+        {
             try
             {
                 var picker = new FileOpenPicker();
@@ -234,26 +329,11 @@ namespace Telegram.Controls
                     picker.FileTypeFilter.Add("*");
                 }
 
-                media = await picker.PickSingleMediaAsync(XamlRoot);
+                return await picker.PickSingleMediaAsync(XamlRoot);
             }
             catch
             {
-                return;
-            }
-
-            if (media == null)
-            {
-                return;
-            }
-
-            var draft = await PollMediaDraft.CreateAsync(media, Slot, asDocument);
-            if (draft != null)
-            {
-                SetMedia(draft, true);
-            }
-            else
-            {
-                ToastPopup.Show(XamlRoot, Strings.UnsupportedAttachment, ToastPopupIcon.Info);
+                return null;
             }
         }
 
@@ -264,17 +344,40 @@ namespace Telegram.Controls
                 return;
             }
 
-            var popup = new SendLocationPopup(ClientService.Session);
+            BeginBusy();
 
-            // Over the popup this button may be in: one queued behind it would wait for it to close.
-            var confirm = await popup.ShowAsync(XamlRoot);
-            if (confirm == ContentDialogResult.Primary && PollMediaDraft.FromLocation(popup.Media) is PollMediaDraft draft)
+            try
             {
-                SetMedia(draft, true);
+                var popup = new SendLocationPopup(ClientService.Session);
+
+                // Over the popup this button may be in: one queued behind it would wait for it to close.
+                var confirm = await popup.ShowAsync(XamlRoot);
+                if (confirm == ContentDialogResult.Primary && PollMediaDraft.FromLocation(popup.Media) is PollMediaDraft draft)
+                {
+                    SetMedia(draft, true);
+                }
+            }
+            finally
+            {
+                EndBusy();
             }
         }
 
         private async void PickLink()
+        {
+            BeginBusy();
+
+            try
+            {
+                await PickLinkAsync();
+            }
+            finally
+            {
+                EndBusy();
+            }
+        }
+
+        private async Task PickLinkAsync()
         {
             var popup = new InputPopup
             {
@@ -331,6 +434,7 @@ namespace Telegram.Controls
                 Padding = new Thickness(0)
             });
 
+            BeginBusy();
             _stickerFlyout.Closed += StickerFlyout_Closed;
             _stickerFlyout.ShowAt(this, FlyoutPlacementMode.Auto, FlyoutShowMode.Transient, source: this);
         }
@@ -351,6 +455,8 @@ namespace Telegram.Controls
             _stickerDrawer.Deactivate();
             _stickerDrawer.DataContext = null;
             _stickerDrawer = null;
+
+            EndBusy();
         }
 
         private void Remove()

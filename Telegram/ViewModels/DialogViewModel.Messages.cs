@@ -2712,9 +2712,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void AddPollOption(MessageViewModel message, FormattedText text)
+        public async void AddPollOption(MessageViewModel message, FormattedText text, InputPollMedia media)
         {
-            var response = await ClientService.SendAsync(new AddPollOption(message.ChatId, message.Id, new InputPollOption(text, null)));
+            var response = await ClientService.SendAsync(new AddPollOption(message.ChatId, message.Id, new InputPollOption(text, media)));
             if (response is Error error)
             {
                 ShowToast(error);

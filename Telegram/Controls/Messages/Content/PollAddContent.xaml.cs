@@ -40,6 +40,7 @@ namespace Telegram.Controls.Messages.Content
         private Grid FieldRoot;
         private GlyphButton Emoji;
         private MessageTextBox Field;
+        private PollMediaButton Attach;
 
         protected override void OnApplyTemplate()
         {
@@ -50,7 +51,7 @@ namespace Telegram.Controls.Messages.Content
         #endregion
 
         /// <summary>
-        /// While the field has the focus or any text: the poll's footer offers to save the option
+        /// While the field has the focus, any text or media: the poll's footer offers to save the option
         /// instead of its usual button.
         /// </summary>
         public bool IsEditing => _isEditing;
@@ -63,6 +64,7 @@ namespace Telegram.Controls.Messages.Content
             if (Field != null && (_message == null || _message.ChatId != message.ChatId || _message.Id != message.Id))
             {
                 Field.ClearText();
+                Attach.Media = null;
                 SetEditing(false);
             }
 
@@ -72,6 +74,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 Field.ClientService = message.ClientService;
                 Field.ChatId = message.ChatId;
+                Attach.ClientService = message.ClientService;
             }
         }
 
@@ -94,13 +97,14 @@ namespace Telegram.Controls.Messages.Content
             }
 
             // The server takes no entities in an option but custom emoji, so no markdown either.
-            _message.Delegate.AddPollOption(_message, Field.GetFormattedText(true, false));
+            _message.Delegate.AddPollOption(_message, Field.GetFormattedText(true, false), Attach.Media?.Input);
             Close();
         }
 
         private void Close()
         {
             Field.ClearText();
+            Attach.Media = null;
             SetEditing(false);
 
             // Or the field, collapsed with the focus, sends it wherever the window decides.
@@ -128,8 +132,9 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateEditing()
         {
-            // The emoji flyout takes the focus while it is open, and the field has to stay up under it.
-            SetEditing(_emojiFlyout != null || !Field.IsEmpty || Field.InputFocusState != FocusState.Unfocused);
+            // The emoji flyout and what the attach button opens take the focus while they are up,
+            // and the field has to stay up under them.
+            SetEditing(_emojiFlyout != null || Attach.IsBusy || Attach.Media != null || !Field.IsEmpty || Field.InputFocusState != FocusState.Unfocused);
         }
 
         private void Placeholder_Click(object sender, RoutedEventArgs e)
@@ -144,8 +149,13 @@ namespace Telegram.Controls.Messages.Content
                 FieldRoot = GetTemplateChild(nameof(FieldRoot)) as Grid;
                 Emoji = GetTemplateChild(nameof(Emoji)) as GlyphButton;
                 Field = GetTemplateChild(nameof(Field)) as MessageTextBox;
+                Attach = GetTemplateChild(nameof(Attach)) as PollMediaButton;
 
                 Emoji.Click += Emoji_Click;
+
+                Attach.ClientService = _message.ClientService;
+                Attach.MediaChanged += Attach_MediaChanged;
+                Attach.IsBusyChanged += Attach_IsBusyChanged;
 
                 Field.ClientService = _message.ClientService;
                 Field.ChatId = _message.ChatId;
@@ -164,6 +174,17 @@ namespace Telegram.Controls.Messages.Content
                 SetEditing(true);
                 Field.FocusInput(FocusState.Programmatic);
             }
+        }
+
+        private void Attach_MediaChanged(object sender, EventArgs e)
+        {
+            UpdateEditing();
+            Field.FocusInput(FocusState.Programmatic);
+        }
+
+        private void Attach_IsBusyChanged(object sender, EventArgs e)
+        {
+            UpdateEditing();
         }
 
         private void Field_Loaded(object sender, RoutedEventArgs e)
