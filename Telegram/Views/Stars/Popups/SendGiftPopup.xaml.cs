@@ -39,7 +39,8 @@ namespace Telegram.Views.Stars.Popups
 
         private readonly MessageSender _receiverId;
 
-        public SendGiftPopup(IClientService clientService, INavigationService navigationService, Gift gift, MessageSender receiverId)
+        /// <param name="accepted">What the receiving user accepts; null for the current user and for channels.</param>
+        public SendGiftPopup(IClientService clientService, INavigationService navigationService, Gift gift, MessageSender receiverId, AcceptedGiftTypes accepted)
         {
             InitializeComponent();
 
@@ -92,9 +93,28 @@ namespace Telegram.Views.Stars.Popups
 
                 if (gift.UpgradeStarCount > 0)
                 {
-                    UpgradeableInfo.Text = string.Format(Strings.Gift2UpgradeInfo, _clientService.GetTitle(receiverId));
-
                     UpgradeableText.Text = string.Format(Strings.Gift2Upgrade, gift.UpgradeStarCount).ReplaceStar(Icons.PremiumStar);
+
+                    // A user who takes limited gifts only plain, or only unique, decides the upgrade for the sender.
+                    if (gift.OverallLimits != null && accepted?.LimitedGifts is false)
+                    {
+                        Upgradeable.IsChecked = true;
+                        Upgradeable.IsEnabled = false;
+
+                        UpgradeableInfo.IsLink = false;
+                        UpgradeableInfo.Text = string.Format(Strings.Gift2UpgradeForcedInfo, _clientService.GetTitle(receiverId));
+                    }
+                    else if (gift.OverallLimits != null && accepted?.UpgradedGifts is false)
+                    {
+                        Upgradeable.IsEnabled = false;
+
+                        UpgradeableInfo.IsLink = false;
+                        UpgradeableInfo.Text = string.Format(Strings.Gift2NoUpgradeForcedInfo, _clientService.GetTitle(receiverId));
+                    }
+                    else
+                    {
+                        UpgradeableInfo.Text = string.Format(Strings.Gift2UpgradeInfo, _clientService.GetTitle(receiverId));
+                    }
                 }
                 else
                 {
@@ -110,10 +130,12 @@ namespace Telegram.Views.Stars.Popups
                 NextLimit.Text = NextLimitBelow.Text = Locale.Declension(Strings.R.Gift2AvailabilityLeft, gift.OverallLimits.RemainingCount);
             }
 
-            PrimaryButtonText = Locale.Declension(Strings.R.Gift2Send, gift.StarCount).ReplaceStar(Icons.Premium);
+            PrimaryButtonText = Locale.Declension(Strings.R.Gift2Send, StarCount).ReplaceStar(Icons.Premium);
 
             InitializeGiftsForResale();
         }
+
+        private long StarCount => _gift.StarCount + (Upgradeable.IsChecked is true ? _gift.UpgradeStarCount : 0);
 
         private async void InitializeGiftsForResale()
         {
@@ -190,7 +212,7 @@ namespace Telegram.Views.Stars.Popups
             {
                 content = new MessageGift(_gift, _clientService.MyId, _receiverId, string.Empty, text, 0, _gift.DefaultSellStarCount, Upgradeable.IsChecked is true ? _gift.UpgradeStarCount : 0, false, false, false, false, false, false, false, false, false, false, string.Empty, string.Empty);
 
-                PrimaryButtonText = Locale.Declension(Strings.R.Gift2Send, _gift.StarCount + (Upgradeable.IsChecked is true ? _gift.UpgradeStarCount : 0)).ReplaceStar(Icons.Premium);
+                PrimaryButtonText = Locale.Declension(Strings.R.Gift2Send, StarCount).ReplaceStar(Icons.Premium);
             }
             else if (_option != null && _receiverId is MessageSenderUser user)
             {
@@ -260,7 +282,7 @@ namespace Telegram.Views.Stars.Popups
 
                 if (result == PayResult.StarsNeeded)
                 {
-                    await _navigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForChannel(_gift.StarCount, 0));
+                    await _navigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForChannel(StarCount, 0));
                 }
 
                 return;
@@ -300,7 +322,7 @@ namespace Telegram.Views.Stars.Popups
         {
             var text = CaptionInput.GetFormattedText();
 
-            var response = await _clientService.SendPaymentAsync(_gift.StarCount, new SendGift(_gift.Id, _receiverId, text, HideMyName.IsChecked is true, Upgradeable.IsChecked is true));
+            var response = await _clientService.SendPaymentAsync(StarCount, new SendGift(_gift.Id, _receiverId, text, HideMyName.IsChecked is true, Upgradeable.IsChecked is true));
             if (response is Ok result)
             {
                 //var user = ClientService.GetUser(PaymentForm.SellerBotUserId);

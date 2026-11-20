@@ -11897,6 +11897,8 @@
     <string name="Gift2HideSelfInfo">Hide my name and message from visitors to my profile</string>
     <string name="Gift2Upgrade">Make Unique for &#11088;&#65039;{0}</string>
     <string name="Gift2UpgradeInfo">Enable this to let {0} turn your gift into a unique collectible. **Learn More &gt;**</string>
+    <string name="Gift2UpgradeForcedInfo">{0} only accepts unique gifts.</string>
+    <string name="Gift2NoUpgradeForcedInfo">{0} only accepts limited gifts.</string>
 
     <string name="FilterNameAnimationsEnable">Enable Animations</string>
     <string name="FilterNameAnimationsDisable">Disable Animations</string>
@@ -13003,6 +13005,10 @@
     <string name="StarRatingLevelNegativeOther">A negative rating indicates that **{0}’s** payments are unreliable.</string>
 
     <string name="Gift2LimitedPremium">premium</string>
+    <string name="Gift2LimitedAuction">auction</string>
+    <string name="Gift2LimitedAuctionSoon">soon</string>
+    <string name="Gift2AuctionPriceJoin">Join</string>
+    <string name="Gift2AuctionPriceView">View</string>
     <string name="Gift2PremiumTitle">Premium Gift</string>
     <string name="Gift2PremiumSubtitle">Subscribe to **Telegram Premium** to send these gifts and unlock access to powerful features.</string>
     <string name="Gift2PremiumSubtitleMany_one">Subscribe to **Telegram Premium** to send up to **{0}** of these gifts and unlock powerful features.</string>

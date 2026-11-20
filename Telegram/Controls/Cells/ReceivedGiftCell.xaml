@@ -67,6 +67,16 @@
                    VerticalAlignment="Top"
                    Margin="4" />
 
+        <TextBlock x:Name="Locked"
+                   x:Load="False"
+                   Text="&#xEA1E;"
+                   Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                   FontSize="16"
+                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Margin="4" />
+
         <controls:AnimatedImage x:Name="Animated"
                                 Width="88"
                                 Height="88"

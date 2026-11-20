@@ -274,6 +274,10 @@ namespace Telegram.Controls.Cells
 
             Pinned.Visibility = Visibility.Collapsed;
 
+            // The picker shows this beside available gifts, whose marks a container may still carry.
+            PremiumRoot?.Visibility = Visibility.Collapsed;
+            Locked?.Visibility = Visibility.Collapsed;
+
             Photo.Visibility = Visibility.Collapsed;
             Pattern.Visibility = Visibility.Visible;
 
@@ -306,7 +310,8 @@ namespace Telegram.Controls.Cells
         private readonly Color _ribbonPremiumBottom = Color.FromArgb(0xFF, 0xBF, 0x7D, 0x16);
 
         /// <param name="resale">The cell that opens the gift's resale listings, beside or instead of the one that buys it.</param>
-        public void UpdateGift(IClientService clientService, AvailableGift gift, bool resale)
+        /// <param name="upgrade">The price includes the upgrade: the receiver takes this gift only unique.</param>
+        public void UpdateGift(IClientService clientService, AvailableGift gift, bool resale, bool upgrade)
         {
             Photo.Visibility = Visibility.Collapsed;
             Pinned.Visibility = Visibility.Collapsed;
@@ -314,72 +319,83 @@ namespace Telegram.Controls.Cells
             StarCountParticles.Source = new ParticlesImageSource(Color.FromArgb(0x80, 0xE8, 0xAB, 0x02), Native.ParticlesType.Premium);
             Animated.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
 
-            if (resale && gift.ResaleCount > 0)
+            var listed = resale && gift.ResaleCount > 0;
+            var soldOut = gift.Gift.OverallLimits?.RemainingCount == 0;
+            var auction = gift.Gift.AuctionInfo;
+
+            // Gold marks what isn't for everyone right now: Premium gifts and running auctions.
+            if (!listed && (gift.Gift.IsPremium || auction != null && !soldOut))
             {
-                PremiumRoot?.Visibility = Visibility.Collapsed;
-
-                // "+" says there are dearer listings too, unless the cheapest is already at the cap.
-                StarCount.Text = gift.ResaleCount > 1 && gift.MinResaleStarCount < clientService.Options.GiftResaleStarCountMax
-                    ? Icons.PremiumStar + " " + gift.MinResaleStarCount.ToString("N0") + "+"
-                    : Icons.PremiumStar + " " + gift.MinResaleStarCount.ToString("N0");
-
-                Ribbon.Visibility = Visibility.Visible;
-                Ribbon.Text = Strings.Gift2Resale;
-
-                RibbonTop.Color = _ribbonResaleTop;
-                RibbonBottom.Color = _ribbonResaleBottom;
-            }
-            else if (gift.Gift.OverallLimits != null)
-            {
-                StarCount.Text = Icons.PremiumStar + " " + gift.Gift.StarCount.ToString("N0");
-
-                if (gift.Gift.OverallLimits.RemainingCount > 0)
-                {
-                    if (gift.Gift.IsPremium)
-                    {
-                        FindName(nameof(PremiumRoot));
-                        PremiumRoot.Visibility = Visibility.Visible;
-
-                        Ribbon.Visibility = Visibility.Visible;
-                        Ribbon.Text = gift.Gift.UserLimits != null
-                            ? Locale.Declension(Strings.R.Gift2AvailabilityLeft, gift.Gift.UserLimits.RemainingCount)
-                            : Strings.Gift2LimitedPremium;
-
-                        RibbonTop.Color = _ribbonPremiumTop;
-                        RibbonBottom.Color = _ribbonPremiumBottom;
-                    }
-                    else
-                    {
-                        PremiumRoot?.Visibility = Visibility.Collapsed;
-
-                        Ribbon.Visibility = Visibility.Visible;
-                        Ribbon.Text = Strings.Gift2LimitedRibbon;
-
-                        RibbonTop.Color = _ribbonLimitedTop;
-                        RibbonBottom.Color = _ribbonLimitedBottom;
-                    }
-                }
-                else
-                {
-                    PremiumRoot?.Visibility = Visibility.Collapsed;
-
-                    Ribbon.Visibility = Visibility.Visible;
-                    Ribbon.Text = Strings.Gift2SoldOut;
-
-                    RibbonTop.Color = _ribbonSoldOutTop;
-                    RibbonBottom.Color = _ribbonSoldOutBottom;
-                }
+                FindName(nameof(PremiumRoot));
+                PremiumRoot.Visibility = Visibility.Visible;
             }
             else
             {
                 PremiumRoot?.Visibility = Visibility.Collapsed;
+            }
 
-                StarCount.Text = Icons.PremiumStar + " " + gift.Gift.StarCount.ToString("N0");
+            if (!listed && gift.Gift.NextSendDate > clientService.UnixTime)
+            {
+                FindName(nameof(Locked));
+                Locked.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Locked?.Visibility = Visibility.Collapsed;
+            }
 
+            if (listed)
+            {
+                // "+" says there are dearer listings too, unless the cheapest is already at the cap.
+                StarCount.Text = gift.ResaleCount > 1 && gift.MinResaleStarCount < clientService.Options.GiftResaleStarCountMax
+                    ? Icons.PremiumStar + " " + gift.MinResaleStarCount.ToString("N0") + "+"
+                    : Icons.PremiumStar + " " + gift.MinResaleStarCount.ToString("N0");
+            }
+            else if (auction != null && gift.ResaleCount == 0)
+            {
+                StarCount.Text = soldOut ? Strings.Gift2AuctionPriceView : Strings.Gift2AuctionPriceJoin;
+            }
+            else
+            {
+                var starCount = gift.Gift.StarCount + (upgrade ? gift.Gift.UpgradeStarCount : 0);
+                StarCount.Text = Icons.PremiumStar + " " + starCount.ToString("N0");
+            }
+
+            if (listed)
+            {
+                UpdateRibbon(Strings.Gift2Resale, _ribbonResaleTop, _ribbonResaleBottom);
+            }
+            else if (soldOut)
+            {
+                UpdateRibbon(Strings.Gift2SoldOut, _ribbonSoldOutTop, _ribbonSoldOutBottom);
+            }
+            else if (auction != null)
+            {
+                UpdateRibbon(auction.StartDate > clientService.UnixTime ? Strings.Gift2LimitedAuctionSoon : Strings.Gift2LimitedAuction, _ribbonPremiumTop, _ribbonPremiumBottom);
+            }
+            else if (gift.Gift.IsPremium)
+            {
+                UpdateRibbon(Strings.Gift2LimitedPremium, _ribbonPremiumTop, _ribbonPremiumBottom);
+            }
+            else if (gift.Gift.OverallLimits != null)
+            {
+                UpdateRibbon(Strings.Gift2LimitedRibbon, _ribbonLimitedTop, _ribbonLimitedBottom);
+            }
+            else
+            {
                 Ribbon.Visibility = Visibility.Collapsed;
             }
 
             Hidden?.Visibility = Visibility.Collapsed;
+        }
+
+        private void UpdateRibbon(string text, Color top, Color bottom)
+        {
+            Ribbon.Visibility = Visibility.Visible;
+            Ribbon.Text = text;
+
+            RibbonTop.Color = top;
+            RibbonBottom.Color = bottom;
         }
     }
 }

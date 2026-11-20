@@ -406,7 +406,7 @@ namespace Telegram.Views.Premium.Popups
                     return;
                 }
 
-                confirm = await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, availableGift.Gift, _receiverId));
+                confirm = await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, availableGift.Gift, _receiverId, _accepted));
             }
             else if (e.ClickedItem is PremiumGiftPaymentOption option && _receiverId is MessageSenderUser user)
             {
@@ -429,11 +429,13 @@ namespace Telegram.Views.Premium.Popups
             {
                 if (args.Item is AvailableGift availableGift)
                 {
-                    receivedGiftCell.UpdateGift(_clientService, availableGift, false);
+                    // The send sheet forces the upgrade on a limited gift the user takes only unique.
+                    var upgrade = availableGift.Gift.OverallLimits != null && _accepted?.LimitedGifts is false;
+                    receivedGiftCell.UpdateGift(_clientService, availableGift, false, upgrade);
                 }
                 else if (args.Item is AvailableGiftResale resale)
                 {
-                    receivedGiftCell.UpdateGift(_clientService, resale.Gift, true);
+                    receivedGiftCell.UpdateGift(_clientService, resale.Gift, true, false);
                 }
                 else if (args.Item is ReceivedGift receivedGift)
                 {
