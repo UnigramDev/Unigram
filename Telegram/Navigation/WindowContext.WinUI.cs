@@ -326,6 +326,13 @@ namespace Telegram.Navigation
             // the window would refuse to close and ask the root a second time.
             _window.Close();
 
+            // The process outlives a main window closed to the icon, and so would an account it
+            // was adding: the next window would open on that sign in page.
+            if (IsInMainView && SystemTray.IsShowing())
+            {
+                LifetimeService.Current.DropAbandonedLogin();
+            }
+
             ExitIfIdle();
             return Task.CompletedTask;
         }

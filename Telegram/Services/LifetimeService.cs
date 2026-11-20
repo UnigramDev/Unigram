@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Controls;
 using Telegram.Navigation;
+using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Windows.UI.Xaml.Media;
 
@@ -263,6 +264,37 @@ namespace Telegram.Services
             }
 
             return session;
+        }
+
+        /// <summary>
+        /// Destroys the active account if it is one being added that is still on the first sign
+        /// in step, the way restarting the app drops it: GetSessionsToInitialize skips it as long
+        /// as another account is signed in.
+        /// </summary>
+        public void DropAbandonedLogin()
+        {
+            var active = _activeItem;
+            if (active.ClientService.AuthorizationState is AuthorizationStateWaitPhoneNumber or AuthorizationStateWaitOtherDeviceConfirmation && HasAnotherAccount(active))
+            {
+                // Reaches Destroy below through AuthorizationStateClosed, which switches away.
+                active.ClientService.Send(new Destroy());
+            }
+        }
+
+        /// <summary>
+        /// Whether an account other than this one is signed in, by the same test a cold start uses.
+        /// </summary>
+        public bool HasAnotherAccount(ISession session)
+        {
+            foreach (var other in _sessions.Values)
+            {
+                if (other != session && SettingsService.IsAuthorized(other.Id))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public async void Destroy(ISession item)

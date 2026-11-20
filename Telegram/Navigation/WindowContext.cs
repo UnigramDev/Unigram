@@ -1512,18 +1512,23 @@ namespace Telegram.Navigation
                     case AuthorizationStateWaitPhoneNumber:
                     case AuthorizationStateWaitOtherDeviceConfirmation:
                         service.Navigate(typeof(AuthorizationPage));
+                        AddSignInBackStack(service, false);
                         break;
                     case AuthorizationStateWaitCode:
                         service.Navigate(typeof(AuthorizationCodePage), navigationStackEnabled: false);
+                        AddSignInBackStack(service, true);
                         break;
                     case AuthorizationStateWaitEmailAddress:
                         service.Navigate(typeof(AuthorizationEmailAddressPage), navigationStackEnabled: false);
+                        AddSignInBackStack(service, true);
                         break;
                     case AuthorizationStateWaitEmailCode:
                         service.Navigate(typeof(AuthorizationEmailCodePage), navigationStackEnabled: false);
+                        AddSignInBackStack(service, true);
                         break;
                     case AuthorizationStateWaitRegistration:
                         service.Navigate(typeof(AuthorizationRegistrationPage), navigationStackEnabled: false);
+                        AddSignInBackStack(service, true);
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -1532,10 +1537,30 @@ namespace Telegram.Navigation
                         }
 
                         service.Navigate(typeof(AuthorizationPasswordPage), navigationStackEnabled: false);
+                        AddSignInBackStack(service, true);
                         break;
                 }
             }
             catch { }
+        }
+
+        /// <summary>
+        /// A window opened on a sign in step gets the back stack that signing in leaves: back
+        /// reaches the phone number, and when another account is signed in BlankPage below it
+        /// destroys this one and switches to that. Entries rather than navigations, because a live
+        /// AuthorizationPage asks for a QR code, which logs out of the step on screen.
+        /// </summary>
+        private static void AddSignInBackStack(INavigationService service, bool phoneNumber)
+        {
+            if (LifetimeService.Current.HasAnotherAccount(service.Session))
+            {
+                service.AddToBackStack(typeof(BlankPage));
+            }
+
+            if (phoneNumber)
+            {
+                service.AddToBackStack(typeof(AuthorizationPage));
+            }
         }
 
         private async void Activate(IActivatedEventArgs args, INavigationService service)
