@@ -15,6 +15,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
+using System.Xml.Linq;
 using Telegram.Common;
 using Telegram.Td.Api;
 using JsonValue = System.Text.Json.Nodes.JsonValue;
@@ -96,6 +97,8 @@ namespace Telegram.Td
     /// "@photo" on a message - {path, width, height, caption}, given as a photo message;
     /// "text" on a message - a plain text message; "@from" on a message - the sending user's id;
     /// "@pinned" on a chat - pinned in the main list;
+    /// {"@string": key} in place of any string - that string of <see cref="Language"/>, else the
+    /// English one this build has;
     /// a date, edit_date, was_online or expires under 10^9 and not 0 - seconds from launch, or
     /// "HH:mm" - that time today.
     /// A message without an id or date gets one in list order, a private or secret chat without a
@@ -118,6 +121,58 @@ namespace Telegram.Td
             || Environment.UserName == "WDAGUtilityAccount"
 #endif
             ) && System.IO.File.Exists(System.IO.Path.Combine(Folder, "scenario.json"));
+
+        // After IsEnabled, which it reads: static initializers run in the order they are written.
+        private static readonly MockLanguagePack? _languagePack = IsEnabled ? MockLanguagePack.Load(System.IO.Path.Combine(Folder, "langpack")) : null;
+
+        /// <summary>
+        /// The language of the pack Screenshots.ps1 left in mock\langpack, which the app shows in
+        /// place of the one it is set to: null when there is none.
+        /// </summary>
+        public static string? Language => _languagePack?.Language;
+
+        /// <summary>The plural rules of <see cref="Language"/>, which the pack itself does not name.</summary>
+        public static string? PluralCode => _languagePack?.PluralCode;
+
+        /// <summary>Answers a string of <see cref="Language"/> from the pack, where TDLib would read its database.</summary>
+        public static Object GetLanguagePackString(string key)
+        {
+            var strings = _languagePack!.Strings;
+            if (strings.TryGetValue(key, out string? value))
+            {
+                return new LanguagePackStringValueOrdinary(value);
+            }
+
+            if (strings.TryGetValue(key + "_other", out string? other))
+            {
+                return new LanguagePackStringValuePluralized(
+                    GetForm(strings, key, "_zero"),
+                    GetForm(strings, key, "_one"),
+                    GetForm(strings, key, "_two"),
+                    GetForm(strings, key, "_few"),
+                    GetForm(strings, key, "_many"),
+                    other);
+            }
+
+            return new Error(404, "Not Found");
+        }
+
+        private static string GetForm(Dictionary<string, string> strings, string key, string suffix)
+        {
+            return strings.TryGetValue(key + suffix, out string? value) ? value : string.Empty;
+        }
+
+        // The pack first, then the English the app is built with, then the key itself, so that a
+        // key the scenario misspells shows up in the screenshot.
+        private static string GetString(string key)
+        {
+            if (_languagePack != null && _languagePack.Strings.TryGetValue(key, out string? value))
+            {
+                return value;
+            }
+
+            return LocaleFallback.GetString(key) ?? key;
+        }
 
         private const string Ok = "{\"@type\":\"ok\"}";
         private const string NotFound = "{\"@type\":\"error\",\"code\":404,\"message\":\"Not Found\"}";
@@ -461,6 +516,91 @@ namespace Telegram.Td
         }
 
         /// <summary>
+        /// A localization target's export, named for its language: the format of Resources.xml,
+        /// plurals as _one/_other entries and \n, \' and \" escaped.
+        /// </summary>
+        private sealed class MockLanguagePack
+        {
+            private MockLanguagePack(string language, Dictionary<string, string> strings)
+            {
+                Language = language;
+                Strings = strings;
+
+                var dash = language.IndexOf('-');
+                PluralCode = dash > 0 ? language.Substring(0, dash) : language;
+            }
+
+            public string Language { get; }
+
+            public string PluralCode { get; }
+
+            public Dictionary<string, string> Strings { get; }
+
+            public static MockLanguagePack? Load(string folder)
+            {
+                if (!System.IO.Directory.Exists(folder))
+                {
+                    return null;
+                }
+
+                try
+                {
+                    var files = System.IO.Directory.GetFiles(folder, "*.xml");
+                    if (files.Length != 1)
+                    {
+                        Scenario.Log("errors.log", "langpack: expected one pack, found " + files.Length);
+                        return null;
+                    }
+
+                    var strings = new Dictionary<string, string>();
+
+                    foreach (var element in XDocument.Load(files[0]).Root!.Elements("string"))
+                    {
+                        if ((string?)element.Attribute("name") is string name)
+                        {
+                            strings[name] = Unescape(element.Value);
+                        }
+                    }
+
+                    return new MockLanguagePack(System.IO.Path.GetFileNameWithoutExtension(files[0]), strings);
+                }
+                catch (Exception ex)
+                {
+                    Scenario.Log("errors.log", "langpack: " + ex);
+                    return null;
+                }
+            }
+
+            // Android resource escaping: an unescaped quote only marks a span whose spaces are kept, and the
+            // export quotes every value that starts or ends with one. TDLib's copy has neither the quotes
+            // nor the backslashes.
+            private static string Unescape(string value)
+            {
+                var builder = new StringBuilder(value.Length);
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    var c = value[i];
+                    if (c == '"')
+                    {
+                        continue;
+                    }
+                    else if (c == '\\' && i + 1 < value.Length)
+                    {
+                        c = value[++i];
+                        builder.Append(c == 'n' ? '\n' : c == 't' ? '\t' : c);
+                    }
+                    else
+                    {
+                        builder.Append(c);
+                    }
+                }
+
+                return builder.ToString();
+            }
+        }
+
+        /// <summary>
         /// What a scenario leaves out and the app cannot do without: TDLib always sends these
         /// fields, and the generated classes leave a missing object or vector null.
         /// </summary>
@@ -591,6 +731,7 @@ namespace Telegram.Td
 
                     if (root is JsonObject obj)
                     {
+                        Localize(obj);
                         scenario.Read(obj);
                     }
                 }
@@ -600,6 +741,51 @@ namespace Telegram.Td
                 }
 
                 return scenario;
+            }
+
+            // Before anything else reads the scenario, so the shorthands and the completion from
+            // chats and users see plain strings.
+            private static void Localize(JsonNode node)
+            {
+                if (node is JsonObject obj)
+                {
+                    List<string>? keys = null;
+
+                    foreach (var pair in obj)
+                    {
+                        if (pair.Value is JsonObject child && child["@string"] != null)
+                        {
+                            (keys ??= new List<string>()).Add(pair.Key);
+                        }
+                        else if (pair.Value != null)
+                        {
+                            Localize(pair.Value);
+                        }
+                    }
+
+                    // Replacing a value while enumerating the object would invalidate the enumerator.
+                    if (keys != null)
+                    {
+                        foreach (var name in keys)
+                        {
+                            obj[name] = JsonValue.Create(GetString((string)obj[name]!["@string"]!));
+                        }
+                    }
+                }
+                else if (node is JsonArray array)
+                {
+                    for (int i = 0; i < array.Count; i++)
+                    {
+                        if (array[i] is JsonObject child && child["@string"] is JsonNode key)
+                        {
+                            array[i] = JsonValue.Create(GetString((string)key));
+                        }
+                        else if (array[i] != null)
+                        {
+                            Localize(array[i]!);
+                        }
+                    }
+                }
             }
 
             private void Read(JsonObject root)

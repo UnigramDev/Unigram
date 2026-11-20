@@ -177,6 +177,14 @@ namespace Telegram.Td
         /// <exception cref="NullReferenceException">Thrown when query is null.</exception>
         public static unsafe Object Execute(Function function)
         {
+#if DEBUG
+            // The mock's pack is in no database TDLib could read.
+            if (function is GetLanguagePackString languagePackString && MockClient.Language != null)
+            {
+                return MockClient.GetLanguagePackString(languagePackString.Key);
+            }
+#endif
+
             if (_writer == null)
             {
                 _writer = new ArrayPoolBufferWriter();

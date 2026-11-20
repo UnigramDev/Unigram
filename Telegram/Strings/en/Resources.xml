@@ -14661,6 +14661,74 @@
   <string name="WelcomeMessageHint_other">New members will see these messages\nwhen they join</string>
 
   <string name="UseNavigationBar">Use Navigation Bar</string>
+  <!--store screenshots: the headings of the Microsoft Store screenshots in screen order, then each chat
+      they show, its messages numbered in the order they are sent. The names are meant to be replaced by
+      names common in the language, and the messages that mention one follow it.-->
+  <string name="StoreScreenshot1Title">Fast</string>
+  <string name="StoreScreenshot1Subtitle">Simple, reliable and synced\nacross all your devices.</string>
+  <string name="StoreScreenshot2Title">Powerful</string>
+  <string name="StoreScreenshot2Subtitle">No limits on the size of\ngroups and broadcasts.</string>
+  <string name="StoreScreenshot3Title">Private</string>
+  <string name="StoreScreenshot3Subtitle">Your data is never disclosed.\nOnly you are in control.</string>
+  <string name="StoreScreenshot4Title">Secure</string>
+  <string name="StoreScreenshot4Subtitle">All chats are protected\nwith strong encryption.</string>
+  <string name="StoreScreenshot5Title">Creative</string>
+  <string name="StoreScreenshot5Subtitle">Color themes, stickers, GIFs,\nvideo messages and more.</string>
+  <string name="StoreScreenshot6Title">Cloud-based</string>
+  <string name="StoreScreenshot6Subtitle">Unlimited storage for chats,\nmedia and documents.</string>
+  <string name="StoreScreenshotAlexName">Alex Morgan</string>
+  <string name="StoreScreenshotEmmaName">Emma Torreaux</string>
+  <string name="StoreScreenshotEmmaMessage1">Send a dice emoji to roll a die!</string>
+  <string name="StoreScreenshotEmmaMessage2">Advance to Illinois Ave. If you pass Go, collect coffee</string>
+  <string name="StoreScreenshotEmmaMessage3">Passed! 🎉</string>
+  <string name="StoreScreenshotEmmaMessage4">Okay</string>
+  <string name="StoreScreenshotEmmaMessage5">Wait for me there.</string>
+  <string name="StoreScreenshotEmmaMessage6">Bob says hi.</string>
+  <string name="StoreScreenshotRobertoName">Roberto</string>
+  <string name="StoreScreenshotRobertoMessage1">Say hello to Emma.</string>
+  <string name="StoreScreenshotRoadTripTitle">Road Trip 🚗</string>
+  <string name="StoreScreenshotRoadTripMessage1">Who\'s in charge of the playlist? 🎶</string>
+  <string name="StoreScreenshotRoadTripMessage2">Our ride for the weekend 😍</string>
+  <string name="StoreScreenshotRoadTripMessage3">Please tell me it has AC 😅</string>
+  <string name="StoreScreenshotRoadTripChecklistTitle">Before Friday 🗓️</string>
+  <string name="StoreScreenshotRoadTripChecklistTask1">Fill up the tank ⛽</string>
+  <string name="StoreScreenshotRoadTripChecklistTask2">Snacks for the drive 🍪</string>
+  <string name="StoreScreenshotRoadTripChecklistTask3">Sunscreen 🧴</string>
+  <string name="StoreScreenshotLittleSisterName">Little Sister</string>
+  <string name="StoreScreenshotLittleSisterMessage1">Any gift ideas for mom?</string>
+  <string name="StoreScreenshotLittleSisterMessage2">A dog!</string>
+  <string name="StoreScreenshotLittleSisterMessage3">I’m serious. Let’s get her a puppy. 🐶</string>
+  <string name="StoreScreenshotLittleSisterMessage4">I saw this!</string>
+  <string name="StoreScreenshotLittleSisterMessage5">I needed proof this was your idea! 😨🤫</string>
+  <string name="StoreScreenshotPenelopeName">Penelope</string>
+  <string name="StoreScreenshotPenelopeMessage1">Lunch tomorrow? My treat 🍝</string>
+  <string name="StoreScreenshotPenelopeMessage2">Table for four, 2 PM. Be there.</string>
+  <string name="StoreScreenshotPenelopeMessage3">No limits on the size of your cats.</string>
+  <string name="StoreScreenshotDigitalNomadsTitle">Digital Nomads</string>
+  <string name="StoreScreenshotDigitalNomadsEmmaName">Emma</string>
+  <string name="StoreScreenshotDigitalNomadsMessage1">Good morning! 👋</string>
+  <string name="StoreScreenshotDigitalNomadsMessage2">Do you have any idea what time it is? 🤣😴</string>
+  <string name="StoreScreenshotDigitalNomadsPollQuestion">Is it still morning? 🤔</string>
+  <string name="StoreScreenshotDigitalNomadsPollOption1">Sure!</string>
+  <string name="StoreScreenshotDigitalNomadsPollOption2">Not sure</string>
+  <string name="StoreScreenshotDigitalNomadsMessage3">We just reached 2,500 members! WOO!</string>
+  <string name="StoreScreenshotJamesName">James</string>
+  <string name="StoreScreenshotJamesMessage1">Check these out!</string>
+  <string name="StoreScreenshotBookClubTitle">Book Club</string>
+  <string name="StoreScreenshotBookClubMessage1">Next meeting is Thursday at 7, bring snacks 🍪</string>
+  <string name="StoreScreenshotDanielName">Daniel Kim</string>
+  <string name="StoreScreenshotDanielMessage1">Sent you the tickets for Saturday 🎟️</string>
+  <string name="StoreScreenshotWeekendRecipesTitle">Weekend Recipes</string>
+  <string name="StoreScreenshotWeekendRecipesMessage1">Lemon pasta in 15 minutes 🍋</string>
+  <string name="StoreScreenshotRoxanneName">Roxanne</string>
+  <string name="StoreScreenshotRoxanneBio">23 y.o. pianist from Vienna.</string>
+  <string name="StoreScreenshotRoxanneMessage1">Rehearsal recording from last night 🎹</string>
+  <string name="StoreScreenshotDwayneName">Dwayne</string>
+  <string name="StoreScreenshotHalbertName">Halbert</string>
+  <string name="StoreScreenshotJennieName">Jennie</string>
+  <string name="StoreScreenshotLucyName">Lucy Garner</string>
+  <string name="StoreScreenshotMayaName">Maya</string>
+  <string name="StoreScreenshotNinaName">Nina</string>
   <!--NOT FINAL: widget messages. The badge over a widget that crashed (widget-sandbox's stoppedLabel default),
       the media name for a widget without a caption, and the hint of the sign on a widget that may send data to
       its bot. Replace with the final strings once they ship, and remove this block.-->
