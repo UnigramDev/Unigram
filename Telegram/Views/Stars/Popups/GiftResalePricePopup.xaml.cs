@@ -37,7 +37,7 @@ namespace Telegram.Views.Stars.Popups
             InitializeComponent();
 
             _clientService = clientService;
-            _formatter = GetRegionalSettingsAwareDecimalFormatter();
+            _formatter = CreateFormatter();
 
             PrimaryButtonText = Strings.ResellGiftButton;
             SecondaryButtonText = Strings.Cancel;
@@ -134,7 +134,7 @@ namespace Telegram.Views.Stars.Popups
             UpdateValue(value);
         }
 
-        private static void AnimateIcon(UIElement element, bool show)
+        internal static void AnimateIcon(UIElement element, bool show)
         {
             var visual = ElementComposition.GetElementVisual(element);
             visual.CenterPoint = new Vector3(10, 10, 0);
@@ -207,14 +207,17 @@ namespace Telegram.Views.Stars.Popups
             return (cents / 100d).ToString("0.##");
         }
 
-        private long? Parse(string text)
+        /// <summary>
+        /// Stars, or 1/100 of a Gram when <paramref name="gram"/>; null for text that is neither.
+        /// </summary>
+        internal static long? Parse(INumberFormatter2 formatter, string text, bool gram)
         {
-            if (_formatter is not INumberParser parser)
+            if (formatter is not INumberParser parser)
             {
                 return null;
             }
 
-            if (!_gram)
+            if (!gram)
             {
                 return parser.ParseInt(text) is long stars && stars >= 0 ? stars : null;
             }
@@ -242,7 +245,7 @@ namespace Telegram.Views.Stars.Popups
             {
                 UpdateValue(0);
             }
-            else if (Parse(args.NewText) is long value)
+            else if (Parse(_formatter, args.NewText, _gram) is long value)
             {
                 UpdateValue(value);
             }
@@ -268,7 +271,7 @@ namespace Telegram.Views.Stars.Popups
         }
 
         // This was largely copied from Calculator's GetRegionalSettingsAwareDecimalFormatter()
-        private static DecimalFormatter GetRegionalSettingsAwareDecimalFormatter()
+        internal static DecimalFormatter CreateFormatter()
         {
             DecimalFormatter formatter = null;
 

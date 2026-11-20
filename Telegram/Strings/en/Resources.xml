@@ -13401,7 +13401,7 @@
     <string name="GiftOfferRowValue">Value</string>
     <string name="GiftOfferRowDuration">Duration</string>
     <string name="GiftOfferPay">Pay &#11088;&#65039;{0}</string>
-    <string name="GiftOfferPayMulti">Pay {0} and {0}</string>
+    <string name="GiftOfferPayMulti">Pay {0} and {1}</string>
     <string name="GiftOfferPayMultiPart">&#11088;&#65039;{0}</string>
     <string name="GiftOfferSellFor">Sell for &#11088;&#65039;{0}</string>
     <string name="GiftOfferAmount">&#11088;&#65039; {0}</string>

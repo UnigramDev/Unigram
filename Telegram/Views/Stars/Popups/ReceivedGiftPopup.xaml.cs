@@ -1576,6 +1576,11 @@ namespace Telegram.Views.Stars.Popups
                 flyout.CreateFlyoutItem(CopyLink, Strings.CopyLink, Icons.Link);
                 flyout.CreateFlyoutItem(Share, Strings.ShareFile, Icons.Share);
 
+                if (upgraded.CanSendPurchaseOffer)
+                {
+                    flyout.CreateFlyoutItem(OfferToBuy, Strings.GiftOfferToBuyMenu, Icons.Coin);
+                }
+
                 // A chat theme belongs to a user, so a channel's gift cannot be one.
                 if (upgraded.IsThemeAvailable && upgraded.OwnerId.IsUser(_clientService.Options.MyId))
                 {
@@ -1855,6 +1860,31 @@ namespace Telegram.Views.Stars.Popups
             {
                 Hide();
                 _navigationService.ShowPopup(new ChooseChatsPopup(), new ChooseChatsConfigurationTransferGift(_gift));
+            }
+        }
+
+        private async void OfferToBuy()
+        {
+            if (_gift.Gift is not SentGiftUpgraded upgraded)
+            {
+                return;
+            }
+
+            var ownerName = _clientService.GetTitle(upgraded.Gift.OwnerId, true);
+
+            var response = await GiftOfferPopup.OfferAsync(_clientService, _navigationService, upgraded.Gift, ownerName);
+            if (response is Ok)
+            {
+                ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.GiftOfferSentTitle, string.Format(Strings.GiftOfferSentText, upgraded.Gift.ToName(), ownerName)), ToastPopupIcon.Forward);
+            }
+            else if (response is Error error)
+            {
+                ToastPopup.ShowError(XamlRoot, error);
+            }
+            else if (response is ErrorStarsNeeded needed)
+            {
+                Hide();
+                await _navigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForChannel(needed.StarCount, 0));
             }
         }
 

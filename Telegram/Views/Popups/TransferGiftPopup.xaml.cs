@@ -207,7 +207,10 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private static async Task<bool> HasGramsAsync(IClientService clientService, INavigationService navigationService, long gramCentCount)
+        /// <summary>
+        /// False, after offering to top up, when the balance is short of <paramref name="gramCentCount"/>.
+        /// </summary>
+        public static async Task<bool> HasGramsAsync(IClientService clientService, INavigationService navigationService, long gramCentCount)
         {
             // The balance is in nanograms, and a gram cent is 10^7 of them.
             var required = gramCentCount * 10_000_000;

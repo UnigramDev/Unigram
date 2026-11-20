@@ -9,6 +9,11 @@ namespace Telegram.Td.Api
 {
     public partial class ErrorStarsNeeded : Object
     {
+        /// <summary>
+        /// What the refused action costs, which the balance is short of.
+        /// </summary>
+        public long StarCount { get; set; }
+
         public override string ToString()
         {
             return nameof(ErrorStarsNeeded);

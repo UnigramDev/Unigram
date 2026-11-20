@@ -1099,7 +1099,7 @@ namespace Telegram.Services
                 var updated = await GetStarTransactionsAsync(MyId, string.Empty, null, string.Empty, 1) as StarTransactions;
                 if (updated is null || updated.StarAmount.StarCount < starCount)
                 {
-                    return new ErrorStarsNeeded();
+                    return new ErrorStarsNeeded { StarCount = starCount };
                 }
             }
 
