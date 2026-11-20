@@ -296,21 +296,10 @@ namespace Telegram.Views.Premium.Popups
             }
             else if (e.ClickedItem is ReceivedGift receivedGift)
             {
-                confirm = await _navigationService.ShowPopupAsync(new TransferGiftPopup(_clientService, receivedGift, _chat));
-
-                if (confirm == ContentDialogResult.Primary)
+                if (await TransferGiftPopup.ConfirmTransferAsync(_clientService, _navigationService, receivedGift, _chat))
                 {
                     Hide();
-
-                    var response = await _clientService.SendAsync(new TransferGift(receivedGift.ReceivedGiftId, _receiverId, receivedGift.TransferStarCount));
-                    if (response is Ok && receivedGift.Gift is SentGiftUpgraded upgraded)
-                    {
-                        ToastPopup.Show(XamlRoot, string.Format(Strings.Gift2TransferredText, upgraded.Gift.ToName(), _chat.Title));
-                    }
-                    else if (response is Error error)
-                    {
-                        ToastPopup.ShowError(XamlRoot, error);
-                    }
+                    await TransferGiftPopup.TransferAsync(_clientService, _navigationService, receivedGift, _chat);
                 }
 
                 return;

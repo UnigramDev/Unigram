@@ -873,22 +873,10 @@ namespace Telegram.ViewModels
             }
             else if (_configuration is ChooseChatsConfigurationTransferGift transferGift)
             {
-                var confirm = await NavigationService.ShowPopupAsync(new TransferGiftPopup(ClientService, transferGift.Gift, chats[0]));
-                if (confirm == ContentDialogResult.Primary)
+                if (await TransferGiftPopup.ConfirmTransferAsync(ClientService, NavigationService, transferGift.Gift, chats[0]))
                 {
                     NavigationService.HidePopup(typeof(ChooseChatsPopup));
-
-                    var response = await ClientService.SendAsync(new TransferGift(transferGift.Gift.ReceivedGiftId, chats[0].ToMessageSender(), transferGift.Gift.TransferStarCount));
-                    if (response is Ok && transferGift.Gift.Gift is SentGiftUpgraded upgraded)
-                    {
-                        Aggregator.Publish(new UpdateGiftIsSold(transferGift.Gift.ReceivedGiftId));
-
-                        ShowToast(string.Format(Strings.Gift2TransferredText, upgraded.Gift.ToName(), chats[0].Title));
-                    }
-                    else if (response is Error error)
-                    {
-                        ToastPopup.ShowError(XamlRoot, error);
-                    }
+                    await TransferGiftPopup.TransferAsync(ClientService, NavigationService, transferGift.Gift, chats[0]);
                 }
             }
             else if (_configuration is ChooseChatsConfigurationCreateGroupCall)

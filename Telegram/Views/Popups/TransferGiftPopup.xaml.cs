@@ -14,6 +14,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Telegram.Views.Stars.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -34,18 +35,21 @@ namespace Telegram.Views.Popups
 
             if (gift.Gift is SentGiftUpgraded upgraded)
             {
+                var name = clientService.GetTitle(chat, true);
+
                 InitializePhotos(clientService, upgraded.Gift, chat);
+                InitializeAttributes(upgraded.Gift);
 
                 if (gift.TransferStarCount > 0)
                 {
-                    TextBlockHelper.SetMarkdown(MessageLabel, Locale.Declension(Strings.R.Gift2TransferPriceText, gift.TransferStarCount, upgraded.Gift.ToName(), chat.Title));
+                    TextBlockHelper.SetMarkdown(MessageLabel, Locale.Declension(Strings.R.Gift2TransferPriceText, gift.TransferStarCount, upgraded.Gift.ToName(), name));
+                    PrimaryButtonText = string.Format(Strings.Gift2TransferDoPrice, gift.TransferStarCount.ToString("N0")).ReplaceStar(Icons.Premium);
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(MessageLabel, string.Format(Strings.Gift2TransferText, upgraded.Gift.ToName(), chat.Title));
+                    TextBlockHelper.SetMarkdown(MessageLabel, string.Format(Strings.Gift2TransferText, upgraded.Gift.ToName(), name));
+                    PrimaryButtonText = Strings.Gift2TransferDo;
                 }
-
-                PrimaryButtonContent = Strings.Gift2TransferDo;
             }
 
             PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
@@ -101,6 +105,27 @@ namespace Telegram.Views.Popups
             else if (clientService.TryGetUser(clientService.Options.MyId, out User user))
             {
                 Photo2.Source = ProfilePictureSource.User(clientService, user);
+            }
+        }
+
+        private void InitializeAttributes(UpgradedGift gift)
+        {
+            Attributes.Visibility = Visibility.Visible;
+
+            ModelText.Text = gift.Model.Name;
+            ModelRarity.Glyph = gift.Model.Rarity.ToText();
+            gift.Model.Rarity.ToColor(ModelRarity);
+            BackdropText.Text = gift.Backdrop.Name;
+            BackdropRarity.Glyph = gift.Backdrop.Rarity.ToText();
+            gift.Backdrop.Rarity.ToColor(BackdropRarity);
+            SymbolText.Text = gift.Symbol.Name;
+            SymbolRarity.Glyph = gift.Symbol.Rarity.ToText();
+            gift.Symbol.Rarity.ToColor(SymbolRarity);
+
+            if (gift.ValueAmount != 0)
+            {
+                ValueRow.Content = "~" + Locale.FormatCurrency(gift.ValueAmount, gift.ValueCurrency);
+                ValueRow.Visibility = Visibility.Visible;
             }
         }
 
@@ -204,6 +229,94 @@ namespace Telegram.Views.Popups
                 }
 
                 return response;
+            }
+        }
+
+        /// <summary>
+        /// False, after saying why, when the chat takes no upgraded gifts; otherwise asks to confirm the transfer.
+        /// </summary>
+        public static async Task<bool> ConfirmTransferAsync(IClientService clientService, INavigationService navigationService, ReceivedGift gift, Chat chat)
+        {
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                if (!clientService.TryGetSupergroupFull(supergroup.SupergroupId, out SupergroupFullInfo fullInfo))
+                {
+                    var response = await clientService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId));
+                    if (response is Error error)
+                    {
+                        navigationService.ShowToast(error);
+                        return false;
+                    }
+
+                    fullInfo = response as SupergroupFullInfo;
+                }
+
+                if (fullInfo?.CanSendGift is false)
+                {
+                    await navigationService.ShowPopupAsync(Strings.Gift2ChannelDoesntSupportGiftsText, Strings.Gift2ChannelDoesntSupportGiftsTitle, Strings.OK);
+                    return false;
+                }
+            }
+            else if (chat.Type is ChatTypePrivate privata)
+            {
+                if (!clientService.TryGetUserFull(privata.UserId, out UserFullInfo fullInfo))
+                {
+                    var response = await clientService.SendAsync(new GetUserFullInfo(privata.UserId));
+                    if (response is Error error)
+                    {
+                        navigationService.ShowToast(error);
+                        return false;
+                    }
+
+                    fullInfo = response as UserFullInfo;
+                }
+
+                if (fullInfo?.GiftSettings?.AcceptedGiftTypes?.UpgradedGifts is false)
+                {
+                    navigationService.ShowToast(string.Format(Strings.UserDisallowedGifts, clientService.GetTitle(chat, true)), ToastPopupIcon.Error);
+                    return false;
+                }
+            }
+
+            var confirm = await navigationService.ShowPopupAsync(new TransferGiftPopup(clientService, gift, chat));
+            return confirm == ContentDialogResult.Primary;
+        }
+
+        /// <summary>
+        /// Transfers a gift the user already confirmed, paying its transfer price when it has one.
+        /// </summary>
+        public static async Task TransferAsync(IClientService clientService, INavigationService navigationService, ReceivedGift gift, Chat chat)
+        {
+            if (gift.Gift is not SentGiftUpgraded upgraded)
+            {
+                return;
+            }
+
+            var function = new TransferGift(gift.ReceivedGiftId, chat.ToMessageSender(), gift.TransferStarCount);
+            var response = gift.TransferStarCount > 0
+                ? await clientService.SendPaymentAsync(gift.TransferStarCount, function)
+                : await clientService.SendAsync(function);
+
+            if (response is Ok)
+            {
+                clientService.Session.Resolve<IEventAggregator>().Publish(new UpdateGiftIsSold(gift.ReceivedGiftId));
+
+                // From one user to another the gift arrives as a message, so the chat is where it can be seen.
+                if (chat.Type is ChatTypePrivate && upgraded.Gift.OwnerId is MessageSenderUser)
+                {
+                    navigationService.NavigateToChat(chat);
+                }
+
+                var text = string.Format(Strings.Gift2TransferredText, upgraded.Gift.ToName(), clientService.GetTitle(chat, true));
+                navigationService.ShowToast(string.Format("**{0}**\n{1}", Strings.Gift2TransferredTitle, text), ToastPopupIcon.Forward);
+            }
+            else if (response is ErrorStarsNeeded needed)
+            {
+                await navigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForChannel(needed.StarCount, 0));
+            }
+            else if (response is Error error)
+            {
+                navigationService.ShowToast(error);
             }
         }
 

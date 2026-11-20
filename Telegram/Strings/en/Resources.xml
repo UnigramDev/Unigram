@@ -11943,6 +11943,10 @@
     <string name="Gift2TransferDo">Transfer</string>
     <string name="Gift2TransferDoPrice">Transfer for &#11088;&#65039;{0}</string>
     <string name="Gift2TransferredText">You have successfully transferred **{0}** to **{1}**.</string>
+    <string name="Gift2TransferredTitle">Gift Transferred</string>
+    <string name="Gift2ChannelDoesntSupportGiftsTitle">Not Available</string>
+    <string name="Gift2ChannelDoesntSupportGiftsText">This channel can\'t receive any star gifts.</string>
+    <string name="UserDisallowedGifts">**{0}** disallowed sending themselves gifts.</string>
 
     <string name="BotVerifyAccounts">Verify Accounts</string>
     <string name="BotChooseChatToVerify">Choose Chat To Verify</string>

@@ -118,5 +118,85 @@
         <TextBlock x:Name="MessageLabel"
                    Margin="0,0,0,4"
                    Style="{StaticResource BodyTextBlockStyle}" />
+
+        <controls:TableView x:Name="Attributes"
+                            Margin="-8,12,-8,0"
+                            Visibility="Collapsed">
+            <controls:TableViewItem Header="{CustomResource Gift2AttributeModel}"
+                                    Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="ModelText"
+                               Margin="8,5,8,6"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               VerticalAlignment="Top" />
+                    <controls:SettingsButton x:Name="ModelRarity"
+                                             IsHitTestVisible="False"
+                                             IsTabStop="False"
+                                             Style="{StaticResource SmallButtonStyle}"
+                                             VerticalAlignment="Center"
+                                             FontSize="11"
+                                             Padding="4,0"
+                                             CornerRadius="8"
+                                             BorderThickness="0"
+                                             Height="16"
+                                             Grid.Column="1" />
+                </Grid>
+            </controls:TableViewItem>
+            <controls:TableViewItem Header="{CustomResource Gift2AttributeBackdrop}"
+                                    Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="BackdropText"
+                               Margin="8,5,8,6"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               VerticalAlignment="Top" />
+                    <controls:SettingsButton x:Name="BackdropRarity"
+                                             IsHitTestVisible="False"
+                                             IsTabStop="False"
+                                             Style="{StaticResource SmallButtonStyle}"
+                                             VerticalAlignment="Center"
+                                             FontSize="11"
+                                             Padding="4,0"
+                                             CornerRadius="8"
+                                             BorderThickness="0"
+                                             Height="16"
+                                             Grid.Column="1" />
+                </Grid>
+            </controls:TableViewItem>
+            <controls:TableViewItem Header="{CustomResource Gift2AttributeSymbol}"
+                                    Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="SymbolText"
+                               Margin="8,5,8,6"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               VerticalAlignment="Top" />
+                    <controls:SettingsButton x:Name="SymbolRarity"
+                                             IsHitTestVisible="False"
+                                             IsTabStop="False"
+                                             Style="{StaticResource SmallButtonStyle}"
+                                             VerticalAlignment="Center"
+                                             FontSize="11"
+                                             Padding="4,0"
+                                             CornerRadius="8"
+                                             BorderThickness="0"
+                                             Height="16"
+                                             Grid.Column="1" />
+                </Grid>
+            </controls:TableViewItem>
+            <controls:TableViewItem x:Name="ValueRow"
+                                    Header="{CustomResource GiftValue2}"
+                                    Visibility="Collapsed" />
+        </controls:TableView>
     </StackPanel>
 </controls:ModalPopup>
