@@ -866,6 +866,42 @@ namespace Telegram.ViewModels
         }
     }
 
+    /// <summary>
+    /// The delegate of the media in a poll, which reaches the content controls as a message of its
+    /// own: the chat would look that message up to build the gallery, so the medium opens alone,
+    /// as protected as the poll that holds it.
+    /// </summary>
+    public partial class PollMediaDelegate : DialogMessageDelegate
+    {
+        private readonly bool _protect;
+
+        public PollMediaDelegate(DialogMessageDelegate delegato, bool protect)
+            : base(delegato.ViewModel)
+        {
+            _protect = protect;
+        }
+
+        public override void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0)
+        {
+            var media = message.Content switch
+            {
+                MessageAnimation animation => new GalleryMedia(ClientService, animation.Animation, animation.Caption, _protect),
+                MessagePhoto photo => new GalleryMedia(ClientService, photo.Photo, photo.Caption, _protect),
+                MessageVideo video => new GalleryMedia(ClientService, video.Video, video.Caption, _protect),
+                _ => null
+            };
+
+            if (media != null)
+            {
+                OpenMedia(media, target);
+            }
+            else
+            {
+                base.OpenMedia(message, target, timestamp);
+            }
+        }
+    }
+
     public partial class RichMessageDelegate : DialogMessageDelegate
     {
         private readonly RichMessage _message;

@@ -1498,7 +1498,23 @@ namespace Telegram.Td.Api
                 return false;
             }
 
-            return x.Id == yMessage.Id && x.ChatId == yMessage.ChatId;
+            return x.Id == yMessage.Id && x.ChatId == yMessage.ChatId && IsPlaybackFile(x.Content, yMessage.Document);
+        }
+
+        // One message can stand for two tracks: a poll's media and its explanation's play under the
+        // poll's id, and an edit replaces a message's file under the same one. Other contents are
+        // only read for their file at a cost, and play one file each.
+        private static bool IsPlaybackFile(MessageContent content, File document)
+        {
+            var file = content switch
+            {
+                MessageAudio audio => audio.Audio.AudioValue,
+                MessageVoiceNote voiceNote => voiceNote.VoiceNote.Voice,
+                MessageVideoNote videoNote => videoNote.VideoNote.Video,
+                _ => null
+            };
+
+            return file == null || file.Id == document?.Id;
         }
 
         public static bool AreTheSame(this AudioWithOwner x, PlaybackItem y)

@@ -168,7 +168,6 @@ namespace Telegram.Controls.Messages.Content
             {
                 MessageDocument => true,
                 MessageText text when text.LinkPreview != null && !primary => text.LinkPreview.Type is LinkPreviewTypeDocument,
-                MessagePoll poll when poll.Media is PollMediaDocument && !primary => true,
                 _ => false,
             };
         }
@@ -187,8 +186,6 @@ namespace Telegram.Controls.Messages.Content
                     return document.Document;
                 case MessageText text when text.LinkPreview?.Type is LinkPreviewTypeDocument previewDocument:
                     return previewDocument.Document;
-                case MessagePoll poll when poll.Media is PollMediaDocument pollDocument:
-                    return pollDocument.Document;
             }
 
             return null;

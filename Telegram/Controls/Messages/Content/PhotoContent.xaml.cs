@@ -432,7 +432,6 @@ namespace Telegram.Controls.Messages.Content
                 MessageGame game when !primary => game.Game.Photo != null,
                 MessageText text when text.LinkPreview != null && !primary => text.LinkPreview.HasPhoto(),
                 MessageInvoice invoice when invoice.PaidMedia is PaidMediaPhoto => true,
-                MessagePoll poll when poll.Media is PollMediaPhoto && !primary => true,
                 MessageSponsored { Content: MessagePhoto } when !primary => true,
                 _ => false,
             };
@@ -499,10 +498,6 @@ namespace Telegram.Controls.Messages.Content
             else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaPhoto paidMediaPhoto)
             {
                 return paidMediaPhoto.Photo;
-            }
-            else if (content is MessagePoll poll && poll.Media is PollMediaPhoto pollPhoto)
-            {
-                return pollPhoto.Photo;
             }
             else if (content is MessageSponsored { Content: MessagePhoto sponsored })
             {

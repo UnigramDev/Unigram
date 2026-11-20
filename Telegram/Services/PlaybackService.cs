@@ -1316,6 +1316,14 @@ namespace Telegram.Services
                 return;
             }
 
+            // A poll's audio plays under the poll's id, and the poll's content is updated with every
+            // vote. Its media is never edited, so none of these updates concern what is playing,
+            // and taking them for an edit would drop the track.
+            if (update.NewContent is MessagePoll)
+            {
+                return;
+            }
+
             var current = _currentItem;
 
             PlaybackItem replacement = null;

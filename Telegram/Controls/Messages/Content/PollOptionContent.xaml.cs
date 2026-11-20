@@ -407,12 +407,14 @@ namespace Telegram.Controls.Messages.Content
             Media.Visibility = Visibility.Visible;
         }
 
-        private static bool IsSameMedia(PollMedia x, PollMedia y)
+        internal static bool IsSameMedia(PollMedia x, PollMedia y)
         {
             return (x, y) switch
             {
                 (null, null) => true,
                 (PollMediaAnimation a, PollMediaAnimation b) => a.Animation.AnimationValue.Id == b.Animation.AnimationValue.Id,
+                (PollMediaAudio a, PollMediaAudio b) => a.Audio.AudioValue.Id == b.Audio.AudioValue.Id,
+                (PollMediaDocument a, PollMediaDocument b) => a.Document.DocumentValue.Id == b.Document.DocumentValue.Id,
                 (PollMediaLocation a, PollMediaLocation b) => a.Location.Latitude == b.Location.Latitude && a.Location.Longitude == b.Location.Longitude,
                 (PollMediaPhoto a, PollMediaPhoto b) => a.Photo.GetSmall()?.Photo.Id == b.Photo.GetSmall()?.Photo.Id,
                 (PollMediaSticker a, PollMediaSticker b) => a.Sticker.StickerValue.Id == b.Sticker.StickerValue.Id,
@@ -441,18 +443,18 @@ namespace Telegram.Controls.Messages.Content
                 GalleryMedia media = null;
                 if (_option.Media is PollMediaAnimation animation)
                 {
-                    media = new GalleryMedia(_message.ClientService, animation.Animation, _option.Text);
+                    media = new GalleryMedia(_message.ClientService, animation.Animation, _option.Text, !_message.CanBeSaved);
                 }
                 // Location
                 else if (_option.Media is PollMediaPhoto photo)
                 {
-                    media = new GalleryMedia(_message.ClientService, photo.Photo, _option.Text);
+                    media = new GalleryMedia(_message.ClientService, photo.Photo, _option.Text, !_message.CanBeSaved);
                 }
                 // Sticker
                 // Venue
                 else if (_option.Media is PollMediaVideo video)
                 {
-                    media = new GalleryMedia(_message.ClientService, video.Video, _option.Text);
+                    media = new GalleryMedia(_message.ClientService, video.Video, _option.Text, !_message.CanBeSaved);
                 }
 
                 if (media != null)

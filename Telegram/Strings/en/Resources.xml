@@ -13847,6 +13847,7 @@
     <string name="DiscardPollOptionWithMediaMessage">This poll option has a media attachment. Do you want to delete it?</string>
     <string name="DiscardQuizOptionWithMediaAlertTitle">Delete Quiz Answer?</string>
     <string name="DiscardQuizOptionWithMediaMessage">This quiz answer has a media attachment. Do you want to delete it?</string>
+    <string name="QuizExplanationTitle">Explanation</string>
     <string name="PollItemQuote">Reply to Option</string>
     <string name="PollMenuTabOption">Option</string>
     <string name="Unvote">Retract Vote</string>

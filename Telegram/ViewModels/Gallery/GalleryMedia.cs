@@ -69,7 +69,7 @@ namespace Telegram.ViewModels.Gallery
             CanBeShared = !protect;
         }
 
-        public GalleryMedia(IClientService clientService, Animation animation, FormattedText caption = null)
+        public GalleryMedia(IClientService clientService, Animation animation, FormattedText caption = null, bool protect = false)
         {
             _clientService = clientService;
             _source = animation;
@@ -90,8 +90,8 @@ namespace Telegram.ViewModels.Gallery
             IsLoopingEnabled = true;
             Duration = animation.Duration;
 
-            CanBeSaved = true;
-            CanBeShared = true;
+            CanBeSaved = !protect;
+            CanBeShared = !protect;
         }
 
         public IClientService ClientService => _clientService;

@@ -13,9 +13,11 @@ using Telegram.Converters;
 using Telegram.Native.Controls;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -35,6 +37,11 @@ namespace Telegram.Controls.Messages.Content
         private bool _awaitingVote;
         private bool _botChat;
         private bool _showClock;
+        private bool _explanationExpanded;
+
+        private IMessageDelegate _mediaDelegate;
+        private PollMedia _media;
+        private PollMedia _explanationMedia;
 
         public PollContent(MessageViewModel message)
         {
@@ -77,6 +84,11 @@ namespace Telegram.Controls.Messages.Content
         private TextBlock Timeout;
         private TextBlock TimeoutGlyph;
         private GlyphButton Explanation;
+        private Grid ExplanationRoot;
+        private DashPath ExplanationDash;
+        private GlyphButton ExplanationClose;
+        private FormattedTextBlock ExplanationText;
+        private Border ExplanationMedia;
         private StackPanel Options;
         private PollAddContent AddOption;
         private TextBlock Votes;
@@ -162,6 +174,20 @@ namespace Telegram.Controls.Messages.Content
                 _showPreview = false;
             }
 
+            if (!recycled)
+            {
+                _explanationExpanded = false;
+            }
+
+            // Made once per message rather than with each medium's: those messages hold it weakly,
+            // and the controls keep the messages they were given while the media stay the same.
+            if (!recycled || _mediaDelegate == null)
+            {
+                _mediaDelegate = message.Delegate is DialogMessageDelegate dialog
+                    ? new PollMediaDelegate(dialog, !message.CanBeSaved)
+                    : message.Delegate;
+            }
+
             // CanSeeResults is also true for the creator before voting and, whether or not the
             // poll hides its results, for a restricted user. A hidden poll sends that user a total
             // and no per-option counts, which is the only way to tell the two apart.
@@ -188,7 +214,7 @@ namespace Telegram.Controls.Messages.Content
 
             UpdateTimeout(poll.Poll);
 
-            UpdateMedia(message, poll);
+            UpdateMedia(message, poll, recycled);
 
             Description.SetText(message.ClientService, poll.Description);
             Description.Visibility = poll.Description.Text.Length > 0
@@ -211,9 +237,14 @@ namespace Telegram.Controls.Messages.Content
                 ? poll.Poll.IsAnonymous ? Strings.AnonymousQuizPoll : Strings.QuizPoll
                 : poll.Poll.IsAnonymous ? Strings.AnonymousPoll : Strings.PublicPoll;
 
-            Explanation.Visibility = (voted || showResults) && !string.IsNullOrEmpty(quiz?.Explanation.Text)
+            var canExplain = (voted || showResults) && quiz != null && (quiz.Explanation.Text.Length > 0 || quiz.ExplanationMedia != null);
+            var expanded = canExplain && _explanationExpanded;
+
+            Explanation.Visibility = canExplain && !expanded
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            UpdateExplanation(message, quiz, expanded, recycled);
 
             var order = poll.Poll.OptionOrder;
             var shuffled = order.Count == pollOptions.Count;
@@ -289,6 +320,95 @@ namespace Telegram.Controls.Messages.Content
             else if (AddOption != null)
             {
                 AddOption.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void UpdateExplanation(MessageViewModel message, PollTypeQuiz quiz, bool expanded, bool recycled)
+        {
+            if (!expanded)
+            {
+                if (ExplanationRoot != null)
+                {
+                    ExplanationRoot.Visibility = Visibility.Collapsed;
+                }
+
+                return;
+            }
+
+            if (ExplanationRoot == null)
+            {
+                ExplanationRoot = GetTemplateChild(nameof(ExplanationRoot)) as Grid;
+                ExplanationDash = GetTemplateChild(nameof(ExplanationDash)) as DashPath;
+                ExplanationClose = GetTemplateChild(nameof(ExplanationClose)) as GlyphButton;
+                ExplanationText = GetTemplateChild(nameof(ExplanationText)) as FormattedTextBlock;
+                ExplanationMedia = GetTemplateChild(nameof(ExplanationMedia)) as Border;
+
+                ExplanationClose.Click += ExplanationClose_Click;
+                ExplanationText.TextEntityClick += QuestionText_TextEntityClick;
+            }
+
+            ExplanationRoot.Visibility = Visibility.Visible;
+
+            UpdateExplanationColors(message);
+
+            ExplanationText.SetText(message.ClientService, quiz.Explanation);
+            ExplanationText.Visibility = quiz.Explanation.Text.Length > 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            UpdateExplanationMedia(message, quiz, recycled);
+        }
+
+        private void UpdateExplanationColors(MessageViewModel message)
+        {
+            var outgoing = message.IsOutgoing && !message.IsChannelPost;
+            var (accent, giftColors) = outgoing ? (null, null) : message.GetSender() switch
+            {
+                User user => (message.ClientService.GetAccentColor(user.AccentColorId), user.UpgradedGiftColors),
+                Chat chat => (message.ClientService.GetAccentColor(chat.AccentColorId), chat.UpgradedGiftColors),
+                _ => (null, null)
+            };
+
+            if (giftColors != null)
+            {
+                var colors = giftColors.ForTheme(ActualTheme, out _);
+                BorderBrush = new SolidColorBrush(colors[0]);
+
+                ExplanationDash.Stripe1 = colors.Count > 1 ? colors[1] : default;
+                ExplanationDash.Stripe2 = colors.Count > 2 ? colors[2] : default;
+            }
+            else if (accent != null)
+            {
+                var colors = accent.ForTheme(ActualTheme);
+                BorderBrush = new SolidColorBrush(colors[0]);
+
+                ExplanationDash.Stripe1 = colors.Count > 1 ? colors[1] : default;
+                ExplanationDash.Stripe2 = colors.Count > 2 ? colors[2] : default;
+            }
+            else
+            {
+                ClearValue(BorderBrushProperty);
+
+                ExplanationDash.Stripe1 = default;
+                ExplanationDash.Stripe2 = default;
+            }
+        }
+
+        private void UpdateExplanationMedia(MessageViewModel message, PollTypeQuiz quiz, bool recycled)
+        {
+            var same = recycled && PollOptionContent.IsSameMedia(_explanationMedia, quiz.ExplanationMedia);
+
+            _explanationMedia = quiz.ExplanationMedia;
+
+            if (!same)
+            {
+                UpdateMedia(ExplanationMedia, message, _mediaDelegate, quiz.ExplanationMedia, quiz.Explanation);
+
+                // Their padding insets them from a bubble's edge, and the block is inset already.
+                if (ExplanationMedia.Child is AudioContent or DocumentContent)
+                {
+                    (ExplanationMedia.Child as Control).Padding = new Thickness(0);
+                }
             }
         }
 
@@ -433,40 +553,77 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        public void UpdateMedia(MessageViewModel message, MessagePoll poll)
+        private void UpdateMedia(MessageViewModel message, MessagePoll poll, bool recycled)
         {
-            // Currently, can be only of the types messageAnimation, messageAudio, messageDocument, messageLocation, messagePhoto, messageVenue, or messageVideo without caption
+            // Every update delivers new objects for the same media, and the content controls follow
+            // their files by themselves: handing them a new message would only reload it.
+            var same = recycled && PollOptionContent.IsSameMedia(_media, poll.Media);
 
-            var content = poll.Media;
+            _media = poll.Media;
 
-            if (Media.Child is IContent media)
+            if (!same)
             {
-                // The content hosted here is not the primary one: the poll is.
-                if (media.IsValid(message.Content, false))
+                UpdateMedia(Media, message, _mediaDelegate, poll.Media, poll.Description);
+            }
+        }
+
+        /// <summary>
+        /// Hosts <paramref name="media"/> in the content control for its type, given a message of its
+        /// own: the controls are written for the content of a message, and in a poll message they
+        /// would only find the poll. The caption is what the gallery shows.
+        /// </summary>
+        private static void UpdateMedia(Border host, MessageViewModel message, IMessageDelegate delegato, PollMedia media, FormattedText caption)
+        {
+            MessageContent content = media switch
+            {
+                PollMediaAnimation animation => new MessageAnimation(animation.Animation, caption, false, false, false),
+                PollMediaAudio audio => new MessageAudio(audio.Audio, caption),
+                PollMediaDocument document => new MessageDocument(document.Document, caption),
+                PollMediaLocation location => new MessageLocation(location.Location),
+                PollMediaPhoto photo => new MessagePhoto(photo.Photo, photo.Video, caption, false, false, false),
+                PollMediaVenue venue => new MessageVenue(venue.Venue),
+                PollMediaVideo video => new MessageVideo(video.Video, video.AlternativeVideos, video.Storyboards, video.Cover, video.StartTimestamp, caption, false, false, false),
+                _ => null
+            };
+
+            if (content == null)
+            {
+                if (host.Child is IContent previous)
                 {
-                    media.UpdateMessage(message);
-                    return;
+                    previous.Recycle();
                 }
-                else
-                {
-                    media.Recycle();
-                }
+
+                host.Child = null;
+                host.Visibility = Visibility.Collapsed;
+                return;
             }
 
-            //if (Media.Child is StickerContent or VideoNoteContent)
-            //{
-            //    UpdateAttach(message);
-            //}
+            // The poll's own id: an audio's playlist is searched for in the chat from it, and the
+            // thumbnails tell one message's placeholder from another's by it.
+            var viewModel = new MessageViewModel(message.ClientService, delegato, message.Chat, null, null, new Message { ChatId = message.ChatId, Id = message.Id, Content = content, SchedulingState = new MessageSchedulingStateSendWhenOnline() });
 
-            Media.Child = content switch
+            host.Visibility = Visibility.Visible;
+
+            if (host.Child is IContent current)
             {
-                PollMediaAnimation => new AnimationContent(message),
-                PollMediaAudio => new AudioContent(message),
-                PollMediaDocument => new DocumentContent(message),
-                PollMediaLocation => new LocationContent(message),
-                PollMediaPhoto => new PhotoContent(message),
-                PollMediaVenue => new VenueContent(message),
-                PollMediaVideo => new VideoContent(message),
+                if (current.IsValid(content, true))
+                {
+                    current.UpdateMessage(viewModel);
+                    return;
+                }
+
+                current.Recycle();
+            }
+
+            host.Child = content switch
+            {
+                MessageAnimation => new AnimationContent(viewModel),
+                MessageAudio => new AudioContent(viewModel),
+                MessageDocument => new DocumentContent(viewModel),
+                MessageLocation => new LocationContent(viewModel),
+                MessagePhoto => new PhotoContent(viewModel),
+                MessageVenue => new VenueContent(viewModel),
+                MessageVideo => new VideoContent(viewModel),
                 _ => null
             };
         }
@@ -480,6 +637,10 @@ namespace Telegram.Controls.Messages.Content
             else if (Media?.Child is IPlayerView playback)
             {
                 return playback;
+            }
+            else if (ExplanationRoot?.Visibility == Visibility.Visible && ExplanationMedia.Child is IContentWithPlayback explanation)
+            {
+                return explanation.GetPlaybackElement();
             }
 
             return null;
@@ -540,6 +701,15 @@ namespace Telegram.Controls.Messages.Content
             {
                 media.Recycle();
             }
+
+            if (ExplanationMedia?.Child is IContent explanation)
+            {
+                explanation.Recycle();
+            }
+
+            _media = null;
+            _explanationMedia = null;
+            _mediaDelegate = null;
         }
 
         public bool IsValid(MessageContent content, bool primary)
@@ -700,24 +870,45 @@ namespace Telegram.Controls.Messages.Content
 
         private void Explanation_Click(object sender, RoutedEventArgs e)
         {
-            var poll = _message?.Content as MessagePoll;
-            if (poll == null)
-            {
-                return;
-            }
+            SetExplanationExpanded(true);
+        }
 
-            var quiz = poll.Poll.Type as PollTypeQuiz;
-            if (string.IsNullOrEmpty(quiz?.Explanation.Text))
-            {
-                return;
-            }
-
-            ToastPopup.Show(Explanation, quiz.Explanation, ToastPlacementMode.TopLeft);
+        private void ExplanationClose_Click(object sender, RoutedEventArgs e)
+        {
+            SetExplanationExpanded(false);
         }
 
         public void ShowExplanation()
         {
-            Explanation_Click(null, null);
+            SetExplanationExpanded(true);
+        }
+
+        private void SetExplanationExpanded(bool expanded)
+        {
+            if (_message == null || _explanationExpanded == expanded)
+            {
+                return;
+            }
+
+            // The button pressed collapses with the focus, which would go wherever the window decides.
+            var focused = expanded
+                ? Explanation.FocusState != FocusState.Unfocused
+                : ExplanationClose?.FocusState is not null and not FocusState.Unfocused;
+
+            _explanationExpanded = expanded;
+            UpdateMessage(_message);
+
+            if (focused)
+            {
+                if (expanded)
+                {
+                    ExplanationClose?.Focus(FocusState.Programmatic);
+                }
+                else
+                {
+                    Explanation.Focus(FocusState.Programmatic);
+                }
+            }
         }
     }
 }

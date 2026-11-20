@@ -11,6 +11,9 @@
     <Style TargetType="local:PollContent">
         <Setter Property="MinWidth"
                 Value="220" />
+        <!--  The explanation's frame, replaced by the sender's colour on incoming polls.  -->
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
@@ -38,6 +41,70 @@
                                                      IsTextSelectionEnabled="True"
                                                      AutoFontSize="True"
                                                      Margin="10,4,10,0"/>
+
+                        <!--  Framed as a link preview is, and in the same colours.  -->
+                        <Grid x:Name="ExplanationRoot"
+                              x:Load="False"
+                              CornerRadius="4"
+                              Margin="10,6,10,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Rectangle Fill="{TemplateBinding BorderBrush}"
+                                       Opacity="0.1"
+                                       Grid.ColumnSpan="2" />
+                            <Rectangle Fill="{TemplateBinding BorderBrush}"
+                                       HorizontalAlignment="Left"
+                                       Width="3" />
+                            <controls:DashPath x:Name="ExplanationDash" />
+
+                            <Grid Padding="8,0,0,8"
+                                  Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{CustomResource QuizExplanationTitle}"
+                                           Foreground="{TemplateBinding BorderBrush}"
+                                           FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,4,0,0" />
+
+                                <!--  Taller than the title: the margin keeps it from setting the
+                                      row's height and pushing the explanation down.  -->
+                                <controls:GlyphButton x:Name="ExplanationClose"
+                                                      Glyph="&#xE711;"
+                                                      FontSize="12"
+                                                      Foreground="{TemplateBinding BorderBrush}"
+                                                      AutomationProperties.Name="{CustomResource Close}"
+                                                      VerticalAlignment="Top"
+                                                      Width="28"
+                                                      Height="28"
+                                                      Margin="0,0,0,-8"
+                                                      Grid.Column="1" />
+
+                                <controls:FormattedTextBlock x:Name="ExplanationText"
+                                                             TextWrapping="Wrap"
+                                                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                             IsTextSelectionEnabled="True"
+                                                             AutoFontSize="False"
+                                                             Margin="0,0,8,0"
+                                                             Grid.Row="1"
+                                                             Grid.ColumnSpan="2" />
+
+                                <Border x:Name="ExplanationMedia"
+                                        CornerRadius="4"
+                                        Margin="0,6,8,0"
+                                        Grid.Row="2"
+                                        Grid.ColumnSpan="2" />
+                            </Grid>
+                        </Grid>
 
                         <Grid Margin="10,4,10,0">
                             <Grid.ColumnDefinitions>

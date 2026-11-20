@@ -88,7 +88,6 @@ namespace Telegram.Controls.Messages.Content
             return content switch
             {
                 MessageVenue => true,
-                MessagePoll poll when poll.Media is PollMediaVenue && !primary => true,
                 _ => false,
             };
         }
@@ -105,8 +104,6 @@ namespace Telegram.Controls.Messages.Content
             {
                 case MessageVenue venue:
                     return venue.Venue;
-                case MessagePoll poll when poll.Media is PollMediaVenue pollVenue:
-                    return pollVenue.Venue;
             }
 
             return null;

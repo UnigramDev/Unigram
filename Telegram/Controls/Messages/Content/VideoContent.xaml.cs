@@ -585,8 +585,6 @@ namespace Telegram.Controls.Messages.Content
 
                 case MessageInvoice invoice when invoice.PaidMedia is PaidMediaVideo:
                     return true;
-                case MessagePoll poll when poll.Media is PollMediaVideo && !primary:
-                    return true;
                 case MessageSponsored { Content: MessageVideo } when !primary:
                     return true;
             }
@@ -652,9 +650,6 @@ namespace Telegram.Controls.Messages.Content
                 case MessageInvoice invoice when invoice.PaidMedia is PaidMediaVideo paidMedia:
                     cover = paidMedia.Cover;
                     return paidMedia.Video;
-                case MessagePoll poll when poll.Media is PollMediaVideo pollVideo:
-                    cover = pollVideo.Cover;
-                    return pollVideo.Video;
                 case MessageSponsored { Content: MessageVideo sponsored }:
                     cover = sponsored.Cover;
                     return sponsored.Video;
