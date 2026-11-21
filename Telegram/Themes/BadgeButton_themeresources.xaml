@@ -684,6 +684,8 @@
                 Value="Auto" />
         <Setter Property="MinHeight"
                 Value="0" />
+        <Setter Property="CornerRadius"
+                Value="4" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SettingsButton">
@@ -733,7 +735,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Border x:Name="RootGrid"
-                                CornerRadius="4"
+                                CornerRadius="{TemplateBinding CornerRadius}"
                                 Margin="4,2"
                                 Grid.ColumnSpan="2" />
 
