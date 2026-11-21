@@ -41,17 +41,14 @@ P:Windows.ApplicationModel.Package.Current;Throws without package identity. AppP
 P:Windows.Storage.ApplicationData.Current;Throws without package identity. AppPaths for the folders and their paths, SettingsStore.Local for LocalSettings.
 M:Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(System.Uri);Fails without package identity. Open a path under AppPaths.InstalledPath or AppPaths.LocalPath instead.
 
-# Files and folders. The app names them FileItem and FolderItem, which are these types on UWP and the
-# classes in Telegram/Storage here. Those classes and StorageEdge are the only files that may name the
-# WinRT types: an API that takes or returns one is an edge, and StorageEdge converts at it. The
-# aliases do not catch global::Windows.Storage.StorageFile, which skips them silently; this does.
+# Files and folders. The app names them FileItem and FolderItem: these types on UWP, the classes in
+# Telegram/Storage here. A StorageFile where a FileItem is expected already fails to compile, so the
+# ban is on the silent case - getting a WinRT file from nothing and never meeting a FileItem. The
+# types themselves cannot be banned: CsWinRT's generated marshalling names every one the app hands to
+# WinRT, and the analyzer also reports types it only infers, which every edge has.
 # KnownFolders, DownloadsFolder and StorageApplicationPermissions join the list when they are retired.
 
-T:Windows.Storage.StorageFile;Use FileItem. A WinRT API that wants a StorageFile gets one from FileItem.ToStorageFileAsync; one that returns it is converted with ToFileItem.
-T:Windows.Storage.StorageFolder;Use FolderItem. StorageEdge converts both ways at a WinRT API.
-T:Windows.Storage.IStorageItem;Use IFileSystemItem. StorageEdge.ToFileSystemItem converts what drag-drop, paste and activation hand over.
-T:Windows.Storage.IStorageFile;Use FileItem.
-T:Windows.Storage.IStorageFolder;Use FolderItem.
+M:Windows.Storage.StorageFile.GetFileFromPathAsync(System.String);Use FileItem.GetFileFromPathAsync.
+M:Windows.Storage.StorageFolder.GetFolderFromPathAsync(System.String);Use FolderItem.GetFolderFromPathAsync.
 T:Windows.Storage.FileIO;Use FileItemIO.
 T:Windows.Storage.PathIO;Use FileItemIO, or System.IO.File on a path.
-T:Windows.Storage.FileProperties.BasicProperties;Use FileItemProperties, from GetBasicPropertiesAsync.
