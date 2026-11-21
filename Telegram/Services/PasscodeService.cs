@@ -14,6 +14,10 @@ using Telegram.Navigation;
 using Telegram.Services.Settings;
 using Telegram.Services.Updates;
 using Windows.Security.Cryptography;
+#if CSWINRT3_0
+// IBuffer.ToArray lives here on CsWinRT 3; without it ToArray binds to ImmutableArray's and fails.
+using Windows.Storage.Streams;
+#endif
 
 namespace Telegram.Services
 {

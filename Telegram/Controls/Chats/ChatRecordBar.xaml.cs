@@ -29,6 +29,9 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+#if CSWINRT3_0
+using Windows.Storage.Streams;
+#endif
 
 namespace Telegram.Controls.Chats
 {

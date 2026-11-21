@@ -1379,7 +1379,7 @@ namespace Telegram.Services
                     // Rect.Empty is negative infinity wide, which the UWP constructor refuses.
                     return width < 0 || height < 0
                         ? Rect.Empty
-                        : new Rect(x, y, width, height);
+                        : new Rect((float)x, (float)y, (float)width, (float)height);
                 }
 
                 if (reader.TokenType == JsonTokenType.PropertyName)
@@ -1427,7 +1427,7 @@ namespace Telegram.Services
                 {
                     return width < 0 || height < 0
                         ? Size.Empty
-                        : new Size(width, height);
+                        : new Size((float)width, (float)height);
                 }
 
                 if (reader.TokenType == JsonTokenType.PropertyName)

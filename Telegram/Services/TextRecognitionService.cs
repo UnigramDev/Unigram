@@ -16,6 +16,8 @@ using Windows.System;
 #if !CSWINRT3_0
 using static System.IO.WindowsRuntimeStorageExtensions;
 using WindowsRuntimeStreamExtensions = System.IO.WindowsRuntimeStreamExtensions;
+#else
+using WindowsRuntimeStreamExtensions = Windows.Storage.Streams.WindowsRuntimeStreamExtensions;
 #endif
 
 namespace Telegram.Services

@@ -1228,8 +1228,8 @@ namespace Telegram.Views.Stars.Popups
                 return Vector3.Zero;
             }
 
-            var badge = WearIcon.TransformToVisual(UpgradedHeader).TransformPoint(new Point(WearIcon.ActualWidth / 2, WearIcon.ActualHeight / 2));
-            var photo = UpgradedAnimatedPhoto.TransformToVisual(UpgradedHeader).TransformPoint(new Point(UpgradedAnimatedPhoto.ActualWidth / 2, UpgradedAnimatedPhoto.ActualHeight / 2));
+            var badge = WearIcon.TransformToVisual(UpgradedHeader).TransformPoint(new Point((float)(WearIcon.ActualWidth / 2), (float)(WearIcon.ActualHeight / 2)));
+            var photo = UpgradedAnimatedPhoto.TransformToVisual(UpgradedHeader).TransformPoint(new Point((float)(UpgradedAnimatedPhoto.ActualWidth / 2), (float)(UpgradedAnimatedPhoto.ActualHeight / 2)));
 
             return new Vector3((float)(badge.X - photo.X), (float)(badge.Y - photo.Y), 0);
         }

@@ -62,10 +62,19 @@ namespace Telegram.Storage
             return Source.OpenAsync(accessMode).AsTask();
         }
 
+#if CSWINRT3_0
+        // CsWinRT 3 has no storage extensions. This is what theirs does: read-write at offset 0, not truncated.
+        public async Task<System.IO.Stream> OpenStreamForWriteAsync()
+        {
+            var stream = await Source.OpenAsync(FileAccessMode.ReadWrite);
+            return Windows.Storage.Streams.WindowsRuntimeStreamExtensions.AsStream(stream);
+        }
+#else
         public Task<System.IO.Stream> OpenStreamForWriteAsync()
         {
             return System.IO.WindowsRuntimeStorageExtensions.OpenStreamForWriteAsync(Source);
         }
+#endif
 
         public async Task<FileItem> CopyAsync(FolderItem destinationFolder)
         {
