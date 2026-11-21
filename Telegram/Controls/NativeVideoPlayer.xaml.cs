@@ -232,10 +232,11 @@ namespace Telegram.Controls
                 {
                     var rendition = _renditions[value.Index];
 
-                    AppSettings.Playback.VideoQualityManual = true;
-
+                    // The original is a choice for this video only: the next one starts the way the
+                    // last quality choice left it.
                     if (!rendition.IsOriginal)
                     {
+                        AppSettings.Playback.VideoQualityManual = true;
                         AppSettings.Playback.VideoQuality = rendition.Quality;
                     }
 

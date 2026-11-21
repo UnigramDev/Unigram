@@ -72,13 +72,10 @@ namespace Telegram.Streams
                 return null;
             }
 
-            // The original only once it is on disk: then nothing plays better, and nothing more has
-            // to be downloaded. Before that it is usually far larger than the best alternative.
+            // Always listed, so that it can be picked by hand, but never started on unless it is on
+            // disk: it is usually far larger than the best alternative. See PickRendition.
             var original = video.Video;
-            if (original.VideoValue.Local.IsDownloadingCompleted)
-            {
-                renditions.Add(new RemoteRendition(clientService, original.VideoValue, null, original.Width, original.Height, duration, rank));
-            }
+            renditions.Add(new RemoteRendition(clientService, original.VideoValue, null, original.Width, original.Height, duration, rank));
 
             renditions.Sort(CompareRenditions);
 
@@ -116,18 +113,25 @@ namespace Telegram.Streams
             }
 
             // Then the quality picked by hand, or the one automatic quality last settled on, as the
-            // best guess at what the connection carries.
+            // best guess at what the connection carries. Never the original, which is only played
+            // when it is on disk or picked for this video.
             var quality = AppSettings.Playback.VideoQuality;
             if (quality <= 0)
             {
                 quality = 480;
             }
 
-            var best = 0;
+            // CreateRenditions lists at least one alternative besides the original.
+            var best = -1;
 
-            for (int i = 1; i < renditions.Count; i++)
+            for (int i = 0; i < renditions.Count; i++)
             {
-                if (Math.Abs(renditions[i].Quality - quality) < Math.Abs(renditions[best].Quality - quality))
+                if (renditions[i].IsOriginal)
+                {
+                    continue;
+                }
+
+                if (best < 0 || Math.Abs(renditions[i].Quality - quality) < Math.Abs(renditions[best].Quality - quality))
                 {
                     best = i;
                 }
