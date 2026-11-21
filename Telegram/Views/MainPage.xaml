@@ -476,7 +476,8 @@
                                                   AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
                                                   ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"
                                                   Width="40"
-                                                  Height="40" />
+                                                  Height="40"
+                                                  CornerRadius="16" />
                         </StackPanel>
                     </Grid>
                 </Grid>
