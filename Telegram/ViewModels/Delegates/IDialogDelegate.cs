@@ -39,6 +39,8 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatDraft(Chat chat, DraftMessage draft);
         void UpdatePendingMessage(Chat chat);
 
+        void UpdateFooter(Chat chat, ChatFooterState state);
+
         void UpdateUserEmptyState(Chat chat, User user, UserFullInfo fullInfo, CanSendMessageToUserResult result);
         void UpdateSupergroupEmptyState(Chat chat, Supergroup supergroup);
 

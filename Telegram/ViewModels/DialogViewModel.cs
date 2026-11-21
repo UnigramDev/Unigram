@@ -639,6 +639,8 @@ namespace Telegram.ViewModels
                 {
                     ClientService.Send(new GetUserFullInfo(privata.UserId));
                 }
+
+                UpdateFooter(chat, item, cache, null);
             }
 
             if (filterByTag is false && tag != null)
@@ -2693,6 +2695,7 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetUserFull(privata.UserId);
 
                 Delegate?.UpdateUser(chat, item, cache, false, _accessToken != null);
+                UpdateFooter(chat, item, cache, null);
 
                 ClientService.Send(new GetUserFullInfo(privata.UserId));
 
@@ -2721,6 +2724,7 @@ namespace Telegram.ViewModels
                 Delegate?.UpdateSecretChat(chat, secret);
                 Delegate?.UpdateUser(chat, item, cache, true, false);
                 Delegate?.UpdateUserEmptyState(chat, null, null, null);
+                UpdateFooter(chat, item, cache, secret);
 
                 ClientService.Send(new GetUserFullInfo(secret.UserId));
             }
@@ -2731,6 +2735,7 @@ namespace Telegram.ViewModels
 
                 Delegate?.UpdateBasicGroup(chat, item, cache);
                 Delegate?.UpdateUserEmptyState(chat, null, null, null);
+                UpdateFooter(chat, item);
 
                 ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
                 _messageDelegate.UpdateAdministrators(chat);
@@ -2743,6 +2748,7 @@ namespace Telegram.ViewModels
                 Delegate?.UpdateSupergroup(chat, item, cache);
                 Delegate?.UpdateSupergroupEmptyState(chat, item);
                 Delegate?.UpdateUserEmptyState(chat, null, null, null);
+                UpdateFooter(chat, item, cache);
 
                 ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
                 _messageDelegate.UpdateAdministrators(chat);
@@ -5173,134 +5179,6 @@ namespace Telegram.ViewModels
         protected virtual void FilterExecute()
         {
 
-        }
-
-        public async void Action()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (ClientService.FreezeState.IsFrozen)
-            {
-                ShowPopup(new FrozenPopup(ClientService.FreezeState));
-            }
-            else if (Search?.SavedMessagesTag != null)
-            {
-                Search.FilterByTag = !Search.FilterByTag;
-            }
-            else if (Type == DialogType.EventLog)
-            {
-                FilterExecute();
-            }
-            else if (SavedMessagesTopic != null)
-            {
-                if (SavedMessagesTopic.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
-                {
-                    NavigationService.NavigateToChat(savedChat);
-                }
-            }
-            else if (Type == DialogType.Pinned)
-            {
-                UnpinMessages();
-            }
-            else if (chat.Type is ChatTypePrivate privata)
-            {
-                var user = ClientService.GetUser(privata.UserId);
-                if (user == null)
-                {
-                    return;
-                }
-
-                if (user.Type is UserTypeDeleted)
-                {
-                    DeleteChat();
-                }
-                else if (chat.Id == ClientService.Options.RepliesBotChatId || chat.Id == ClientService.Options.VerificationCodesBotChatId)
-                {
-                    ToggleMute();
-                }
-                else if (chat.BlockList is BlockListMain)
-                {
-                    Unblock();
-                }
-                else if (user.Type is UserTypeBot)
-                {
-                    Start();
-                }
-            }
-            else if (chat.Type is ChatTypeBasicGroup basic)
-            {
-                var group = ClientService.GetBasicGroup(basic.BasicGroupId);
-                if (group == null)
-                {
-                    return;
-                }
-
-                if (group.UpgradedToSupergroupId != 0)
-                {
-                    var response = await ClientService.SendAsync(new CreateSupergroupChat(group.UpgradedToSupergroupId, false));
-                    if (response is Chat migratedChat)
-                    {
-                        NavigationService.NavigateToChat(migratedChat);
-                    }
-                }
-                else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
-                {
-                    // Delete and exit
-                    DeleteChat();
-                }
-                else if (group.Status is ChatMemberStatusCreator creator && !creator.IsMember)
-                {
-                    JoinChannel();
-                }
-            }
-            else if (chat.Type is ChatTypeSupergroup super)
-            {
-                var group = ClientService.GetSupergroup(super.SupergroupId);
-                if (group == null)
-                {
-                    return;
-                }
-
-                if (group.IsChannel)
-                {
-                    if (Constants.DEBUG)
-                    {
-                        ClientService.Send(new AddLocalMessage(chat.Id, new MessageSenderChat(chat.Id), null, true, new InputMessageContact(new Contact("999888777666", "SIMILAR", "CHANNELS", string.Empty, ClientService.Options.MyId))));
-                        return;
-                    }
-
-                    if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
-                    {
-                        JoinChannel();
-                    }
-                    else
-                    {
-                        ToggleMute();
-                    }
-                }
-                else
-                {
-                    if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusRestricted restricted && !restricted.IsMember) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
-                    {
-                        JoinChannel();
-                    }
-                    else if (group.Status is ChatMemberStatusBanned)
-                    {
-                        DeleteChat();
-                    }
-                    else if (ClientService.TryGetSupergroupFull(group.Id, out SupergroupFullInfo fullInfo))
-                    {
-                        if (fullInfo.MyBoostCount < fullInfo.UnrestrictBoostCount)
-                        {
-                            Boost(fullInfo.UnrestrictBoostCount);
-                        }
-                    }
-                }
-            }
         }
 
         #endregion

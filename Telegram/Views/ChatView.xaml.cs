@@ -816,6 +816,10 @@ namespace Telegram.Views
             DataContext = _viewModel = viewModel;
             Messages.ViewModel = viewModel;
 
+            // The view outlives the chat, so the next chat's footer must be applied even when it
+            // equals the last one: ShowArea also moves focus to the composer.
+            _footer = null;
+
             if (_needActivation)
             {
                 _needActivation = false;
@@ -5780,21 +5784,43 @@ namespace Telegram.Views
         private bool? _replyEnabled = null;
         private bool _actionCollapsed = true;
 
-        private void ShowAction(string content, bool enabled, bool replyEnabled = false)
+        private ChatFooterState _footer;
+
+        public void UpdateFooter(Chat chat, ChatFooterState state)
         {
+            if (state == _footer)
+            {
+                return;
+            }
+
+            _footer = state;
+
             if (FromPreview)
             {
                 ButtonAction.Visibility = Visibility.Collapsed;
                 ChatFooter.Visibility = Visibility.Collapsed;
                 TextArea.Visibility = Visibility.Collapsed;
-                return;
             }
-            else if (ViewModel.ClientService.FreezeState.IsFrozen)
+            else if (state.Kind == ChatFooterKind.Composer)
+            {
+                ShowArea(state.PaidMessageStarCount);
+            }
+            else if (state.Action == ChatFooterAction.Frozen)
             {
                 ShowFrozen();
-                return;
             }
+            else if (state.Kind == ChatFooterKind.Link)
+            {
+                ShowLink(state.Text);
+            }
+            else
+            {
+                ShowAction(state.Text, state.Kind != ChatFooterKind.Info, state.ReplyRestoresComposer);
+            }
+        }
 
+        private void ShowAction(string content, bool enabled, bool replyEnabled = false)
+        {
             if (content != null && (ButtonAction.Content is not TextBlock || (ButtonAction.Content is TextBlock block && !string.Equals(block.Text, content))))
             {
                 ButtonAction.Content = new TextBlock
@@ -5845,21 +5871,29 @@ namespace Telegram.Views
             TextArea.Visibility = Visibility.Collapsed;
         }
 
+        private void ShowLink(string text)
+        {
+            var textBlock = new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap,
+                TextAlignment = TextAlignment.Center,
+                Style = App.Current.Resources["InfoBodyTextBlockStyle"] as Style
+            };
+
+            TextBlockHelper.SetFormattedText(textBlock, Extensions.ReplacePremiumLink(text, null));
+
+            _replyEnabled = false;
+            ButtonAction.IsEnabled = true;
+            ButtonAction.Content = textBlock;
+
+            _actionCollapsed = false;
+            ButtonAction.Visibility = Visibility.Visible;
+            ChatFooter.Visibility = Visibility.Visible;
+            TextArea.Visibility = Visibility.Collapsed;
+        }
+
         private void ShowArea(long paidMessageStarCount, bool permanent = true)
         {
-            if (FromPreview)
-            {
-                ButtonAction.Visibility = Visibility.Collapsed;
-                ChatFooter.Visibility = Visibility.Collapsed;
-                TextArea.Visibility = Visibility.Collapsed;
-                return;
-            }
-            else if (ViewModel.ClientService.FreezeState.IsFrozen)
-            {
-                ShowFrozen();
-                return;
-            }
-
             if (permanent)
             {
                 _replyEnabled = null;
@@ -6510,25 +6544,7 @@ namespace Telegram.Views
 
         public void UpdateChatNotificationSettings(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
-            {
-                var group = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
-                if (group == null)
-                {
-                    return;
-                }
-
-                if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostMessages)
-                {
-                }
-                else if (group.Status is ChatMemberStatusLeft)
-                {
-                }
-                else
-                {
-                    ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
-                }
-            }
+            // The mute button's label is the footer's, which DialogViewModel resolves on this update.
         }
 
 
@@ -7321,11 +7337,6 @@ namespace Telegram.Views
             btnSendMessage.SlowModeDelay = 0;
             btnSendMessage.SlowModeDelayExpiresIn = 0;
 
-            if (!secret && !user.RestrictsNewChats)
-            {
-                ShowArea(fullInfo?.OutgoingPaidMessageStarCount ?? user.PaidMessageStarCount);
-            }
-
             UpdateChatTextPlaceholder(chat);
 
             UpdateUserStatus(chat, user);
@@ -7339,61 +7350,6 @@ namespace Telegram.Views
                 ButtonMore.Content = Strings.BotsMenuTitle;
 
                 return;
-            }
-
-            if (ViewModel.Search?.SavedMessagesTag != null)
-            {
-                ShowAction(ViewModel.Search.FilterByTag ? Strings.SavedTagShowOtherMessages : Strings.SavedTagHideOtherMessages, true);
-            }
-            else if (ViewModel.SavedMessagesTopic != null)
-            {
-                if (ViewModel.SavedMessagesTopic.Type is SavedMessagesTopicTypeMyNotes)
-                {
-                    ShowArea(fullInfo.OutgoingPaidMessageStarCount);
-                }
-                else if (ViewModel.SavedMessagesTopic.Type is SavedMessagesTopicTypeAuthorHidden)
-                {
-                    ShowAction(Strings.AuthorHiddenDescription, false);
-                }
-                else if (ViewModel.SavedMessagesTopic.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
-                {
-                    if (savedChat.Type is ChatTypePrivate)
-                    {
-                        ShowAction(Strings.SavedOpenChat, true);
-                    }
-                    else if (savedChat.Type is ChatTypeSupergroup { IsChannel: true })
-                    {
-                        ShowAction(Strings.SavedOpenChannel, true);
-                    }
-                    else
-                    {
-                        ShowAction(Strings.SavedOpenGroup, true);
-                    }
-                }
-            }
-            else if (ViewModel.Type == DialogType.Pinned)
-            {
-                ShowAction(Strings.UnpinAllMessages, true);
-            }
-            else if (user.Type is UserTypeDeleted)
-            {
-                ShowAction(Strings.DeleteThisChat, true);
-            }
-            else if (chat.Id == ViewModel.ClientService.Options.RepliesBotChatId || chat.Id == ViewModel.ClientService.Options.VerificationCodesBotChatId)
-            {
-                ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
-            }
-            else if (chat.BlockList is BlockListMain)
-            {
-                ShowAction(user.Type is UserTypeBot ? Strings.BotUnblock : Strings.Unblock, true);
-            }
-            else if (user.Type is UserTypeBot && (accessToken || chat?.LastMessage == null))
-            {
-                ShowAction(Strings.BotStart, true);
-            }
-            else if (!secret && !user.RestrictsNewChats)
-            {
-                ShowArea(fullInfo.OutgoingPaidMessageStarCount);
             }
 
             if (fullInfo.BotInfo?.MenuButton != null)
@@ -7451,42 +7407,6 @@ namespace Telegram.Views
 
         public void UpdateUserEmptyState(Chat chat, User user, UserFullInfo fullInfo, CanSendMessageToUserResult result)
         {
-            if (result is CanSendMessageToUserResultOk)
-            {
-                ShowArea(0);
-            }
-            else if (result is CanSendMessageToUserResultUserHasPaidMessages userHasPaidMessages)
-            {
-                ShowArea(userHasPaidMessages.OutgoingPaidMessageStarCount);
-            }
-            else if (result is CanSendMessageToUserResultUserIsDeleted)
-            {
-                ShowAction(Strings.DeleteThisChat, true);
-            }
-            else if (result is CanSendMessageToUserResultUserRestrictsNewChats)
-            {
-                var text = string.Format(Strings.OnlyPremiumCanMessage, user.FirstName);
-                var markdown = Extensions.ReplacePremiumLink(text, null);
-
-                var textBlock = new TextBlock
-                {
-                    TextWrapping = TextWrapping.Wrap,
-                    TextAlignment = TextAlignment.Center,
-                    Style = App.Current.Resources["InfoBodyTextBlockStyle"] as Style
-                };
-
-                TextBlockHelper.SetFormattedText(textBlock, markdown);
-
-                _replyEnabled = false;
-                ButtonAction.IsEnabled = true;
-                ButtonAction.Content = textBlock;
-
-                _actionCollapsed = false;
-                ButtonAction.Visibility = Visibility.Visible;
-                ChatFooter.Visibility = Visibility.Visible;
-                TextArea.Visibility = Visibility.Collapsed;
-            }
-
             if (ViewModel.Type == DialogType.History && chat.LastMessage == null && user?.Type is UserTypeRegular && user?.Id != ViewModel.ClientService.Options.MyId && fullInfo != null)
             {
                 if (result is CanSendMessageToUserResultUserRestrictsNewChats)
@@ -7518,55 +7438,19 @@ namespace Telegram.Views
 
         public void UpdateSecretChat(Chat chat, SecretChat secretChat)
         {
-            if (secretChat.State is SecretChatStateReady)
-            {
-                ShowArea(0);
-            }
-            else if (secretChat.State is SecretChatStatePending)
-            {
-                ShowAction(string.Format(Strings.AwaitingEncryption, ViewModel.ClientService.GetTitle(chat)), false);
-            }
-            else if (secretChat.State is SecretChatStateClosed)
-            {
-                ShowAction(Strings.EncryptionRejected, false);
-            }
+            // The secret chat's state is shown by the footer, which DialogViewModel resolves on this update.
         }
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             AccountInfoHeader.UpdateUser(_viewModel.ClientService, null, null, null);
 
-            if (group.UpgradedToSupergroupId != 0)
+            if (group.UpgradedToSupergroupId == 0 && group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
             {
-                ShowAction(Strings.OpenSupergroup, true);
-            }
-            else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
-            {
-                ShowAction(Strings.DeleteThisGroup, true);
                 ViewModel.UpdateLastSeen(Strings.YouLeft);
             }
-            else if (group.Status is ChatMemberStatusCreator creator && !creator.IsMember)
+            else if (group.UpgradedToSupergroupId == 0 && group.Status is not ChatMemberStatusCreator { IsMember: false })
             {
-                ShowAction(Strings.ChannelJoin, true);
-            }
-            else
-            {
-                if (ViewModel.Type == DialogType.Pinned)
-                {
-                    if (chat.CanPinMessages(_viewModel.ClientService))
-                    {
-                        ShowAction(Strings.UnpinAllMessages, true);
-                    }
-                    else
-                    {
-                        ShowAction(Strings.HidePinnedMessages, true);
-                    }
-                }
-                else
-                {
-                    ShowArea(0);
-                }
-
                 TextField.PlaceholderText = GetPlaceholder(chat, group, out bool readOnly);
 
                 if (_isTextReadOnly != readOnly)
@@ -7613,146 +7497,7 @@ namespace Telegram.Views
 
             if (ViewModel.Type == DialogType.EventLog)
             {
-                ShowAction(Strings.Settings, true);
                 return;
-            }
-
-            if (ViewModel.Type == DialogType.Pinned)
-            {
-                if (chat.CanPinMessages(_viewModel.ClientService))
-                {
-                    ShowAction(Strings.UnpinAllMessages, true);
-                }
-                else
-                {
-                    ShowAction(Strings.HidePinnedMessages, true);
-                }
-            }
-            else if (group.IsChannel || group.IsBroadcastGroup)
-            {
-                if ((group.Status is ChatMemberStatusLeft && (group.HasActiveUsername() || ViewModel.ClientService.IsChatAccessible(chat))) || group.Status is ChatMemberStatusCreator { IsMember: false })
-                {
-                    ShowAction(Strings.ChannelJoin, true);
-                }
-                else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostMessages)
-                {
-                    ShowArea(0);
-                }
-                else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
-                {
-                    ShowAction(Strings.DeleteChat, true);
-                }
-                else
-                {
-                    ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
-                }
-            }
-            else
-            {
-                if ((group.Status is ChatMemberStatusLeft && (group.IsPublic() || ViewModel.ClientService.IsChatAccessible(chat))) || group.Status is ChatMemberStatusCreator { IsMember: false })
-                {
-                    if (ViewModel.Type == DialogType.Thread)
-                    {
-                        if (group.JoinToSendMessages)
-                        {
-                            if (group.JoinByRequest)
-                            {
-                                ShowAction(Strings.ChannelJoinRequest, true);
-                            }
-                            else
-                            {
-                                ShowAction(Strings.JoinGroup, true);
-                            }
-                        }
-                        else if (!chat.Permissions.CanSendBasicMessages)
-                        {
-                            ShowAction(Strings.GlobalSendMessageRestricted, false);
-                        }
-                        else
-                        {
-                            ShowArea(group.PaidMessageStarCount);
-                        }
-                    }
-                    else if (group.IsDirectMessagesGroup)
-                    {
-                        ShowArea(group.PaidMessageStarCount);
-                    }
-                    else if (group.JoinByRequest)
-                    {
-                        ShowAction(Strings.ChannelJoinRequest, true);
-                    }
-                    else
-                    {
-                        ShowAction(Strings.ChannelJoin, true);
-                    }
-                }
-                else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator)
-                {
-                    if (ViewModel.Type != DialogType.Thread && group.IsDirectMessagesGroup && group.IsAdministeredDirectMessagesGroup)
-                    {
-                        ShowAction(Strings.ForumReplyToMessagesInTopic, false, true);
-                    }
-                    else
-                    {
-                        ShowArea(0);
-                    }
-                }
-                else if (group.Status is ChatMemberStatusRestricted restrictedSend)
-                {
-                    if (!restrictedSend.IsMember && group.HasActiveUsername())
-                    {
-                        ShowAction(Strings.ChannelJoin, true);
-                    }
-                    else if (!restrictedSend.Permissions.CanSendBasicMessages)
-                    {
-                        if (restrictedSend.IsForever())
-                        {
-                            ShowAction(Strings.SendMessageRestrictedForever, false);
-                        }
-                        else
-                        {
-                            ShowAction(string.Format(Strings.SendMessageRestricted, Formatter.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
-                        }
-                    }
-                    else
-                    {
-                        ShowArea(group.PaidMessageStarCount);
-                    }
-                }
-                else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
-                {
-                    if (group.IsDirectMessagesGroup)
-                    {
-                        ShowArea(group.PaidMessageStarCount);
-                    }
-                    else
-                    {
-                        ShowAction(Strings.DeleteChat, true);
-                    }
-                }
-                else if (!chat.Permissions.CanSendBasicMessages && (fullInfo == null || fullInfo.MyBoostCount < fullInfo.UnrestrictBoostCount))
-                {
-                    if (fullInfo != null && fullInfo.MyBoostCount < fullInfo.UnrestrictBoostCount)
-                    {
-                        ShowAction(Strings.BoostingBoostToSendMessages, true);
-                    }
-                    else
-                    {
-                        ShowAction(Strings.GlobalSendMessageRestricted, false);
-                    }
-                }
-                else if (ViewModel.Type != DialogType.Thread && group.IsDirectMessagesGroup && group.IsAdministeredDirectMessagesGroup)
-                {
-                    ShowAction(Strings.ForumReplyToMessagesInTopic, false, true);
-                }
-                else if (ViewModel.ForumTopic is ForumTopic { Info.IsClosed: true })
-                {
-                    ShowAction(Strings.TopicClosedByAdmin, false);
-                }
-                else
-                {
-                    ShowArea(group.IsAdministeredDirectMessagesGroup ? 0 : group.PaidMessageStarCount);
-                }
             }
 
             UpdateChatTextPlaceholder(chat);
