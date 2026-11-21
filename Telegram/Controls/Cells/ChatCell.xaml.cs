@@ -74,10 +74,17 @@ namespace Telegram.Controls.Cells
         private bool _compact;
         private bool _draft;
 
-        // Detaching the heart does not stop its loops; StopAnimation on each line does.
+        // Detaching the heart does not stop its loops; StopAnimation on each line does. The
+        // animations are kept so a cell leaving the tree can stop them and restart them on return:
+        // a loop left running keeps the compositor ticking, and re-evaluating every expression.
         private CompositionRoundedRectangleGeometry _heart1;
         private CompositionRoundedRectangleGeometry _heart2;
         private CompositionRoundedRectangleGeometry _heart3;
+        private Vector2KeyFrameAnimation _heartSize1;
+        private Vector2KeyFrameAnimation _heartSize2;
+        private Vector2KeyFrameAnimation _heartOffset1;
+        private Vector2KeyFrameAnimation _heartOffset2;
+        private Vector2KeyFrameAnimation _heartOffset3;
 
         private MessageTicksState _ticksState;
         private long _ticksHash;
@@ -94,12 +101,47 @@ namespace Telegram.Controls.Cells
         {
             _strokeBrush?.Register();
             _selectionStrokeBrush?.Register();
+
+            StartHeart();
         }
 
         protected override void OnUnloaded()
         {
             _strokeBrush?.Unregister();
             _selectionStrokeBrush?.Unregister();
+
+            StopHeart();
+        }
+
+        private void StartHeart()
+        {
+            if (_heart1 == null)
+            {
+                return;
+            }
+
+            _heart1.StartAnimation("Size", _heartSize1);
+            _heart2.StartAnimation("Size", _heartSize2);
+            _heart3.StartAnimation("Size", _heartSize1);
+
+            _heart1.StartAnimation("Offset", _heartOffset1);
+            _heart2.StartAnimation("Offset", _heartOffset2);
+            _heart3.StartAnimation("Offset", _heartOffset3);
+        }
+
+        private void StopHeart()
+        {
+            if (_heart1 == null)
+            {
+                return;
+            }
+
+            _heart1.StopAnimation("Size");
+            _heart1.StopAnimation("Offset");
+            _heart2.StopAnimation("Size");
+            _heart2.StopAnimation("Offset");
+            _heart3.StopAnimation("Size");
+            _heart3.StopAnimation("Offset");
         }
 
         #region InitializeComponent
@@ -1238,35 +1280,35 @@ namespace Telegram.Controls.Cells
                 offset3.IterationBehavior = AnimationIterationBehavior.Forever;
                 offset3.Duration *= 8;
 
-                line1.StartAnimation("Size", size1);
-                line2.StartAnimation("Size", size2);
-                line3.StartAnimation("Size", size1);
-
-                line1.StartAnimation("Offset", offset1);
-                line2.StartAnimation("Offset", offset2);
-                line3.StartAnimation("Offset", offset3);
-
                 _heart1 = line1;
                 _heart2 = line2;
                 _heart3 = line3;
+                _heartSize1 = size1;
+                _heartSize2 = size2;
+                _heartOffset1 = offset1;
+                _heartOffset2 = offset2;
+                _heartOffset3 = offset3;
+
+                // A cell can be bound before it is in the tree; OnLoaded starts it then.
+                if (IsConnected)
+                {
+                    StartHeart();
+                }
 
                 ElementCompositionPreview.SetElementChildVisual(OnlineHeart, shape);
             }
             else
             {
-                if (_heart1 != null)
-                {
-                    _heart1.StopAnimation("Size");
-                    _heart1.StopAnimation("Offset");
-                    _heart2.StopAnimation("Size");
-                    _heart2.StopAnimation("Offset");
-                    _heart3.StopAnimation("Size");
-                    _heart3.StopAnimation("Offset");
+                StopHeart();
 
-                    _heart1 = null;
-                    _heart2 = null;
-                    _heart3 = null;
-                }
+                _heart1 = null;
+                _heart2 = null;
+                _heart3 = null;
+                _heartSize1 = null;
+                _heartSize2 = null;
+                _heartOffset1 = null;
+                _heartOffset2 = null;
+                _heartOffset3 = null;
 
                 ElementCompositionPreview.SetElementChildVisual(OnlineHeart, null);
             }
