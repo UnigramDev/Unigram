@@ -227,9 +227,13 @@ namespace Telegram.Controls.Stories
             {
                 flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, Strings.UnarchiveStories, Icons.Unarchive);
             }
-            else
+            else if (activeStories.CanBeArchived)
             {
                 flyout.CreateFlyoutItem(ViewModel.HideProfile, activeStories, Strings.ArchivePeerStories, Icons.Archive);
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(ViewModel.RemoveFromRecent, activeStories, Strings.StoriesRemoveFromRecent, Icons.Delete);
             }
 
             flyout.ShowAt(element, args);

@@ -6451,6 +6451,7 @@
 
     <string name="ArchivePeerStories">Hide Stories</string>
     <string name="UnarchiveStories">Unhide Stories</string>
+    <string name="StoriesRemoveFromRecent">Remove from Recent</string>
 
 
 

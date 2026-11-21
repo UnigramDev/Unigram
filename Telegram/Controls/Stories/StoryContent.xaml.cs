@@ -820,7 +820,7 @@ namespace Telegram.Controls.Stories
             {
                 _timer.Stop();
                 _timer.Start();
-                Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, 5);
+                Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, StoryContentPhotoTimer.Duration);
 
                 MessagesRoot.Visibility = Visibility.Collapsed;
             }
@@ -1004,7 +1004,7 @@ namespace Telegram.Controls.Stories
             if (parent != null)
             {
                 parent.TryHide(ContentDialogResult.Primary);
-                parent.ViewModel.NavigationService.NavigateToChat(ViewModel.Chat);
+                parent.ViewModel.OpenPoster(ViewModel);
             }
         }
 
@@ -2088,6 +2088,11 @@ namespace Telegram.Controls.Stories
 
     public partial class StoryContentPhotoTimer
     {
+        /// <summary>
+        /// How long a photo story stays on screen, in seconds.
+        /// </summary>
+        public const double Duration = 10;
+
         private readonly Stopwatch _watch;
         private readonly DispatcherTimer _timer;
 
@@ -2095,7 +2100,7 @@ namespace Telegram.Controls.Stories
 
         public StoryContentPhotoTimer()
         {
-            _interval = TimeSpan.FromSeconds(5);
+            _interval = TimeSpan.FromSeconds(Duration);
 
             _watch = new Stopwatch();
 
@@ -2123,7 +2128,7 @@ namespace Telegram.Controls.Stories
             _watch.Reset();
 
             _timer.Stop();
-            _timer.Interval = TimeSpan.FromSeconds(5);
+            _timer.Interval = _interval;
         }
 
         public event EventHandler Tick;

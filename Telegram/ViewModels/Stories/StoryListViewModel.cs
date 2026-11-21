@@ -24,6 +24,7 @@ using Telegram.Services;
 using Telegram.Services.Factories;
 using Telegram.Td.Api;
 using Telegram.Views;
+using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Stories.Popups;
@@ -125,6 +126,21 @@ namespace Telegram.ViewModels.Stories
             }
         }
 
+        /// <summary>
+        /// Opens whoever posted the stories: My Stories for your own, otherwise the profile or chat.
+        /// </summary>
+        public void OpenPoster(ActiveStoriesViewModel activeStories)
+        {
+            if (activeStories.IsMyStory)
+            {
+                NavigationService.Navigate(typeof(ChatStoriesPage), new ChatStoriesArgs(activeStories.ChatId, ChatStoriesType.Pinned));
+            }
+            else
+            {
+                OpenProfile(activeStories);
+            }
+        }
+
         public void MuteProfile(ActiveStoriesViewModel activeStories)
         {
             var chat = activeStories.Chat;
@@ -135,7 +151,7 @@ namespace Telegram.ViewModels.Stories
 
             var settings = chat.NotificationSettings.Clone();
             settings.UseDefaultMuteStories = false;
-            settings.MuteStories = !settings.MuteStories;
+            settings.MuteStories = !Settings.Notifications.GetMuteStories(chat);
 
             ClientService.Send(new SetChatNotificationSettings(chat.Id, settings));
 
@@ -151,14 +167,7 @@ namespace Telegram.ViewModels.Stories
 
         public void HideProfile(ActiveStoriesViewModel activeStories)
         {
-            if (activeStories.CanBeArchived)
-            {
-                ClientService.Send(new SetChatActiveStoriesList(activeStories.ChatId, new StoryListArchive()));
-            }
-            else
-            {
-                ClientService.Send(new RemoveTopChat(new TopChatCategoryUsers(), activeStories.ChatId));
-            }
+            ClientService.Send(new SetChatActiveStoriesList(activeStories.ChatId, new StoryListArchive()));
 
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
@@ -168,6 +177,14 @@ namespace Telegram.ViewModels.Stories
             {
                 ShowToast(string.Format(Strings.StoriesMovedToContacts, activeStories.Chat.Title));
             }
+        }
+
+        /// <summary>
+        /// Takes stories that can't be archived, shown only because the poster is a top chat, out of the main list.
+        /// </summary>
+        public void RemoveFromRecent(ActiveStoriesViewModel activeStories)
+        {
+            ClientService.Send(new RemoveTopChat(new TopChatCategoryUsers(), activeStories.ChatId));
         }
 
         public void ShowProfile(ActiveStoriesViewModel activeStories)

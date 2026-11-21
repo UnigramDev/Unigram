@@ -22,6 +22,7 @@ using Telegram.ViewModels.Stories;
 using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
 using Windows.System;
+using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -373,6 +374,8 @@ namespace Telegram.Controls.Stories
 
             // The peers grow as more are loaded.
             _total = viewModel.Items.Count;
+
+            UpdateScreenCapture();
 
             for (int i = 0; i < _indexes.Length; i++)
             {
@@ -920,6 +923,10 @@ namespace Telegram.Controls.Stories
         {
             _viewModel.NavigationService.Window.Activated += OnActivated;
 
+            _loaded = true;
+            _displayRequest.TryRequestActive();
+            UpdateScreenCapture();
+
             StoriesWindow_Loaded(sender, e);
         }
 
@@ -927,8 +934,55 @@ namespace Telegram.Controls.Stories
         {
             _viewModel.NavigationService.Window.Activated -= OnActivated;
 
+            _loaded = false;
+            _displayRequest.TryRequestRelease();
+            UpdateScreenCapture();
+
             _viewModel?.Aggregator.Unsubscribe(this);
             _stealthTimer.Stop();
+        }
+
+        // Stories play with no input, so the screen is kept on for as long as the viewer is open.
+        private readonly DisplayRequest _displayRequest = new();
+
+        private bool _loaded;
+        private bool _screenCaptureDisabled;
+
+        // The side cards show their stories too, so any of them that can't be forwarded blocks
+        // capture. Checked only while loaded, so that a late update can't block it after closing.
+        private void UpdateScreenCapture()
+        {
+            var disable = false;
+
+            if (_loaded && _viewModel != null)
+            {
+                var last = Math.Min(_index + 3, _viewModel.Items.Count - 1);
+
+                for (int real = Math.Max(_index - 3, 0); real <= last; real++)
+                {
+                    if (_viewModel.Items[real].SelectedItem is { CanBeForwarded: false })
+                    {
+                        disable = true;
+                        break;
+                    }
+                }
+            }
+
+            if (_screenCaptureDisabled == disable)
+            {
+                return;
+            }
+
+            _screenCaptureDisabled = disable;
+
+            if (disable)
+            {
+                _viewModel.NavigationService.Window.DisableScreenCapture(GetHashCode());
+            }
+            else
+            {
+                _viewModel.NavigationService.Window.EnableScreenCapture(GetHashCode());
+            }
         }
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
@@ -1089,7 +1143,7 @@ namespace Telegram.Controls.Stories
                 flyout.CreateFlyoutItem(ViewModel.ArchiveStory, story, story.IsPostedToChatPage ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPostedToChatPage ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
             }
 
-            if (story.Chat.Type is ChatTypePrivate && !activeStories.IsMyStory)
+            if (!activeStories.IsMyStory && activeStories.ChatId != activeStories.ClientService.Options.TelegramServiceNotificationsChatId)
             {
                 flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
             }
@@ -1100,7 +1154,14 @@ namespace Telegram.Controls.Stories
             }
             else if (!activeStories.IsMyStory)
             {
-                flyout.CreateFlyoutItem(ViewModel.HideProfile, activeStories, Strings.ArchivePeerStories, Icons.Archive);
+                if (activeStories.CanBeArchived)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.HideProfile, activeStories, Strings.ArchivePeerStories, Icons.Archive);
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(ViewModel.RemoveFromRecent, activeStories, Strings.StoriesRemoveFromRecent, Icons.Delete);
+                }
             }
 
             //if (activeStories.IsMyStory || story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable)
