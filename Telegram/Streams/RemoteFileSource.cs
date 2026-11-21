@@ -45,6 +45,14 @@ namespace Telegram.Streams
         // by the reader, read on the thread updates arrive on.
         private long _requestedEnd;
 
+        // The largest part TDLib downloads in. Every smaller part size divides it, so its multiples
+        // are part boundaries in any file.
+        private const long PartSize = 512 * 1024;
+
+        // The window last sent, rounded as Download rounds it, or -1 when none is. Under _stateLock.
+        private long _sentOffset = -1;
+        private long _sentEnd = -1;
+
         private bool _closed;
 
         // Null while closed. Under _stateLock.
@@ -276,9 +284,10 @@ namespace Telegram.Streams
             // wait, and UpdateFile needs that same lock, so the reply queued behind a
             // dispatch this call was itself blocking. It timed out and reported zero.
             //
-            // The query is also redundant. MustWait calls DownloadFile with the current
-            // offset on every pass, and TDLib sets download_offset to it and recomputes
-            // downloaded_prefix_size against it, so the next update carries the answer.
+            // The query is also redundant. MustWait calls DownloadFile on every pass that
+            // waits, and TDLib sets download_offset to the start of the part holding the
+            // offset and recomputes downloaded_prefix_size against it, so the next update
+            // carries the answer.
             return 0;
         }
 
@@ -297,8 +306,7 @@ namespace Telegram.Streams
                 var downloaded = CalculateDownloadedBytes();
                 if (downloaded >= count)
                 {
-                    // Always request new bytes
-                    Download(_offset, buffer);
+                    Download(_offset, buffer, coalesce: true);
 
                     //Logger.Debug($"Next chunk is available for {_file.Id}, offset: {_offset}, limit: {buffer}, count: {count}, download: {_file.Local.DownloadOffset}, prefix: {_file.Local.DownloadedPrefixSize}, size: {_file.Size}");
                     return false;
@@ -315,11 +323,36 @@ namespace Telegram.Streams
             }
         }
 
-        private void Download(long offset, long limit)
+        private void Download(long offset, long limit, bool coalesce = false)
         {
             if (_lease == null)
             {
                 return;
+            }
+
+            if (limit > 0)
+            {
+                // Rounded out to whole parts, so that the requests made while reads move through a
+                // part are one and the same: TDLib ignores an offset and limit it already has, and
+                // sends updateFile for every new offset.
+                var end = Math.Min(_file.Size, (offset + limit + PartSize - 1) / PartSize * PartSize);
+                offset = offset / PartSize * PartSize;
+                limit = end - offset;
+
+                // A read whose bytes are there only has to ask if the window moved. One that waits
+                // always asks: someone else may have stopped the download or moved it elsewhere.
+                if (coalesce && offset == _sentOffset && end == _sentEnd)
+                {
+                    return;
+                }
+
+                _sentOffset = offset;
+                _sentEnd = end;
+            }
+            else
+            {
+                _sentOffset = -1;
+                _sentEnd = -1;
             }
 
             Interlocked.Exchange(ref _requestedEnd, limit > 0 ? offset + limit : _file.Size);
@@ -428,6 +461,9 @@ namespace Telegram.Streams
                 // leave it to whoever else is reading the file.
                 _clientService.CloseFileRead(_lease, _streaming);
                 _lease = null;
+
+                _sentOffset = -1;
+                _sentEnd = -1;
 
                 _event.Set();
             }
