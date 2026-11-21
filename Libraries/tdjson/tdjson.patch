@@ -1,0 +1,358 @@
+From 0b2cbf6725a91128155ab25ea7a5d12694771411 Mon Sep 17 00:00:00 2001
+From: Fela <frayx@live.it>
+Date: Sat, 5 Sep 2026 17:47:20 +0400
+Subject: [PATCH] Replace @extra with a request identifier, drop the old JSON
+ interface
+
+---
+ td/telegram/ClientJson.cpp     | 86 +++++-----------------------------
+ td/telegram/ClientJson.h       | 26 +---------
+ td/telegram/td_json_client.cpp | 28 ++---------
+ td/telegram/td_json_client.h   | 80 +------------------------------
+ tdclientjson_export_list       |  5 --
+ 5 files changed, 19 insertions(+), 206 deletions(-)
+
+diff --git a/td/telegram/ClientJson.cpp b/td/telegram/ClientJson.cpp
+index a8e93ec18..ab0abdf91 100644
+--- a/td/telegram/ClientJson.cpp
++++ b/td/telegram/ClientJson.cpp
+@@ -10,7 +10,6 @@
+ #include "td/telegram/td_api_json.h"
+ 
+ #include "td/utils/common.h"
+-#include "td/utils/FlatHashMap.h"
+ #include "td/utils/JsonBuilder.h"
+ #include "td/utils/port/thread_local.h"
+ #include "td/utils/SliceBuilder.h"
+@@ -53,110 +52,47 @@ static std::pair<td_api::object_ptr<td_api::Function>, string> to_request(Slice
+   return std::make_pair(std::move(func), std::move(extra));
+ }
+ 
+-static string from_response(const td_api::Object &object, const string &extra, int client_id) {
++static TD_THREAD_LOCAL string *current_output;
++
++static const char *store_response(const td_api::Object &object) {
+   auto buf = StackAllocator::alloc(1 << 18);
+   JsonBuilder jb(StringBuilder(buf.as_slice(), true), -1);
+   jb.enter_value() << ToJson(object);
+-  auto &sb = jb.string_builder();
+-  auto slice = sb.as_cslice();
++  auto slice = jb.string_builder().as_cslice();
+   CHECK(!slice.empty() && slice.back() == '}');
+-  sb.pop_back();
+-  if (!extra.empty()) {
+-    sb << ",\"@extra\":" << extra;
+-  }
+-  if (client_id != 0) {
+-    sb << ",\"@client_id\":" << client_id;
+-  }
+-  sb << '}';
+-  return sb.as_cslice().str();
+-}
+-
+-static TD_THREAD_LOCAL string *current_output;
+ 
+-static const char *store_string(string str) {
+   init_thread_local<string>(current_output);
+-  *current_output = std::move(str);
++  current_output->assign(slice.data(), slice.size());
+   return current_output->c_str();
+ }
+ 
+-void ClientJson::send(Slice request) {
+-  auto parsed_request = to_request(request);
+-  std::uint64_t extra_id = extra_id_.fetch_add(1, std::memory_order_relaxed);
+-  if (!parsed_request.second.empty()) {
+-    std::lock_guard<std::mutex> guard(mutex_);
+-    extra_[extra_id] = std::move(parsed_request.second);
+-  }
+-  client_.send(Client::Request{extra_id, std::move(parsed_request.first)});
+-}
+-
+-const char *ClientJson::receive(double timeout) {
+-  auto response = client_.receive(timeout);
+-  if (response.object == nullptr) {
+-    return nullptr;
+-  }
+-
+-  string extra;
+-  if (response.id != 0) {
+-    std::lock_guard<std::mutex> guard(mutex_);
+-    auto it = extra_.find(response.id);
+-    if (it != extra_.end()) {
+-      extra = std::move(it->second);
+-      extra_.erase(it);
+-    }
+-  }
+-  return store_string(from_response(*response.object, extra, 0));
+-}
+-
+-const char *ClientJson::execute(Slice request) {
+-  auto parsed_request = to_request(request);
+-  return store_string(from_response(*Client::execute(Client::Request{0, std::move(parsed_request.first)}).object,
+-                                    parsed_request.second, 0));
+-}
+-
+ static ClientManager *get_manager() {
+   return ClientManager::get_manager_singleton();
+ }
+ 
+-static std::mutex extra_mutex;
+-static FlatHashMap<int64, string> extra;
+-static std::atomic<uint64> extra_id{1};
+-
+ int json_create_client_id() {
+   return static_cast<int>(get_manager()->create_client_id());
+ }
+ 
+-void json_send(int client_id, Slice request) {
++void json_send(int client_id, unsigned long long request_id, Slice request) {
+   auto parsed_request = to_request(request);
+-  auto request_id = extra_id.fetch_add(1, std::memory_order_relaxed);
+-  if (!parsed_request.second.empty()) {
+-    std::lock_guard<std::mutex> guard(extra_mutex);
+-    extra[request_id] = std::move(parsed_request.second);
+-  }
+   get_manager()->send(client_id, request_id, std::move(parsed_request.first));
+ }
+ 
+-const char *json_receive(double timeout) {
++const char *json_receive(double timeout, int *client_id, unsigned long long *request_id) {
+   auto response = get_manager()->receive(timeout);
+   if (!response.object) {
+     return nullptr;
+   }
+ 
+-  string extra_str;
+-  if (response.request_id != 0) {
+-    std::lock_guard<std::mutex> guard(extra_mutex);
+-    auto it = extra.find(response.request_id);
+-    if (it != extra.end()) {
+-      extra_str = std::move(it->second);
+-      extra.erase(it);
+-    }
+-  }
+-  return store_string(from_response(*response.object, extra_str, response.client_id));
++  *client_id = response.client_id;
++  *request_id = response.request_id;
++  return store_response(*response.object);
+ }
+ 
+ const char *json_execute(Slice request) {
+   auto parsed_request = to_request(request);
+-  return store_string(
+-      from_response(*ClientManager::execute(std::move(parsed_request.first)), parsed_request.second, 0));
++  return store_response(*ClientManager::execute(std::move(parsed_request.first)));
+ }
+ 
+ }  // namespace td
+diff --git a/td/telegram/ClientJson.h b/td/telegram/ClientJson.h
+index 0b7ea866b..b63164d60 100644
+--- a/td/telegram/ClientJson.h
++++ b/td/telegram/ClientJson.h
+@@ -8,37 +8,15 @@
+ 
+ #include "td/telegram/Client.h"
+ 
+-#include "td/utils/FlatHashMap.h"
+ #include "td/utils/Slice.h"
+ 
+-#include <atomic>
+-#include <cstdint>
+-#include <mutex>
+-#include <string>
+-
+ namespace td {
+ 
+-// TODO can be removed in TDLib 2.0
+-class ClientJson final {
+- public:
+-  void send(Slice request);
+-
+-  const char *receive(double timeout);
+-
+-  static const char *execute(Slice request);
+-
+- private:
+-  Client client_;
+-  std::mutex mutex_;  // for extra_
+-  FlatHashMap<std::int64_t, std::string> extra_;
+-  std::atomic<std::uint64_t> extra_id_{1};
+-};
+-
+ int json_create_client_id();
+ 
+-void json_send(int client_id, Slice request);
++void json_send(int client_id, unsigned long long request_id, Slice request);
+ 
+-const char *json_receive(double timeout);
++const char *json_receive(double timeout, int *client_id, unsigned long long *request_id);
+ 
+ const char *json_execute(Slice request);
+ 
+diff --git a/td/telegram/td_json_client.cpp b/td/telegram/td_json_client.cpp
+index 47d62bef2..9443af398 100644
+--- a/td/telegram/td_json_client.cpp
++++ b/td/telegram/td_json_client.cpp
+@@ -11,36 +11,16 @@
+ 
+ #include "td/utils/Slice.h"
+ 
+-void *td_json_client_create() {
+-  return new td::ClientJson();
+-}
+-
+-void td_json_client_destroy(void *client) {
+-  delete static_cast<td::ClientJson *>(client);
+-}
+-
+-void td_json_client_send(void *client, const char *request) {
+-  static_cast<td::ClientJson *>(client)->send(td::Slice(request == nullptr ? "" : request));
+-}
+-
+-const char *td_json_client_receive(void *client, double timeout) {
+-  return static_cast<td::ClientJson *>(client)->receive(timeout);
+-}
+-
+-const char *td_json_client_execute(void *client, const char *request) {
+-  return td::ClientJson::execute(td::Slice(request == nullptr ? "" : request));
+-}
+-
+ int td_create_client_id() {
+   return td::json_create_client_id();
+ }
+ 
+-void td_send(int client_id, const char *request) {
+-  td::json_send(client_id, td::Slice(request == nullptr ? "" : request));
++void td_send(int client_id, unsigned long long request_id, const char *request) {
++  td::json_send(client_id, request_id, td::Slice(request == nullptr ? "" : request));
+ }
+ 
+-const char *td_receive(double timeout) {
+-  return td::json_receive(timeout);
++const char *td_receive(double timeout, int *client_id, unsigned long long *request_id) {
++  return td::json_receive(timeout, client_id, request_id);
+ }
+ 
+ const char *td_execute(const char *request) {
+diff --git a/td/telegram/td_json_client.h b/td/telegram/td_json_client.h
+index 7ea78bf4c..2adf493ee 100644
+--- a/td/telegram/td_json_client.h
++++ b/td/telegram/td_json_client.h
+@@ -66,7 +66,7 @@ TDJSON_EXPORT int td_create_client_id();
+  * \param[in] client_id TDLib client identifier.
+  * \param[in] request JSON-serialized null-terminated request to TDLib.
+  */
+-TDJSON_EXPORT void td_send(int client_id, const char *request);
++TDJSON_EXPORT void td_send(int client_id, unsigned long long request_id, const char *request);
+ 
+ /**
+  * Receives incoming updates and request responses. Must not be called simultaneously from two different threads.
+@@ -74,7 +74,7 @@ TDJSON_EXPORT void td_send(int client_id, const char *request);
+  * \param[in] timeout The maximum number of seconds allowed for this function to wait for new data.
+  * \return JSON-serialized null-terminated incoming update or request response. May be NULL if the timeout expires.
+  */
+-TDJSON_EXPORT const char *td_receive(double timeout);
++TDJSON_EXPORT const char *td_receive(double timeout, int *client_id, unsigned long long *request_id);
+ 
+ /**
+  * Synchronously executes a TDLib request.
+@@ -106,82 +106,6 @@ typedef void (*td_log_message_callback_ptr)(int verbosity_level, const char *mes
+  */
+ TDJSON_EXPORT void td_set_log_message_callback(int max_verbosity_level, td_log_message_callback_ptr callback);
+ 
+-/**
+- * \file
+- * Alternatively, you can use old TDLib JSON interface, which will be removed in TDLib 2.0.0.
+- *
+- * Objects and functions serialization to JSON is the same for both JSON interfaces.
+- *
+- * The main TDLib interface is asynchronous. To match requests with a corresponding response a field "@extra" can
+- * be added to the request object. The corresponding response will have an "@extra" field with exactly the same value.
+- *
+- * A TDLib client instance can be created through td_json_client_create.
+- * Requests then can be sent using td_json_client_send from any thread.
+- * New updates and request responses can be received through td_json_client_receive from any thread. This function
+- * must not be called simultaneously from two different threads. Also, note that all updates and request responses
+- * must be applied in the order they were received to ensure consistency.
+- * Given this information, it's advisable to call this function from a dedicated thread.
+- * Some service TDLib requests can be executed synchronously from any thread by using td_json_client_execute.
+- * The TDLib client instance can be destroyed via td_json_client_destroy.
+- *
+- * General pattern of usage:
+- * \code
+- * void *client = td_json_client_create();
+- * // somehow share the client with other threads, which will be able to send requests via td_json_client_send
+- *
+- * const double WAIT_TIMEOUT = 10.0; // seconds
+- * int is_closed = 0;  // should be set to 1, when updateAuthorizationState with authorizationStateClosed is received
+- * while (!is_closed) {
+- *   const char *result = td_json_client_receive(client, WAIT_TIMEOUT);
+- *   if (result) {
+- *     // parse the result as JSON object and process it as an incoming update or an answer to a previously sent request
+- *   }
+- * }
+- * td_json_client_destroy(client);
+- * \endcode
+- */
+-
+-/**
+- * Creates a new instance of TDLib.
+- * \return Pointer to the created instance of TDLib.
+- */
+-TDJSON_EXPORT void *td_json_client_create();
+-
+-/**
+- * Sends request to the TDLib client. May be called from any thread.
+- * \param[in] client The client.
+- * \param[in] request JSON-serialized null-terminated request to TDLib.
+- */
+-TDJSON_EXPORT void td_json_client_send(void *client, const char *request);
+-
+-/**
+- * Receives incoming updates and request responses from the TDLib client. May be called from any thread, but
+- * must not be called simultaneously from two different threads.
+- * Returned pointer will be deallocated by TDLib during next call to td_json_client_receive or td_json_client_execute
+- * in the same thread, so it can't be used after that.
+- * \param[in] client The client.
+- * \param[in] timeout The maximum number of seconds allowed for this function to wait for new data.
+- * \return JSON-serialized null-terminated incoming update or request response. May be NULL if the timeout expires.
+- */
+-TDJSON_EXPORT const char *td_json_client_receive(void *client, double timeout);
+-
+-/**
+- * Synchronously executes TDLib request. May be called from any thread.
+- * Only a few requests can be executed synchronously.
+- * Returned pointer will be deallocated by TDLib during next call to td_json_client_receive or td_json_client_execute
+- * in the same thread, so it can't be used after that.
+- * \param[in] client The client. Currently, ignored for all requests, so NULL can be passed.
+- * \param[in] request JSON-serialized null-terminated request to TDLib.
+- * \return JSON-serialized null-terminated request response.
+- */
+-TDJSON_EXPORT const char *td_json_client_execute(void *client, const char *request);
+-
+-/**
+- * Destroys the TDLib client instance. After this is called the client instance must not be used anymore.
+- * \param[in] client The client.
+- */
+-TDJSON_EXPORT void td_json_client_destroy(void *client);
+-
+ #ifdef __cplusplus
+ }  // extern "C"
+ #endif
+diff --git a/tdclientjson_export_list b/tdclientjson_export_list
+index 51f370e6f..c5154a5b1 100644
+--- a/tdclientjson_export_list
++++ b/tdclientjson_export_list
+@@ -1,8 +1,3 @@
+-_td_json_client_create
+-_td_json_client_destroy
+-_td_json_client_send
+-_td_json_client_receive
+-_td_json_client_execute
+ _td_set_log_file_path
+ _td_set_log_max_file_size
+ _td_set_log_verbosity_level
+-- 
+2.40.0.windows.1
+
