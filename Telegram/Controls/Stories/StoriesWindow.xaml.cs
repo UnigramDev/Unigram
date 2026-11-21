@@ -369,8 +369,10 @@ namespace Telegram.Controls.Stories
                 DataContext = viewModel;
 
                 _index = viewModel.Items.IndexOf(activeStories);
-                _total = viewModel.Items.Count;
             }
+
+            // The peers grow as more are loaded.
+            _total = viewModel.Items.Count;
 
             for (int i = 0; i < _indexes.Length; i++)
             {
@@ -458,7 +460,30 @@ namespace Telegram.Controls.Stories
 
             if (_index == _total - 1 && _viewModel.Items is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
             {
-                _ = incremental.LoadMoreItemsAsync(20);
+                LoadMoreItems(incremental);
+            }
+        }
+
+        private bool _loadingMoreItems;
+
+        private async void LoadMoreItems(ISupportIncrementalLoading incremental)
+        {
+            if (_loadingMoreItems)
+            {
+                return;
+            }
+
+            _loadingMoreItems = true;
+
+            var viewModel = _viewModel;
+            await incremental.LoadMoreItemsAsync(20);
+
+            _loadingMoreItems = false;
+
+            // The side cards are laid out from the count, so show the peers that arrived.
+            if (_viewModel == viewModel && _total != viewModel.Items.Count && _index >= 0 && _index < viewModel.Items.Count)
+            {
+                Update(viewModel, viewModel.Items[_index]);
             }
         }
 
@@ -586,6 +611,8 @@ namespace Telegram.Controls.Stories
                     return true;
                 }
             }
+
+            _total = _viewModel.Items.Count;
 
             if (_index < _total - increment && direction == Direction.Forward)
             {
@@ -1067,7 +1094,14 @@ namespace Telegram.Controls.Stories
                 flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
             }
 
-            flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
+            if (archived)
+            {
+                flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, Strings.UnarchiveStories, Icons.Unarchive);
+            }
+            else if (!activeStories.IsMyStory)
+            {
+                flyout.CreateFlyoutItem(ViewModel.HideProfile, activeStories, Strings.ArchivePeerStories, Icons.Archive);
+            }
 
             //if (activeStories.IsMyStory || story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable)
             //{
@@ -1190,7 +1224,7 @@ namespace Telegram.Controls.Stories
 
         private async void SaveStory(StoryViewModel story)
         {
-            if (story.ClientService.IsPremium)
+            if (story.ClientService.IsPremium || story.PosterChatId == story.ClientService.Options.MyId)
             {
                 ViewModel.SaveStory(story);
             }

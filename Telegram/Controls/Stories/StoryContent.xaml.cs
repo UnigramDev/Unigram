@@ -767,6 +767,8 @@ namespace Telegram.Controls.Stories
             CollapseCaption();
             DiscardGroupCall();
 
+            _buffering = false;
+
             if (story.Content is StoryContentVideo videoContent && !_unloaded)
             {
                 var video = SelectVideoFile(videoContent);
@@ -1544,7 +1546,38 @@ namespace Telegram.Controls.Stories
             {
                 ShowSkeleton();
             }
+
+            // The progress is a timed animation, so it has to stop while the video does and
+            // pick up from where the player really is.
+            if (e.Cache == 100)
+            {
+                if (_buffering)
+                {
+                    _buffering = false;
+
+                    if (_state == StoryPauseSource.None)
+                    {
+                        SynchronizeProgress();
+                        Progress.Resume();
+                    }
+                }
+            }
+            else if (!_buffering)
+            {
+                _buffering = true;
+                Progress.Suspend();
+            }
         }
+
+        private void SynchronizeProgress()
+        {
+            if (_player != null && _player.Duration > 0)
+            {
+                Progress.Seek(_player.Position / _player.Duration);
+            }
+        }
+
+        private bool _buffering;
 
         private Image _texture;
 
@@ -1631,13 +1664,17 @@ namespace Telegram.Controls.Stories
                 if (_type == StoryType.Video)
                 {
                     _player?.Pause(false);
+                    SynchronizeProgress();
                 }
                 else
                 {
                     _timer.Start();
                 }
 
-                Progress.Resume();
+                if (!_buffering)
+                {
+                    Progress.Resume();
+                }
             }
         }
 
@@ -2111,6 +2148,11 @@ namespace Telegram.Controls.Stories
         public void Resume()
         {
             _progressController?.Resume();
+        }
+
+        public void Seek(double progress)
+        {
+            _progressController?.Progress = (float)Math.Clamp(progress, 0, 1);
         }
 
         public void Update(int index, int count, double duration)

@@ -101,6 +101,8 @@ namespace Telegram.ViewModels.Stories
 
         public StoryList List => _activeStories?.List;
 
+        public bool HasUnread => _activeStories is { Stories.Count: > 0 } activeStories && activeStories.Stories[^1].StoryId > activeStories.MaxReadStoryId;
+
         public bool IsMyStory { get; }
 
         public ObservableCollection<StoryViewModel> Items { get; }

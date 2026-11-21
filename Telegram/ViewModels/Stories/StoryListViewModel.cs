@@ -52,13 +52,18 @@ namespace Telegram.ViewModels.Stories
         }
 
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, params ActiveStoriesViewModel[] items)
+            : this(clientService, settingsService, aggregator, new ObservableCollection<ActiveStoriesViewModel>(items))
+        {
+        }
+
+        private StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ObservableCollection<ActiveStoriesViewModel> items)
             : base(clientService, settingsService, aggregator)
         {
             _storageService = Session.Resolve<IStorageService>();
             _translateService = Session.Resolve<ITranslateService>();
             _storyService = Session.Resolve<IStoryService>();
 
-            Items = new ObservableCollection<ActiveStoriesViewModel>(items);
+            Items = items;
         }
 
         public static StoryListViewModel Create(INavigationService navigationService, ActiveStoriesViewModel activeStories)
@@ -352,14 +357,109 @@ namespace Telegram.ViewModels.Stories
 
         public void OpenStory(ActiveStoriesViewModel activeStories, Rect origin, Func<ActiveStoriesViewModel, Rect> closing)
         {
-            // Your own cell can be in the strip with no stories, to add one from.
-            var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, Items.Where(x => x.Items.Count > 0).ToArray());
+            var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, CreatePeers(activeStories));
             viewModel.NavigationService = NavigationService;
             viewModel.UpdateSelectedItem();
 
             var window = new StoriesWindow(NavigationService.XamlRoot);
             window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, origin, closing);
             _ = window.ShowAsync();
+        }
+
+        // Your own cell plays alone while anyone else has something unread. An unread peer plays
+        // the unread peers only, a read one every peer. Your own cell can be in the strip with no
+        // stories, to add one from, so a peer needs at least one.
+        private ObservableCollection<ActiveStoriesViewModel> CreatePeers(ActiveStoriesViewModel activeStories)
+        {
+            if (activeStories.IsMyStory)
+            {
+                var othersUnread = false;
+                var others = false;
+
+                foreach (var item in Items)
+                {
+                    if (item.IsMyStory || item.Items.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    others = true;
+                    othersUnread |= item.HasUnread;
+                }
+
+                if (othersUnread || !others)
+                {
+                    return new ObservableCollection<ActiveStoriesViewModel>(new[] { activeStories });
+                }
+            }
+            else if (activeStories.HasUnread)
+            {
+                return new PeersCollection(Items, true);
+            }
+
+            return new PeersCollection(Items, false);
+        }
+
+        // The viewer's peers are taken once and only ever appended to, so that its position holds
+        // while the strip reorders. More come from the strip's own list as the viewer nears the end.
+        private partial class PeersCollection : ObservableCollection<ActiveStoriesViewModel>, ISupportIncrementalLoading
+        {
+            private readonly ObservableCollection<ActiveStoriesViewModel> _source;
+            private readonly HashSet<long> _chats = new();
+
+            private readonly bool _unreadOnly;
+            private bool _noMoreUnread;
+
+            public PeersCollection(ObservableCollection<ActiveStoriesViewModel> source, bool unreadOnly)
+            {
+                _source = source;
+                _unreadOnly = unreadOnly;
+
+                Append();
+            }
+
+            private uint Append()
+            {
+                var count = 0u;
+
+                foreach (var item in _source)
+                {
+                    if (item.Items.Count > 0 && (item.HasUnread || !_unreadOnly) && _chats.Add(item.ChatId))
+                    {
+                        Add(item);
+                        count++;
+                    }
+                }
+
+                return count;
+            }
+
+            public bool HasMoreItems => !_noMoreUnread && _source is ISupportIncrementalLoading incremental && incremental.HasMoreItems;
+
+            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            {
+                return IncrementalLoading.Run(token => AppendMoreAsync(count));
+            }
+
+            private async Task<LoadMoreItemsResult> AppendMoreAsync(uint count)
+            {
+                var appended = Append();
+
+                if (appended == 0 && _source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
+                {
+                    await incremental.LoadMoreItemsAsync(count);
+                    appended = Append();
+
+                    // TDLib orders unread peers before every read one (only live stories and your
+                    // own come earlier), so a page with no unread peer means there are none left.
+                    _noMoreUnread = _unreadOnly && appended == 0;
+                }
+
+                return new LoadMoreItemsResult
+                {
+                    Count = appended
+                };
+            }
         }
 
         public void SetList(StoryList storyList)
@@ -417,12 +517,26 @@ namespace Telegram.ViewModels.Stories
                 _chats.Clear();
                 Clear();
 
-                return LoadMoreItemsAsync();
+                return _loading = LoadMoreItemsAsync();
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return IncrementalLoading.Run(token => LoadMoreItemsAsync());
+                return IncrementalLoading.Run(token => LoadOnceAsync());
+            }
+
+            private Task<LoadMoreItemsResult> _loading;
+
+            // The strip and an open viewer both page through this list. Each page starts at Count,
+            // so a second request made while one is in flight would load the same page again.
+            private Task<LoadMoreItemsResult> LoadOnceAsync()
+            {
+                if (_loading == null || _loading.IsCompleted)
+                {
+                    _loading = LoadMoreItemsAsync();
+                }
+
+                return _loading;
             }
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
