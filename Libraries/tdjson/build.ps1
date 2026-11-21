@@ -117,12 +117,34 @@ function clean {
   Remove-Item build-* -Force -Recurse -ErrorAction SilentlyContinue
 }
 
+# gperf generates TDLib's MIME type tables, and only the native prepare build runs it: the target
+# builds are cross-compiles, which take the generated sources instead. It is a host dependency in the
+# manifest, but this build has no vcpkg toolchain, and the config step that installs the manifest needs
+# its sources first. So the first triplet's tree is installed here, which config would do anyway.
+function InstallGperf {
+  $vcpkg = ResolveVcpkgPaths $arch_list[0] $target_list[0]
+  $vcpkg_exe = Join-Path $vcpkg.VcpkgRoot.TrimEnd('\') "vcpkg.exe"
+  $installed_root = $vcpkg.VcpkgInstalledDir.TrimEnd('\')
+
+  & $vcpkg_exe install "--x-manifest-root=$manifest_root" "--x-install-root=$installed_root" "--triplet=$($vcpkg.TelegramVcpkgTriplet)" | Out-Host
+  CheckLastExitCode
+
+  # Under the host triplet, which is the target one only for the native triplet of this machine.
+  $gperf = Get-ChildItem -Path (Join-Path $installed_root "*\tools\gperf\gperf.exe") | Select-Object -First 1
+  if (-not $gperf) {
+    throw "vcpkg installed the manifest into $installed_root, but there is no gperf.exe under it."
+  }
+  return $gperf.FullName
+}
+
 function prepare {
+  $gperf = InstallGperf
+
   New-Item -ItemType Directory -Force -Path build-native
 
   cd build-native
 
-  cmake -A Win32 -DTD_GENERATE_SOURCE_FILES=ON -DTD_ENABLE_MULTI_PROCESSOR_COMPILATION=ON "$td_root"
+  cmake -A Win32 -DGPERF_EXECUTABLE="$gperf" -DTD_GENERATE_SOURCE_FILES=ON -DTD_ENABLE_MULTI_PROCESSOR_COMPILATION=ON "$td_root"
   CheckLastExitCode
   cmake --build .
   CheckLastExitCode
