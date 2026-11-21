@@ -36,6 +36,10 @@ namespace Telegram.Views.Authorization
         {
             ViewModel.Window.SetTitleBar(TitleBar);
             ViewModel.PropertyChanged += OnPropertyChanged;
+
+            Back.Visibility = Frame.CanGoBack
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
