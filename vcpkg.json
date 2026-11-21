@@ -9,6 +9,10 @@
       "name": "ffmpeg",
       "features": [ "dav1d", "opus", "vpx" ]
     },
+    {
+      "name": "gperf",
+      "host": true
+    },
     "libogg",
     "libyuv",
     "lz4",
