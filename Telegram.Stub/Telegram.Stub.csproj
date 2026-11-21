@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net11.0-windows10.0.18362.0</TargetFramework>
+    <!-- Not 11: .NET 11 fails to start on CPUs below x86-64-v2, which the .NET Native app still runs on,
+         and this process is launched with every packaged session. -->
+    <TargetFramework>net10.0-windows10.0.18362.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishAot>true</PublishAot>
