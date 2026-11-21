@@ -5813,6 +5813,14 @@ namespace Telegram.Views
             {
                 ShowLink(state.Text);
             }
+            else if (state.Kind == ChatFooterKind.FormattedInfo)
+            {
+                ShowFormattedInfo(state.Text);
+            }
+            else if (state.Kind == ChatFooterKind.Progress)
+            {
+                ShowProgress();
+            }
             else
             {
                 ShowAction(state.Text, state.Kind != ChatFooterKind.Info, state.ReplyRestoresComposer);
@@ -5885,6 +5893,44 @@ namespace Telegram.Views
             _replyEnabled = false;
             ButtonAction.IsEnabled = true;
             ButtonAction.Content = textBlock;
+
+            _actionCollapsed = false;
+            ButtonAction.Visibility = Visibility.Visible;
+            ChatFooter.Visibility = Visibility.Visible;
+            TextArea.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShowFormattedInfo(string text)
+        {
+            var textBlock = new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap,
+                TextAlignment = TextAlignment.Center
+            };
+
+            TextBlockHelper.SetFormattedText(textBlock, ClientEx.ParseMarkdown(text));
+
+            _replyEnabled = false;
+            ButtonAction.IsEnabled = false;
+            ButtonAction.Content = textBlock;
+
+            _actionCollapsed = false;
+            ButtonAction.Visibility = Visibility.Visible;
+            ChatFooter.Visibility = Visibility.Visible;
+            TextArea.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShowProgress()
+        {
+            ButtonAction.Content = new Microsoft.UI.Xaml.Controls.ProgressRing
+            {
+                IsActive = true,
+                Width = 20,
+                Height = 20
+            };
+
+            _replyEnabled = false;
+            ButtonAction.IsEnabled = false;
 
             _actionCollapsed = false;
             ButtonAction.Visibility = Visibility.Visible;

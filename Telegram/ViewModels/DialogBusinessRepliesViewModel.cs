@@ -101,6 +101,8 @@ namespace Telegram.ViewModels
 
                 IsNewestSliceLoaded = true;
                 IsOldestSliceLoaded = true;
+
+                UpdateBusinessMessageCount(replied.Count);
             });
         }
 

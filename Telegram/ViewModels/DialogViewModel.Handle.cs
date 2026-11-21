@@ -92,15 +92,34 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateSavedMessagesTags>(Handle)
                 .Subscribe<UpdateGreetingSticker>(Handle)
                 .Subscribe<UpdateQuickReplyShortcut>(Handle)
-                .Subscribe<UpdateForumTopicInfo>(Handle);
+                .Subscribe<UpdateForumTopicInfo>(Handle)
+                .Subscribe<UpdateChatBlockList>(Handle)
+                .Subscribe<UpdateFreezeState>(Handle);
         }
 
         public void Handle(UpdateForumTopicInfo update)
         {
             if (_chat?.Id == update.Info.ChatId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateServiceWithForumTopic(update.Info.ForumTopicId));
+                BeginOnUIThread(() =>
+                {
+                    Delegate?.UpdateServiceWithForumTopic(update.Info.ForumTopicId);
+                    UpdateForumTopicFooter(update.Info);
+                });
             }
+        }
+
+        public void Handle(UpdateChatBlockList update)
+        {
+            if (_chat?.Id == update.ChatId)
+            {
+                BeginOnUIThread(() => UpdateFooter());
+            }
+        }
+
+        public void Handle(UpdateFreezeState update)
+        {
+            BeginOnUIThread(() => UpdateFooter());
         }
 
         public void Handle(UpdateQuickReplyShortcut update)

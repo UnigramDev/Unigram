@@ -183,6 +183,7 @@
     <string name="NewSecretChat">New Secret Chat</string>
     <string name="AwaitingEncryption">Waiting for {0} to come online...</string>
     <string name="EncryptionRejected">Secret chat canceled</string>
+    <string name="EncryptionProcessing">Exchanging encryption keys...</string>
 
     <string name="EncryptedChatStartedOutgoing">{0} joined your secret chat</string>
     <string name="EncryptedChatStartedIncoming">You joined the secret chat</string>
@@ -485,7 +486,11 @@
     <string name="LeaveChannelMenu">Leave channel</string>
     <string name="ChannelSettings">Settings</string>
     <string name="ChannelJoin">JOIN</string>
-    <string name="ChannelJoinRequest">APPLY TO JOIN GROUP</string>
+    <string name="ChannelJoinRequest">APPLY TO JOIN CHANNEL</string>
+    <string name="ChannelJoinRequestSent">JOIN REQUEST SENT</string>
+    <string name="GroupJoin">JOIN</string>
+    <string name="GroupJoinRequest">APPLY TO JOIN GROUP</string>
+    <string name="GroupJoinRequestSent">JOIN REQUEST SENT</string>
 
 
 

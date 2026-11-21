@@ -2689,6 +2689,9 @@ namespace Telegram.ViewModels
 
             UpdateChatActionBar(chat);
 
+            _joiningChat = false;
+            _joinRequestSent = false;
+
             if (chat.Type is ChatTypePrivate privata)
             {
                 var item = ClientService.GetUser(privata.UserId);
@@ -2748,6 +2751,7 @@ namespace Telegram.ViewModels
                 Delegate?.UpdateSupergroup(chat, item, cache);
                 Delegate?.UpdateSupergroupEmptyState(chat, item);
                 Delegate?.UpdateUserEmptyState(chat, null, null, null);
+                LoadForumGeneralTopic(chat, item);
                 UpdateFooter(chat, item, cache);
 
                 ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
@@ -3307,6 +3311,7 @@ namespace Telegram.ViewModels
             {
                 Set(ref _composerHeader, value);
                 Delegate?.UpdateComposerHeader(_chat, value);
+                UpdateFooterEditing(value);
             }
         }
 
@@ -3958,7 +3963,19 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            _joiningChat = true;
+            UpdateFooter();
+
             var response = await ClientService.SendAsync(new JoinChat(chat.Id));
+
+            _joiningChat = false;
+
+            if (_chat?.Id == chat.Id)
+            {
+                _joinRequestSent |= response is ChatJoinResultRequestSent;
+                UpdateFooter();
+            }
+
             MessageHelper.HandleChatJoinResult(ClientService, NavigationService, chat.Id, chat.Type is ChatTypeSupergroup { IsChannel: true }, response);
         }
 

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Td.Api;
@@ -19,7 +20,9 @@ namespace Telegram.ViewModels
         AccentButton,
         StartButton,
         Info,
-        Link
+        FormattedInfo,
+        Link,
+        Progress
     }
 
     public enum ChatFooterAction
@@ -62,6 +65,11 @@ namespace Telegram.ViewModels
         private CanSendMessageToUserResult _canSendMessageToUser;
 
         private ChatFooterState _footer;
+        private bool _footerEditing;
+        private bool _joiningChat;
+        private bool _joinRequestSent;
+        private int _businessMessageCount;
+        private ForumTopic _forumGeneralTopic;
 
         // For the triggers that carry none of the chat's objects. Where a handler already holds them
         // it passes them to an overload below, so each cache read takes ClientService's lock once.
@@ -92,17 +100,22 @@ namespace Telegram.ViewModels
 
         public void UpdateFooter(Chat chat, User user, UserFullInfo fullInfo, SecretChat secretChat)
         {
-            ApplyFooter(chat, ResolveFrozenFooter() ?? ResolveUserFooter(chat, user, fullInfo, secretChat));
+            if (secretChat?.State is SecretChatStateClosed && chat.DraftMessage != null)
+            {
+                ClientService.Send(new SetChatDraftMessage(chat.Id, null, null));
+            }
+
+            ApplyFooter(chat, ResolveCommonFooter(user) ?? ResolveUserFooter(chat, user, fullInfo, secretChat));
         }
 
         public void UpdateFooter(Chat chat, BasicGroup group)
         {
-            ApplyFooter(chat, ResolveFrozenFooter() ?? ResolveBasicGroupFooter(chat, group));
+            ApplyFooter(chat, ResolveCommonFooter(null) ?? ResolveBasicGroupFooter(chat, group));
         }
 
         public void UpdateFooter(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            ApplyFooter(chat, ResolveFrozenFooter() ?? ResolveSupergroupFooter(chat, group, fullInfo));
+            ApplyFooter(chat, ResolveCommonFooter(null) ?? ResolveSupergroupFooter(chat, group, fullInfo));
         }
 
         private void ApplyFooter(Chat chat, ChatFooterState state)
@@ -111,11 +124,93 @@ namespace Telegram.ViewModels
             Delegate?.UpdateFooter(chat, state);
         }
 
-        private ChatFooterState ResolveFrozenFooter()
+        private void UpdateFooterEditing(MessageComposerHeader header)
         {
-            return ClientService.FreezeState.IsFrozen
-                ? new ChatFooterState(ChatFooterKind.Link, ChatFooterAction.Frozen, null)
-                : null;
+            var editing = header?.Editing != null;
+            if (editing != _footerEditing)
+            {
+                _footerEditing = editing;
+                UpdateFooter();
+            }
+        }
+
+        protected void UpdateBusinessMessageCount(int count)
+        {
+            if (count != _businessMessageCount)
+            {
+                _businessMessageCount = count;
+                UpdateFooter();
+            }
+        }
+
+        private bool IsEditing => _composerHeader?.Editing != null;
+
+        // Editing a message brings the composer back over a button, but not over the restriction
+        // and secret chat texts, nor over the bot start, saved chat and link states.
+        private ChatFooterState Bar(ChatFooterState state)
+        {
+            return IsEditing ? ChatFooterState.Composer(0) : state;
+        }
+
+        private ChatFooterState ResolveCommonFooter(User user)
+        {
+            if (Type == DialogType.ScheduledMessages)
+            {
+                return ChatFooterState.Composer(0);
+            }
+            else if (Type is DialogType.History or DialogType.Thread && ClientService.FreezeState.IsFrozen && !IsFreezeAppealBot(user))
+            {
+                return new ChatFooterState(ChatFooterKind.Link, ChatFooterAction.Frozen, null);
+            }
+            else if (IsEditing)
+            {
+                return null;
+            }
+            else if (Type == DialogType.BusinessReplies)
+            {
+                var max = ClientService.Options.QuickReplyShortcutMessageCountMax;
+                if (max > 0 && _businessMessageCount >= max)
+                {
+                    return new ChatFooterState(ChatFooterKind.FormattedInfo, ChatFooterAction.None, Locale.Declension(Strings.R.BusinessRepliesLimit, max));
+                }
+            }
+            else if (Type == DialogType.WelcomeMessages)
+            {
+                var max = ClientService.Options.WelcomeMessageCountMax;
+                if (max > 0 && _businessMessageCount >= max)
+                {
+                    return new ChatFooterState(ChatFooterKind.FormattedInfo, ChatFooterAction.None, Locale.Declension(Strings.R.WelcomeMessagesLimit, max));
+                }
+            }
+
+            return null;
+        }
+
+        // The bot named by the appeal link stays writable, so that a frozen account can appeal.
+        private bool IsFreezeAppealBot(User user)
+        {
+            var username = user?.ActiveUsername();
+            if (string.IsNullOrEmpty(username))
+            {
+                return false;
+            }
+
+            var link = ClientService.FreezeState.AppealLink ?? string.Empty;
+            var index = link.IndexOf("t.me/", StringComparison.OrdinalIgnoreCase);
+            if (index < 0)
+            {
+                return false;
+            }
+
+            var start = index + 5;
+            var end = start;
+
+            while (end < link.Length && link[end] < 128 && char.IsLetterOrDigit(link[end]))
+            {
+                end++;
+            }
+
+            return end - start == username.Length && string.Compare(link, start, username, 0, username.Length, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         private ChatFooterState ResolveUserFooter(Chat chat, User user, UserFullInfo fullInfo, SecretChat secretChat)
@@ -130,6 +225,10 @@ namespace Telegram.ViewModels
             if (Search?.SavedMessagesTag != null)
             {
                 return ChatFooterState.Button(ChatFooterAction.ToggleSavedTag, Search.FilterByTag ? Strings.SavedTagShowOtherMessages : Strings.SavedTagHideOtherMessages);
+            }
+            else if (Type is DialogType.History or DialogType.Thread && user.Id != ClientService.Options.MyId && user.RestrictsNewChats && _canSendMessageToUser is CanSendMessageToUserResultUserRestrictsNewChats)
+            {
+                return new ChatFooterState(ChatFooterKind.Link, ChatFooterAction.None, string.Format(Strings.OnlyPremiumCanMessage, user.FirstName));
             }
             else if (SavedMessagesTopic != null)
             {
@@ -151,32 +250,37 @@ namespace Telegram.ViewModels
             }
             else if (Type == DialogType.Pinned)
             {
-                return ChatFooterState.Button(ChatFooterAction.Unpin, Strings.UnpinAllMessages);
+                return Bar(ChatFooterState.Button(ChatFooterAction.Unpin, Strings.UnpinAllMessages));
             }
-            else if (user.Type is UserTypeDeleted)
-            {
-                return ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteThisChat);
-            }
-            else if (chat.Id == ClientService.Options.RepliesBotChatId || chat.Id == ClientService.Options.VerificationCodesBotChatId)
+            else if (chat.Id == ClientService.Options.VerificationCodesBotChatId)
             {
                 return ChatFooterState.Button(ChatFooterAction.ToggleMute, ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute);
             }
             else if (chat.BlockList is BlockListMain)
             {
-                return ChatFooterState.Button(ChatFooterAction.Unblock, user.Type is UserTypeBot ? Strings.BotUnblock : Strings.Unblock);
+                return Bar(ChatFooterState.Button(ChatFooterAction.Unblock, user.Type is UserTypeBot ? Strings.BotUnblock : Strings.Unblock));
+            }
+            else if (chat.Id == ClientService.Options.RepliesBotChatId)
+            {
+                return Bar(ChatFooterState.Button(ChatFooterAction.ToggleMute, ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute));
+            }
+            else if (user.Type is UserTypeBot && (_accessToken != null || chat.LastMessage == null))
+            {
+                return new ChatFooterState(ChatFooterKind.StartButton, ChatFooterAction.Start, Strings.BotStart);
+            }
+            else if (user.Type is UserTypeDeleted)
+            {
+                return Bar(ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteThisChat));
             }
             else if (secretChat != null)
             {
                 return secretChat.State switch
                 {
-                    SecretChatStatePending => ChatFooterState.Info(string.Format(Strings.AwaitingEncryption, ClientService.GetTitle(chat))),
+                    SecretChatStatePending when secretChat.IsOutbound => new ChatFooterState(ChatFooterKind.FormattedInfo, ChatFooterAction.None, string.Format(Strings.AwaitingEncryption, "**" + user.FirstName + "**")),
+                    SecretChatStatePending => ChatFooterState.Info(Strings.EncryptionProcessing),
                     SecretChatStateClosed => ChatFooterState.Info(Strings.EncryptionRejected),
                     _ => ChatFooterState.Composer(0)
                 };
-            }
-            else if (user.Type is UserTypeBot && (_accessToken != null || chat.LastMessage == null))
-            {
-                return new ChatFooterState(ChatFooterKind.StartButton, ChatFooterAction.Start, Strings.BotStart);
             }
             else if (user.RestrictsNewChats)
             {
@@ -184,8 +288,7 @@ namespace Telegram.ViewModels
                 {
                     CanSendMessageToUserResultOk => ChatFooterState.Composer(0),
                     CanSendMessageToUserResultUserHasPaidMessages userHasPaidMessages => ChatFooterState.Composer(userHasPaidMessages.OutgoingPaidMessageStarCount),
-                    CanSendMessageToUserResultUserIsDeleted => ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteThisChat),
-                    CanSendMessageToUserResultUserRestrictsNewChats => new ChatFooterState(ChatFooterKind.Link, ChatFooterAction.None, string.Format(Strings.OnlyPremiumCanMessage, user.FirstName)),
+                    CanSendMessageToUserResultUserIsDeleted => Bar(ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteThisChat)),
                     _ => ChatFooterState.Composer(paidMessageStarCount)
                 };
             }
@@ -199,21 +302,26 @@ namespace Telegram.ViewModels
             {
                 return ChatFooterState.Composer(0);
             }
+            else if (Type == DialogType.Pinned)
+            {
+                return Bar(ChatFooterState.Button(ChatFooterAction.Unpin, CanPinMessages(chat, group.Status) ? Strings.UnpinAllMessages : Strings.HidePinnedMessages));
+            }
             else if (group.UpgradedToSupergroupId != 0)
             {
-                return ChatFooterState.Button(ChatFooterAction.OpenSupergroup, Strings.OpenSupergroup);
-            }
-            else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
-            {
-                return ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteThisGroup);
+                return Bar(ChatFooterState.Button(ChatFooterAction.OpenSupergroup, Strings.OpenSupergroup));
             }
             else if (group.Status is ChatMemberStatusCreator { IsMember: false })
             {
-                return new ChatFooterState(ChatFooterKind.AccentButton, ChatFooterAction.Join, Strings.ChannelJoin);
+                return Bar(new ChatFooterState(ChatFooterKind.AccentButton, ChatFooterAction.Join, Strings.GroupJoin));
             }
-            else if (Type == DialogType.Pinned)
+            else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
             {
-                return ChatFooterState.Button(ChatFooterAction.Unpin, chat.CanPinMessages(ClientService) ? Strings.UnpinAllMessages : Strings.HidePinnedMessages);
+                return Bar(ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteThisGroup));
+            }
+            else if (group.Status is ChatMemberStatusMember && !CanSendAnything(chat.Permissions, null))
+            {
+                // A basic group has no personal restrictions and no boosts, so only the default rights apply.
+                return ChatFooterState.Info(Strings.GlobalSendMessageRestricted);
             }
 
             return ChatFooterState.Composer(0);
@@ -231,100 +339,178 @@ namespace Telegram.ViewModels
             }
             else if (Type == DialogType.Pinned)
             {
-                return ChatFooterState.Button(ChatFooterAction.Unpin, chat.CanPinMessages(ClientService) ? Strings.UnpinAllMessages : Strings.HidePinnedMessages);
-            }
-            else if (group.IsChannel || group.IsBroadcastGroup)
-            {
-                if ((group.Status is ChatMemberStatusLeft && (group.HasActiveUsername() || ClientService.IsChatAccessible(chat))) || group.Status is ChatMemberStatusCreator { IsMember: false })
-                {
-                    return new ChatFooterState(ChatFooterKind.AccentButton, ChatFooterAction.Join, Strings.ChannelJoin);
-                }
-                else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator { Rights.CanPostMessages: true })
-                {
-                    return ChatFooterState.Composer(0);
-                }
-                else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
-                {
-                    return ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteChat);
-                }
-
-                return ChatFooterState.Button(ChatFooterAction.ToggleMute, ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute);
+                return Bar(ChatFooterState.Button(ChatFooterAction.Unpin, CanPinMessages(chat, group.Status) && !group.IsDirectMessagesGroup ? Strings.UnpinAllMessages : Strings.HidePinnedMessages));
             }
 
-            if ((group.Status is ChatMemberStatusLeft && (group.IsPublic() || ClientService.IsChatAccessible(chat))) || group.Status is ChatMemberStatusCreator { IsMember: false })
+            var status = group.Status;
+            var notInChat = status is ChatMemberStatusLeft or ChatMemberStatusBanned or ChatMemberStatusRestricted { IsMember: false } or ChatMemberStatusCreator { IsMember: false };
+            if (!notInChat || !group.JoinByRequest)
             {
-                if (Type == DialogType.Thread)
+                _joinRequestSent = false;
+            }
+
+            // A subscriber's view of a direct messages group is their own thread, which never asks to join.
+            if (notInChat && !(group.IsDirectMessagesGroup && !group.IsAdministeredDirectMessagesGroup))
+            {
+                if (!group.IsDirectMessagesGroup && (status is ChatMemberStatusBanned || (status is ChatMemberStatusLeft && !group.IsPublic() && !ClientService.IsChatAccessible(chat))))
                 {
-                    if (group.JoinToSendMessages)
+                    return Bar(ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteChat));
+                }
+                else if (group.IsForum || Type != DialogType.Thread || group.JoinToSendMessages)
+                {
+                    if (_joiningChat)
                     {
-                        return new ChatFooterState(ChatFooterKind.AccentButton, ChatFooterAction.Join, group.JoinByRequest ? Strings.ChannelJoinRequest : Strings.JoinGroup);
+                        return Bar(new ChatFooterState(ChatFooterKind.Progress, ChatFooterAction.None, null));
                     }
-                    else if (!chat.Permissions.CanSendBasicMessages)
+                    else if (group.JoinByRequest)
                     {
-                        return ChatFooterState.Info(Strings.GlobalSendMessageRestricted);
+                        if (_joinRequestSent)
+                        {
+                            return Bar(ChatFooterState.Info(group.IsChannel ? Strings.ChannelJoinRequestSent : Strings.GroupJoinRequestSent));
+                        }
+
+                        return Bar(new ChatFooterState(ChatFooterKind.AccentButton, ChatFooterAction.Join, group.IsChannel ? Strings.ChannelJoinRequest : Strings.GroupJoinRequest));
                     }
 
-                    return ChatFooterState.Composer(group.PaidMessageStarCount);
+                    return Bar(new ChatFooterState(ChatFooterKind.AccentButton, ChatFooterAction.Join, group.IsChannel ? Strings.ChannelJoin : Strings.GroupJoin));
                 }
-                else if (group.IsDirectMessagesGroup)
-                {
-                    return ChatFooterState.Composer(group.PaidMessageStarCount);
-                }
-
-                return new ChatFooterState(ChatFooterKind.AccentButton, ChatFooterAction.Join, group.JoinByRequest ? Strings.ChannelJoinRequest : Strings.ChannelJoin);
-            }
-            else if (group.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
-            {
-                if (Type != DialogType.Thread && group.IsDirectMessagesGroup && group.IsAdministeredDirectMessagesGroup)
-                {
-                    return ChatFooterState.Info(Strings.ForumReplyToMessagesInTopic, true);
-                }
-
-                return ChatFooterState.Composer(0);
-            }
-            else if (group.Status is ChatMemberStatusRestricted restricted)
-            {
-                if (!restricted.IsMember && group.HasActiveUsername())
-                {
-                    return new ChatFooterState(ChatFooterKind.AccentButton, ChatFooterAction.Join, Strings.ChannelJoin);
-                }
-                else if (!restricted.Permissions.CanSendBasicMessages)
-                {
-                    return ChatFooterState.Info(restricted.IsForever()
-                        ? Strings.SendMessageRestrictedForever
-                        : string.Format(Strings.SendMessageRestricted, Formatter.BannedUntil(restricted.RestrictedUntilDate)));
-                }
-
-                return ChatFooterState.Composer(group.PaidMessageStarCount);
-            }
-            else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
-            {
-                if (group.IsDirectMessagesGroup)
-                {
-                    return ChatFooterState.Composer(group.PaidMessageStarCount);
-                }
-
-                return ChatFooterState.Button(ChatFooterAction.DeleteChat, Strings.DeleteChat);
-            }
-            else if (!chat.Permissions.CanSendBasicMessages && (fullInfo == null || fullInfo.MyBoostCount < fullInfo.UnrestrictBoostCount))
-            {
-                if (fullInfo != null)
-                {
-                    return ChatFooterState.Button(ChatFooterAction.Boost, Strings.BoostingBoostToSendMessages);
-                }
-
-                return ChatFooterState.Info(Strings.GlobalSendMessageRestricted);
-            }
-            else if (Type != DialogType.Thread && group.IsDirectMessagesGroup && group.IsAdministeredDirectMessagesGroup)
-            {
-                return ChatFooterState.Info(Strings.ForumReplyToMessagesInTopic, true);
-            }
-            else if (ForumTopic is ForumTopic { Info.IsClosed: true })
-            {
-                return ChatFooterState.Info(Strings.TopicClosedByAdmin);
             }
 
-            return ChatFooterState.Composer(group.IsAdministeredDirectMessagesGroup ? 0 : group.PaidMessageStarCount);
+            var administrator = status is ChatMemberStatusCreator or ChatMemberStatusAdministrator;
+
+            // Any administrator may write to a broadcast group, only those with the right may post to a channel.
+            var readOnly = group.IsChannel
+                ? !(status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator { Rights.CanPostMessages: true })
+                : group.IsBroadcastGroup && !administrator;
+
+            if (Type != DialogType.Thread && IsForumShownAsMessages(group) && !CanPostToGeneralTopic(group))
+            {
+                return Bar(ChatFooterState.Info(Strings.ForumReplyToMessagesInTopic, true));
+            }
+            else if (readOnly)
+            {
+                if (Type != DialogType.Thread)
+                {
+                    return Bar(ChatFooterState.Button(ChatFooterAction.ToggleMute, ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute));
+                }
+            }
+            else if (Type == DialogType.Thread && ForumTopic is ForumTopic { Info.IsClosed: true } forumTopic && !CanManageTopic(group, forumTopic))
+            {
+                return Bar(ChatFooterState.Info(Strings.TopicClosedByAdmin));
+            }
+
+            if (!group.IsChannel && !group.IsBroadcastGroup && !administrator && !IsUnrestrictedByBoosts(fullInfo))
+            {
+                var restricted = status as ChatMemberStatusRestricted;
+                if (!CanSendAnything(chat.Permissions, restricted?.Permissions))
+                {
+                    if (!chat.Permissions.CanSendBasicMessages)
+                    {
+                        return fullInfo?.UnrestrictBoostCount > 0
+                            ? ChatFooterState.Button(ChatFooterAction.Boost, Strings.BoostingBoostToSendMessages)
+                            : ChatFooterState.Info(Strings.GlobalSendMessageRestricted);
+                    }
+                    else if (restricted != null)
+                    {
+                        return ChatFooterState.Info(restricted.IsForever()
+                            ? Strings.SendMessageRestrictedForever
+                            : string.Format(Strings.SendMessageRestricted, Formatter.BannedUntil(restricted.RestrictedUntilDate)));
+                    }
+
+                    return ChatFooterState.Info(Strings.GlobalSendMessageRestricted);
+                }
+            }
+
+            return ChatFooterState.Composer(administrator || group.IsAdministeredDirectMessagesGroup ? 0 : group.PaidMessageStarCount);
+        }
+
+        private bool IsForumShownAsMessages(Supergroup group)
+        {
+            return (group.IsForum && Type == DialogType.History) || (group.IsDirectMessagesGroup && group.IsAdministeredDirectMessagesGroup);
+        }
+
+        // A direct messages group has no General topic. A forum's General is requested when the chat
+        // opens; until it arrives it counts as postable, so that the composer does not flicker away.
+        private bool CanPostToGeneralTopic(Supergroup group)
+        {
+            if (group.IsDirectMessagesGroup)
+            {
+                return false;
+            }
+
+            var general = _forumGeneralTopic;
+            return general == null || !general.Info.IsClosed || CanManageTopic(group, general);
+        }
+
+        private static bool CanManageTopic(Supergroup group, ForumTopic topic)
+        {
+            return group.CanManageTopics() || topic.Info.IsOutgoing;
+        }
+
+        private static bool IsUnrestrictedByBoosts(SupergroupFullInfo fullInfo)
+        {
+            return fullInfo != null && fullInfo.UnrestrictBoostCount > 0 && fullInfo.MyBoostCount >= fullInfo.UnrestrictBoostCount;
+        }
+
+        // Polls are not counted: being able to send only a poll still leaves the chat read-only.
+        private static bool CanSendAnything(ChatPermissions permissions, ChatPermissions restricted)
+        {
+            return (permissions.CanSendBasicMessages && (restricted == null || restricted.CanSendBasicMessages))
+                || (permissions.CanSendPhotos && (restricted == null || restricted.CanSendPhotos))
+                || (permissions.CanSendVideos && (restricted == null || restricted.CanSendVideos))
+                || (permissions.CanSendVideoNotes && (restricted == null || restricted.CanSendVideoNotes))
+                || (permissions.CanSendVoiceNotes && (restricted == null || restricted.CanSendVoiceNotes))
+                || (permissions.CanSendDocuments && (restricted == null || restricted.CanSendDocuments))
+                || (permissions.CanSendAudios && (restricted == null || restricted.CanSendAudios))
+                || (permissions.CanSendOtherMessages && (restricted == null || restricted.CanSendOtherMessages));
+        }
+
+        private static bool CanPinMessages(Chat chat, ChatMemberStatus status)
+        {
+            return status switch
+            {
+                ChatMemberStatusMember => chat.Permissions.CanPinMessages,
+                ChatMemberStatusCreator => true,
+                ChatMemberStatusAdministrator administrator => administrator.Rights.CanPinMessages,
+                ChatMemberStatusRestricted restricted => restricted.Permissions.CanPinMessages,
+                _ => false
+            };
+        }
+
+        private void LoadForumGeneralTopic(Chat chat, Supergroup group)
+        {
+            _forumGeneralTopic = null;
+
+            if (group?.IsForum is true && Type == DialogType.History)
+            {
+                ClientService.Send(new GetForumTopic(chat.Id, 1), result =>
+                {
+                    if (result is ForumTopic topic)
+                    {
+                        BeginOnUIThread(() =>
+                        {
+                            if (_chat?.Id == chat.Id)
+                            {
+                                _forumGeneralTopic = topic;
+                                UpdateFooter();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        private void UpdateForumTopicFooter(ForumTopicInfo info)
+        {
+            if (info.ForumTopicId == 1 && _forumGeneralTopic != null)
+            {
+                _forumGeneralTopic.Info = info;
+                UpdateFooter();
+            }
+            else if (info.ForumTopicId == ForumTopic?.Info.ForumTopicId)
+            {
+                UpdateFooter();
+            }
         }
 
         public async void Action()
