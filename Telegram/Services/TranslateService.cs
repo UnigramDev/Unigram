@@ -144,6 +144,7 @@ namespace Telegram.Services
 
             if (entireChat)
             {
+                exclude.Add(Settings.Translate.To);
                 exclude.Add(LANG_UND);
             }
 
