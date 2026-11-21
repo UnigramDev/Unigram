@@ -599,26 +599,9 @@ namespace Telegram.ViewModels
         public async void MarkFolderAsRead(ChatFolderViewModel folder)
         {
             var confirm = await ShowPopupAsync(Strings.AreYouSure, Strings.MarkAllAsRead, Strings.OK, Strings.Cancel);
-            if (confirm != ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary)
             {
-                return;
-            }
-
-            var chats = await ClientService.GetChatListAsync(folder.ChatList, 0, int.MaxValue);
-            if (chats.TotalCount > chats.ChatIds.Count)
-            {
-                // ???
-            }
-
-            foreach (var id in chats.ChatIds)
-            {
-                var chat = ClientService.GetChat(id);
-                if (chat == null || chat.LastMessage == null || !chat.IsUnread())
-                {
-                    continue;
-                }
-
-                ClientService.Send(new ViewMessages(chat.Id, new[] { chat.LastMessage.Id }, new MessageSourceChatList(), true));
+                ClientService.Send(new ReadChatList(folder.ChatList));
             }
         }
 
