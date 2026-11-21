@@ -78,6 +78,17 @@ namespace Telegram.Services
             _languageCode = AppSettings.LanguagePackId;
             _languageBase = AppSettings.LanguageBaseId;
             _languagePlural = AppSettings.LanguagePluralId;
+
+#if DEBUG
+            // A screenshot run shows its pack's language without changing the one this build is set to.
+            if (MockClient.Language != null)
+            {
+                _languageCode = MockClient.Language;
+                _languageBase = string.Empty;
+                _languagePlural = MockClient.PluralCode;
+            }
+#endif
+
             _pack = GetLanguagePack(_languageCode);
 
             LoadCurrentCulture();
