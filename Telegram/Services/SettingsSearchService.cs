@@ -348,6 +348,7 @@ namespace Telegram.Services
                     new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.UseSystemSpellChecker),
                     new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.ReplaceEmoji),
                     new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.AdaptiveLayout),
+                    new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.ShowWindowTitleDetails),
                     new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.SendByEnter2),
                     new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.DistanceUnits)
                 })
