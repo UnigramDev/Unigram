@@ -40,9 +40,42 @@ namespace Telegram.Views.Popups
             ScrollingHost.ItemsSource = viewModel.Collections[0].Items;
         }
 
+        /// <summary>
+        /// Picks the pinned gift that a new pin replaces, when every pin is taken.
+        /// </summary>
+        public ChooseGiftsPopup(IClientService clientService, IList<ReceivedGift> pinned)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+
+            Title = Strings.Gift2UnpinAlertTitle;
+            Subtitle.Text = Strings.Gift2UnpinAlertSubtitle;
+            Subtitle.Visibility = Visibility.Visible;
+
+            PrimaryButtonText = Strings.Gift2UnpinAlertButton;
+            SecondaryButtonText = Strings.Cancel;
+            IsPrimaryButtonEnabled = false;
+
+            MoreButton.Visibility = Visibility.Collapsed;
+
+            ScrollingHost.SelectionMode = ListViewSelectionMode.Single;
+            ScrollingHost.ItemsSource = pinned;
+        }
+
         public IEnumerable<ReceivedGift> SelectedItems => ScrollingHost.SelectedItems
             .Cast<ReceivedGift>()
             .OrderByDescending(x => x.Date);
+
+        public ReceivedGift SelectedItem => ScrollingHost.SelectedItem as ReceivedGift;
+
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ScrollingHost.SelectionMode == ListViewSelectionMode.Single)
+            {
+                IsPrimaryButtonEnabled = ScrollingHost.SelectedItem != null;
+            }
+        }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
@@ -71,12 +104,13 @@ namespace Telegram.Views.Popups
 
         private void More_ContextRequested(object sender, RoutedEventArgs e)
         {
+            // The item names the order it switches to.
             var sort = new MenuFlyoutItem
             {
                 Text = _viewModel.SortByPrice
-                    ? Strings.Gift2FilterSortByValue
-                    : Strings.Gift2FilterSortByDate,
-                Icon = MenuFlyoutHelper.CreateIcon(_viewModel.SortByPrice ? Icons.DollarArrowUp : Icons.CalendarArrowUp)
+                    ? Strings.Gift2FilterSortByDate
+                    : Strings.Gift2FilterSortByValue,
+                Icon = MenuFlyoutHelper.CreateIcon(_viewModel.SortByPrice ? Icons.CalendarArrowUp : Icons.DollarArrowUp)
             };
 
             var unlimited = new MenuFlyoutItem

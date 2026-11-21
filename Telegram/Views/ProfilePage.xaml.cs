@@ -1154,12 +1154,13 @@ namespace Telegram.Views
             }
             else if (MediaFrame.Content is ProfileGiftsTabPage)
             {
+                // The item names the order it switches to.
                 var sort = new MenuFlyoutItem
                 {
                     Text = ViewModel.GiftsTab.SortByPrice
-                        ? Strings.Gift2FilterSortByValue
-                        : Strings.Gift2FilterSortByDate,
-                    Icon = MenuFlyoutHelper.CreateIcon(ViewModel.GiftsTab.SortByPrice ? Icons.DollarArrowUp : Icons.CalendarArrowUp)
+                        ? Strings.Gift2FilterSortByDate
+                        : Strings.Gift2FilterSortByValue,
+                    Icon = MenuFlyoutHelper.CreateIcon(ViewModel.GiftsTab.SortByPrice ? Icons.CalendarArrowUp : Icons.DollarArrowUp)
                 };
 
                 var unlimited = new MenuFlyoutItem
@@ -1199,8 +1200,25 @@ namespace Telegram.Views
                 upgradable.Click += (s, args) => UpdateFilters(() => ViewModel.GiftsTab.ExcludeUpgradable = !ViewModel.GiftsTab.ExcludeUpgradable);
                 unique.Click += (s, args) => UpdateFilters(() => ViewModel.GiftsTab.ExcludeUpgraded = !ViewModel.GiftsTab.ExcludeUpgraded);
 
-                flyout.Items.Add(sort);
-                flyout.CreateFlyoutSeparator();
+                var gifts = ViewModel.GiftsTab;
+
+                // A collection keeps the order its owner gave it.
+                if (gifts.SelectedCollection?.Id is null or 0)
+                {
+                    flyout.Items.Add(sort);
+                }
+
+                // The first collection is All gifts, which is not one of the user's.
+                if (gifts.IsOwned && gifts.Collections.Count - 1 < gifts.ClientService.Options.GiftCollectionCountMax)
+                {
+                    flyout.CreateFlyoutItem(gifts.CreateCollection, (ReceivedGift)null, Strings.Gift2NewCollection, Icons.FolderAdd);
+                }
+
+                if (flyout.Items.Count > 0)
+                {
+                    flyout.CreateFlyoutSeparator();
+                }
+
                 flyout.Items.Add(unlimited);
                 flyout.Items.Add(limited);
                 flyout.Items.Add(upgradable);

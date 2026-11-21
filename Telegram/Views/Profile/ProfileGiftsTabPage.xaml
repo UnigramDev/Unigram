@@ -179,7 +179,7 @@
         </controls:SelectGridView>
 
         <Grid x:Name="EmptyState"
-              Visibility="{x:Bind ViewModel.SelectedCollection.IsEmpty, Mode=OneWay}">
+              Visibility="{x:Bind ViewModel.SelectedCollection.ShowEmptyState, Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition />

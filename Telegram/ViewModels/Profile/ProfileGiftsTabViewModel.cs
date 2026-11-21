@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -36,6 +37,10 @@ namespace Telegram.ViewModels.Profile
 
         private MessageSender _senderId;
 
+        // The profile's pinned gifts in order, whichever collection or filter is on screen;
+        // null until a pin operation needs it.
+        private List<ReceivedGift> _pinned;
+
         public ProfileGiftsTabViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
@@ -56,11 +61,56 @@ namespace Telegram.ViewModels.Profile
 
             if (_cache.TryGetValue(gift.ReceivedGiftId, out ReceivedGift cached))
             {
+                Refresh(cached, gift);
                 return cached;
             }
 
             _cache[gift.ReceivedGiftId] = gift;
             return gift;
+        }
+
+        /// <summary>
+        /// Every field but the id: the lists share one instance per gift, and the diff that swaps
+        /// in a reloaded list keeps the old instance wherever the gift did not move.
+        /// </summary>
+        private static void Refresh(ReceivedGift cached, ReceivedGift gift)
+        {
+            cached.SenderId = gift.SenderId;
+            cached.Text = gift.Text;
+            cached.UniqueGiftNumber = gift.UniqueGiftNumber;
+            cached.IsPrivate = gift.IsPrivate;
+            cached.IsSaved = gift.IsSaved;
+            cached.IsPinned = gift.IsPinned;
+            cached.CanBeUpgraded = gift.CanBeUpgraded;
+            cached.CanBeTransferred = gift.CanBeTransferred;
+            cached.CanBeDeleted = gift.CanBeDeleted;
+            cached.WasRefunded = gift.WasRefunded;
+            cached.Date = gift.Date;
+            cached.Gift = gift.Gift;
+            cached.CollectionIds = gift.CollectionIds;
+            cached.SellStarCount = gift.SellStarCount;
+            cached.PrepaidUpgradeStarCount = gift.PrepaidUpgradeStarCount;
+            cached.IsUpgradeSeparate = gift.IsUpgradeSeparate;
+            cached.TransferStarCount = gift.TransferStarCount;
+            cached.DropOriginalDetailsStarCount = gift.DropOriginalDetailsStarCount;
+            cached.NextTransferDate = gift.NextTransferDate;
+            cached.NextResaleDate = gift.NextResaleDate;
+            cached.ExportDate = gift.ExportDate;
+            cached.PrepaidUpgradeHash = gift.PrepaidUpgradeHash;
+            cached.CraftDate = gift.CraftDate;
+        }
+
+        private static int IndexOf(IList<ReceivedGift> list, string receivedGiftId)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].ReceivedGiftId == receivedGiftId)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -167,13 +217,27 @@ namespace Telegram.ViewModels.Profile
         public async void DeleteCollection(GiftCollectionViewModel collection)
         {
             var confirm = await ShowPopupAsync(string.Format(Strings.GiftsCollectionMenuDeleteCollectionAsk, collection.Name), Strings.GiftsCollectionMenuDeleteCollection, Strings.Delete, Strings.Cancel, destructive: true);
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm != ContentDialogResult.Primary)
             {
-                ClientService.Send(new DeleteGiftCollection(_senderId, collection.Id));
-
-                Collections.Remove(collection);
-                SelectedCollection = Collections[0];
+                return;
             }
+
+            var response = await ClientService.SendAsync(new DeleteGiftCollection(_senderId, collection.Id));
+            if (response is not Ok)
+            {
+                return;
+            }
+
+            foreach (var gift in _cache.Values)
+            {
+                if (gift.CollectionIds.Contains(collection.Id))
+                {
+                    gift.CollectionIds = gift.CollectionIds.Without(collection.Id);
+                }
+            }
+
+            Collections.Remove(collection);
+            SelectedCollection = Collections[0];
         }
 
         public async void CreateCollection(ReceivedGift gift)
@@ -219,58 +283,93 @@ namespace Telegram.ViewModels.Profile
             var popup = new ChooseGiftsPopup(this);
 
             var confirm = await ShowPopupAsync(popup);
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm != ContentDialogResult.Primary)
             {
-                var receivedGiftIds = new MutableVector<string>();
+                return;
+            }
 
-                foreach (var gift in popup.SelectedItems)
+            var gifts = new List<ReceivedGift>();
+            var receivedGiftIds = new MutableVector<string>();
+
+            foreach (var gift in popup.SelectedItems)
+            {
+                if (gift.CollectionIds.Contains(collection.Id))
                 {
-                    if (gift.CollectionIds.Contains(collection.Id) /*|| album.Items.Contains(gift)*/)
-                    {
-                        continue;
-                    }
-
-                    if (collection.HasLoadedItems)
-                    {
-                        collection.Items.Insert(0, gift);
-                    }
-
-                    gift.CollectionIds = gift.CollectionIds.With(collection.Id);
-                    receivedGiftIds.Add(gift.ReceivedGiftId);
+                    continue;
                 }
 
-                ClientService.Send(new AddGiftCollectionGifts(_senderId, collection.Id, receivedGiftIds));
-                ShowToast(Locale.Declension(Strings.R.GiftAddedToCollectionTitle, receivedGiftIds.Count, collection.Name), ToastPopupIcon.Info);
+                gifts.Add(gift);
+                receivedGiftIds.Add(gift.ReceivedGiftId);
             }
+
+            // addGiftCollectionGifts takes at least one gift.
+            if (gifts.Count == 0)
+            {
+                return;
+            }
+
+            var response = await ClientService.SendAsync(new AddGiftCollectionGifts(_senderId, collection.Id, receivedGiftIds));
+            if (response is not GiftCollection)
+            {
+                return;
+            }
+
+            // A list that has not loaded yet gets them from the server instead, and would hold them twice.
+            var items = collection.Items.Source;
+
+            foreach (var gift in gifts)
+            {
+                gift.CollectionIds = gift.CollectionIds.With(collection.Id);
+
+                if (items.IsLoaded)
+                {
+                    items.Insert(0, gift);
+                }
+            }
+
+            ShowToast(Locale.Declension(Strings.R.GiftAddedToCollectionTitle, gifts.Count, collection.Name), ToastPopupIcon.Info);
         }
 
-        public void AddGiftToCollection((ReceivedGift gift, GiftCollectionViewModel collection) param)
+        public async void AddGiftToCollection((ReceivedGift gift, GiftCollectionViewModel collection) param)
         {
-            if (param.gift.CollectionIds.Contains(param.collection.Id))
+            var gift = param.gift;
+            var collection = param.collection;
+            var items = collection.Items.Source;
+
+            if (gift.CollectionIds.Contains(collection.Id))
             {
-                ClientService.Send(new RemoveGiftCollectionGifts(_senderId, param.collection.Id, new[] { param.gift.ReceivedGiftId }));
-
-                param.gift.CollectionIds = param.gift.CollectionIds.Without(param.collection.Id);
-
-                if (param.collection.HasLoadedItems)
+                var response = await ClientService.SendAsync(new RemoveGiftCollectionGifts(_senderId, collection.Id, new[] { gift.ReceivedGiftId }));
+                if (response is not GiftCollection)
                 {
-                    param.collection.Items.Remove(param.gift);
+                    return;
                 }
 
-                ShowToast(string.Format(Strings.GiftRemovedFromCollectionX, param.collection.Name), ToastPopupIcon.Info);
+                gift.CollectionIds = gift.CollectionIds.Without(collection.Id);
+
+                var index = IndexOf(items, gift.ReceivedGiftId);
+                if (index >= 0)
+                {
+                    items.RemoveAt(index);
+                }
+
+                ShowToast(string.Format(Strings.GiftRemovedFromCollectionX, collection.Name), ToastPopupIcon.Info);
             }
             else
             {
-                ClientService.Send(new AddGiftCollectionGifts(_senderId, param.collection.Id, new[] { param.gift.ReceivedGiftId }));
-
-                param.gift.CollectionIds = param.gift.CollectionIds.With(param.collection.Id);
-
-                if (param.collection.HasLoadedItems)
+                var response = await ClientService.SendAsync(new AddGiftCollectionGifts(_senderId, collection.Id, new[] { gift.ReceivedGiftId }));
+                if (response is not GiftCollection)
                 {
-                    param.collection.Items.Insert(0, param.gift);
+                    return;
                 }
 
-                ShowToast(string.Format(Strings.GiftAddedToCollectionX, param.collection.Name), ToastPopupIcon.Info);
+                gift.CollectionIds = gift.CollectionIds.With(collection.Id);
+
+                if (items.IsLoaded)
+                {
+                    items.Insert(0, gift);
+                }
+
+                ShowToast(string.Format(Strings.GiftAddedToCollectionX, collection.Name), ToastPopupIcon.Info);
             }
         }
 
@@ -283,48 +382,77 @@ namespace Telegram.ViewModels.Profile
 
         private void Handle(UpdateGiftIsSaved update)
         {
-            BeginOnUIThread(() =>
+            BeginOnUIThread(() => UpdateIsSaved(update.ReceivedGiftId, update.IsSaved));
+        }
+
+        private void UpdateIsSaved(string receivedGiftId, bool isSaved)
+        {
+            // The server drops a gift from the pinned list when it leaves the profile page.
+            var unpinned = !isSaved && IsPinned(receivedGiftId);
+            if (unpinned && _pinned != null)
             {
-                var receivedGift = Items.FirstOrDefault(x => x.ReceivedGiftId == update.ReceivedGiftId);
-                if (receivedGift == null)
+                _pinned = Without(_pinned, receivedGiftId);
+            }
+
+            foreach (var collection in Collections)
+            {
+                var items = collection.Items.Source;
+
+                var index = IndexOf(items, receivedGiftId);
+                if (index < 0)
                 {
-                    return;
+                    continue;
                 }
 
-                receivedGift.IsSaved = update.IsSaved;
+                var gift = items[index];
+                gift.IsSaved = isSaved;
 
-                // The server drops a gift from the pinned list when it leaves the profile page.
-                if (!update.IsSaved && receivedGift.IsPinned)
+                if (unpinned)
                 {
-                    receivedGift.IsPinned = false;
-                    Items.Pinned.Remove(receivedGift.ReceivedGiftId);
-
-                    PlaceUnpinned(receivedGift);
-                    return;
+                    gift.IsPinned = false;
                 }
 
-                var index = Items.IndexOf(receivedGift);
-                Items.Remove(receivedGift);
-                Items.Insert(index, receivedGift);
-            });
+                items.RemoveAt(index);
+
+                if (!items.Accepts(gift))
+                {
+                    continue;
+                }
+                else if (unpinned && items.KeepsPinnedFirst)
+                {
+                    if (items.PlaceUnpinned(gift) is false)
+                    {
+                        collection.Reload(collection == SelectedCollection);
+                    }
+                }
+                else
+                {
+                    items.Insert(index, gift);
+                }
+            }
         }
 
         private void Handle(UpdateGiftIsSold update)
         {
             BeginOnUIThread(() =>
             {
-                var receivedGift = Items.FirstOrDefault(x => x.ReceivedGiftId == update.ReceivedGiftId);
-                if (receivedGift == null)
+                if (_pinned != null)
                 {
-                    return;
+                    _pinned = Without(_pinned, update.ReceivedGiftId);
                 }
 
-                if (receivedGift.IsPinned)
+                foreach (var collection in Collections)
                 {
-                    Items.Pinned.Remove(receivedGift.ReceivedGiftId);
+                    var items = collection.Items.Source;
+
+                    var index = IndexOf(items, update.ReceivedGiftId);
+                    if (index >= 0)
+                    {
+                        items.RemoveAt(index);
+                    }
                 }
 
-                Items.Remove(receivedGift);
+                _cache.TryRemove(update.ReceivedGiftId, out _);
             });
         }
 
@@ -332,20 +460,58 @@ namespace Telegram.ViewModels.Profile
         {
             BeginOnUIThread(() =>
             {
-                var receivedGift = Items.FirstOrDefault(x => x.ReceivedGiftId == update.ReceivedGiftId || x.ReceivedGiftId == update.OldReceivedGiftId);
-                if (receivedGift == null)
-                {
-                    return;
-                }
+                _cache.TryRemove(update.OldReceivedGiftId, out _);
 
-                var index = Items.IndexOf(receivedGift);
-                Items.Remove(receivedGift);
-                Items.Insert(index, update.Gift);
+                var gift = GetOrCreate(update.Gift);
+
+                foreach (var collection in Collections)
+                {
+                    var items = collection.Items.Source;
+
+                    var index = IndexOf(items, update.OldReceivedGiftId);
+                    if (index < 0)
+                    {
+                        index = IndexOf(items, update.ReceivedGiftId);
+                    }
+
+                    if (index >= 0)
+                    {
+                        items.RemoveAt(index);
+                        items.Insert(index, gift);
+                    }
+                }
             });
+        }
+
+        private bool IsPinned(string receivedGiftId)
+        {
+            if (_pinned != null)
+            {
+                return IndexOf(_pinned, receivedGiftId) >= 0;
+            }
+
+            return _cache.TryGetValue(receivedGiftId, out ReceivedGift gift) && gift.IsPinned;
+        }
+
+        private static List<ReceivedGift> Without(List<ReceivedGift> gifts, string receivedGiftId)
+        {
+            var index = IndexOf(gifts, receivedGiftId);
+            if (index < 0)
+            {
+                return gifts;
+            }
+
+            // A pin operation awaiting the server may still hold the old list.
+            var copy = new List<ReceivedGift>(gifts);
+            copy.RemoveAt(index);
+            return copy;
         }
 
         private void Reload(bool preload = true)
         {
+            _pinned = null;
+
+            // The filters apply to every collection, so every list starts over; only the visible one loads now.
             foreach (var collection in Collections)
             {
                 collection.Reload(preload && SelectedCollection == collection);
@@ -362,6 +528,8 @@ namespace Telegram.ViewModels.Profile
                 {
                     value = false;
                     _excludeSaved = false;
+
+                    RaisePropertyChanged(nameof(ExcludeSaved));
 
                     Reload();
                 }
@@ -382,6 +550,8 @@ namespace Telegram.ViewModels.Profile
                 {
                     _excludeUnsaved = false;
                     value = false;
+
+                    RaisePropertyChanged(nameof(ExcludeUnsaved));
 
                     Reload();
                 }
@@ -405,6 +575,10 @@ namespace Telegram.ViewModels.Profile
                     _excludeNonUpgradable = false;
                     _excludeUpgraded = false;
 
+                    RaisePropertyChanged(nameof(ExcludeUpgradable));
+                    RaisePropertyChanged(nameof(ExcludeNonUpgradable));
+                    RaisePropertyChanged(nameof(ExcludeUpgraded));
+
                     Reload();
                 }
                 else if (Set(ref _excludeUnlimited, value))
@@ -426,6 +600,10 @@ namespace Telegram.ViewModels.Profile
                     value = false;
                     _excludeNonUpgradable = false;
                     _excludeUpgraded = false;
+
+                    RaisePropertyChanged(nameof(ExcludeUnlimited));
+                    RaisePropertyChanged(nameof(ExcludeNonUpgradable));
+                    RaisePropertyChanged(nameof(ExcludeUpgraded));
 
                     Reload();
                 }
@@ -449,6 +627,10 @@ namespace Telegram.ViewModels.Profile
                     value = false;
                     _excludeUpgraded = false;
 
+                    RaisePropertyChanged(nameof(ExcludeUnlimited));
+                    RaisePropertyChanged(nameof(ExcludeUpgradable));
+                    RaisePropertyChanged(nameof(ExcludeUpgraded));
+
                     Reload();
                 }
                 else if (Set(ref _excludeNonUpgradable, value))
@@ -470,6 +652,10 @@ namespace Telegram.ViewModels.Profile
                     _excludeUpgradable = false;
                     _excludeNonUpgradable = false;
                     value = false;
+
+                    RaisePropertyChanged(nameof(ExcludeUnlimited));
+                    RaisePropertyChanged(nameof(ExcludeUpgradable));
+                    RaisePropertyChanged(nameof(ExcludeNonUpgradable));
 
                     Reload();
                 }
@@ -528,11 +714,6 @@ namespace Telegram.ViewModels.Profile
             ItemsReady = null;
         }
 
-        private ReceivedGiftsCollection UpdateItems(object arg1, string arg2)
-        {
-            return new ReceivedGiftsCollection(this, _senderId, _selectedCollection, _excludeUnsaved, _excludeSaved, _excludeUnlimited, _excludeUpgradable, _excludeNonUpgradable, _excludeUpgraded, _sortByPrice);
-        }
-
         public ReceivedGiftsCollection CreateItemsSource(GiftCollectionViewModel collection)
         {
             return new ReceivedGiftsCollection(this, _senderId, collection, _excludeUnsaved, _excludeSaved, _excludeUnlimited, _excludeUpgradable, _excludeNonUpgradable, _excludeUpgraded, _sortByPrice);
@@ -580,8 +761,6 @@ namespace Telegram.ViewModels.Profile
             private readonly bool _excludeUpgraded;
             private readonly bool _sortByPrice;
 
-            private readonly MutableVector<string> _pinnedGifts = new();
-
             private string _nextOffsetId = string.Empty;
             private bool _loading;
 
@@ -623,11 +802,6 @@ namespace Telegram.ViewModels.Profile
 
                         foreach (var gift in gifts.Gifts)
                         {
-                            if (gift.IsPinned && gift.ReceivedGiftId.Length > 0)
-                            {
-                                _pinnedGifts.Add(gift.ReceivedGiftId);
-                            }
-
                             Add(_viewModel.GetOrCreate(gift));
                             total++;
                         }
@@ -636,10 +810,9 @@ namespace Telegram.ViewModels.Profile
                     _viewModel.OnItemsReady();
 
                     _collection.IsEmpty = Items.Count == 0;
-                    _collection.HasMoreItems = !string.IsNullOrEmpty(_nextOffsetId);
-                    _collection.HasLoadedItems = true;
 
                     HasMoreItems = !string.IsNullOrEmpty(_nextOffsetId);
+                    IsLoaded = true;
 
                     _loading = false;
                     return new LoadMoreItemsResult
@@ -651,8 +824,72 @@ namespace Telegram.ViewModels.Profile
 
             public bool HasMoreItems { get; private set; } = true;
 
-            // This is only valid for owned gifts
-            public MutableVector<string> Pinned => _pinnedGifts;
+            public bool IsLoaded { get; private set; }
+
+            /// <summary>
+            /// The full list puts the pinned gifts first; a collection keeps the order its owner gave it.
+            /// </summary>
+            public bool KeepsPinnedFirst => _collection.Id == 0;
+
+            public bool SortByPrice => _sortByPrice;
+
+            /// <summary>
+            /// Whether the filters still let the gift in. Only the ones a gift can move across while
+            /// the list is open are checked: being saved, and being upgraded.
+            /// </summary>
+            public bool Accepts(ReceivedGift gift)
+            {
+                if (gift.IsSaved ? _excludeSaved : _excludeUnsaved)
+                {
+                    return false;
+                }
+
+                return !_excludeUpgraded || gift.Gift is not SentGiftUpgraded;
+            }
+
+            /// <summary>
+            /// Moves a gift that just lost its pin back among the others, by date. Returns false when
+            /// the list is sorted by value, which only the server can place.
+            /// </summary>
+            public bool PlaceUnpinned(ReceivedGift gift)
+            {
+                var index = ProfileGiftsTabViewModel.IndexOf(this, gift.ReceivedGiftId);
+                if (index >= 0)
+                {
+                    // The search has to follow the removal: a position found in the longer list
+                    // is one slot too far down, and Count when the gift sorts last.
+                    RemoveAt(index);
+                }
+
+                if (_sortByPrice)
+                {
+                    return false;
+                }
+
+                index = this.BinarySearch(gift, UnpinnedComparison);
+                if (index < 0)
+                {
+                    index = ~index;
+                }
+
+                // Past the end of a list that has more to load, the gift arrives with the next page.
+                if (index < Count || !HasMoreItems)
+                {
+                    Insert(index, gift);
+                }
+
+                return true;
+            }
+
+            private static int UnpinnedComparison(ReceivedGift gift, ReceivedGift item)
+            {
+                if (item.IsPinned)
+                {
+                    return 1;
+                }
+
+                return item.Date.CompareTo(gift.Date);
+            }
         }
 
         public void OpenGift(ReceivedGift receivedGift)
@@ -689,108 +926,274 @@ namespace Telegram.ViewModels.Profile
             await PinGiftAsync(gift);
         }
 
+        /// <summary>
+        /// setPinnedGifts replaces the whole list, so it is built from the profile's pins and never
+        /// from the list on screen, which a collection or a filter may leave without some of them.
+        /// </summary>
+        private async Task<List<ReceivedGift>> GetPinnedAsync()
+        {
+            if (_pinned != null)
+            {
+                return _pinned;
+            }
+
+            // Pinned gifts are upgraded and saved, and come first when sorted by date.
+            var limit = (int)Math.Min(ClientService.Options.PinnedGiftCountMax, 100);
+
+            var response = await ClientService.SendAsync(new GetReceivedGifts(_senderId, 0, true, false, true, true, true, false, false, false, false, string.Empty, limit));
+            if (response is not ReceivedGifts gifts)
+            {
+                return null;
+            }
+
+            var pinned = new List<ReceivedGift>(gifts.Gifts.Count);
+
+            foreach (var gift in gifts.Gifts)
+            {
+                if (!gift.IsPinned)
+                {
+                    break;
+                }
+
+                pinned.Add(GetOrCreate(gift));
+            }
+
+            return _pinned = pinned;
+        }
+
+        public async Task<bool> IsPinLimitReachedAsync(ReceivedGift gift)
+        {
+            if (gift.IsPinned)
+            {
+                return false;
+            }
+
+            var pinned = await GetPinnedAsync();
+            return pinned != null && pinned.Count >= ClientService.Options.PinnedGiftCountMax;
+        }
+
         public async Task PinGiftAsync(ReceivedGift gift)
         {
-            var pin = !gift.IsPinned;
-            if (pin && Items.Pinned.Count == ClientService.Options.PinnedGiftCountMax)
+            var pinned = await GetPinnedAsync();
+            if (pinned == null)
             {
-                ShowToast(Locale.Declension(Strings.R.GiftsPinLimit, ClientService.Options.PinnedGiftCountMax), ToastPopupIcon.Info);
                 return;
             }
 
-            // setPinnedGifts refuses a gift that is not on the profile page.
-            if (pin && !gift.IsSaved)
+            var pin = IndexOf(pinned, gift.ReceivedGiftId) < 0;
+            if (pin && pinned.Count >= ClientService.Options.PinnedGiftCountMax)
             {
-                var saved = await ClientService.SendAsync(new ToggleGiftIsSaved(gift.ReceivedGiftId, true));
-                if (saved is not Ok)
-                {
-                    return;
-                }
+                await ReplacePinnedGiftAsync(gift, pinned);
+                return;
+            }
 
-                gift.IsSaved = true;
-                Aggregator.Publish(new UpdateGiftIsSaved(gift.ReceivedGiftId, true));
+            if (pin && await SaveForPinAsync(gift) is false)
+            {
+                return;
+            }
+
+            var updated = pin
+                ? new List<ReceivedGift>(pinned.Count + 1) { gift }
+                : new List<ReceivedGift>(pinned.Count);
+
+            foreach (var item in pinned)
+            {
+                if (item.ReceivedGiftId != gift.ReceivedGiftId)
+                {
+                    updated.Add(item);
+                }
+            }
+
+            if (await SetPinnedAsync(pinned, updated) is false)
+            {
+                return;
             }
 
             if (pin)
             {
-                Items.Pinned.Insert(0, gift.ReceivedGiftId);
-            }
-            else
-            {
-                Items.Pinned.Remove(gift.ReceivedGiftId);
-            }
-
-            var response = await ClientService.SendAsync(new SetPinnedGifts(_senderId, Items.Pinned));
-            if (response is not Ok)
-            {
-                if (pin)
-                {
-                    Items.Pinned.Remove(gift.ReceivedGiftId);
-                }
-                else
-                {
-                    Items.Pinned.Insert(0, gift.ReceivedGiftId);
-                }
-
-                return;
-            }
-
-            gift.IsPinned = pin;
-
-            if (pin)
-            {
-                Items.Remove(gift);
-                Items.Insert(0, gift);
-
                 ShowToast(string.Format("**{0}**\n{1}", Strings.Gift2PinnedTitle, Strings.Gift2PinnedSubtitle), ToastPopupIcon.Pin);
             }
             else
             {
-                PlaceUnpinned(gift);
                 ShowToast(Strings.Gift2Unpinned, ToastPopupIcon.Unpin);
             }
         }
 
         /// <summary>
-        /// Moves a gift that just lost its pin back among the others, sorted by date.
+        /// setPinnedGifts refuses a gift that is not on the profile page, so one is put there first.
         /// </summary>
-        private void PlaceUnpinned(ReceivedGift gift)
+        private async Task<bool> SaveForPinAsync(ReceivedGift gift)
         {
-            // The search has to follow the removal: a position found in the longer list
-            // is one slot too far down, and Items.Count when the gift sorts last.
-            Items.Remove(gift);
-
-            var index = Items.BinarySearch(gift, (x, y) => Items.Pinned.Contains(y.ReceivedGiftId) ? 1 : y.Date.CompareTo(x.Date));
-            if (index < 0)
+            if (gift.IsSaved)
             {
-                index = ~index;
+                return true;
             }
 
-            if (index < Items.Count || !Items.HasMoreItems)
+            var saved = await ClientService.SendAsync(new ToggleGiftIsSaved(gift.ReceivedGiftId, true));
+            if (saved is not Ok)
             {
-                Items.Insert(index, gift);
+                return false;
+            }
+
+            gift.IsSaved = true;
+            Aggregator.Publish(new UpdateGiftIsSaved(gift.ReceivedGiftId, true));
+
+            return true;
+        }
+
+        /// <summary>
+        /// With every pin taken, the user picks the pinned gift the new one replaces, in place.
+        /// </summary>
+        private async Task ReplacePinnedGiftAsync(ReceivedGift gift, List<ReceivedGift> pinned)
+        {
+            var popup = new ChooseGiftsPopup(ClientService, pinned);
+
+            var confirm = await ShowPopupAsync(popup);
+            if (confirm != ContentDialogResult.Primary || popup.SelectedItem is not ReceivedGift replaced)
+            {
+                return;
+            }
+
+            var index = IndexOf(pinned, replaced.ReceivedGiftId);
+            if (index < 0 || await SaveForPinAsync(gift) is false)
+            {
+                return;
+            }
+
+            var updated = new List<ReceivedGift>(pinned);
+            updated[index] = gift;
+
+            if (await SetPinnedAsync(pinned, updated))
+            {
+                ShowToast(string.Format("**{0}**\n{1}", string.Format(Strings.Gift2ReplacedPinTitle, GetName(gift)), string.Format(Strings.Gift2ReplacedPinSubtitle, GetName(replaced))), ToastPopupIcon.Pin);
             }
         }
 
-        private int UnpinGiftComparison(ReceivedGift x, ReceivedGift y)
+        private static string GetName(ReceivedGift gift)
         {
-            if (y.IsPinned)
-            {
-                return 1;
-            }
-
-            return y.Date.CompareTo(x.Date);
+            return gift.Gift is SentGiftUpgraded upgraded ? upgraded.Gift.ToName() : string.Empty;
         }
 
-        public void SetPinnedItems()
+        /// <summary>
+        /// Nothing local changes until the server accepts the list, so a failure leaves the lists as they were.
+        /// </summary>
+        private async Task<bool> SetPinnedAsync(List<ReceivedGift> pinned, List<ReceivedGift> updated)
         {
-            var receivedGiftIds = new MutableVector<string>();
+            var receivedGiftIds = new MutableVector<string>(updated.Count);
 
-            foreach (var item in Items)
+            foreach (var gift in updated)
+            {
+                receivedGiftIds.Add(gift.ReceivedGiftId);
+            }
+
+            var response = await ClientService.SendAsync(new SetPinnedGifts(_senderId, receivedGiftIds));
+            if (response is not Ok)
+            {
+                return false;
+            }
+
+            ApplyPinned(pinned, updated);
+            return true;
+        }
+
+        private void ApplyPinned(List<ReceivedGift> pinned, List<ReceivedGift> updated)
+        {
+            _pinned = updated;
+
+            foreach (var gift in pinned)
+            {
+                gift.IsPinned = false;
+            }
+
+            foreach (var gift in updated)
+            {
+                gift.IsPinned = true;
+            }
+
+            foreach (var collection in Collections)
+            {
+                var items = collection.Items.Source;
+                if (!items.IsLoaded)
+                {
+                    continue;
+                }
+
+                if (items.KeepsPinnedFirst && items.SortByPrice)
+                {
+                    collection.Reload(collection == SelectedCollection);
+                }
+                else if (items.KeepsPinnedFirst)
+                {
+                    foreach (var gift in pinned)
+                    {
+                        var index = IndexOf(items, gift.ReceivedGiftId);
+                        if (index >= 0)
+                        {
+                            items.RemoveAt(index);
+                        }
+                    }
+
+                    var position = 0;
+
+                    foreach (var gift in updated)
+                    {
+                        var index = IndexOf(items, gift.ReceivedGiftId);
+                        if (index >= 0)
+                        {
+                            items.RemoveAt(index);
+                        }
+
+                        if (items.Accepts(gift))
+                        {
+                            items.Insert(position++, gift);
+                        }
+                    }
+
+                    foreach (var gift in pinned)
+                    {
+                        if (!gift.IsPinned && items.Accepts(gift))
+                        {
+                            items.PlaceUnpinned(gift);
+                        }
+                    }
+                }
+                else
+                {
+                    // The order stays, only the pin badge changes.
+                    Redraw(items, pinned);
+                    Redraw(items, updated);
+                }
+            }
+        }
+
+        private static void Redraw(ReceivedGiftsCollection items, List<ReceivedGift> gifts)
+        {
+            foreach (var gift in gifts)
+            {
+                var index = IndexOf(items, gift.ReceivedGiftId);
+                if (index >= 0)
+                {
+                    items.RemoveAt(index);
+                    items.Insert(index, gift);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Called after a pinned gift is dragged: the pinned gifts at the top of the list, in their
+        /// new order, become the profile's pins. A drop that leaves any of them below the others is
+        /// undone.
+        /// </summary>
+        public async void SetPinnedItems()
+        {
+            var order = new List<ReceivedGift>();
+
+            // The drag moved the items in the view only, not in the lists behind it.
+            foreach (var item in ItemsView)
             {
                 if (item.IsPinned)
                 {
-                    receivedGiftIds.Add(item.ReceivedGiftId);
+                    order.Add(item);
                 }
                 else
                 {
@@ -798,22 +1201,27 @@ namespace Telegram.ViewModels.Profile
                 }
             }
 
-            if (receivedGiftIds.Count != Items.Pinned.Count)
+            var pinned = await GetPinnedAsync();
+            if (pinned == null)
             {
                 return;
             }
 
-            ClientService.Send(new SetPinnedGifts(_senderId, receivedGiftIds));
-        }
+            var valid = order.Count == pinned.Count;
 
-        public void SetPinnedItem(ReceivedGift gift)
-        {
-            var index = Items.Pinned.IndexOf(gift.ReceivedGiftId);
-            if (index >= 0 && index < Items.Count)
+            for (int i = 0; valid && i < order.Count; i++)
             {
-                Items.Remove(gift);
-                Items.Insert(index, gift);
+                valid = IndexOf(pinned, order[i].ReceivedGiftId) >= 0;
             }
+
+            if (valid is false || await SetPinnedAsync(pinned, order) is false)
+            {
+                ApplyPinned(pinned, pinned);
+            }
+
+            // The lists forward their changes by index, which the drag left pointing at other items
+            // in the view, so it is matched to them again.
+            ItemsView.SetSource(_selectedCollection.Items);
         }
 
         public void CopyGift(ReceivedGift gift)
@@ -854,6 +1262,14 @@ namespace Telegram.ViewModels.Profile
                 {
                     ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2MadePrivateTitle, Strings.Gift2MadePrivate), new DelayedFileSource(ClientService, gift.GetSticker()));
                 }
+            }
+        }
+
+        public void ToggleWear(ReceivedGift gift)
+        {
+            if (gift.Gift is SentGiftUpgraded upgraded)
+            {
+                _ = ReceivedGiftPopup.ToggleWearAsync(ClientService, NavigationService, XamlRoot, upgraded.Gift);
             }
         }
 
@@ -948,16 +1364,24 @@ namespace Telegram.ViewModels.Profile
         //    };
         //}
 
-        public bool HasMoreItems { get; set; } = true;
-
-        public bool HasLoadedItems { get; set; }
-
         private bool _isEmpty;
         public bool IsEmpty
         {
             get => _isEmpty;
-            set => Set(ref _isEmpty, value);
+            set
+            {
+                if (Set(ref _isEmpty, value))
+                {
+                    RaisePropertyChanged(nameof(ShowEmptyState));
+                }
+            }
         }
+
+        /// <summary>
+        /// The empty state invites the owner to fill one of their collections; it is not what an
+        /// empty or filtered-out profile shows.
+        /// </summary>
+        public bool ShowEmptyState => _isEmpty && Id != 0 && _viewModel.IsOwned;
 
         //public void ReorderStories()
         //{

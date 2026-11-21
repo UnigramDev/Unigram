@@ -12097,6 +12097,11 @@
     <string name="Gift2PinnedSubtitle">Now it will always be shown on top.</string>
     <string name="Gift2PinnedTitle">Gift pinned</string>
     <string name="Gift2Unpinned">Gift unpinned</string>
+    <string name="Gift2UnpinAlertTitle">Too Many Pinned Gifts</string>
+    <string name="Gift2UnpinAlertSubtitle">Select a gift to unpin below</string>
+    <string name="Gift2UnpinAlertButton">Unpin</string>
+    <string name="Gift2ReplacedPinTitle">{0} pinned</string>
+    <string name="Gift2ReplacedPinSubtitle">replacing {0}</string>
     <string name="Gift2ShowOnProfile">Show on Profile</string>
     <string name="Gift2HideFromProfile">Hide from Profile</string>
     <string name="Gift2DeleteOption">Delete Gift</string>
@@ -12948,6 +12953,7 @@
     <string name="GiftsCollectionMenuDeleteCollectionAsk">Are you sure you want to delete the **{0}** collection?</string>
     <string name="GiftsCollectionAddToCollection">Add to Collection</string>
     <string name="GiftsCollectionNewCollection">New Collection</string>
+    <string name="Gift2NewCollection">Add Collection</string>
     <string name="GiftsCollectionAddCollection">Add Collection</string>
     <string name="GiftAddedToCollectionX">This gift has been added to **{0}** collection.</string>
     <string name="GiftRemovedFromCollectionX">This gift has been removed from **{0}** collection.</string>

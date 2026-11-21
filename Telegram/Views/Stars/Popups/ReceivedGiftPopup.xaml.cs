@@ -705,7 +705,7 @@ namespace Telegram.Views.Stars.Popups
                     ResellButton.Content = Strings.Gift2ActionShare;
                 }
 
-                UpdateWearButton(IsWorn(gift));
+                UpdateWearButton(IsWorn(_clientService, gift));
             }
             else
             {
@@ -1668,7 +1668,18 @@ namespace Telegram.Views.Stars.Popups
 
         private async void Pin()
         {
-            await _profile.PinGiftAsync(_gift);
+            // Over the limit the replacement picker opens, a ContentPopup, which this one makes way for.
+            if (await _profile.IsPinLimitReachedAsync(_gift))
+            {
+                Hide();
+
+                await _profile.PinGiftAsync(_gift);
+                await this.ShowQueuedAsync(XamlRoot);
+            }
+            else
+            {
+                await _profile.PinGiftAsync(_gift);
+            }
 
             // Pinning saves a hidden gift first.
             UpdateSavedInfo();
@@ -2167,7 +2178,7 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            if (_shownWearInfo || IsWorn(upgraded.Gift))
+            if (_shownWearInfo || IsWorn(_clientService, upgraded.Gift))
             {
                 ToggleWear();
             }
@@ -2179,14 +2190,28 @@ namespace Telegram.Views.Stars.Popups
 
         private async void ToggleWear()
         {
-            if (_gift.Gift is not SentGiftUpgraded upgraded)
+            if (_gift.Gift is SentGiftUpgraded upgraded)
             {
-                _submitted = false;
-                return;
+                var worn = IsWorn(_clientService, upgraded.Gift);
+
+                if (await ToggleWearAsync(_clientService, _navigationService, XamlRoot, upgraded.Gift, this))
+                {
+                    UpdateWearButton(!worn);
+                    ShowPage(GiftPage.Details);
+                }
             }
 
-            var gift = upgraded.Gift;
-            var worn = IsWorn(gift);
+            _submitted = false;
+        }
+
+        /// <summary>
+        /// Puts the gift on as its holder's emoji status, or takes it off. False when nothing
+        /// changed. <paramref name="host"/> is the popup asking, if any: it steps aside while the
+        /// boost requirement for a channel is shown, and comes back after.
+        /// </summary>
+        public static async Task<bool> ToggleWearAsync(IClientService clientService, INavigationService navigationService, XamlRoot xamlRoot, UpgradedGift gift, ModalPopup host = null)
+        {
+            var worn = IsWorn(clientService, gift);
 
             EmojiStatus status = null;
 
@@ -2194,24 +2219,21 @@ namespace Telegram.Views.Stars.Popups
             {
                 if (HolderOf(gift) is MessageSenderChat senderChat)
                 {
-                    if (await CanSetChatEmojiStatusAsync(senderChat.ChatId) is false)
+                    if (await CanSetChatEmojiStatusAsync(clientService, navigationService, xamlRoot, senderChat.ChatId, host) is false)
                     {
-                        _submitted = false;
-                        return;
+                        return false;
                     }
                 }
-                else if (_clientService.IsPremium is false)
+                else if (clientService.IsPremium is false)
                 {
-                    _submitted = false;
-                    ToastPopup.ShowFeaturePromo(_navigationService, Strings.Gift2ActionWearNeededPremium, new PremiumFeatureEmojiStatus());
-                    return;
+                    ToastPopup.ShowFeaturePromo(navigationService, Strings.Gift2ActionWearNeededPremium, new PremiumFeatureEmojiStatus());
+                    return false;
                 }
 
                 var type = ToEmojiStatusType(gift);
                 if (type == null)
                 {
-                    _submitted = false;
-                    return;
+                    return false;
                 }
 
                 status = new EmojiStatus(type, 0);
@@ -2221,31 +2243,29 @@ namespace Telegram.Views.Stars.Popups
                 ? new SetChatEmojiStatus(ownerChat.ChatId, status)
                 : new SetEmojiStatus(status);
 
-            var response = await _clientService.SendAsync(function);
+            var response = await clientService.SendAsync(function);
             if (response is Ok)
             {
-                UpdateWearButton(!worn);
-                ShowPage(GiftPage.Details);
-
-                ToastPopup.Show(XamlRoot, string.Format(worn ? Strings.Gift2ActionWearOffDone : Strings.Gift2ActionWearDone, gift.ToName()), new DelayedFileSource(_clientService, gift.Model.Sticker));
+                ToastPopup.Show(xamlRoot, string.Format(worn ? Strings.Gift2ActionWearOffDone : Strings.Gift2ActionWearDone, gift.ToName()), new DelayedFileSource(clientService, gift.Model.Sticker));
+                return true;
             }
             else if (response is Error error)
             {
-                ToastPopup.ShowError(XamlRoot, error);
+                ToastPopup.ShowError(xamlRoot, error);
             }
 
-            _submitted = false;
+            return false;
         }
 
-        private async Task<bool> CanSetChatEmojiStatusAsync(long chatId)
+        private static async Task<bool> CanSetChatEmojiStatusAsync(IClientService clientService, INavigationService navigationService, XamlRoot xamlRoot, long chatId, ModalPopup host)
         {
-            if (!_clientService.TryGetChat(chatId, out Chat chat))
+            if (!clientService.TryGetChat(chatId, out Chat chat))
             {
                 return false;
             }
 
-            var response1 = await _clientService.SendAsync(new GetChatBoostFeatures(true));
-            var response2 = await _clientService.SendAsync(new GetChatBoostStatus(chatId));
+            var response1 = await clientService.SendAsync(new GetChatBoostFeatures(true));
+            var response2 = await clientService.SendAsync(new GetChatBoostStatus(chatId));
 
             // If the level can't be read, the server has the last word.
             if (response1 is not ChatBoostFeatures features || response2 is not ChatBoostStatus status || status.Level >= features.MinEmojiStatusBoostLevel)
@@ -2253,10 +2273,14 @@ namespace Telegram.Views.Stars.Popups
                 return true;
             }
 
-            Hide();
+            host?.Hide();
 
-            await _navigationService.ShowPopupAsync(new ChatBoostFeaturesPopup(_clientService, _navigationService, chat, status, null, features, ChatBoostFeature.EmojiStatus, features.MinEmojiStatusBoostLevel));
-            await this.ShowQueuedAsync(XamlRoot);
+            await navigationService.ShowPopupAsync(new ChatBoostFeaturesPopup(clientService, navigationService, chat, status, null, features, ChatBoostFeature.EmojiStatus, features.MinEmojiStatusBoostLevel));
+
+            if (host != null)
+            {
+                await host.ShowQueuedAsync(xamlRoot);
+            }
 
             return false;
         }
@@ -2270,17 +2294,17 @@ namespace Telegram.Views.Stars.Popups
             return gift.HostId ?? gift.OwnerId;
         }
 
-        private bool IsWorn(UpgradedGift gift)
+        public static bool IsWorn(IClientService clientService, UpgradedGift gift)
         {
             EmojiStatus status = null;
 
             var holder = HolderOf(gift);
 
-            if (_clientService.TryGetUser(holder, out User user))
+            if (clientService.TryGetUser(holder, out User user))
             {
                 status = user.EmojiStatus;
             }
-            else if (_clientService.TryGetChat(holder, out Chat chat))
+            else if (clientService.TryGetChat(holder, out Chat chat))
             {
                 status = chat.EmojiStatus;
             }

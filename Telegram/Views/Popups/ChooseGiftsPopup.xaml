@@ -15,8 +15,15 @@
                   SelectionMode="Multiple"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
+                  SelectionChanged="OnSelectionChanged"
                   common:FluidGridView.MaxLength="1008"
                   Padding="22,0,22,22">
+            <GridView.Header>
+                <TextBlock x:Name="Subtitle"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           Visibility="Collapsed"
+                           Margin="2,0,2,12" />
+            </GridView.Header>
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="3" />
             </common:FluidGridView.Triggers>
