@@ -496,7 +496,7 @@ namespace Telegram.ViewModels.Settings
             // Not the one from when the page opened: the system accent may have changed since.
             if (id == SystemThemeId)
             {
-                return AppearanceSettings.GetSystemVariant(Type, AppearanceSettings.GetDefaultBackground(RequestedTheme == TelegramTheme.Dark));
+                return AppearanceSettings.GetSystemVariant(Type, AppearanceSettings.GetDefaultBackground(Type));
             }
 
             return _seeds != null && _seeds.TryGetValue(id, out ThemeSettings seed) ? seed : null;
@@ -588,7 +588,7 @@ namespace Telegram.ViewModels.Settings
             var seeds = new Dictionary<string, ThemeSettings>
             {
                 [DefaultThemeId] = AppearanceSettings.GetHouse(type),
-                [SystemThemeId] = AppearanceSettings.GetSystemVariant(type, AppearanceSettings.GetDefaultBackground(!light))
+                [SystemThemeId] = AppearanceSettings.GetSystemVariant(type, AppearanceSettings.GetDefaultBackground(type))
             };
 
             var ids = new List<string> { DefaultThemeId, SystemThemeId };
@@ -720,7 +720,7 @@ namespace Telegram.ViewModels.Settings
             // Never null, so every card can be drawn and switched to. Only on the copy this returns:
             // a stored copy without a background is what lets the next updateDefaultBackground be
             // adopted, so the default must not reach it.
-            background ??= AppearanceSettings.GetDefaultBackground(baseTheme is BuiltInThemeNight or BuiltInThemeTinted);
+            background ??= AppearanceSettings.GetDefaultBackground(ThemeSettingsStore.ToThemeType(baseTheme, TelegramTheme.Light /* TODO */));
 
             return new ThemeSettingsData(name, baseTheme, source.AccentColor, background, source.OutgoingMessageFill, source.AnimateOutgoingMessageFill, source.HasOutgoingMessageAccentColor, source.OutgoingMessageAccentColor);
         }

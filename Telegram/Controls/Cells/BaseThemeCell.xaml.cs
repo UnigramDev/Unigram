@@ -71,7 +71,7 @@ namespace Telegram.Controls.Cells
             }
             else
             {
-                Preview.UpdateSource(theme.ClientService, AppearanceSettings.GetDefaultBackground(info is ThemeCustomInfo { Parent: TelegramTheme.Dark }), true);
+                Preview.UpdateSource(theme.ClientService, AppearanceSettings.GetDefaultBackground(info is ThemeCustomInfo { Parent: TelegramTheme.Dark } ? TelegramThemeType.Night : TelegramThemeType.Day), true);
             }
 
             if (settings != null)

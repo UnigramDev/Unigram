@@ -527,11 +527,11 @@ namespace Telegram.Services.Settings
                 return new ThemeSettings
                 {
                     BaseTheme = new BuiltInThemeNight(),
-                    AccentColor = 0x71BAFA,
+                    AccentColor = 0x258DE5,
                     HasOutgoingMessageAccentColor = true,
-                    OutgoingMessageAccentColor = 0x2B5278,
+                    OutgoingMessageAccentColor = 0x258DE5,
                     OutgoingMessageFill = new BackgroundFillFreeformGradient(new[] { 0x258DE5, 0x4272DF, 0x8146D7, 0x9F3EAA }),
-                    Background = GetDefaultBackground(true)
+                    Background = GetDefaultBackground(type)
                 };
             }
             else if (type == TelegramThemeType.Classic)
@@ -543,7 +543,7 @@ namespace Telegram.Services.Settings
                     HasOutgoingMessageAccentColor = true,
                     OutgoingMessageAccentColor = 0xF0FDDF,
                     OutgoingMessageFill = new BackgroundFillSolid(0xF0FDDF),
-                    Background = GetDefaultBackground(false)
+                    Background = GetDefaultBackground(type)
                 };
             }
 
@@ -556,7 +556,7 @@ namespace Telegram.Services.Settings
                 BaseTheme = ThemeSettingsStore.ToBuiltInTheme(type),
                 AccentColor = accent,
                 OutgoingMessageAccentColor = accent,
-                Background = GetDefaultBackground(GetBase(type) == TelegramTheme.Dark)
+                Background = GetDefaultBackground(type)
             };
         }
 
@@ -585,12 +585,30 @@ namespace Telegram.Services.Settings
                 : TelegramTheme.Light;
         }
 
-        public static Background GetDefaultBackground(bool dark)
+        public static Background GetDefaultBackground(TelegramThemeType type)
         {
-            var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+            if (type == TelegramThemeType.Tinted)
+            {
+                type = TelegramThemeType.Night;
+            }
+
+            var dark = type is TelegramThemeType.Night or TelegramThemeType.Tinted;
+            var freeform = type switch
+            {
+                TelegramThemeType.Tinted => new[] { 0x0E141A, 0x172431, 0x0F171E, 0x141C2B },
+                TelegramThemeType.Night => new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 },
+                _ => new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 }
+
+            };
+            var intensity = type switch
+            {
+                TelegramThemeType.Tinted => 38,
+                TelegramThemeType.Night => 57,
+                _ => 50
+            };
             return new Background(0, true, dark, string.Empty,
                 new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
-                new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
+                new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), intensity, type is TelegramThemeType.Night, false));
         }
 
         #endregion

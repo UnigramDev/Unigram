@@ -11,6 +11,7 @@ using Telegram.Common;
 using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -219,7 +220,13 @@ namespace Telegram.Controls.Chats
                 dimming = 0;
             }
 
-            background ??= CreateDefaultBackground(forDarkTheme);
+            if (background == null)
+            {
+                var settings = AppSettings.Appearance.GetSettings(forDarkTheme ? TelegramTheme.Dark : TelegramTheme.Light);
+                var type = ThemeSettingsStore.ToThemeType(settings?.BaseTheme ?? new BuiltInThemeClassic(), forDarkTheme ? TelegramTheme.Dark : TelegramTheme.Light);
+
+                background = AppearanceSettings.GetDefaultBackground(type);
+            }
 
             if (IsLockScreen)
             {
@@ -227,14 +234,6 @@ namespace Telegram.Controls.Chats
             }
 
             return new Variant(theme, background, dimming);
-        }
-
-        private static Background CreateDefaultBackground(bool dark)
-        {
-            var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
-            return new Background(0, true, dark, string.Empty,
-                new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
-                new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
         }
 
         // White text has to read on whatever the user picked, so every wallpaper is dimmed, and
