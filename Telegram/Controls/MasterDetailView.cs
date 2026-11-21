@@ -16,6 +16,7 @@ using Telegram.Controls.Chats;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views;
 #if WINUI3
@@ -106,6 +107,7 @@ namespace Telegram.Controls
 
             _windowTitleSession = service.Session;
             _windowTitleSession.PropertyChanged += OnWindowTitleSessionChanged;
+            _windowTitleSession.Aggregator.Subscribe<UpdateWindowTitleDetails>(this, Handle);
 
             // A standalone window has navigated before it gets here.
             WatchWindowTitle(DetailFrame.Content as HostedPage);
@@ -128,6 +130,7 @@ namespace Telegram.Controls
             if (_windowTitleSession != null)
             {
                 _windowTitleSession.PropertyChanged -= OnWindowTitleSessionChanged;
+                _windowTitleSession.Aggregator.Unsubscribe<UpdateWindowTitleDetails>(this);
                 _windowTitleSession = null;
             }
 
@@ -893,6 +896,12 @@ namespace Telegram.Controls
             }
         }
 
+        private void Handle(UpdateWindowTitleDetails update)
+        {
+            // Published from the settings page, whose window need not be this one.
+            this.BeginOnUIThread(UpdateWindowTitle);
+        }
+
         /// <summary>
         /// Shown as the whole window title while set; null goes back to the account and chat.
         /// </summary>
@@ -920,9 +929,9 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (!session.ClientService.TryGetUser(session.UserId, out User user))
+            if (!AppSettings.ShowWindowTitleDetails || !session.ClientService.TryGetUser(session.UserId, out User user))
             {
-                // Clears a connection state that ended before the user arrived.
+                // Also clears a connection state that ended before the user arrived.
                 NavigationService.Window.Title = string.Empty;
                 return;
             }
